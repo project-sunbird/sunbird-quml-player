@@ -1,0 +1,54 @@
+<div class="quml-header-container">
+  <div>
+    <quml-menu class="quml-menu"></quml-menu>
+  </div>
+
+  <div class="header-right-section">
+    <div class="duration">
+      <span><quml-durationtimer></quml-durationtimer></span>&nbsp;&nbsp;<span>{{time}}</span>
+    </div>
+    <div class="star-container">
+      <span div class="star">
+        <quml-star></quml-star>
+      </span>
+      <span class="score">
+        47
+      </span>
+    </div>
+    <div class="navigation-icons">
+      <span (click)="prevSlide()">
+        <quml-previous></quml-previous>
+      </span>
+      <span (click)="nextSlide()">
+        <quml-next *ngIf="!active"></quml-next>
+        <quml-next-active *ngIf="active"></quml-next-active>
+      </span>
+    </div>
+  </div>
+</div>
+
+<div class="navigation-portrait-section">
+  <div class="current-slide">
+    {{currentSlideIndex}}/{{totalNoOfQuestions}}
+  </div>
+  <div>
+    <quml-bookmark></quml-bookmark>
+  </div>
+  <div>
+    <quml-hint></quml-hint>
+  </div>
+  <div>
+    <quml-share></quml-share>
+  </div>
+  <div>
+    <quml-ans></quml-ans>
+  </div>
+  <div>
+    <span (click)="prevSlide()">
+      <quml-previous></quml-previous>
+    </span>
+    <span (click)="nextSlide()">
+      <quml-next></quml-next>
+    </span>
+  </div>
+</div>

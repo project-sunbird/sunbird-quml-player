@@ -1,0 +1,15 @@
+<div class="quml-correct-alert">
+  <div class="close-icon"><quml-close (click)="closeAlertBox($event)" ></quml-close></div>
+  <div class="quml-alert-body">
+      <quml-correct *ngIf="alertType"></quml-correct>
+      <quml-wrong *ngIf="!alertType"></quml-wrong>
+      <div>
+        <div class="alert-text" *ngIf="alertType">You got it Right</div>
+        <div class="alert-text" *ngIf="!alertType"> Not the right one</div>
+        <div class="view-solution">
+          <span class="padding-right" (click)="viewSolution()">View Solution</span>
+          <span *ngIf="!alertType" (click)="closeAlertBox($event)">Try again</span>
+        </div>
+      </div>
+    </div>
+  </div>

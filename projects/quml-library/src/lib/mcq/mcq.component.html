@@ -1,0 +1,44 @@
+<!-- Default Layout-->
+<div class="quml-mcq" *ngIf="layout=='DEFAULT'">
+    <quml-mcq-question [mcqQuestion]="mcqQuestion" [layout]="layout" (showPopup)="showPopup()"></quml-mcq-question>
+    <quml-mcq-option [mcqOptions]="mcqOptions" [solutions]="solutions" [layout]="layout" (optionSelected)="onOptionSelect($event)"
+        (showPopup)="showPopup()"></quml-mcq-option>
+</div>
+<!-- End of Default Layout-->
+<!--Image Grid Layout-->
+<div class="quml-mcq" *ngIf="layout=='IMAGEGRID'">
+    <quml-mcq-question [mcqQuestion]="mcqQuestion" [layout]="layout"></quml-mcq-question>
+    <quml-mcq-option [mcqOptions]="mcqOptions" [layout]="layout" [solutions]="solutions" (optionSelected)="optionSelectedInImage($event)">
+    </quml-mcq-option>
+</div>
+<!--End of Grid Layout-->
+<!--Image Multi Grid Layout-->
+<div class="quml-mcq" *ngIf="layout==='MULTIIMAGEGRID'">
+    <div class="imageqa-wrapper">
+
+    <quml-mcq-question [mcqQuestion]="mcqQuestion" [layout]="layout"></quml-mcq-question>
+    <quml-mcq-option [mcqOptions]="mcqOptions" [solutions]="solutions" (optionSelected)="optionSelectedInImage($event)" [layout]="layout"></quml-mcq-option>
+    </div>
+</div>
+<!--End of Image Multi Grid Layout-->
+<!--Image QA Grid Layout-->
+<div class="quml-mcq" *ngIf="layout=='IMAGEQAGRID'">
+    <div class="imageqa-wrapper">
+        <quml-mcq-question [mcqQuestion]="mcqQuestion" [layout]="layout"></quml-mcq-question>
+        <quml-mcq-option [mcqOptions]="mcqOptions" [solutions]="solutions"  (optionSelected)="optionSelectedInImage($event)" [layout]="layout"></quml-mcq-option>
+    </div>
+</div>
+<!--End of Image QA Grid Layout-->
+<!--Image QOption Layout-->
+<div class="quml-mcq" *ngIf="layout=='IMAGEQOPTION'">
+    <div class="columnBlock questionBlock">
+        <quml-mcq-question [mcqQuestion]="mcqQuestion" [layout]="layout"></quml-mcq-question>
+    </div>
+    <div class="columnBlock">
+        <quml-mcq-option [mcqOptions]="mcqOptions" [solutions]="solutions" [layout]="layout" (optionSelected)="optionSelectedInImage($event)">
+        </quml-mcq-option>
+    </div>
+</div>
+
+<!--End of Image QOption Layout-->
+<quml-quml-popup *ngIf="showQumlPopup" (popUpClose)="closePopUp()"></quml-quml-popup>

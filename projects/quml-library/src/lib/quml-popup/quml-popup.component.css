@@ -1,0 +1,47 @@
+.quml-popup {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: rgba(0, 0, 0, .4);
+    top: 0;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+.quml-popup .quml-popup-icon {
+    font-size: 20px;
+    right: 10%;
+    position: absolute;
+    cursor: pointer;
+    z-index: 2;
+    color: #fff;
+    top: 8%;
+}
+
+.quml-popup img {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    height: 90%;
+    border-radius: 8px;
+    position: absolute;
+    z-index: 2;
+}
+
+.htmlTag {
+    position: absolute;
+    top: 15%;
+    left: 27%;
+    z-index: 10;
+}
+
+ @media only screen and (max-width: 640px) {
+    .htmlTag {
+        position: absolute;
+        top: 10%;
+        left: 27%;
+        z-index: 10;
+    }
+}
