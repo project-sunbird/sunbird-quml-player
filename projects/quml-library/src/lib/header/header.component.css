@@ -85,24 +85,24 @@ quml-next-active{
   font-weight: bold;
 }
 
-.current-slide {
+/* .current-slide {
   color: #6D7278;
   font-family: Avenir;
   font-size: 14px;
   font-weight: 900;
   letter-spacing: 0;
   line-height: 19px;
-}
+} */
 
 
 
-.quml-arrow-button {
+/* .quml-arrow-button {
   border-radius: 28%;
   font-size: 0%;
   outline: none;
   background-color: rgb(15, 5, 160);
   padding: 8px;
-}
+} */
 
 .timer-section {
   color: #ff0000a8;
@@ -124,7 +124,7 @@ quml-next-active{
 
 
 
-.sidenav {
+/* .sidenav {
   height: 100%;
   width: 0;
   position: fixed;
@@ -135,14 +135,14 @@ quml-next-active{
   overflow-x: hidden;
   display: flex;
   z-index: 300;
-}
+} */
 
-.navBlock {
+/* .navBlock {
   width: 40%;
   background: white;
-}
+} */
 
-.sidenav a {
+/* .sidenav a {
   text-decoration: none;
   font-size: 25px;
   color: #000000;
@@ -169,17 +169,17 @@ quml-next-active{
   .sidenav a {
     font-size: 18px;
   }
-}
+} */
 
-.quml-nav-unit {
+/* .quml-nav-unit {
   background: rgb(15, 5, 160);
   ;
   color: white;
   padding: 16px;
   text-overflow: ellipsis;
-}
+} */
 
-.quml-nav-items {
+/* .quml-nav-items {
   border-bottom: 1px solid grey;
   padding: 16px;
   background: white;
@@ -244,4 +244,4 @@ quml-next-active{
   .transparentBlock {
     width: 40%;
   }
-}
+} */

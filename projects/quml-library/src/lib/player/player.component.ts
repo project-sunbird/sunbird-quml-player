@@ -123,8 +123,8 @@ export class PlayerComponent implements OnInit {
     let updated = false;
     if (this.optionSelectedObj !== undefined) {
       const currentIndex = this.car.getCurrentSlideIndex() - 1;
-      this.currentQuestion = this.questions[currentIndex].assessment_item.metadata.editorState.question;
-      this.currentOptions = this.questions[currentIndex].assessment_item.metadata.editorState.options;
+      this.currentQuestion = this.questionsSorted[currentIndex].assessment_item.metadata.editorState.question;
+      this.currentOptions = this.questionsSorted[currentIndex].assessment_item.metadata.editorState.options;
       this.currentOptions.forEach((ele, index) => {
         if (ele.value.body === option.optionHtml && Boolean(ele.answer)) {
           this.scoreBoardObject['index'] = this.car.getCurrentSlideIndex();
@@ -182,14 +182,6 @@ export class PlayerComponent implements OnInit {
     } else if (!this.linearNavigation) {
       this.car.move(this.CarouselConfig.PREV);
     }
-  }
-
-  addSlide() {
-    this.slides.push(this.questions.length);
-  }
-
-  removeSlide() {
-    this.slides.length = this.slides.length - 1;
   }
 
   nextSlideClicked(event) {
