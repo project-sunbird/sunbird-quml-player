@@ -1,0 +1,61 @@
+.quml-alert-body {
+    display: grid;
+    grid-template-columns: 40px 200px;
+    grid-gap: 1em;
+}
+
+.close-icon {
+    float: right;
+    margin-bottom: 12px;
+}
+
+.alert-text {
+    color: #4A4A4A;
+    font-family: "Noto Sans";
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 0;
+    margin-bottom: 4px;
+}
+
+.padding-right{
+    padding-right: 8px;
+}
+
+.view-solution {
+    color: #024F9D;
+    font-family: "Noto Sans";
+    font-size: 12px;
+    letter-spacing: 0;
+    line-height: 17px;
+}
+
+.quml-correct-alert {
+    position: fixed;
+    bottom: 12px;
+    left: 27%;
+    border-radius: 8px;
+    background-color: #FFFFFF;
+    box-shadow: 0 2px 14px 0 rgba(0, 0, 0, 0.1);
+    width: 50%;
+    padding: 16px;
+    margin-bottom: 8px;
+}
+
+.close-icon {
+    float: right;
+}
+
+@media only screen and (max-width: 480px) {
+    .quml-correct-alert {
+        position: fixed;
+        bottom: 60px;
+        left: 13%;
+        width: 100%;
+        border-radius: 8px;
+        background-color: #fff;
+        box-shadow: 0 2px 14px 0 rgba(0, 0, 0, .1);
+        width: 77%;
+        padding: 16px;
+    }
+}

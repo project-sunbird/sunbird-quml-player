@@ -1,0 +1,18 @@
+<div class="scoreboard">
+  <div class="scoreboard-header">
+    Are you ready to submit
+  </div>
+  <div class="scoreboard-title">
+    central Nervous system
+  </div>
+
+  <div class="scoreboard-scores">
+    <div *ngFor="let score of scores; let i = index" [ngClass]="score.class">
+      {{score.index}}
+    </div>
+  </div>
+
+  <div class="scoreboard-button-container">
+    <button type="submit" class="scoreboard-quml-btn">submit</button>
+  </div>
+</div>

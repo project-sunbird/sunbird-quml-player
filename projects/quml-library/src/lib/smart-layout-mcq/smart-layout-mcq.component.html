@@ -1,0 +1,16 @@
+<div class="sm-layout-main-container">
+  <div class="sb-question-container">
+    <!-- <button (click)="showMore = !showMore">show more</button> -->
+    <div class="sb-mcq-question" [innerHtml]="question">
+    </div>
+  </div>
+  <div class="sb-option-container">
+    <div class="sb-mcq-option" [ngClass]="option.selected === true ? 'sb-mcq-option-selected': 'sb-mcq-option'"
+      *ngFor="let option of options; let i=index" id={{i}} >
+      <div  (click)="optionSelected(option)" [innerHtml]="option.value.body"></div>
+      <quml-zoom-in *ngIf="option.value.body.includes('img')" class="zoom-in-icon" (click)="zoomInImage(option)"></quml-zoom-in>
+    </div>
+  </div>
+</div>
+<!-- <quml-chevron-right class="chevron-right"></quml-chevron-right> -->
+<quml-quml-popup *ngIf="showQumlPopUp" [htmlTag]="htmlTag" (popUpClose)="closePopUp()"></quml-quml-popup>

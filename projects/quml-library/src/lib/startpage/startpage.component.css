@@ -1,0 +1,90 @@
+.startpage {
+    display: grid;
+    grid-template-columns: 300px 10px 100px;
+    grid-gap: 1em;
+    justify-items: start;
+}
+
+.startpage .header {
+    color: #024f9d;
+    font-family: "Noto Sans";
+    font-size: 18px;
+    font-weight: bold;
+    letter-spacing: 0;
+    line-height: 24px;
+    margin-bottom: 16px;
+}
+
+.startpage .border {
+    box-sizing: border-box;
+    height: 60vh;
+    width: 1px;
+    border: 1px solid #6D7278;
+    opacity: 0.2;
+}
+
+.startpage .sub-header {
+    color: #6D7278;
+    font-family: "Kohinoor Devanagari";
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 0;
+    line-height: 18px;
+    margin-bottom: 16px;
+}
+
+.startpage .startpage-guidelines {
+    color: #6D7278;
+    font-family: "Noto Sans";
+    font-size: 13px;
+    letter-spacing: 0;
+    line-height: 17px;
+}
+
+.questions,
+.points,
+.score {
+    margin-bottom: 16px;
+}
+
+.points {
+    margin-bottom: 16px;
+}
+
+.minutes {
+    margin-bottom: 16px;
+}
+
+.startpage-guidelines p {
+    margin-bottom: 8px;
+    font-size: 13px;
+}
+
+.score-heading {
+    color: #6D7278;
+    font-family: "Noto Sans";
+    font-size: 13px;
+}
+
+.scores {
+    color: #024F9D;
+    font-family: "Noto Sans";
+    font-size: 18px;
+    font-weight: bold;
+    letter-spacing: 0;
+    line-height: 24px;
+    text-align: center;
+}
+
+.icon {
+    padding-right: 8px;
+}
+
+@media only screen and (max-width: 480px) {
+    .startpage {
+        display: grid;
+        grid-template-columns: 200px 10px 100px;
+        grid-gap: 1em;
+        justify-items: center;
+    }
+}
