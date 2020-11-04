@@ -1,7 +1,6 @@
 import { Component, OnInit, Input, SecurityContext, Output, EventEmitter, AfterViewInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { katex } from 'katex';
-import { questionData } from './data';
 
 declare var katex: any;
 
@@ -33,27 +32,29 @@ export class McqComponent implements OnInit, AfterViewInit {
   }
 
   async ngOnInit() {
-    if (this.question.metadata.solutions) {
-      this.solutions = this.question.metadata.solutions;
+    if (this.question.solutions) {
+      this.solutions = this.question.solutions;
+      console.log('this.solutions in mcq componets', this.solutions);
     }
     this.componentLoaded.emit({ event: 'mcq component has been loaded' });
     this.renderLatex();
-    this.question = this.question.metadata;
-    this.layout = this.layout ? this.layout : 'IMAGEGRID';
-    if (this.question.editorState) {
-      if (this.question.templateId === 'mcq-vertical') {
-        this.layout = 'DEFAULT';
-      } else if (this.question.templateId === 'mcq-horizontal') {
-        this.layout = 'IMAGEGRID';
-      } else if (this.question.templateId === 'mcq-vertical mcq-split') {
-        this.layout = 'IMAGEQAGRID';
-      } else if (this.question.templateId === 'mcq-grid mcq-split') {
-        this.layout = 'MULTIIMAGEGRID';
-      }
+    // this.question = this.question.metadata;
+    // this.layout = this.layout ? this.layout : 'IMAGEGRID';
+    this.layout = 'DEFAULT';
+    // if (this.question.editorState) {
+    //   if (this.question.templateId === 'mcq-vertical') {
+    //     this.layout = 'DEFAULT';
+    //   } else if (this.question.templateId === 'mcq-horizontal') {
+    //     this.layout = 'IMAGEGRID';
+    //   } else if (this.question.templateId === 'mcq-vertical mcq-split') {
+    //     this.layout = 'IMAGEQAGRID';
+    //   } else if (this.question.templateId === 'mcq-grid mcq-split') {
+    //     this.layout = 'MULTIIMAGEGRID';
+    //   }
       this.mcqQuestion = this.domSanitizer.sanitize(SecurityContext.HTML,
-        this.domSanitizer.bypassSecurityTrustHtml(this.question.editorState.question));
-      this.options = this.question.editorState.options;
-    }
+      this.domSanitizer.bypassSecurityTrustHtml(this.question.body));
+      this.options = this.question.interactions.response1.options;
+    // }
     this.initOptions();
   }
 
@@ -109,6 +110,7 @@ export class McqComponent implements OnInit, AfterViewInit {
   }
 
   onOptionSelect(event) {
+    console.log('event is here', event);
     const mcqOption = event.option;
     const solutions = event.solutions;
     this.mcqOptions.forEach(mcqOptionElement => {

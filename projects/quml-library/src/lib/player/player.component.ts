@@ -35,7 +35,15 @@ export class PlayerComponent implements OnInit {
   alertType: boolean;
   previousOption: any;
   scoreBoardObject = {};
-  questionsSorted = [];
+  timeLimit: any;
+  showTimer: any;
+  showFeedBack: boolean;
+  showUserSolution: boolean;
+  startPageInstruction: string;
+  shuffleQuestions: boolean;
+  requiresSubmit: boolean;
+  noOfQuestions: number;
+  maxScore: number;
 
 
   currentSlideIndex = 0;
@@ -58,14 +66,20 @@ export class PlayerComponent implements OnInit {
     this.slideInterval = 0;
     this.showIndicator = false;
     this.noWrapSlides = true;
-    this.questions = data;
-    this.extractData();
-  }
+    this.questions = data.result.content.children;
+    this.timeLimit = data.result.content.timeLimit;
+    this.showTimer = data.result.content.showTimer;
+    this.showFeedBack = data.result.content.showFeedback;
+    this.showUserSolution = data.result.content.showSolutions;
+    this.startPageInstruction = data.result.content.instructions;
+    this.linearNavigation = data.result.content.navigationMode === 'non-linear' ? false : true;
+    this.requiresSubmit = data.result.content.requiresSubmit;
+    this.noOfQuestions = data.result.content.totalQuestions;
+    this.maxScore = data.result.content.maxScore;
 
-  setQuestionType() {
-    this.questionClicked.forEach((ele) => {
-      ele.questionType = 'mcq';
-    });
+    if (data.result.content.shuffle) {
+      this.questions = data.result.content.children.sort(() => Math.random() - 0.5);
+    }
   }
 
   nextSlide() {
@@ -74,26 +88,22 @@ export class PlayerComponent implements OnInit {
     }
 
     if (this.car.getCurrentSlideIndex() + 1 === this.questions.length) {
-      this.scoreBoard.splice(0, 1);
-      this.loadScoreBoard = true;
-      this.endPageReached = true;
+      if (!this.requiresSubmit) {
+        this.endPageReached = true;
+      } else {
+        this.scoreBoard.splice(0, 1);
+        this.loadScoreBoard = true;
+      }
       const slide = document.getElementsByTagName('slide');
       return;
-
     }
+
     this.car.move(this.CarouselConfig.NEXT);
     this.active = false;
     this.showAlert = false;
     this.optionSelectedObj = undefined;
     if (!this.attemptedQuestions.includes(this.car.getCurrentSlideIndex())) {
       this.attemptedQuestions.push(this.car.getCurrentSlideIndex());
-    }
-  }
-
-  extractData() {
-    for (let i = 0; i < data.length; i++) {
-      const currentObject = Object.values(data[i])[0].request;
-      this.questionsSorted.push(currentObject);
     }
   }
 
@@ -123,16 +133,17 @@ export class PlayerComponent implements OnInit {
     let updated = false;
     if (this.optionSelectedObj !== undefined) {
       const currentIndex = this.car.getCurrentSlideIndex() - 1;
-      this.currentQuestion = this.questionsSorted[currentIndex].assessment_item.metadata.editorState.question;
-      this.currentOptions = this.questionsSorted[currentIndex].assessment_item.metadata.editorState.options;
+      this.currentQuestion = this.questions[currentIndex].body;
+      this.currentOptions = this.questions[currentIndex].interactions.response1.options;
+      const correctOptionValue = this.questions[currentIndex].responseDeclaration.response1.correct_response.value;
       this.currentOptions.forEach((ele, index) => {
-        if (ele.value.body === option.optionHtml && Boolean(ele.answer)) {
+        if (ele.body === option.option.body && ele.value === correctOptionValue) {
           this.scoreBoardObject['index'] = this.car.getCurrentSlideIndex();
           this.scoreBoardObject['status'] = true;
           this.scoreBoardObject['class'] = 'correct';
           this.showAlert = true;
           this.alertType = true;
-        } else if (index === this.currentOptions.length - 1 && !Object.keys(this.scoreBoardObject).length) {
+        } else if (index === (this.currentOptions.length - 1) && !Object.keys(this.scoreBoardObject).length) {
           this.scoreBoardObject['index'] = this.car.getCurrentSlideIndex();
           this.scoreBoardObject['status'] = false;
           this.scoreBoardObject['class'] = 'wrong';
@@ -174,7 +185,7 @@ export class PlayerComponent implements OnInit {
     } else if (this.car.getCurrentSlideIndex() === 0) {
       this.attemptedQuestions = [];
     }
-    if (this.currentSlideIndex > 1) {
+    if (this.currentSlideIndex > 0) {
       this.currentSlideIndex = this.currentSlideIndex - 1;
     }
     if (this.car.getCurrentSlideIndex() + 1 === this.questions.length && this.endPageReached) {
@@ -197,7 +208,8 @@ export class PlayerComponent implements OnInit {
   }
   replayContent() {
     this.endPageReached = false;
-    this.currentSlideIndex = 1;
+    this.currentSlideIndex = 0;
+    this.attemptedQuestions = [];
     this.car.selectSlide(0);
   }
 

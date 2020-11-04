@@ -11,19 +11,22 @@ export class HeaderComponent implements OnInit {
   @Input() questions?: any;
   @Input() duration?: any;
   @Input() disablePreviousNavigation: boolean;
+  @Input() showTimer: boolean;
   @Input() totalNoOfQuestions: any;
   @Input() currentSlideIndex: any;
   @Input() active: boolean;
+  @Input() endPageReached: boolean;
   @Output() nextSlideClicked = new EventEmitter<any>();
   @Output() prevSlideClicked = new EventEmitter<any>();
   @Output() durationEnds = new EventEmitter<any>();
+
   time: any;
   constructor() {
   }
 
 
   ngOnInit() {
-    if (this.duration) {
+    if (this.duration && this.showTimer) {
       this.timer();
     }
   }

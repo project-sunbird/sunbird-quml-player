@@ -7,26 +7,21 @@
       <div class="sub-header">
         General Instructions
       </div>
-      <div class="startpage-guidelines">
-        <p>Read and understand the guidelines</p>
-        <p>Click on audio sound to play sound </p>
-        <p>Tap on zoom icon to enlarge image </p>
-        <p>Tap on option to select answer</p>
-      </div>
+      <div class="startpage-guidelines" *ngIf="instructions" [innerHTML]="instructions"></div>
   </div>
   <div class="border"></div>
   <div class="question-scores">
       <div class="questions">
         <div class="score-heading">Questions</div>
-        <quml-content class="icon"></quml-content><span class="scores">10</span>
+        <quml-content class="icon"></quml-content><span class="scores">{{totalNoOfQuestions}}</span>
       </div>
       <div class="minutes">
         <div class="score-heading">Minutes</div>
-        <quml-timer  class="icon"></quml-timer><span class="scores">10</span>
+        <quml-timer  class="icon"></quml-timer><span class="scores">{{minutes}}:{{seconds}}</span>
       </div>
       <div class="points">
         <div class="score-heading">Points</div>
-        <quml-startpagestaricon  class="icon">i</quml-startpagestaricon><span class="scores">300</span>
+        <quml-startpagestaricon  class="icon">i</quml-startpagestaricon><span class="scores">{{maxScore}}</span>
       </div>
   </div>
 </div>
