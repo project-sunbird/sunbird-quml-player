@@ -57,11 +57,18 @@ quml-next-active{
 .star-container {
   background-color: #eee;
   padding-right: 12px;
-  border-radius: 12px;
-  margin-bottom: 8px;
-  padding-left: 6px;
-  margin-top: 6px;
+  border-radius: 32px;
+  padding: 8px 12px;
   margin: 0 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+quml-star {
+   display: flex;
+   align-items: center;
 }
 
 .star-container .star {
@@ -77,12 +84,19 @@ quml-next-active{
   line-height: 16px;
 }
 
+svg {
+  width:100%
+}
+
 .duration {
   color: #131415;
-  font-family: "Noto Sans";
+  font-family: “Noto Sans”;
   font-size: 14px;
-  font-weight: bold;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
 }
+
 .timer-section {
   color: #ff0000a8;
   font-weight: bold;
@@ -99,4 +113,10 @@ quml-next-active{
 
 .quml-optionMenu {
   padding-left: 21px;
+}
+
+quml-durationtimer { 
+  display: flex;
+  align-items: center;
+  margin-right: 8px;
 }

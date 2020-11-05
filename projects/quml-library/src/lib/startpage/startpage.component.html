@@ -1,27 +1,33 @@
 <div class="startpage">
 
   <div class="startpage-info">
-      <div class="header">
-        Central Nervous systems
-      </div>
-      <div class="sub-header">
-        General Instructions
-      </div>
-      <div class="startpage-guidelines" *ngIf="instructions" [innerHTML]="instructions"></div>
+    <div class="header">
+      Central Nervous systems
+    </div>
+    <div class="sub-header">
+      General Instructions
+    </div>
+    <div class="startpage-guidelines" *ngIf="instructions" [innerHTML]="instructions"></div>
   </div>
   <div class="border"></div>
   <div class="question-scores">
-      <div class="questions">
-        <div class="score-heading">Questions</div>
+    <div class="points">
+      <div class="score-heading">Questions</div>
+      <div class="icon-section">
         <quml-content class="icon"></quml-content><span class="scores">{{totalNoOfQuestions}}</span>
       </div>
-      <div class="minutes">
-        <div class="score-heading">Minutes</div>
-        <quml-timer  class="icon"></quml-timer><span class="scores">{{minutes}}:{{seconds}}</span>
+    </div>
+    <div class="points">
+      <div class="score-heading">Minutes</div>
+      <div class="icon-section">
+        <quml-timer class="icon"></quml-timer><span class="scores">{{minutes}}:{{seconds}}</span>
       </div>
-      <div class="points">
-        <div class="score-heading">Points</div>
-        <quml-startpagestaricon  class="icon">i</quml-startpagestaricon><span class="scores">{{maxScore}}</span>
+    </div>
+    <div class="points">
+      <div class="score-heading">Points</div>
+      <div class="icon-section">
+        <quml-startpagestaricon class="icon">i</quml-startpagestaricon><span class="scores">{{maxScore}}</span>
       </div>
+    </div>
   </div>
 </div>

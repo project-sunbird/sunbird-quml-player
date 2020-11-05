@@ -1,4 +1,5 @@
-import { Component, OnInit, ViewChild, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, Output, EventEmitter, Input, OnChanges } from '@angular/core';
+import { iif } from 'rxjs';
 
 
 @Component({
@@ -6,7 +7,7 @@ import { Component, OnInit, ViewChild, Output, EventEmitter, Input } from '@angu
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnChanges {
 
   @Input() questions?: any;
   @Input() duration?: any;
@@ -15,10 +16,13 @@ export class HeaderComponent implements OnInit {
   @Input() totalNoOfQuestions: any;
   @Input() currentSlideIndex: any;
   @Input() active: boolean;
+  @Input() initializeTimer: boolean;
   @Input() endPageReached: boolean;
   @Output() nextSlideClicked = new EventEmitter<any>();
   @Output() prevSlideClicked = new EventEmitter<any>();
   @Output() durationEnds = new EventEmitter<any>();
+  minutes: number;
+  seconds: number;
 
   time: any;
   constructor() {
@@ -27,6 +31,14 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
     if (this.duration && this.showTimer) {
+      const durationInSec = this.duration / 1000;
+      this.minutes = ~~(durationInSec / 60);
+      this.seconds = (durationInSec % 60);
+    }
+  }
+
+  ngOnChanges() {
+    if (this.duration && this.showTimer && this.initializeTimer) {
       this.timer();
     }
   }

@@ -5,7 +5,8 @@
     [currentSlideIndex]="currentSlideIndex" 
     [totalNoOfQuestions]="questions.length"
      [active]="active"
-     [endPageReached]="endPageReached"></quml-header>
+     [endPageReached]="endPageReached"
+     [initializeTimer]="initializeTimer"></quml-header>
   <div class="landscape-mode" [hidden]="loadScoreBoard || endPageReached">
     <div class="lanscape-mode-left">
       <div class="current-slide">
@@ -42,9 +43,9 @@
     </carousel>
     <div class="lanscape-mode-right" *ngIf="!endPageReached">
       <ul>
-        <li [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' ">i</li>
+        <li [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlide(0)">i</li>
         <li *ngFor="let question of questions; let i = index"
-          [ngClass]="attemptedQuestions.includes(i+1) ? 'att-color': '' " (click)="goToSlide(i)">{{i+1}}</li>
+          [ngClass]="attemptedQuestions.includes(i+1) ? 'att-color': '' " (click)="goToSlide(i+1)">{{i+1}}</li>
       </ul>
     </div>
   </div>
@@ -53,8 +54,8 @@
 <!-- <quml-endpage *ngIf="endPageReached" (replayContentEvent)="replayContent()">
 </quml-endpage> -->
 <div class="endPage-container">
-  <sb-player-end-page *ngIf="endPageReached" [contentName]="'mcq practise set'" [pagesRead]="10" [userName]="'qwerty'"
-    [timeSpentLabel]="50" (replayContent)="replayContent()"></sb-player-end-page>
+  <sb-player-end-page *ngIf="endPageReached" [contentName]="questionData.result.content.name" [outcome]="questionData.result.content.totalQuestions" [outcomeLabel]="'score : '" [userName]="userName"
+    [timeSpentLabel]="durationSpent" (replayContent)="replayContent()"></sb-player-end-page>
 </div>
 <quml-scoreboard *ngIf="loadScoreBoard && requiresSubmit" [scores]="scoreBoard"></quml-scoreboard>
 <quml-alert *ngIf="showAlert && showFeedBack" [alertType]="alertType" [showSolutionButton]="showUserSolution"

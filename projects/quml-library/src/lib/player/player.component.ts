@@ -1,7 +1,8 @@
-import { Component, OnInit, Input, ViewChild, Output, EventEmitter, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Output, EventEmitter, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { CarouselComponent } from 'ngx-bootstrap/carousel';
 import { newQuestionFormatMcq } from './data';
 import { data } from './smartLayout-data';
+import { QumlLibraryService } from '../quml-library.service';
 
 
 @Component({
@@ -44,6 +45,11 @@ export class PlayerComponent implements OnInit {
   requiresSubmit: boolean;
   noOfQuestions: number;
   maxScore: number;
+  initialTime: number;
+  initializeTimer: boolean;
+  durationSpent: string;
+  userName: string;
+  contentName: string;
 
 
   currentSlideIndex = 0;
@@ -55,7 +61,9 @@ export class PlayerComponent implements OnInit {
     PREV: 2
   };
 
-  constructor() {
+  constructor(
+    public qumlLibraryService: QumlLibraryService
+  ) {
     this.endPageReached = false;
   }
   getQuestionData() {
@@ -63,6 +71,7 @@ export class PlayerComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.initialTime = new Date().getTime();
     this.slideInterval = 0;
     this.showIndicator = false;
     this.noWrapSlides = true;
@@ -76,6 +85,8 @@ export class PlayerComponent implements OnInit {
     this.requiresSubmit = data.result.content.requiresSubmit;
     this.noOfQuestions = data.result.content.totalQuestions;
     this.maxScore = data.result.content.maxScore;
+    this.userName = data.context.userData.firstName + ' ' + data.context.userData.lastName;
+    this.contentName = data.result.content.name;
 
     if (data.result.content.shuffle) {
       this.questions = data.result.content.children.sort(() => Math.random() - 0.5);
@@ -86,9 +97,15 @@ export class PlayerComponent implements OnInit {
     if (this.currentSlideIndex !== this.questions.length) {
       this.currentSlideIndex = this.currentSlideIndex + 1;
     }
+    if (this.currentSlideIndex === 1 && (this.currentSlideIndex - 1) === 0) {
+        debugger
+        this.initializeTimer = true;
+    }
 
     if (this.car.getCurrentSlideIndex() + 1 === this.questions.length) {
       if (!this.requiresSubmit) {
+        const spentTime = (new Date().getTime() - this.initialTime) / 10000;
+        this.durationSpent = spentTime.toFixed(2);
         this.endPageReached = true;
       } else {
         this.scoreBoard.splice(0, 1);
@@ -214,7 +231,7 @@ export class PlayerComponent implements OnInit {
   }
 
   goToSlide(index) {
-    this.currentSlideIndex = index + 1;
+    this.currentSlideIndex = index;
     this.car.selectSlide(index);
   }
 
