@@ -1,8 +1,8 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { CarouselComponent } from 'ngx-bootstrap/carousel';
 import { newQuestionFormatMcq } from './data';
-import { data } from './smartLayout-data';
 import { QumlLibraryService } from '../quml-library.service';
+import { QumlPlayerConfig } from '../quml-library-interface';
 
 
 @Component({
@@ -12,6 +12,7 @@ import { QumlLibraryService } from '../quml-library.service';
 })
 export class PlayerComponent implements OnInit {
   @Input() questions: any;
+  @Input() QumlPlayerConfig: QumlPlayerConfig;
   @Input() linearNavigation: boolean;
   @Input() duration: any;
   @Output() componentLoaded = new EventEmitter<any>();
@@ -50,12 +51,9 @@ export class PlayerComponent implements OnInit {
   durationSpent: string;
   userName: string;
   contentName: string;
-
-
   currentSlideIndex = 0;
   attemptedQuestions = [];
   loadScoreBoard = false;
-  questionData = data;
   CarouselConfig = {
     NEXT: 1,
     PREV: 2
@@ -75,21 +73,21 @@ export class PlayerComponent implements OnInit {
     this.slideInterval = 0;
     this.showIndicator = false;
     this.noWrapSlides = true;
-    this.questions = data.result.content.children;
-    this.timeLimit = data.result.content.timeLimit;
-    this.showTimer = data.result.content.showTimer;
-    this.showFeedBack = data.result.content.showFeedback;
-    this.showUserSolution = data.result.content.showSolutions;
-    this.startPageInstruction = data.result.content.instructions;
-    this.linearNavigation = data.result.content.navigationMode === 'non-linear' ? false : true;
-    this.requiresSubmit = data.result.content.requiresSubmit;
-    this.noOfQuestions = data.result.content.totalQuestions;
-    this.maxScore = data.result.content.maxScore;
-    this.userName = data.context.userData.firstName + ' ' + data.context.userData.lastName;
-    this.contentName = data.result.content.name;
+    this.questions = this.QumlPlayerConfig.data.result.content.children;
+    this.timeLimit = this.QumlPlayerConfig.data.result.content.timeLimit;
+    this.showTimer = this.QumlPlayerConfig.data.result.content.showTimer;
+    this.showFeedBack = this.QumlPlayerConfig.data.result.content.showFeedback;
+    this.showUserSolution = this.QumlPlayerConfig.data.result.content.showSolutions;
+    this.startPageInstruction = this.QumlPlayerConfig.data.result.content.instructions;
+    this.linearNavigation = this.QumlPlayerConfig.data.result.content.navigationMode === 'non-linear' ? false : true;
+    this.requiresSubmit = this.QumlPlayerConfig.data.result.content.requiresSubmit;
+    this.noOfQuestions = this.QumlPlayerConfig.data.result.content.totalQuestions;
+    this.maxScore = this.QumlPlayerConfig.data.result.content.maxScore;
+    this.userName = this.QumlPlayerConfig.context.userData.firstName + ' ' + this.QumlPlayerConfig.context.userData.lastName;
+    this.contentName = this.QumlPlayerConfig.data.result.content.name;
 
-    if (data.result.content.shuffle) {
-      this.questions = data.result.content.children.sort(() => Math.random() - 0.5);
+    if (this.QumlPlayerConfig.data.result.content.shuffle) {
+      this.questions = this.QumlPlayerConfig.data.result.content.children.sort(() => Math.random() - 0.5);
     }
   }
 
@@ -98,7 +96,6 @@ export class PlayerComponent implements OnInit {
       this.currentSlideIndex = this.currentSlideIndex + 1;
     }
     if (this.currentSlideIndex === 1 && (this.currentSlideIndex - 1) === 0) {
-        debugger
         this.initializeTimer = true;
     }
 

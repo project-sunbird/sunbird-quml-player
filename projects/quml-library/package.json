@@ -8,10 +8,7 @@
     "ngx-bootstrap": "^5.3.2"
   },
   "dependencies": {
-    "@project-sunbird/sb-styles": "0.0.7",
-    "@project-sunbird/sunbird-player-sdk": "0.0.5",
-    "i": "^0.3.6",
-    "npm": "^6.14.8"
+    "@project-sunbird/sunbird-player-sdk": "0.0.6"
   },
   "whitelistedNonPeerDependencies": [
     "carousel",

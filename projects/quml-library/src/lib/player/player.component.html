@@ -2,11 +2,8 @@
   <quml-header class="main-header" (durationEnds)="this.endPageReached = true"
     [disablePreviousNavigation]="linearNavigation" [duration]="timeLimit" [showTimer]="showTimer"
     (nextSlideClicked)="nextSlideClicked($event)" (prevSlideClicked)="previousSlideClicked($event)"
-    [currentSlideIndex]="currentSlideIndex" 
-    [totalNoOfQuestions]="questions.length"
-     [active]="active"
-     [endPageReached]="endPageReached"
-     [initializeTimer]="initializeTimer"></quml-header>
+    [currentSlideIndex]="currentSlideIndex" [totalNoOfQuestions]="questions.length" [active]="active"
+    [endPageReached]="endPageReached" [initializeTimer]="initializeTimer"></quml-header>
   <div class="landscape-mode" [hidden]="loadScoreBoard || endPageReached">
     <div class="lanscape-mode-left">
       <div class="current-slide">
@@ -32,30 +29,29 @@
           [time]="timeLimit"></quml-startpage>
       </slide>
       <slide *ngFor="let question of questions; let i= index">
-        <!-- <div *ngIf="question.assessment_item.metadata.type === 'reference'"> -->
-        <!-- <quml-sa [questions]='question.assessment_item' [identifier]="question.id" id={{question.id}}></quml-sa> -->
-        <!-- </div> -->
-        <div *ngIf="question.interactions.response1.type === 'choice'">
+        <div *ngIf="question.interactions?.response1?.type === 'choice'">
           <quml-mcq [question]='question' (optionSelected)="getOptionSelected($event)" [identifier]="question.id"
             id={{question.id}}></quml-mcq>
+        </div>
+        <div *ngIf="question?.interactions === null">
+          <quml-sa [questions]='question'></quml-sa>
         </div>
       </slide>
     </carousel>
     <div class="lanscape-mode-right" *ngIf="!endPageReached">
       <ul>
-        <li [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlide(0)">i</li>
+        <li [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlide(0)">i
+        </li>
         <li *ngFor="let question of questions; let i = index"
           [ngClass]="attemptedQuestions.includes(i+1) ? 'att-color': '' " (click)="goToSlide(i+1)">{{i+1}}</li>
       </ul>
     </div>
   </div>
 </div>
-<!-- [hidden]="!endPageReached" -->
-<!-- <quml-endpage *ngIf="endPageReached" (replayContentEvent)="replayContent()">
-</quml-endpage> -->
 <div class="endPage-container">
-  <sb-player-end-page *ngIf="endPageReached" [contentName]="questionData.result.content.name" [outcome]="questionData.result.content.totalQuestions" [outcomeLabel]="'score : '" [userName]="userName"
-    [timeSpentLabel]="durationSpent" (replayContent)="replayContent()"></sb-player-end-page>
+  <sb-player-end-page *ngIf="endPageReached" [contentName]="contentName" [outcome]="noOfQuestions"
+    [outcomeLabel]="'score : '" [userName]="userName" [timeSpentLabel]="durationSpent"
+    (replayContent)="replayContent()"></sb-player-end-page>
 </div>
 <quml-scoreboard *ngIf="loadScoreBoard && requiresSubmit" [scores]="scoreBoard"></quml-scoreboard>
 <quml-alert *ngIf="showAlert && showFeedBack" [alertType]="alertType" [showSolutionButton]="showUserSolution"
