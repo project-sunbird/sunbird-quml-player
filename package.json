@@ -11,7 +11,7 @@
     "create-player-link": "cd dist/quml-library && npm link && cd ../..",
     "link-player": "npm link @project-sunbird/sunbird-quml-player",
     "build-lib": "ng build quml-library && node scripts/copyAssets.js",
-    "build-link-lib": "npm run build-lib && npm run create-player-link && npm run link-player",
+    "build-link-lib": "npm run build-lib && npm run create-player-link && npm run link-player"
   },
   "private": true,
   "dependencies": {
