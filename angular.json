@@ -60,14 +60,11 @@
             "styles": [
               "./node_modules/bootstrap/dist/css/bootstrap.min.css",
               "projects/quml-demo-app/src/styles.css",
-              "./node_modules/katex/dist/katex.min.css",
-              "./node_modules/slick-carousel/slick/slick.scss",
-              "./node_modules/slick-carousel/slick/slick-theme.scss"
+              "./node_modules/katex/dist/katex.min.css"
             ],
             "scripts": [
               "./node_modules/katex/dist/katex.min.js",
-              "./node_modules/jquery/dist/jquery.min.js",
-              "./node_modules/slick-carousel/slick/slick.min.js"
+              "./node_modules/jquery/dist/jquery.min.js"
             ]
           },
           "configurations": {
