@@ -7,20 +7,15 @@ import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 })
 export class AlertComponent implements OnInit {
   @Input() alertType: any;
+  @Input() showSolutionButton: boolean;
   @Output() closeAlert = new EventEmitter();
   @Output() showSolution = new EventEmitter();
-
 
   constructor() { }
 
   ngOnInit() {
   }
 
-  closeAlertBox(event) {
-    this.closeAlert.emit({
-      close: true
-    });
-  }
 
   viewSolution() {
     this.showSolution.emit({

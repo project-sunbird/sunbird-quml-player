@@ -78,6 +78,12 @@
 
 .icon {
     padding-right: 8px;
+    margin-top: 4px;
+}
+.icon-section {
+    display: flex;
+    justify-items: center;
+    align-items: center;
 }
 
 @media only screen and (max-width: 480px) {

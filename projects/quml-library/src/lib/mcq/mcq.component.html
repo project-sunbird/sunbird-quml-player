@@ -1,7 +1,7 @@
 <!-- Default Layout-->
 <div class="quml-mcq" *ngIf="layout=='DEFAULT'">
     <quml-mcq-question [mcqQuestion]="mcqQuestion" [layout]="layout" (showPopup)="showPopup()"></quml-mcq-question>
-    <quml-mcq-option [mcqOptions]="mcqOptions" [solutions]="solutions" [layout]="layout" (optionSelected)="onOptionSelect($event)"
+    <quml-mcq-option [mcqOptions]="options" [solutions]="solutions" [layout]="layout" (optionSelected)="getSelectedOptionAndResult($event)"
         (showPopup)="showPopup()"></quml-mcq-option>
 </div>
 <!-- End of Default Layout-->

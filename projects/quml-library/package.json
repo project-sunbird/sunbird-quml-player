@@ -7,7 +7,12 @@
     "katex": "^0.11.1",
     "ngx-bootstrap": "^5.3.2"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@project-sunbird/client-services": "^3.4.9",
+    "@project-sunbird/sunbird-player-sdk": "0.0.8"
+  },
   "whitelistedNonPeerDependencies": [
+    "carousel",
+    "@project-sunbird/sunbird-player-sdk"
   ]
 }

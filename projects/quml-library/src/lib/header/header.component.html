@@ -1,10 +1,13 @@
-<div class="quml-header-container">
+<div class="quml-header-container" *ngIf="!endPageReached">
   <div>
     <quml-menu class="quml-menu"></quml-menu>
   </div>
 
   <div class="header-right-section">
-    <div class="duration">
+    <div class="duration" *ngIf="duration && showTimer && !initializeTimer">
+      <span><quml-durationtimer></quml-durationtimer></span>&nbsp;&nbsp;<span>{{minutes}}:{{seconds}}</span>
+    </div>
+    <div class="duration" *ngIf="duration && showTimer && initializeTimer">
       <span><quml-durationtimer></quml-durationtimer></span>&nbsp;&nbsp;<span>{{time}}</span>
     </div>
     <div class="star-container">
@@ -27,7 +30,7 @@
   </div>
 </div>
 
-<div class="navigation-portrait-section">
+<div class="navigation-portrait-section" *ngIf="!endPageReached">
   <div class="current-slide">
     {{currentSlideIndex}}/{{totalNoOfQuestions}}
   </div>

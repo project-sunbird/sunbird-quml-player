@@ -1,114 +1,32 @@
-.quml-sujective-question-section {
-  background-color: #d3e9fe;
-  height: auto;
-  padding: 0px 24px 24px 24px;
+.sa-title {
+    color: #024F9D;
+    font-family: "Noto Sans";
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 16px;
 }
 
-.subjective-container {
-  background-color: #d4e9fe;
-  padding: 16px;
+.sa-round-btn {
+  border-radius: 16px;
+    background-color: #024F9D;
+    font-size: 11px;
+    border: none;
+    color: white;
+    padding: 8px;
+    outline: none;
 }
 
-.answer-button {
-  background-color: #07bc81;
-  border-color: #07bc81;
-  border-radius: 4px;
-  color: #fff;
-  font-size: 13px;
-  height: 32px;
-  text-align: center;
-  width: 106px;
-  border-style: solid;
+.sa-button-container{
+    text-align: center;
+    margin-bottom: 16px;
+    margin-top: 16px;
 }
 
-.quml-sujective-answer-section {
-  padding: 0px 24px 24px 24px;
-}
-
-.border-bottom {
-  border-bottom: 1px solid #e5e5e5;
-  padding: 0px 10px 0px 10px;
-}
-
-.quml-subjective-qa-section {
-  background-color: white;
-  height: auto;
-  border-radius: 8px;
-  margin-top: 10px;
-  padding: 20px;
-  font-size: 15px;
-}
-
-.quml-subjective-solution-header {
-  font-size: 13px;
-  padding-top: 18px;
-  padding-left: 8px;
-  color: #776e61;
-}
-
-.quml-subjective-answer {
-  font-size: 14px;
-  padding-left: 8px;
-}
-
-.quml-subjective-solution {
-  font-size: 14px;
-}
-
-.quml-solution-and-image .wrapper {
-  display: grid;
-  grid-template-columns: 200px auto;
-  grid-gap: 2em;
-  padding: 10px 0px 0px 10px;
-}
-
-.quml-solution-and-image .wrapper .image-container {
-  background-color: white;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-}
-
-.quml-solution-and-image .wrapper .quml-outline-button {
-  background-color: white;
-  border: 1px solid #024f9d;
-  color: #2568ab;
-  font-size: 12px;
-  padding: 8px;
-  border-radius: 5px;
-  outline: none;
-}
-
-.quml-solution-and-image .wrapper .button-container {
-  padding-top: 10px;
-
-}
-
-.subjective-quml-btn-container {
-  text-align: center;
-}
-
-.blurr-in {
+.option-container-blurred {
   filter: blur(4px);
 }
 
-.blurr-out {
+.option-container-blurred-out {
   filter: blur(0px);
-  transition: 0.8s;
-}
-
-.quml-sm-text {
-  padding: 8px 0px 0px 24px;
-  font-size: 13px;
-  color: #024f9d;
-}
-
-.subjective-question-text {
-  padding: 8px 0px 0px 24px;
-  font-size: 13px;
-  color: #024f9d;
-}
-@media only screen and (max-width: 840px) {
-  .quml-solution-and-image .wrapper {
-    display: grid;
-    grid-template-columns: auto;
-  }
+  transition: 0.4s;
 }

@@ -8,8 +8,6 @@
   </div>
   <div class="option" *ngIf="mcqQuestion" id="mcqQuestionSection" [innerHTML]="mcqQuestion"></div>
   <div class="option" [ngClass]="(mcqOption?.selected==true)?'option selected-option-text':'option'" *ngIf="mcqOption"
-    [innerHTML]="mcqOption?.optionHtml"></div>
-    <quml-zoom-in *ngIf="mcqOption?.optionHtml.includes('img')" (click)="openPopup(mcqOption?.optionHtml)" class="zoom-in-icon"></quml-zoom-in>
-  
+    [innerHTML]="mcqOption?.optionHtml"></div>  
 </div>
 <quml-quml-popup *ngIf="showQumlPopup" [htmlTag]="qumlPopupImage" (popUpClose)="closePopUp()"></quml-quml-popup>

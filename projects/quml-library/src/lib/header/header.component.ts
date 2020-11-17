@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, OnChanges, OnDestroy } from '@angular/core';
 
 
 @Component({
@@ -6,25 +6,46 @@ import { Component, OnInit, ViewChild, Output, EventEmitter, Input } from '@angu
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() questions?: any;
   @Input() duration?: any;
   @Input() disablePreviousNavigation: boolean;
+  @Input() showTimer: boolean;
   @Input() totalNoOfQuestions: any;
   @Input() currentSlideIndex: any;
   @Input() active: boolean;
+  @Input() initializeTimer: boolean;
+  @Input() endPageReached: boolean;
   @Output() nextSlideClicked = new EventEmitter<any>();
   @Output() prevSlideClicked = new EventEmitter<any>();
   @Output() durationEnds = new EventEmitter<any>();
+  minutes: number;
+  seconds: number;
+  private intervalRef?;
+
   time: any;
   constructor() {
   }
 
 
   ngOnInit() {
-    if (this.duration) {
+    if (this.duration && this.showTimer) {
+      const durationInSec = this.duration / 1000;
+      this.minutes = ~~(durationInSec / 60);
+      this.seconds = (durationInSec % 60);
+    }
+  }
+
+  ngOnChanges() {
+    if (this.duration && this.showTimer && this.initializeTimer && !this.intervalRef) {
       this.timer();
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.intervalRef) {
+      clearInterval(this.intervalRef);
     }
   }
 
@@ -52,7 +73,7 @@ export class HeaderComponent implements OnInit {
     const durationInSec = this.duration / 1000;
     let min = ~~(durationInSec / 60);
     let sec = (durationInSec % 60);
-    setInterval(() => {
+    this.intervalRef = setInterval(() => {
       if (sec === -1) {
         sec = 59;
         min = min - 1;
