@@ -45,5 +45,6 @@ export interface ObjectRollup {
 
 export interface QumlPlayerConfig {
     context: Context;
+    metadata: any;
     data: any;
 }

@@ -1,60 +1,62 @@
-<div [hidden]="showSolution">
-  <quml-header class="main-header" (durationEnds)="this.endPageReached = true"
-    [disablePreviousNavigation]="linearNavigation" [duration]="timeLimit" [showTimer]="showTimer"
-    (nextSlideClicked)="nextSlideClicked($event)" (prevSlideClicked)="previousSlideClicked($event)"
-    [currentSlideIndex]="currentSlideIndex" [totalNoOfQuestions]="questions.length" [active]="active"
-    [endPageReached]="endPageReached" [initializeTimer]="initializeTimer"></quml-header>
-  <div class="landscape-mode" [hidden]="loadScoreBoard || endPageReached">
-    <div class="lanscape-mode-left">
-      <div class="current-slide">
-        {{currentSlideIndex}}/{{questions.length-1}}
-      </div>
-      <div>
-        <quml-bookmark></quml-bookmark>
-      </div>
-      <div>
-        <quml-hint></quml-hint>
-      </div>
-      <div>
-        <quml-share></quml-share>
-      </div>
-      <div>
-        <quml-ans></quml-ans>
-      </div>
-    </div>
-    <carousel class="landscape-center" [interval]="slideInterval" [showIndicators]="showIndicator"
-      [noWrap]="noWrapSlides" #car [hidden]="endPageReached">
-      <slide>
-        <quml-startpage [instructions]="startPageInstruction" [totalNoOfQuestions]="noOfQuestions" [maxScore]="maxScore"
-          [time]="timeLimit"></quml-startpage>
-      </slide>
-      <slide *ngFor="let question of questions; let i= index">
-        <div *ngIf="question.interactions?.response1?.type === 'choice'">
-          <quml-mcq [question]='question' (optionSelected)="getOptionSelected($event)" [identifier]="question.id"
-            id={{question.id}}></quml-mcq>
+<div class="quml-container">
+  <div [hidden]="showSolution">
+    <quml-header class="main-header" (durationEnds)="this.endPageReached = true"
+      [disablePreviousNavigation]="linearNavigation" [duration]="timeLimit" [showTimer]="showTimer"
+      (nextSlideClicked)="nextSlideClicked($event)" (prevSlideClicked)="previousSlideClicked($event)"
+      [currentSlideIndex]="currentSlideIndex" [totalNoOfQuestions]="questions.length" [active]="active"
+      [endPageReached]="endPageReached" [initializeTimer]="initializeTimer"></quml-header>
+    <div class="landscape-mode" [hidden]="loadScoreBoard || endPageReached">
+      <div class="lanscape-mode-left">
+        <div class="current-slide">
+          {{currentSlideIndex}}/{{questions.length-1}}
         </div>
-        <div *ngIf="question?.interactions === null">
-          <quml-sa [questions]='question'></quml-sa>
+        <div>
+          <quml-bookmark></quml-bookmark>
         </div>
-      </slide>
-    </carousel>
-    <div class="lanscape-mode-right" *ngIf="!endPageReached">
-      <ul>
-        <li [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlide(0)">i
-        </li>
-        <li *ngFor="let question of questions; let i = index"
-          [ngClass]="attemptedQuestions.includes(i+1) ? 'att-color': '' " (click)="goToSlide(i+1)">{{i+1}}</li>
-      </ul>
+        <div>
+          <quml-hint></quml-hint>
+        </div>
+        <div>
+          <quml-share></quml-share>
+        </div>
+        <div>
+          <quml-ans></quml-ans>
+        </div>
+      </div>
+      <carousel class="landscape-center" [interval]="slideInterval" [showIndicators]="showIndicator"
+        [noWrap]="noWrapSlides" #car [hidden]="endPageReached">
+        <slide>
+          <quml-startpage [instructions]="startPageInstruction" [totalNoOfQuestions]="noOfQuestions"
+            [maxScore]="maxScore" [time]="timeLimit"></quml-startpage>
+        </slide>
+        <slide *ngFor="let question of questions; let i= index">
+          <div *ngIf="question.interactions?.response1?.type === 'choice'">
+            <quml-mcq [question]='question' (optionSelected)="getOptionSelected($event)" [identifier]="question.id"
+              id={{question.id}}></quml-mcq>
+          </div>
+          <div *ngIf="question?.interactions === null">
+            <quml-sa [questions]='question'></quml-sa>
+          </div>
+        </slide>
+      </carousel>
+      <div class="lanscape-mode-right" *ngIf="!endPageReached">
+        <ul>
+          <li [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlide(0)">i
+          </li>
+          <li *ngFor="let question of questions; let i = index"
+            [ngClass]="attemptedQuestions.includes(i+1) ? 'att-color': '' " (click)="goToSlide(i+1)">{{i+1}}</li>
+        </ul>
+      </div>
     </div>
   </div>
+  <div class="endPage-container">
+    <sb-player-end-page *ngIf="endPageReached" [contentName]="contentName" [outcome]="noOfQuestions"
+      [outcomeLabel]="'score : '" [userName]="userName" [timeSpentLabel]="durationSpent"
+      (replayContent)="replayContent()"(exitContent)="exitContent($event)"  [showExit]="true"></sb-player-end-page>
+  </div>
+  <quml-scoreboard *ngIf="loadScoreBoard && requiresSubmit" (submitClicked)="inScoreBoardSubmitClicked()" [scores]="scoreBoard"></quml-scoreboard>
+  <quml-alert *ngIf="showAlert && showFeedBack" [alertType]="alertType" [showSolutionButton]="showUserSolution"
+    (showSolution)="viewSolution()" (closeAlert)="closeAlertBox($event)"></quml-alert>
+  <quml-solutions [hidden]="!showSolution" [question]="currentQuestion" [options]="currentOptions"
+    [solutions]="currentSolutions" (close)="closeSolution()"></quml-solutions>
 </div>
-<div class="endPage-container">
-  <sb-player-end-page *ngIf="endPageReached" [contentName]="contentName" [outcome]="noOfQuestions"
-    [outcomeLabel]="'score : '" [userName]="userName" [timeSpentLabel]="durationSpent"
-    (replayContent)="replayContent()"></sb-player-end-page>
-</div>
-<quml-scoreboard *ngIf="loadScoreBoard && requiresSubmit" [scores]="scoreBoard"></quml-scoreboard>
-<quml-alert *ngIf="showAlert && showFeedBack" [alertType]="alertType" [showSolutionButton]="showUserSolution"
-  (showSolution)="viewSolution()" (closeAlert)="closeAlertBox()"></quml-alert>
-<quml-solutions [hidden]="!showSolution" [question]="currentQuestion" [options]="currentOptions"
-  [solutions]="currentSolutions" (close)="closeSolution()"></quml-solutions>

@@ -11,17 +11,11 @@ export class AlertComponent implements OnInit {
   @Output() closeAlert = new EventEmitter();
   @Output() showSolution = new EventEmitter();
 
-
   constructor() { }
 
   ngOnInit() {
   }
 
-  closeAlertBox(event) {
-    this.closeAlert.emit({
-      close: true
-    });
-  }
 
   viewSolution() {
     this.showSolution.emit({

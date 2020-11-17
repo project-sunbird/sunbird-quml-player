@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output , EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'quml-scoreboard',
@@ -7,6 +7,7 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class ScoreboardComponent implements OnInit {
   @Input() scores: Array<[]>;
+  @Output() submitClicked = new EventEmitter<any>();
   constructor() { }
 
   ngOnInit() {

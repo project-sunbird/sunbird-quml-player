@@ -34,7 +34,6 @@ export class McqComponent implements OnInit, AfterViewInit {
   async ngOnInit() {
     if (this.question.solutions) {
       this.solutions = this.question.solutions;
-      console.log('this.solutions in mcq componets', this.solutions);
     }
     this.componentLoaded.emit({ event: 'mcq component has been loaded' });
     this.renderLatex();
@@ -92,7 +91,6 @@ export class McqComponent implements OnInit, AfterViewInit {
       _instance.replaceLatexText();
       const images = document.getElementsByTagName('img');
       if (images != null && images.length > 0) {
-        console.log("images " + images.length);
       }
     }, 100);
   }
@@ -110,7 +108,6 @@ export class McqComponent implements OnInit, AfterViewInit {
   }
 
   onOptionSelect(event) {
-    console.log('event is here', event);
     const mcqOption = event.option;
     const solutions = event.solutions;
     this.mcqOptions.forEach(mcqOptionElement => {

@@ -58,11 +58,13 @@
               "projects/quml-demo-app/src/assets"
             ],
             "styles": [
+              "./node_modules/@project-sunbird/sb-styles/assets/_styles.scss",
               "./node_modules/bootstrap/dist/css/bootstrap.min.css",
               "projects/quml-demo-app/src/styles.css",
               "./node_modules/katex/dist/katex.min.css"
             ],
             "scripts": [
+              "node_modules/@project-sunbird/telemetry-sdk/index.js",
               "./node_modules/katex/dist/katex.min.js",
               "./node_modules/jquery/dist/jquery.min.js"
             ]

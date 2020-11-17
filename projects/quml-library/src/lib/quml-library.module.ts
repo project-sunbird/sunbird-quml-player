@@ -37,6 +37,7 @@ import { AudioComponent } from './icon/audio/audio.component';
 import { WrongComponent } from './icon/wrong/wrong.component';
 import { MenuComponent } from './icon/menu/menu.component';
 import {SunbirdPlayerSdkModule} from '@project-sunbird/sunbird-player-sdk';
+import { QumlLibraryService } from './quml-library.service';
 
 
 @NgModule({
@@ -81,6 +82,9 @@ import {SunbirdPlayerSdkModule} from '@project-sunbird/sunbird-player-sdk';
     CommonModule,
     CarouselModule,
     SunbirdPlayerSdkModule
+  ],
+  providers: [
+    QumlLibraryService
   ],
   exports: [PlayerComponent]
 })

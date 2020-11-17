@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Output, EventEmitter, Input, OnChanges } from '@angular/core';
+import { Component, OnInit, ViewChild, Output, EventEmitter, Input, OnChanges, OnDestroy } from '@angular/core';
 import { iif } from 'rxjs';
 
 
@@ -7,7 +7,7 @@ import { iif } from 'rxjs';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
-export class HeaderComponent implements OnInit, OnChanges {
+export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() questions?: any;
   @Input() duration?: any;
@@ -23,6 +23,7 @@ export class HeaderComponent implements OnInit, OnChanges {
   @Output() durationEnds = new EventEmitter<any>();
   minutes: number;
   seconds: number;
+  private intervalRef?;
 
   time: any;
   constructor() {
@@ -38,8 +39,14 @@ export class HeaderComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
-    if (this.duration && this.showTimer && this.initializeTimer) {
+    if (this.duration && this.showTimer && this.initializeTimer && !this.intervalRef) {
       this.timer();
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.intervalRef) {
+      clearInterval(this.intervalRef);
     }
   }
 
@@ -67,7 +74,7 @@ export class HeaderComponent implements OnInit, OnChanges {
     const durationInSec = this.duration / 1000;
     let min = ~~(durationInSec / 60);
     let sec = (durationInSec % 60);
-    setInterval(() => {
+    this.intervalRef = setInterval(() => {
       if (sec === -1) {
         sec = 59;
         min = min - 1;
