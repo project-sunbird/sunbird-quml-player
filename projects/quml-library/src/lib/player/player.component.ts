@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, Output, EventEmitter, AfterViewInit, ChangeDetectorRef,  HostListener } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Output, EventEmitter, AfterViewInit, ChangeDetectorRef, HostListener } from '@angular/core';
 import { CarouselComponent } from 'ngx-bootstrap/carousel';
 import { QumlLibraryService } from '../quml-library.service';
 import { QumlPlayerConfig } from '../quml-library-interface';
@@ -12,7 +12,7 @@ import { eventName, TelemetryType, pageId } from '../telemetry-constants';
   templateUrl: './player.component.html',
   styleUrls: ['./player.component.css']
 })
-export class PlayerComponent implements OnInit , AfterViewInit {
+export class PlayerComponent implements OnInit, AfterViewInit {
   @Input() questions: any;
   @Input() QumlPlayerConfig: QumlPlayerConfig;
   @Input() linearNavigation: boolean;
@@ -71,7 +71,7 @@ export class PlayerComponent implements OnInit , AfterViewInit {
   ) {
     this.endPageReached = false;
     this.userService.qumlPlayerEvent.asObservable().subscribe((res) => {
-        this.playerEvent.emit(res);
+      this.playerEvent.emit(res);
     });
   }
 
@@ -81,53 +81,55 @@ export class PlayerComponent implements OnInit , AfterViewInit {
   }
 
   ngOnInit() {
+    console.log('quml player config', this.QumlPlayerConfig);
     this.qumlLibraryService.initializeTelemetry(this.QumlPlayerConfig);
     this.userService.initialize(this.QumlPlayerConfig);
     this.initialTime = new Date().getTime();
     this.slideInterval = 0;
     this.showIndicator = false;
     this.noWrapSlides = true;
-    this.questions = this.QumlPlayerConfig.data.result.content.children;
-    this.timeLimit = this.QumlPlayerConfig.data.result.content.timeLimit;
-    this.showTimer = this.QumlPlayerConfig.data.result.content.showTimer;
-    this.showFeedBack = this.QumlPlayerConfig.data.result.content.showFeedback;
-    this.showUserSolution = this.QumlPlayerConfig.data.result.content.showSolutions;
-    this.startPageInstruction = this.QumlPlayerConfig.data.result.content.instructions;
-    this.linearNavigation = this.QumlPlayerConfig.data.result.content.navigationMode === 'non-linear' ? false : true;
-    this.requiresSubmit = this.QumlPlayerConfig.data.result.content.requiresSubmit;
-    this.noOfQuestions = this.QumlPlayerConfig.data.result.content.totalQuestions;
-    this.maxScore = this.QumlPlayerConfig.data.result.content.maxScore;
+    this.questions = this.QumlPlayerConfig.data.children;
+    this.timeLimit = this.QumlPlayerConfig.data.timeLimit ?
+                     this.QumlPlayerConfig.data.timeLimit :  (this.questions.length * 350000);
+    this.showTimer = this.QumlPlayerConfig.data.showTimer;
+    this.showFeedBack = this.QumlPlayerConfig.data.showFeedback;
+    this.showUserSolution = this.QumlPlayerConfig.data.showSolutions;
+    this.startPageInstruction = this.QumlPlayerConfig.data.instructions;
+    this.linearNavigation = this.QumlPlayerConfig.data.navigationMode === 'non-linear' ? false : true;
+    this.requiresSubmit = this.QumlPlayerConfig.data.requiresSubmit;
+    this.noOfQuestions = this.QumlPlayerConfig.data.totalQuestions;
+    this.maxScore = this.QumlPlayerConfig.data.maxScore;
     this.userName = this.QumlPlayerConfig.context.userData.firstName + ' ' + this.QumlPlayerConfig.context.userData.lastName;
-    this.contentName = this.QumlPlayerConfig.data.result.content.name;
+    this.contentName = this.QumlPlayerConfig.data.name;
 
-    if (this.QumlPlayerConfig.data.result.content.shuffle) {
-      this.questions = this.QumlPlayerConfig.data.result.content.children.sort(() => Math.random() - 0.5);
+    if (this.QumlPlayerConfig.data.shuffle) {
+      this.questions = this.QumlPlayerConfig.data.children.sort(() => Math.random() - 0.5);
     }
     this.userService.raiseStartEvent(this.car.getCurrentSlideIndex());
   }
 
   ngAfterViewInit() {
-    this.userService.raiseHeartBeatEvent(eventName.startPageLoaded, TelemetryType.impression , pageId.startPage);
+    this.userService.raiseHeartBeatEvent(eventName.startPageLoaded, TelemetryType.impression, pageId.startPage);
   }
 
   nextSlide() {
-    this.userService.raiseHeartBeatEvent(eventName.nextClicked , TelemetryType.interact, this.currentSlideIndex);
+    this.userService.raiseHeartBeatEvent(eventName.nextClicked, TelemetryType.interact, this.currentSlideIndex);
     if (this.currentSlideIndex !== this.questions.length) {
       this.currentSlideIndex = this.currentSlideIndex + 1;
     }
     if (this.currentSlideIndex === 1 && (this.currentSlideIndex - 1) === 0) {
-        this.initializeTimer = true;
+      this.initializeTimer = true;
     }
-    if (this.car.getCurrentSlideIndex()  === this.questions.length) {
-        if (!this.requiresSubmit) {
+    if (this.car.getCurrentSlideIndex() === this.questions.length) {
+      const spentTime = (new Date().getTime() - this.initialTime) / 10000;
+      this.durationSpent = spentTime.toFixed(2);
+      if (!this.requiresSubmit) {
         this.endPageReached = true;
-        const spentTime = (new Date().getTime() - this.initialTime) / 10000;
-        this.durationSpent = spentTime.toFixed(2);
-        this.userService.raiseEndEvent(this.currentSlideIndex , this.attemptedQuestions.length , this.endPageReached);
-        } else {
-          this.scoreBoard.splice(0, 1);
-          this.loadScoreBoard = true;
-        }
+        this.userService.raiseEndEvent(this.currentSlideIndex, this.attemptedQuestions.length, this.endPageReached);
+      } else {
+        this.scoreBoard.splice(0, 1);
+        this.loadScoreBoard = true;
+      }
     }
     this.car.move(this.CarouselConfig.NEXT);
     this.active = false;
@@ -140,7 +142,7 @@ export class PlayerComponent implements OnInit , AfterViewInit {
 
 
   getOptionSelected(optionSelected) {
-    this.userService.raiseHeartBeatEvent(eventName.optionClicked , TelemetryType.interact , pageId.startPage);
+    this.userService.raiseHeartBeatEvent(eventName.optionClicked, TelemetryType.interact, pageId.startPage);
     this.optionSelectedObj = optionSelected;
     this.currentSolutions = optionSelected.solutions;
     this.active = true;
@@ -148,27 +150,27 @@ export class PlayerComponent implements OnInit , AfterViewInit {
 
   closeAlertBox(event) {
     if (event.type === 'close') {
-    this.userService.raiseHeartBeatEvent(eventName.closedFeedBack , TelemetryType.interact, this.car.getCurrentSlideIndex());
+      this.userService.raiseHeartBeatEvent(eventName.closedFeedBack, TelemetryType.interact, this.car.getCurrentSlideIndex());
     } else if (event.type === 'tryAgain') {
-    this.userService.raiseHeartBeatEvent(eventName.tryAgain , TelemetryType.interact, this.car.getCurrentSlideIndex());
+      this.userService.raiseHeartBeatEvent(eventName.tryAgain, TelemetryType.interact, this.car.getCurrentSlideIndex());
     }
     this.showAlert = false;
   }
 
   viewSolution() {
-    this.userService.raiseHeartBeatEvent(eventName.viewSolutionClicked , TelemetryType.interact, this.car.getCurrentSlideIndex());
+    this.userService.raiseHeartBeatEvent(eventName.viewSolutionClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
     this.showSolution = true;
     this.showAlert = false;
   }
 
   exitContent(event) {
     if (event.type === 'EXIT') {
-      this.userService.raiseEndEvent(this.currentSlideIndex , this.currentSlideIndex - 1, this.endPageReached);
+      this.userService.raiseEndEvent(this.currentSlideIndex, this.currentSlideIndex - 1, this.endPageReached);
     }
   }
 
   closeSolution() {
-    this.userService.raiseHeartBeatEvent(eventName.solutionClosed , TelemetryType.interact, this.car.getCurrentSlideIndex());
+    this.userService.raiseHeartBeatEvent(eventName.solutionClosed, TelemetryType.interact, this.car.getCurrentSlideIndex());
     this.showSolution = false;
     this.car.selectSlide(this.currentSlideIndex);
   }
@@ -179,23 +181,20 @@ export class PlayerComponent implements OnInit , AfterViewInit {
     if (this.optionSelectedObj !== undefined) {
       const currentIndex = this.car.getCurrentSlideIndex() - 1;
       this.currentQuestion = this.questions[currentIndex].body;
-      this.currentOptions = this.questions[currentIndex].interactions.response1.options;
-      const correctOptionValue = this.questions[currentIndex].responseDeclaration.response1.correct_response.value;
-      this.currentOptions.forEach((ele, index) => {
-        if (ele.body === option.option.body && ele.value === correctOptionValue) {
+      this.currentOptions = this.questions[currentIndex].options;
+      if (option.option.answer) {
           this.scoreBoardObject['index'] = this.car.getCurrentSlideIndex();
           this.scoreBoardObject['status'] = true;
           this.scoreBoardObject['class'] = 'correct';
           this.showAlert = true;
           this.alertType = true;
-        } else if (index === (this.currentOptions.length - 1) && !Object.keys(this.scoreBoardObject).length) {
+      } else if (!option.option.answer) {
           this.scoreBoardObject['index'] = this.car.getCurrentSlideIndex();
           this.scoreBoardObject['status'] = false;
           this.scoreBoardObject['class'] = 'wrong';
           this.showAlert = true;
           this.alertType = false;
-        }
-      });
+      }
       this.optionSelectedObj = undefined;
     } else if (this.optionSelectedObj === undefined && !this.active) {
       this.scoreBoardObject['index'] = this.car.getCurrentSlideIndex();
@@ -218,7 +217,7 @@ export class PlayerComponent implements OnInit , AfterViewInit {
   }
 
   prevSlide() {
-    this.userService.raiseHeartBeatEvent(eventName.prevClicked , TelemetryType.interact, this.car.getCurrentSlideIndex());
+    this.userService.raiseHeartBeatEvent(eventName.prevClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
     this.showAlert = false;
     if (this.loadScoreBoard) {
       const index = this.questions.length - 1;
@@ -256,22 +255,29 @@ export class PlayerComponent implements OnInit , AfterViewInit {
     }
   }
   replayContent() {
-    this.userService.raiseHeartBeatEvent(eventName.replayClicked , TelemetryType.interact, this.car.getCurrentSlideIndex());
+    this.userService.raiseHeartBeatEvent(eventName.replayClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
     this.userService.raiseStartEvent(this.car.getCurrentSlideIndex());
     this.endPageReached = false;
+    this.loadScoreBoard = false;
     this.currentSlideIndex = 0;
     this.attemptedQuestions = [];
     this.car.selectSlide(0);
   }
 
   inScoreBoardSubmitClicked() {
-    this.userService.raiseHeartBeatEvent(eventName.scoreBoardSubmitClicked , TelemetryType.interact , pageId.submitPage);
+    this.userService.raiseHeartBeatEvent(eventName.scoreBoardSubmitClicked, TelemetryType.interact, pageId.submitPage);
     this.endPageReached = true;
   }
 
   goToSlide(index) {
     this.currentSlideIndex = index;
     this.car.selectSlide(index);
+  }
+
+  scoreBoardSubmitClicked(event) {
+      if (event.type = 'submit-clicked') {
+        this.endPageReached = true;
+      }
   }
 
 }

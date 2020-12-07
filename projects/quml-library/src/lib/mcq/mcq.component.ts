@@ -52,7 +52,7 @@ export class McqComponent implements OnInit, AfterViewInit {
     //   }
       this.mcqQuestion = this.domSanitizer.sanitize(SecurityContext.HTML,
       this.domSanitizer.bypassSecurityTrustHtml(this.question.body));
-      this.options = this.question.interactions.response1.options;
+      this.options = this.question.options;
     // }
     this.initOptions();
   }

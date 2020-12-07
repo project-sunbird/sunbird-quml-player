@@ -3,6 +3,7 @@
     grid-template-columns: 300px 10px 100px;
     grid-gap: 1em;
     justify-items: start;
+    margin-top: 24px;
 }
 
 .startpage .header {
@@ -25,7 +26,7 @@
 
 .startpage .sub-header {
     color: #6D7278;
-    font-family: "Kohinoor Devanagari";
+    font-family: "Noto Sans";
     font-size: 13px;
     font-weight: bold;
     letter-spacing: 0;
@@ -56,8 +57,9 @@
 }
 
 .startpage-guidelines p {
-    margin-bottom: 8px;
+    margin-bottom: 4px;
     font-size: 13px;
+    font-family: "Noto Sans";
 }
 
 .score-heading {
@@ -83,14 +85,34 @@
 .icon-section {
     display: flex;
     justify-items: center;
-    align-items: center;
+}
+
+.question-scores {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    margin-top: 24px;
+    margin-left: -24px;
+    border-left: 1px solid #eee;
+    padding-left: 24px;
 }
 
 @media only screen and (max-width: 480px) {
     .startpage {
-        display: grid;
-        grid-template-columns: 200px 10px 100px;
-        grid-gap: 1em;
+        display: flex;
+        -ms-grid-columns: 200px 10px 100px;
+        flex-direction: column-reverse;
         justify-items: center;
+    }
+    .question-scores {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        margin-top: 24px;
+        margin-left: -24px;
+        border-bottom: 1px solid #eee;
+        padding-top: 16px;
+        border-left: 0;
+        padding-left: 0;
     }
 }
