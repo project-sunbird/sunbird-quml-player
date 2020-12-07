@@ -11,6 +11,7 @@ export class StartpageComponent implements OnInit {
   @Input() totalNoOfQuestions: number;
   @Input() maxScore: number;
   @Input() time: number;
+  @Input() contentName: string;
   minutes: number;
   seconds: number;
 

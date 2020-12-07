@@ -33,10 +33,10 @@ export class UserService {
 
   initialize(config: QumlPlayerConfig) {
     this.rotation = 0;
-    this.totalNumberOfQuestions = config.data.result.content.totalQuestions;
+    this.totalNumberOfQuestions = config.data.totalQuestions;
     this.qumlPlayerStartTime = this.qumlPlayerLastPageTime = new Date().getTime();
     this.currentQuestionIndex = 1;
-    this.contentName = config.data.result.content.name;
+    this.contentName = config.data.name;
     this.src = config.metadata.artifactUrl;
     if (config.context.userData) {
       this.userName = config.context.userData.firstName + ' ' + config.context.userData.lastName;

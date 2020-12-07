@@ -1,4 +1,4 @@
-<div class="quml-header-container" *ngIf="!endPageReached">
+<div class="quml-header-container">
   <div>
     <quml-menu class="quml-menu"></quml-menu>
   </div>
@@ -7,17 +7,17 @@
     <div class="duration" *ngIf="duration && showTimer && !initializeTimer">
       <span><quml-durationtimer></quml-durationtimer></span>&nbsp;&nbsp;<span>{{minutes}}:{{seconds}}</span>
     </div>
-    <div class="duration" *ngIf="duration && showTimer && initializeTimer">
+    <div class="duration" *ngIf="duration && showTimer && initializeTimer && time">
       <span><quml-durationtimer></quml-durationtimer></span>&nbsp;&nbsp;<span>{{time}}</span>
     </div>
-    <div class="star-container">
+    <!-- <div class="star-container">
       <span div class="star">
         <quml-star></quml-star>
       </span>
       <span class="score">
         47
       </span>
-    </div>
+    </div> -->
     <div class="navigation-icons">
       <span (click)="prevSlide()">
         <quml-previous></quml-previous>

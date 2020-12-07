@@ -1,3 +1,7 @@
+.scoreboard {
+    margin-top: 4rem;
+}
+
 .scoreboard-scores {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -28,15 +32,16 @@
 
 .scoreboard-quml-btn {
     color: #fff;
-    font-family: Avenir;
+    font-family: "Noto Sans";
     font-size: 13px;
     font-weight: 500;
     text-align: center;
     border: none;
-    padding: 8px 16px 8px 16px;
+    padding: 6px 16px;
     border-radius: 16px;
     background-color: #024f9d;
     box-shadow: inset 0 -1px 2px 0 rgba(0, 0, 0, .5);
+    outline: none;
 }
 
 .scoreboard-button-container {
