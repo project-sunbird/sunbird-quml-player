@@ -4,7 +4,6 @@
 
 .solution-header {
     color: #333333;
-    font-family: "Noto Sans";
     font-size: 14px;
     font-weight: bold;
 }
@@ -20,15 +19,14 @@
 }
 
 .scoreboard-quml-btn {
-    color: #fff;
-    font-family: Avenir;
+    color:var(--white);
     font-size: 13px;
     font-weight: 500;
     text-align: center;
     border: none;
     padding: 8px 16px 8px 16px;
     border-radius: 16px;
-    background-color: #024f9d;
+    background-color: var(--primary-color);
     box-shadow: inset 0 -1px 2px 0 rgba(0, 0, 0, .5);
 }
 

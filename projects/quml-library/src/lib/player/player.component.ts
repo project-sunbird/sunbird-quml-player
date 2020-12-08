@@ -10,7 +10,7 @@ import { eventName, TelemetryType, pageId } from '../telemetry-constants';
 @Component({
   selector: 'quml-player',
   templateUrl: './player.component.html',
-  styleUrls: ['./player.component.css']
+  styleUrls: ['./player.component.scss']
 })
 export class PlayerComponent implements OnInit, AfterViewInit {
   @Input() questions: any;

@@ -1,86 +1,84 @@
+@import '../../../../../node_modules/@project-sunbird/sb-styles/assets/mixins/mixins';
+
 .startpage {
     display: grid;
-    grid-template-columns: 300px 10px 100px;
-    grid-gap: 1em;
+    grid-template-columns: calculateRem(360px) calculateRem(100px);
+    grid-gap: calculateRem(16px);
     justify-items: start;
-    margin-top: 24px;
+    margin-top: calculateRem(40px);
 }
 
 .startpage .header {
-    color: #024f9d;
-    font-family: "Noto Sans";
-    font-size: 18px;
+    color: var(--primary-color);
+    font-size: calculateRem(18px);
     font-weight: bold;
     letter-spacing: 0;
-    line-height: 24px;
-    margin-bottom: 16px;
+    line-height: calculateRem(24px);
+    margin-bottom: calculateRem(16px);
 }
 
 .startpage .border {
     box-sizing: border-box;
     height: 60vh;
-    width: 1px;
-    border: 1px solid #6D7278;
+    width: calculateRem(1px);
+    border: calculateRem(1px) solid #6D7278;
     opacity: 0.2;
 }
 
 .startpage .sub-header {
     color: #6D7278;
-    font-family: "Noto Sans";
-    font-size: 13px;
+    font-size: calculateRem(13px);
     font-weight: bold;
     letter-spacing: 0;
-    line-height: 18px;
-    margin-bottom: 16px;
+    line-height: calculateRem(18px);
+    margin-bottom: calculateRem(16px);
 }
 
 .startpage .startpage-guidelines {
     color: #6D7278;
-    font-family: "Noto Sans";
-    font-size: 13px;
+    font-size: calculateRem(13px);
     letter-spacing: 0;
-    line-height: 17px;
+    line-height: calculateRem(18px);
 }
 
 .questions,
 .points,
 .score {
-    margin-bottom: 16px;
+    margin-bottom: calculateRem(16px);
 }
 
 .points {
-    margin-bottom: 16px;
+    margin-bottom: calculateRem(16px);
 }
 
 .minutes {
-    margin-bottom: 16px;
+    margin-bottom: calculateRem(16px);
 }
 
 .startpage-guidelines p {
-    margin-bottom: 4px;
-    font-size: 13px;
-    font-family: "Noto Sans";
+    margin-bottom: calculateRem(14px);
+    font-size: calculateRem(13px);
 }
 
 .score-heading {
     color: #6D7278;
-    font-family: "Noto Sans";
-    font-size: 13px;
+    font-size: calculateRem(13px);
 }
 
 .scores {
-    color: #024F9D;
-    font-family: "Noto Sans";
-    font-size: 18px;
+    color: var(--primary-color);
+    font-size: calculateRem(18px);
     font-weight: bold;
     letter-spacing: 0;
-    line-height: 24px;
+    line-height: calculateRem(24px);
     text-align: center;
 }
 
 .icon {
-    padding-right: 8px;
-    margin-top: 4px;
+    padding-right: calculateRem(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .icon-section {
     display: flex;
@@ -107,12 +105,12 @@
     .question-scores {
         display: flex;
         flex-direction: row;
-        justify-content: space-around;
-        margin-top: 24px;
-        margin-left: -24px;
+        justify-content: space-between;
+        margin-top: 0;
+        margin-left: 0;
         border-bottom: 1px solid #eee;
         padding-top: 16px;
         border-left: 0;
-        padding-left: 0;
+        padding: 0px 16px;
     }
 }

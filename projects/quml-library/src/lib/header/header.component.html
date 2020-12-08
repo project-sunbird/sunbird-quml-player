@@ -4,11 +4,11 @@
   </div>
 
   <div class="header-right-section">
-    <div class="duration" *ngIf="duration && showTimer && !initializeTimer">
-      <span><quml-durationtimer></quml-durationtimer></span>&nbsp;&nbsp;<span>{{minutes}}:{{seconds}}</span>
+    <div class="duration mr-8" *ngIf="duration && showTimer && !initializeTimer">
+      <span><quml-durationtimer></quml-durationtimer></span><span>{{minutes}}:{{seconds}}</span>
     </div>
-    <div class="duration" *ngIf="duration && showTimer && initializeTimer && time">
-      <span><quml-durationtimer></quml-durationtimer></span>&nbsp;&nbsp;<span>{{time}}</span>
+    <div class="duration mr-8" *ngIf="duration && showTimer && initializeTimer && time">
+      <span><quml-durationtimer></quml-durationtimer></span><span>{{time}}</span>
     </div>
     <!-- <div class="star-container">
       <span div class="star">
