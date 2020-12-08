@@ -18,7 +18,7 @@
     position: absolute;
     cursor: pointer;
     z-index: 2;
-    color: #fff;
+    color:var(--white);
     top: 8%;
 }
 

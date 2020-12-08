@@ -17,7 +17,7 @@
 }
 
 .mcq-option {
-    background: #FFF;
+    background: var(--white);
     border-radius: 5px;
     margin: 8px 16px;
     padding: 8px;
@@ -43,9 +43,9 @@
 }
 
 .selected {
-    background: #024f9d;
-    color: #FFF;
-    box-shadow: 1px 2px 1px 3px #000;
+    background: var(--primary-color);
+    color: var(--white);
+    box-shadow: 1px 2px 1px 3px var(--black);
 }
 
 .mathText {

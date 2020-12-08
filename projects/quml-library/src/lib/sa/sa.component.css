@@ -1,6 +1,5 @@
 .sa-title {
-    color: #024F9D;
-    font-family: "Noto Sans";
+    color: var(--primary-color);
     font-size: 12px;
     font-weight: 500;
     margin-bottom: 16px;
@@ -8,7 +7,7 @@
 
 .sa-round-btn {
   border-radius: 16px;
-    background-color: #024F9D;
+    background-color: var(--primary-color);
     font-size: 11px;
     border: none;
     color: white;
