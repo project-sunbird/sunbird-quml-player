@@ -3,7 +3,7 @@ import { Component, Input, OnInit, Output , EventEmitter } from '@angular/core';
 @Component({
   selector: 'quml-scoreboard',
   templateUrl: './scoreboard.component.html',
-  styleUrls: ['./scoreboard.component.css']
+  styleUrls: ['./scoreboard.component.scss']
 })
 export class ScoreboardComponent implements OnInit {
   @Input() scores: Array<[]>;

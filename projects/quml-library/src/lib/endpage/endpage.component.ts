@@ -4,7 +4,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 @Component({
   selector: 'quml-endpage',
   templateUrl: './endpage.component.html',
-  styleUrls: ['./endpage.component.css']
+  styleUrls: ['./endpage.component.scss']
 })
 export class EndpageComponent implements OnInit {
   @Input() scoreSummary;

@@ -3,7 +3,7 @@ import { Component, OnInit, Input, Output, EventEmitter, AfterViewInit } from '@
 @Component({
   selector: 'quml-mcq-option',
   templateUrl: './mcq-option.component.html',
-  styleUrls: ['./mcq-option.component.css']
+  styleUrls: ['./mcq-option.component.scss']
 })
 export class McqOptionComponent implements OnInit {
 

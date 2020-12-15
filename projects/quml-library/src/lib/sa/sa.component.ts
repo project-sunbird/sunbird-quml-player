@@ -8,7 +8,7 @@ declare var katex: any;
 @Component({
   selector: 'quml-sa',
   templateUrl: './sa.component.html',
-  styleUrls: ['./sa.component.css', '../quml-library.component.css']
+  styleUrls: ['./sa.component.scss', '../quml-library.component.scss']
 })
 export class SaComponent implements OnInit {
 
