@@ -7,7 +7,9 @@
     justify-items: start;
     margin-top: calculateRem(40px);
 }
-
+.startpage-info {
+    padding: 0px 8px;
+}
 .startpage .header {
     color: var(--primary-color);
     font-size: calculateRem(18px);
