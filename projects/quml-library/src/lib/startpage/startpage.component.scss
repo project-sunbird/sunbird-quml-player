@@ -6,9 +6,21 @@
     grid-gap: calculateRem(16px);
     justify-items: start;
     margin-top: calculateRem(40px);
+    @include respond-below(xs){
+            display: flex;
+            flex-direction: column-reverse;
+            justify-items: center;
+    }
 }
 .startpage-info {
-    padding: 0px 8px;
+    padding: 0px calculateRem(8px);
+    border-right: 1px solid var(--gray-100);
+    padding-right: 0px;
+    @include respond-below(xs){
+        padding-top: calculateRem(24px);
+        border-top: calculateRem(1px) solid var(--gray-100);
+        border-right: 0px solid var(--gray-100);
+    }
 }
 .startpage .header {
     color: var(--primary-color);
@@ -19,17 +31,17 @@
     margin-bottom: calculateRem(16px);
 }
 
-.startpage .border {
-    box-sizing: border-box;
-    height: 60vh;
-    width: calculateRem(1px);
-    border: calculateRem(1px) solid #6D7278;
-    opacity: 0.2;
-}
+// .startpage .border {
+//     box-sizing: border-box;
+//     height: 60vh;
+//     width: calculateRem(1px);
+//     border: calculateRem(1px) solid #6D7278;
+//     opacity: 0.2;
+// }
 
 .startpage .sub-header {
-    color: #6D7278;
-    font-size: calculateRem(13px);
+    color:var(--gray-400);
+    font-size: calculateRem(12px);
     font-weight: bold;
     letter-spacing: 0;
     line-height: calculateRem(18px);
@@ -58,13 +70,13 @@
 }
 
 .startpage-guidelines p {
-    margin-bottom: calculateRem(14px);
-    font-size: calculateRem(13px);
+    margin-bottom: calculateRem(8px);
+    font-size: calculateRem(12px);
 }
 
 .score-heading {
-    color: #6D7278;
-    font-size: calculateRem(13px);
+    color: var(--gray-400);
+    font-size: calculateRem(12px);
 }
 
 .scores {
@@ -90,29 +102,15 @@
 .question-scores {
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
-    margin-top: 24px;
-    margin-left: -24px;
-    border-left: 1px solid #eee;
-    padding-left: 24px;
-}
-
-@media only screen and (max-width: 480px) {
-    .startpage {
-        display: flex;
-        -ms-grid-columns: 200px 10px 100px;
-        flex-direction: column-reverse;
-        justify-items: center;
-    }
-    .question-scores {
-        display: flex;
+    justify-content: space-evenly;
+    padding-left: calculateRem(8px);
+    @include respond-below(xs){
         flex-direction: row;
         justify-content: space-between;
         margin-top: 0;
         margin-left: 0;
-        border-bottom: 1px solid #eee;
-        padding-top: 16px;
+        padding-top: calculateRem(16px);
         border-left: 0;
-        padding: 0px 16px;
+        padding: 0px calculateRem(16px);
     }
 }
