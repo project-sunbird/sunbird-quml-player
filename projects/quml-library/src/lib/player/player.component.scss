@@ -1,15 +1,15 @@
 @import '../../../../../node_modules/@project-sunbird/sb-styles/assets/mixins/mixins';
 .quml-header {
-  background: #c2c2c2;
+  background: var(--gray-100);
   display: flow-root;
-  height: 36px;
+  height: calculateRem(36px);
   position: fixed;
 }
 
 .att-color{
   background-color: var(--primary-color) !important;
-  border: 1px solid var(--primary-color) !important;
-  color: white;
+  border: calculateRem(1px) solid var(--primary-color) !important;
+  color: var(--white);
 }
 
 ::ng-deep .carousel {
@@ -22,7 +22,7 @@
 }
 
 .quml-button-container {
-  margin-right: 24px;
+  margin-right: calculateRem(24px);
   float: right;
 }
 
@@ -34,37 +34,45 @@
   background-color: rgb(15, 5, 160);
   /* Navy Blue */
   border: none;
-  color: white;
-  padding: 4px;
+  color:var(--white);
+  padding: calculateRem(4px);
   text-align: center;
   text-decoration: none;
-  font-size: 16px;
-  margin: 2px 8px 2px 2px;
+  font-size: calculateRem(16px);
+  margin: calculateRem(2px) calculateRem(8px) calculateRem(2px) calculateRem(2px);
   cursor: pointer;
-  width: 48px;
-  height: 30px;
+  width: calculateRem(48px);
+  height: calculateRem(32px);
   border-radius: 10%;
 }
 
 .landscape-mode {
   display: grid;
   grid-template-columns: 1fr 20fr 1fr;
-  grid-gap: 1em;
+  grid-gap: 1rem;
   justify-items: center;
-  padding: 16px;
+  padding: calculateRem(16px);
   grid-template-areas: 'left center right';
-  padding-top:56px;
+  padding-top:calculateRem(56px);
+  @include respond-below(xs){
+    grid-template-areas: 'right right right'
+    'center center center'
+    'left left left';
+  }
 }
 
 .lanscape-mode-left {
   position: fixed;
-  margin-top: 16px;
+  margin-top: calculateRem(16px);
   grid-area: left;
   text-align: center;
+  @include respond-below(xs){
+    display: none;
+  }
 }
 
 .lanscape-mode-left div {
-  padding-bottom: 24px;
+  padding-bottom: calculateRem(24px);
 }
 
 .landscape-center {
@@ -73,12 +81,23 @@
 
 .lanscape-mode-right {
   position: fixed;
-  right: 20px;
-  color: #ababab;
-  font-size: 13px;
+  right: calculateRem(20px);
+  color: var(--gray-400);
+  font-size: calculateRem(12px);
   height: 78vh;
   overflow-y: scroll;
   grid-area: right;
+  @include respond-below(xs){
+    background:var(--white);
+    height: calculateRem(40px);
+      display: flex;
+      align-items: center;
+      overflow-x: auto;
+      overflow-y: hidden;
+      width: 90vw;
+      height: calculateRem(40px);
+      padding: 0 0px;
+  }
 }
 
 .lanscape-mode-right ul {
@@ -87,11 +106,19 @@
   padding: 0;
   text-align: center;
   position: relative;
+  @include respond-below(xs){
+  list-style: none;
+  padding: 0;
+  text-align: center;
+  position: relative;
+  display: flex;
+  height: calculateRem(24px);
+  }
 }
 
 .lanscape-mode-right ul::before {
   content: '';
-  width: 1px;
+  width: calculateRem(1px);
   height: 100%;
   position: absolute;
   left: 0;
@@ -99,85 +126,10 @@
   background-color: rgba(204, 204, 204, 0.5);
   z-index: -1;
   margin: 0 auto;
-}
-
-.lanscape-mode-right li {
-  background-color:var(--white);
-  border-radius: 50%;
-  width: 24px;
-  padding: 4px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid rgba(204, 204, 204, 0.5);
-  margin-bottom: 30px;
-}
-
-.current-slide {
-  color: #6D7278;
-  font-size: 14px;
-  font-weight: 900;
-  letter-spacing: 0;
-}
-
-.lanscape-mode-right li:hover,
-.lanscape-mode-right li.active {
-  background-color: var(--primary-color);
-  border: 1px solid var(--primary-color);
-  color: white;
-}
-
-@media only screen and (max-width: 480px) {
-  .lanscape-mode-right {
-  background:var(--white);
-  height: 40px;
-    display: flex;
-    align-items: center;
-    overflow-x: auto;
-    overflow-y: hidden;
-    width: 90vw;
-    height: 40px;
-    padding: 0 0px;
-  }
-
-  .lanscape-mode-right ul {
-    list-style: none;
-    padding: 0;
-    text-align: center;
-    position: relative;
-    display: flex;
-    height: 24px;
-  }
-
-  .lanscape-mode-right ul li {
-    
-    border-radius: 50%;
-    width: 22px;
-    padding: 4px;
-    height: 22px;
-    display: -webkit-box;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    // background-color: #fff;
-    // border: 1px solid rgba(204, 204, 204, .5);
-    margin-right: 32px;
-    &:last-child {
-      margin-right: 0px;
-    }
-  }
-
-  .lanscape-mode-right li:hover {
-    background-color: var(--primary-color);
-    border: 1px solid var(--primary-color);
-    color:var(--white);
-  }
-
-  .lanscape-mode-right ul::before {
+  @include respond-below(xs){
     content: '';
     width: 100%;
-    height: 1px;
+    height: calculateRem(1px);
     position: absolute;
     left: 0;
     top: 50%;
@@ -187,17 +139,56 @@
     z-index: -1;
     margin: 0 auto;
   }
+}
 
-  .lanscape-mode-left {
-    display: none;
+.lanscape-mode-right li {
+  background-color:var(--white);
+  border-radius: 50%;
+  width: calculateRem(24px);
+  padding: calculateRem(4px);
+  height: calculateRem(24px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(204, 204, 204, 0.5);
+  margin-bottom: calculateRem(32px);
+  &:hover{
+    background-color: var(--primary-color);
+    border: calculateRem(1px) solid var(--primary-color);
+    color:var(--white);
   }
-
-  .landscape-mode {
-    grid-template-areas: 'right right right'
-      'center center center'
-      'left left left';
+  @include respond-below(xs){
+    border-radius: 50%;
+    width: calculateRem(24px);
+    padding: calculateRem(4px);
+    height: calculateRem(24px);
+    display: -webkit-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    // background-color: #fff;
+    // border: 1px solid rgba(204, 204, 204, .5);
+    margin-right: calculateRem(32px);
+    &:last-child {
+      margin-right: 0px;
+    }
   }
 }
+
+.current-slide {
+  color: var(--gray-400);
+  font-size: calculateRem(14px);
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.lanscape-mode-right li:hover,
+.lanscape-mode-right li.active {
+  background-color: var(--primary-color);
+  border: calculateRem(1px) solid var(--primary-color);
+  color: var(--white);
+}
+
 
 /* Hide scrollbar for Chrome, Safari and Opera */
 .lanscape-mode-right::-webkit-scrollbar {
@@ -213,11 +204,11 @@
 }
 
 .quml-timer {
-  padding: 8px;
+  padding: calculateRem(8px);
 }
 
 .quml-header-text {
-  margin: 8px;
+  margin: calculateRem(8px);
   text-align: center;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -231,18 +222,18 @@
   font-size: 0%;
   outline: none;
   background-color: rgb(15, 5, 160);
-  padding: 8px;
+  padding: calculateRem(8px);
 }
 
 .quml-menu {
-  width: 24px;
-  height: 24px;
+  width: calculateRem(24px);
+  height: calculateRem(24px);
 }
 
 .quml-card {
   background-color:var(--white);
-  padding: 20px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2);
+  padding: calculateRem(20px);
+  box-shadow: 0 calculateRem(4px) calculateRem(8px) 0 rgba(0, 0, 0, .2);
   width: 25%;
   position: absolute;
   left: 37%;
@@ -252,31 +243,31 @@
 }
 
 .quml-card-title {
-  font-size: 20px;
+  font-size: calculateRem(20px);
   text-align: center;
 }
 
 .quml-card-body .wrong {
-  color: red;
+  color: var(--red);
 }
 
 .quml-card-body .right {
-  color: green;
+  color: var(--green);
 }
 
 .quml-card-button-section .button-container button {
-  color: white;
+  color:var(--white);
   background-color: var(--primary-color);
   border-color: var(--primary-color);
   outline: none;
-  font-size: 14px;
-  padding: 4px 23px;
+  font-size: calculateRem(14px);
+  padding: calculateRem(4px) calculateRem(24px);
 }
 
 .quml-card-button-section .button-container {
   width: 40%;
   display: inline;
-  padding-right: 12px
+  padding-right: calculateRem(12px);
 }
 
 ::ng-deep .carousel.slide a.left.carousel-control.carousel-control-prev {
@@ -304,7 +295,7 @@
 }
 
 .potrait-header-top {
-  margin-top: -30px;
+  margin-top: calculateRem(-30px);
 }
 
 .potrait-header-top .wrapper {
@@ -313,15 +304,15 @@
 }
 
 .potrait-header-top .quml-menu {
-  color: #6250f5;
-  font-size: 25px;
-  padding-left: 20px;
-  margin-top: 3px;
+  color: var(--primary-color);
+  font-size: calculateRem(24px);
+  padding-left: calculateRem(20px);
+  margin-top: calculateRem(4px);
 }
 
 .potrait-header-top .quml-header-text {
-  font-size: 14px;
-  color: #6250f5;
+  font-size: calculateRem(14px);
+  color: var(--primary-color);
 }
 
 

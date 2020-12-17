@@ -1,10 +1,11 @@
 @import '../../../../../node_modules/@project-sunbird/sb-styles/assets/mixins/mixins';
+
  .quml-mcq-option-card {
    position: relative;
-   background-color: white;
+   background-color: var(--white);
    padding: 5px;
    border-radius: 5px;
-   border: 1px solid #CCCCCC;
+   border: 1px solid var(--gray-100);
  }
 
  .quml-mcq-option-card .option-image {
@@ -13,7 +14,7 @@
 
  .zoom-in-icon {
   position: absolute;
-  right: 6px;
+  right: calculateRem(6px);
   bottom: 0px;
  }
 
@@ -24,15 +25,15 @@
  }
 
  .quml-mcq-option-card .option {
-   color: #666666;
-   font-size: 14px;
-   margin-top: 0.2em;
+   color: var(--gray-400);
+   font-size: calculateRem(14px);
+   margin-top: calculateRem(4px);
    font-weight: bold;
-   margin-bottom: -1em;
+   margin-bottom: -1rem;
  }
 
  .selected-option-text {
-  color: #3769eb !important;
+  color: var(--primary-color) !important;
 }
 
  .icon-zommin {
@@ -43,5 +44,5 @@
  }
 
  .image-option-selected {
-   border: 2px solid #5649dc;
+   border: 2px solid var(--primary-color);
  }

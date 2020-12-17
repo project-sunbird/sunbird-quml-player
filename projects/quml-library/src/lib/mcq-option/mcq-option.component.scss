@@ -1,12 +1,12 @@
 @import '../../../../../node_modules/@project-sunbird/sb-styles/assets/mixins/mixins';
 .quml-mcq-options {
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: calculateRem(16px);
 }
 
 .quml-option-card .option {
   font-weight: bold;
-  color: #666666;
+  color: var(--gray-400);
 }
 
 ::ng-deep .quml-option-card .option p {
@@ -20,47 +20,47 @@
 .quml-option-card {
   display: grid;
   /* grid-template-columns: 0.5fr 15fr; */
-  grid-gap: 0.5em;
-  margin-bottom: 16px;
+  grid-gap: 0.5rem;
+  margin-bottom: calculateRem(16px);
 }
 
 .option-border {
-  border: 2px solid transparent;
-  border-radius: 8px;
+  border: calculateRem(2px) solid transparent;
+  border-radius: calculateRem(8px);
   display: grid;
   grid-template-columns: 13fr 1fr;
-  grid-gap: 1em;
-  padding: 16px;
+  grid-gap: calculateRem(16px);
+  padding: calculateRem(16px);
   align-items: center;
-  background-color: #FFFFFF;
-  box-shadow: 0 2px 14px 0 rgba(0,0,0,0.1);
-  margin: 0px 8px;
+  background-color:var(--white);
+  box-shadow: 0 calculateRem(2px) calculateRem(14px) 0 rgba(0,0,0,0.1);
+  margin: 0px calculateRem(8px);
 }
 
 .option-border-selected {
-  border: 2px solid #5649dc;
+  border: calculateRem(2px) solid var(--primary-color);
 }
 
 .quml-option-card .option {
-  color: #666666;
-  font-size: 14px;
+  color:var(--gray-400);
+  font-size: calculateRem(14px);
 }
 
 .selected-option {
-  border: 2px solid #5649dc;
+  border: calculateRem(2px) solid var(--primary-color);
 }
 
 .selected-option-text {
-  color: #3769eb !important;
+  color: var(--primary-color) !important;
 }
 
 /* Create a custom radio button */
 .checkmark {
   display: block;
-  height: 18px;
-  width: 18px;
+  height: calculateRem(18px);
+  width: calculateRem(18px);
   border-radius: 50%;
-  border: 2px solid #cdcdcd;
+  border: calculateRem(2px) solid #cdcdcd;
 }
 
 /* Hide the browser's default radio button */
@@ -72,8 +72,8 @@
 
 /* When the radio button is checked, add a blue background */
 .container input:checked~.checkmark {
-  background-color: white;
-  border: 2px solid #5b53f4;
+  background-color: var(--white);
+  border: calculateRem(2px) solid var(--primary-color);
 }
 
 /* Create the indicator (the dot/circle - hidden when not checked) */
@@ -91,11 +91,11 @@
 /* Style the indicator (dot/circle) */
 .container .checkmark:after {
   display: none;
-  margin: 2px;
-  width: 10px;
-  height: 10px;
+  margin: calculateRem(2px);
+  width: calculateRem(10px);
+  height: calculateRem(10px);
   border-radius: 50%;
-  background: #5b53f4;
+  background: var(--primary-color);
 }
 
 img {
@@ -120,23 +120,17 @@ img {
 .qumlImageOption .wrapper {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  grid-gap: 1em;
+  grid-gap: 1rem;
+  @include respond-below(sm) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @include respond-below(xs) {
+    grid-template-columns: repeat(1, 1fr);
+  }
 }
 
 .qumlOption-imageQaGrid .wrapper {
   display: grid;
   grid-template-columns: repeat(1fr);
-  grid-gap: 1em;
-}
-
-@media only screen and (max-width: 840px) {
-  .qumlImageOption .wrapper {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media only screen and (max-width: 640px) {
-  .qumlImageOption .wrapper {
-    grid-template-columns: repeat(1, 1fr);
-  }
+  grid-gap: 1rem;
 }
