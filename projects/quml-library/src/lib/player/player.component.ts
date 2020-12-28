@@ -23,7 +23,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   @Output() previousClicked = new EventEmitter<any>();
   @Output() nextClicked = new EventEmitter<any>();
   @Output() questionClicked = new EventEmitter<any>();
-  @ViewChild('car') car: CarouselComponent;
+  @ViewChild('car', { static: true }) car: CarouselComponent;
 
   scoreBoard = [];
   endPageReached: boolean;
@@ -90,7 +90,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.noWrapSlides = true;
     this.questions = this.QumlPlayerConfig.data.children;
     this.timeLimit = this.QumlPlayerConfig.data.timeLimit ?
-                     this.QumlPlayerConfig.data.timeLimit :  (this.questions.length * 350000);
+      this.QumlPlayerConfig.data.timeLimit : (this.questions.length * 350000);
     this.showTimer = this.QumlPlayerConfig.data.showTimer;
     this.showFeedBack = this.QumlPlayerConfig.data.showFeedback;
     this.showUserSolution = this.QumlPlayerConfig.data.showSolutions;
@@ -183,17 +183,17 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       this.currentQuestion = this.questions[currentIndex].body;
       this.currentOptions = this.questions[currentIndex].options;
       if (option.option.answer) {
-          this.scoreBoardObject['index'] = this.car.getCurrentSlideIndex();
-          this.scoreBoardObject['status'] = true;
-          this.scoreBoardObject['class'] = 'correct';
-          this.showAlert = true;
-          this.alertType = true;
+        this.scoreBoardObject['index'] = this.car.getCurrentSlideIndex();
+        this.scoreBoardObject['status'] = true;
+        this.scoreBoardObject['class'] = 'correct';
+        this.showAlert = true;
+        this.alertType = true;
       } else if (!option.option.answer) {
-          this.scoreBoardObject['index'] = this.car.getCurrentSlideIndex();
-          this.scoreBoardObject['status'] = false;
-          this.scoreBoardObject['class'] = 'wrong';
-          this.showAlert = true;
-          this.alertType = false;
+        this.scoreBoardObject['index'] = this.car.getCurrentSlideIndex();
+        this.scoreBoardObject['status'] = false;
+        this.scoreBoardObject['class'] = 'wrong';
+        this.showAlert = true;
+        this.alertType = false;
       }
       this.optionSelectedObj = undefined;
     } else if (this.optionSelectedObj === undefined && !this.active) {
@@ -275,9 +275,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   scoreBoardSubmitClicked(event) {
-      if (event.type = 'submit-clicked') {
-        this.endPageReached = true;
-      }
+    if (event.type = 'submit-clicked') {
+      this.endPageReached = true;
+    }
   }
 
 }
