@@ -32,29 +32,27 @@ export class McqComponent implements OnInit, AfterViewInit {
   }
 
   async ngOnInit() {
+
     if (this.question.solutions) {
       this.solutions = this.question.solutions;
     }
-    this.componentLoaded.emit({ event: 'mcq component has been loaded' });
-    this.renderLatex();
-    // this.question = this.question.metadata;
-    // this.layout = this.layout ? this.layout : 'IMAGEGRID';
-    this.layout = 'DEFAULT';
-    // if (this.question.editorState) {
-    //   if (this.question.templateId === 'mcq-vertical') {
-    //     this.layout = 'DEFAULT';
-    //   } else if (this.question.templateId === 'mcq-horizontal') {
-    //     this.layout = 'IMAGEGRID';
-    //   } else if (this.question.templateId === 'mcq-vertical mcq-split') {
-    //     this.layout = 'IMAGEQAGRID';
-    //   } else if (this.question.templateId === 'mcq-grid mcq-split') {
-    //     this.layout = 'MULTIIMAGEGRID';
-    //   }
+    // this.componentLoaded.emit({ event: 'mcq component has been loaded' });
+    // this.layout = this.question.templateId;
+    // console.log('--->', this.question);
+      if (this.question.templateId === "mcq-vertical") {
+        this.layout = 'DEFAULT';
+      } else if (this.question.templateId === "mcq-horizontal") {
+        this.layout = 'IMAGEGRID';
+      } else if (this.question.templateId === "mcq-vertical mcq-split") {
+        this.layout = 'IMAGEQAGRID';
+      } else if (this.question.templateId === "mcq-grid mcq-split") {
+        this.layout = 'MULTIIMAGEGRID';
+      }
+      this.renderLatex();
       this.mcqQuestion = this.domSanitizer.sanitize(SecurityContext.HTML,
-      this.domSanitizer.bypassSecurityTrustHtml(this.question.body));
-      this.options = this.question.options;
-    // }
-    this.initOptions();
+      this.domSanitizer.bypassSecurityTrustHtml(this.question.editorState.question));
+      this.options = this.question.editorState.options;
+      this.initOptions();
   }
 
   ngAfterViewInit() {

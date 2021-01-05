@@ -1,4 +1,4 @@
-import { Component, OnInit, Output , EventEmitter  } from '@angular/core';
+import { Component, OnInit, Output , EventEmitter, Input  } from '@angular/core';
 
 @Component({
   selector: 'quml-portrait-header',
@@ -9,6 +9,7 @@ export class PortraitHeaderComponent implements OnInit {
 
   @Output() nextSlideClicked = new EventEmitter<any>();
   @Output() prevSlideClicked = new EventEmitter<any>();
+  @Input() active: boolean;
 
   constructor() { }
 

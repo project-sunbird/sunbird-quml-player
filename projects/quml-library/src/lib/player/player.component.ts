@@ -64,6 +64,12 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     NEXT: 1,
     PREV: 2
   };
+  sideMenuConfig = {
+    showShare: true,
+    showDownload: true,
+    showReplay: false,
+    showExit: true,
+  };
 
   constructor(
     public qumlLibraryService: QumlLibraryService,
@@ -81,7 +87,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    console.log('quml player config', this.QumlPlayerConfig);
     this.qumlLibraryService.initializeTelemetry(this.QumlPlayerConfig);
     this.userService.initialize(this.QumlPlayerConfig);
     this.initialTime = new Date().getTime();
@@ -96,7 +101,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.showUserSolution = this.QumlPlayerConfig.data.showSolutions;
     this.startPageInstruction = this.QumlPlayerConfig.data.instructions;
     this.linearNavigation = this.QumlPlayerConfig.data.navigationMode === 'non-linear' ? false : true;
-    this.requiresSubmit = this.QumlPlayerConfig.data.requiresSubmit;
+    this.requiresSubmit = this.QumlPlayerConfig.data.requiresSubmit ? this.QumlPlayerConfig.data.requiresSubmit : false; 
     this.noOfQuestions = this.QumlPlayerConfig.data.totalQuestions;
     this.maxScore = this.QumlPlayerConfig.data.maxScore;
     this.userName = this.QumlPlayerConfig.context.userData.firstName + ' ' + this.QumlPlayerConfig.context.userData.lastName;
@@ -110,10 +115,14 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.userService.raiseHeartBeatEvent(eventName.startPageLoaded, TelemetryType.impression, pageId.startPage);
+
   }
 
   nextSlide() {
     this.userService.raiseHeartBeatEvent(eventName.nextClicked, TelemetryType.interact, this.currentSlideIndex);
+    if(this.loadScoreBoard) {
+      this.endPageReached = true;
+    }
     if (this.currentSlideIndex !== this.questions.length) {
       this.currentSlideIndex = this.currentSlideIndex + 1;
     }
@@ -138,6 +147,38 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     if (!this.attemptedQuestions.includes(this.car.getCurrentSlideIndex())) {
       this.attemptedQuestions.push(this.car.getCurrentSlideIndex());
     }
+  }
+
+  prevSlide() {
+    this.userService.raiseHeartBeatEvent(eventName.prevClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
+    this.showAlert = false;
+    if (this.loadScoreBoard) {
+      const index = this.questions.length + 1;
+      this.car.selectSlide(index);
+      this.loadScoreBoard = false;
+    }
+    if (this.attemptedQuestions.includes(this.car.getCurrentSlideIndex())) {
+      const index = this.attemptedQuestions.indexOf(this.car.getCurrentSlideIndex());
+      this.attemptedQuestions.splice(index, 1);
+    } else if (this.car.getCurrentSlideIndex() === 0) {
+      this.attemptedQuestions = [];
+    }
+    if (this.currentSlideIndex > 0) {
+      this.currentSlideIndex = this.currentSlideIndex - 1;
+    }
+    if (this.car.getCurrentSlideIndex() + 1 === this.questions.length && this.endPageReached) {
+      this.endPageReached = false;
+    } else if (!this.linearNavigation && !this.loadScoreBoard) {
+      this.car.move(this.CarouselConfig.PREV);
+    }
+    if (!this.attemptedQuestions.includes(this.car.getCurrentSlideIndex())) {
+      this.attemptedQuestions.push(this.car.getCurrentSlideIndex());
+    }
+  }
+
+  sideBarEvents(event){
+    // console.log('event is', event);
+    this.userService.raiseHeartBeatEvent(event, TelemetryType.interact , this.car.getCurrentSlideIndex());
   }
 
 
@@ -181,7 +222,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     if (this.optionSelectedObj !== undefined) {
       const currentIndex = this.car.getCurrentSlideIndex() - 1;
       this.currentQuestion = this.questions[currentIndex].body;
-      this.currentOptions = this.questions[currentIndex].options;
+      this.currentOptions = this.questions[currentIndex].editorState.options;
       if (option.option.answer) {
           this.scoreBoardObject['index'] = this.car.getCurrentSlideIndex();
           this.scoreBoardObject['status'] = true;
@@ -216,33 +257,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     }
   }
 
-  prevSlide() {
-    this.userService.raiseHeartBeatEvent(eventName.prevClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
-    this.showAlert = false;
-    if (this.loadScoreBoard) {
-      const index = this.questions.length - 1;
-      this.car.selectSlide(index);
-      this.loadScoreBoard = false;
-    }
-    if (this.attemptedQuestions.includes(this.currentSlideIndex)) {
-      const index = this.attemptedQuestions.indexOf(this.car.getCurrentSlideIndex());
-      this.attemptedQuestions.splice(index, 1);
-    } else if (this.car.getCurrentSlideIndex() === 0) {
-      this.attemptedQuestions = [];
-    }
-    if (this.currentSlideIndex > 0) {
-      this.currentSlideIndex = this.currentSlideIndex - 1;
-    }
-    if (this.car.getCurrentSlideIndex() + 1 === this.questions.length && this.endPageReached) {
-      this.endPageReached = false;
-    } else if (!this.linearNavigation) {
-      this.car.move(this.CarouselConfig.PREV);
-    }
-    if (!this.attemptedQuestions.includes(this.car.getCurrentSlideIndex())) {
-      this.attemptedQuestions.push(this.car.getCurrentSlideIndex());
-    }
-  }
-
   nextSlideClicked(event) {
     if (event.type === 'next') {
       this.validateSelectedOption(this.optionSelectedObj);
@@ -259,9 +273,10 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.userService.raiseStartEvent(this.car.getCurrentSlideIndex());
     this.endPageReached = false;
     this.loadScoreBoard = false;
-    this.currentSlideIndex = 0;
+    this.currentSlideIndex = 1;
     this.attemptedQuestions = [];
-    this.car.selectSlide(0);
+    this.attemptedQuestions.push(1);
+    this.car.selectSlide(1);
   }
 
   inScoreBoardSubmitClicked() {

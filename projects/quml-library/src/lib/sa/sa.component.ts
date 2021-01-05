@@ -16,7 +16,8 @@ export class SaComponent implements OnInit {
   @Output() componentLoaded = new EventEmitter<any>();
   showAnswer = false;
   solutions: any;
-
+  question: any;
+  answer: any;
   constructor(
     public domSanitizer: DomSanitizer
   ) {
@@ -24,7 +25,8 @@ export class SaComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.solutions = this.questions.solutions;
+    this.question = this.questions.request.question.editorState.question;
+    this.solutions = this.questions.request.question.editorState.answer;
   }
 
 }

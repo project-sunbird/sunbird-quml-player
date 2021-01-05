@@ -68,6 +68,7 @@
 
 .landscape-center {
   grid-area: center;
+  margin-top: -1rem;
 }
 
 .lanscape-mode-right {
@@ -82,7 +83,7 @@
 
 .lanscape-mode-right ul {
   list-style: none;
-  margin: 0;
+  margin-top: 8px;
   padding: 0;
   text-align: center;
   position: relative;
@@ -103,14 +104,14 @@
 .lanscape-mode-right li {
   background-color:var(--white);
   border-radius: 50%;
-  width: 24px;
+  width: 20px;
   padding: 4px;
-  height: 24px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   border: 1px solid rgba(204, 204, 204, 0.5);
-  margin-bottom: 30px;
+  margin-bottom: 36px;
 }
 
 .current-slide {
@@ -152,19 +153,22 @@
   .lanscape-mode-right ul li {
     
     border-radius: 50%;
-    width: 22px;
+    width: 20px;
     padding: 4px;
-    height: 22px;
+    height: 20px;
     display: -webkit-box;
     display: flex;
     align-items: center;
     justify-content: center;
     // background-color: #fff;
     // border: 1px solid rgba(204, 204, 204, .5);
-    margin-right: 32px;
+    margin-right: 48px;
     &:last-child {
       margin-right: 0px;
     }
+  }
+  .landscape-center {
+    margin-top: 2rem;
   }
 
   .lanscape-mode-right li:hover {

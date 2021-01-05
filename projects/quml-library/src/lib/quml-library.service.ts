@@ -27,7 +27,7 @@ export class QumlLibraryService {
     this.context = config.context;
     this.contentSessionId = this.utilService.uniqueId();
     this.playSessionId = this.utilService.uniqueId();
-
+    
     if (!CsTelemetryModule.instance.isInitialised) {
       CsTelemetryModule.instance.init({});
       CsTelemetryModule.instance.telemetryService.initTelemetry(
@@ -153,7 +153,7 @@ export class QumlLibraryService {
     });
   }
 
-  private getEventOptions() {
+  public getEventOptions() {
     return ({
       object: this.telemetryObject,
       context: {

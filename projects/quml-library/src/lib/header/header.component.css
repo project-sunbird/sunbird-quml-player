@@ -36,6 +36,7 @@ quml-next-active{
 .header-right-section {
   display: flex;
   align-items: center;
+  padding-right: 8px;
 }
 
 @media only screen and (max-width: 480px) {
@@ -99,6 +100,11 @@ svg {
   font-weight: 700;
   display: flex;
   align-items: center;
+  margin-top: -8px !important;
+}
+
+.mr-16{
+  margin-right: 1rem !important;
 }
 
 .timer-section {
@@ -123,4 +129,13 @@ quml-durationtimer {
   display: flex;
   align-items: center;
   margin-right: 8px;
+}
+
+.current-slide {
+  color: #6D7278;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 0;
+  font-family: 'Noto Sans';
+  margin-left: 8px;
 }

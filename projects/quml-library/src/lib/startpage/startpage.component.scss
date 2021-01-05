@@ -5,10 +5,10 @@
     grid-template-columns: calculateRem(360px) calculateRem(100px);
     grid-gap: calculateRem(16px);
     justify-items: start;
-    margin-top: calculateRem(40px);
+    margin-top: calculateRem(20px);
 }
 
-.startpage .header {
+.landscape-header {
     color: var(--primary-color);
     font-size: calculateRem(18px);
     font-weight: bold;
@@ -16,6 +16,12 @@
     line-height: calculateRem(24px);
     margin-bottom: calculateRem(16px);
 }
+
+.potrait-header {
+    display: none;
+}
+
+
 
 .startpage .border {
     box-sizing: border-box;
@@ -112,5 +118,15 @@
         padding-top: 16px;
         border-left: 0;
         padding: 0px 16px;
+    }
+    .landscape-header {
+        display: none;
+    }
+    .potrait-header {
+        display: block;
+        color: var(--primary-color);
+        font-size: 18px;
+        font-weight: 700;
+        margin-top: 3rem;
     }
 }

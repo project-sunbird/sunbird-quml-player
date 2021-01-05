@@ -1,6 +1,7 @@
 .quml-mcq-options {
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 8
+  px;
 }
 
 .quml-option-card .option {
@@ -27,17 +28,18 @@
   border: 2px solid transparent;
   border-radius: 8px;
   display: grid;
-  grid-template-columns: 13fr 1fr;
+  grid-template-columns: 10fr 1fr;
   grid-gap: 1em;
   padding: 16px;
   align-items: center;
   background-color: #FFFFFF;
   box-shadow: 0 2px 14px 0 rgba(0,0,0,0.1);
   margin: 0px 8px;
+  box-shadow: 0 2px 14px 0 rgba(0,0,0,0.10);
 }
 
 .option-border-selected {
-  border: 2px solid #5649dc;
+  border: 2px solid #08539f;
 }
 
 .quml-option-card .option {
@@ -51,6 +53,10 @@
 
 .selected-option-text {
   color: #3769eb !important;
+}
+
+.container {
+  padding-right: 0px !important;
 }
 
 /* Create a custom radio button */
@@ -72,7 +78,7 @@
 /* When the radio button is checked, add a blue background */
 .container input:checked~.checkmark {
   background-color: white;
-  border: 2px solid #5b53f4;
+  border: 2px solid #024f9d;
 }
 
 /* Create the indicator (the dot/circle - hidden when not checked) */
@@ -94,7 +100,7 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #5b53f4;
+  background: #024f9d;
 }
 
 img {

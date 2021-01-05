@@ -4,38 +4,40 @@
       [disablePreviousNavigation]="linearNavigation" [duration]="timeLimit" [showTimer]="showTimer"
       (nextSlideClicked)="nextSlideClicked($event)" (prevSlideClicked)="previousSlideClicked($event)"
       [currentSlideIndex]="currentSlideIndex" [totalNoOfQuestions]="questions.length" [active]="active"
-      [endPageReached]="endPageReached" [initializeTimer]="initializeTimer" [hidden]="loadScoreBoard || endPageReached">
+      [endPageReached]="endPageReached" [initializeTimer]="initializeTimer" [hidden]="endPageReached">
     </quml-header>
-    <div class="landscape-mode" [hidden]="loadScoreBoard || endPageReached">
+    <sb-player-side-menu-icon class="notVisible"></sb-player-side-menu-icon>
+    <sb-player-sidebar [title]="contentName" (sidebarEvent)="sideBarEvents($event)" [config]="sideMenuConfig"></sb-player-sidebar>
+    <div class="landscape-mode" [hidden]="endPageReached">
       <div class="lanscape-mode-left">
         <div class="current-slide">
           {{currentSlideIndex}}/{{questions.length}}
         </div>
-        <div>
+        <!-- <div>
           <quml-bookmark></quml-bookmark>
-        </div>
+        </div> -->
         <div>
           <quml-hint></quml-hint>
         </div>
-        <div>
+        <!-- <div>
           <quml-share></quml-share>
-        </div>
+        </div> -->
         <div>
           <quml-ans></quml-ans>
         </div>
       </div>
       <carousel class="landscape-center" [interval]="slideInterval" [showIndicators]="showIndicator"
-        [noWrap]="noWrapSlides" #car [hidden]="endPageReached">
+        [noWrap]="noWrapSlides" #car [hidden]="endPageReached || loadScoreBoard">
         <slide>
           <quml-startpage [instructions]="startPageInstruction" [totalNoOfQuestions]="noOfQuestions"
             [maxScore]="maxScore" [time]="timeLimit" [contentName]="contentName"></quml-startpage>
         </slide>
         <slide *ngFor="let question of questions; let i= index">
-          <div *ngIf="question.interactions?.interactions.response1?.type === 'choice'">
+          <div *ngIf="question?.qType === 'MCQ'">
             <quml-mcq [question]='question' (optionSelected)="getOptionSelected($event)" [identifier]="question.id"
               id={{question.id}}></quml-mcq>
           </div>
-          <div *ngIf="question?.interactions === null">
+          <div *ngIf="question?.request?.question.qType === 'SA'">
             <quml-sa [questions]='question'></quml-sa>
           </div>
         </slide>
@@ -55,7 +57,7 @@
       [outcomeLabel]="'score : '" [userName]="userName" [timeSpentLabel]="durationSpent"
       (replayContent)="replayContent()" (exitContent)="exitContent($event)" [showExit]="true"></sb-player-end-page>
   </div>
-  <quml-scoreboard *ngIf="loadScoreBoard && requiresSubmit" (submitClicked)="inScoreBoardSubmitClicked()"
+  <quml-scoreboard *ngIf="loadScoreBoard && requiresSubmit && !endPageReached" (submitClicked)="inScoreBoardSubmitClicked()"
     [scores]="scoreBoard" (submitClicked)="scoreBoardSubmitClicked($event)"></quml-scoreboard>
   <quml-alert *ngIf="showAlert && showFeedBack" [alertType]="alertType" [showSolutionButton]="showUserSolution"
     (showSolution)="viewSolution()" (closeAlert)="closeAlertBox($event)"></quml-alert>
