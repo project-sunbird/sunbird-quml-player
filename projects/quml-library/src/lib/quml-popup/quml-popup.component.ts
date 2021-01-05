@@ -3,7 +3,7 @@ import { Component, OnInit, Input, Output, EventEmitter, AfterViewInit } from '@
 @Component({
   selector: 'quml-quml-popup',
   templateUrl: './quml-popup.component.html',
-  styleUrls: ['./quml-popup.component.css']
+  styleUrls: ['./quml-popup.component.scss']
 })
 export class QumlPopupComponent implements OnInit, AfterViewInit {
   @Input() image = 'https://via.placeholder.com/65';

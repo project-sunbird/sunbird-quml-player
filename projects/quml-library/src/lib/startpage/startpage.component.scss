@@ -7,8 +7,10 @@
     justify-items: start;
     margin-top: calculateRem(20px);
 }
-
-.landscape-header {
+.startpage-info {
+    padding: 0px 8px;
+}
+.startpage .header {
     color: var(--primary-color);
     font-size: calculateRem(18px);
     font-weight: bold;

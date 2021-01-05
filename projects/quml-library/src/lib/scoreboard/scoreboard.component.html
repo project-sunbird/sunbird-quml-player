@@ -1,11 +1,11 @@
 <div class="scoreboard">
   <div class="scoreboard-header">
     Are you ready to submit
+    <br>
+    <span class="scoreboard-title">
+      central Nervous system
+    </span>
   </div>
-  <div class="scoreboard-title">
-    central Nervous system
-  </div>
-
   <div class="scoreboard-scores">
     <div *ngFor="let score of scores; let i = index" [ngClass]="score.class">
       {{score.index}}

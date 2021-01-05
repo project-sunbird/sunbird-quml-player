@@ -3,7 +3,7 @@ import { Component, OnInit, Output , EventEmitter, Input  } from '@angular/core'
 @Component({
   selector: 'quml-portrait-header',
   templateUrl: './portrait-header.component.html',
-  styleUrls: ['./portrait-header.component.css']
+  styleUrls: ['./portrait-header.component.scss']
 })
 export class PortraitHeaderComponent implements OnInit {
 

@@ -3,7 +3,7 @@ import { Component, Input, OnInit, Output , EventEmitter } from '@angular/core';
 @Component({
   selector: 'quml-solutions',
   templateUrl: './solutions.component.html',
-  styleUrls: ['./solutions.component.css']
+  styleUrls: ['./solutions.component.scss']
 })
 export class SolutionsComponent implements OnInit {
   @Output() close = new EventEmitter();

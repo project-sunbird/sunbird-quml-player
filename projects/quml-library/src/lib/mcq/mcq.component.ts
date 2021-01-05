@@ -7,7 +7,7 @@ declare var katex: any;
 @Component({
   selector: 'quml-mcq',
   templateUrl: './mcq.component.html',
-  styleUrls: ['./mcq.component.css', '../quml-library.component.css'],
+  styleUrls: ['./mcq.component.scss', '../quml-library.component.scss'],
 
 })
 export class McqComponent implements OnInit, AfterViewInit {

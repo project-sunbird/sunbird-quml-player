@@ -3,7 +3,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 @Component({
   selector: 'quml-mcq-question',
   templateUrl: './mcq-question.component.html',
-  styleUrls: ['./mcq-question.component.css']
+  styleUrls: ['./mcq-question.component.scss']
 })
 export class McqQuestionComponent implements OnInit {
 

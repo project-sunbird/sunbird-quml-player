@@ -1,17 +1,26 @@
+.scoreboard {
+    padding: 2rem 0px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 100vh;
+}
 
 .scoreboard-scores {
     display: grid;
-    grid-template-columns: repeat(4,100px);
-    justify-content: center;
-    align-items: center;
-    grid-gap: 8px;
-    margin-left: 10%;
+    grid-template-columns: repeat(6, 1fr);
+    grid-gap: 32px;
+    justify-items: center;
     margin-top: 2rem;
+    margin-bottom: 2rem;
+    padding: 0 32px;
+    min-height: 60%;
+    overflow-y: auto;
 }
 
 .scoreboard-header {
     color: var(--primary-color);
-    font-size: 21px;
+    font-size: 20px;
     font-weight: bold;
     letter-spacing: 0;
     line-height: 28px;
@@ -22,6 +31,7 @@
     color: #6D7278;
     font-size: 14px;
     text-align: center;
+    display: block;
 }
 
 .scoreboard-quml-btn {
@@ -49,9 +59,9 @@
     font-weight: 500;
     border-radius: 50%;
     text-align: center;
-    padding: 0 6px;
-    width: 20px;
-    height: 20px;
+    padding: 8px;
+    width: 24px;
+    height: 24px;
     display: flex;
     align-items: center;
 }
