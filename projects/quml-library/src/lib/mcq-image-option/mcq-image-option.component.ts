@@ -36,8 +36,6 @@ export class McqImageOptionComponent implements OnInit {
   openPopup(optionHtml) {
     this.showQumlPopup = true;
     this.qumlPopupImage = optionHtml;
-    console.log('----->>> option html', optionHtml);
-
   }
 
   closePopUp() {
