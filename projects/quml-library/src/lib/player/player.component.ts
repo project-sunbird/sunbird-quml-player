@@ -221,15 +221,24 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     let updated = false;
     if (this.optionSelectedObj !== undefined) {
       const currentIndex = this.car.getCurrentSlideIndex() - 1;
+      let keys = Object.keys(this.questions[currentIndex].responseDeclaration);
+      let key;
+      keys.forEach((ele) => {
+        if(ele.includes('response')){
+           key = ele;
+           console.log('key here is', key);
+        }
+      })
+      const correctOptionValue = this.questions[currentIndex].responseDeclaration[key].correctResponse.value;
       this.currentQuestion = this.questions[currentIndex].body;
-      this.currentOptions = this.questions[currentIndex].editorState.options;
-      if (option.option.answer) {
+      this.currentOptions = this.questions[currentIndex].interactions.response1.options;
+      if (Boolean(option.option.value.value == correctOptionValue)) {
           this.scoreBoardObject['index'] = this.car.getCurrentSlideIndex();
           this.scoreBoardObject['status'] = true;
           this.scoreBoardObject['class'] = 'correct';
           this.showAlert = true;
           this.alertType = true;
-      } else if (!option.option.answer) {
+      } else if (!Boolean(option.option.value.value == correctOptionValue)) {
           this.scoreBoardObject['index'] = this.car.getCurrentSlideIndex();
           this.scoreBoardObject['status'] = false;
           this.scoreBoardObject['class'] = 'wrong';

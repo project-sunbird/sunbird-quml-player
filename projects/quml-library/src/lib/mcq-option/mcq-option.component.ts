@@ -20,7 +20,7 @@ export class McqOptionComponent implements OnInit {
 
   onOptionSelect(event, mcqOption) {
     this.mcqOptions.forEach((ele) => {
-        if (ele.value.body === mcqOption.value.body) {
+        if (ele.value.label === mcqOption.value.label) {
             ele.selected = true;
         } else {
             ele.selected = false;

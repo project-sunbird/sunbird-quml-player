@@ -39,20 +39,27 @@ export class McqComponent implements OnInit, AfterViewInit {
     // this.componentLoaded.emit({ event: 'mcq component has been loaded' });
     // this.layout = this.question.templateId;
     // console.log('--->', this.question);
-      if (this.question.templateId === "mcq-vertical") {
-        this.layout = 'DEFAULT';
-      } else if (this.question.templateId === "mcq-horizontal") {
-        this.layout = 'IMAGEGRID';
-      } else if (this.question.templateId === "mcq-vertical mcq-split") {
-        this.layout = 'IMAGEQAGRID';
-      } else if (this.question.templateId === "mcq-grid mcq-split") {
-        this.layout = 'MULTIIMAGEGRID';
+    if (this.question.templateId === "mcq-vertical") {
+      this.layout = 'DEFAULT';
+    } else if (this.question.templateId === "mcq-horizontal") {
+      this.layout = 'IMAGEGRID';
+    } else if (this.question.templateId === "mcq-vertical mcq-split") {
+      this.layout = 'IMAGEQAGRID';
+    } else if (this.question.templateId === "mcq-grid mcq-split") {
+      this.layout = 'MULTIIMAGEGRID';
+    }
+    this.renderLatex();
+    this.mcqQuestion = this.domSanitizer.sanitize(SecurityContext.HTML,
+      this.domSanitizer.bypassSecurityTrustHtml(this.question.body));
+    let keys = Object.keys(this.question.interactions);
+    let key;
+    keys.forEach((ele) => {
+      if (ele.includes('response')){
+        key = ele
       }
-      this.renderLatex();
-      this.mcqQuestion = this.domSanitizer.sanitize(SecurityContext.HTML,
-      this.domSanitizer.bypassSecurityTrustHtml(this.question.editorState.question));
-      this.options = this.question.editorState.options;
-      this.initOptions();
+    });
+    this.options = this.question.interactions[key].options;
+    this.initOptions();
   }
 
   ngAfterViewInit() {
