@@ -6,8 +6,14 @@
       central Nervous system
     </span>
   </div>
-  <div class="scoreboard-scores">
-    <div *ngFor="let score of scores; let i = index" [ngClass]="score.class">
+  <div class="scoreboard-scores" *ngIf="showFeedBack">
+    <div *ngFor="let score of scores | slice:1; let i = index" (click)="goToQuestion(i+1)" [ngClass]="score.class">
+      {{score.index}}
+    </div>
+  </div>
+
+  <div class="scoreboard-scores" *ngIf="!showFeedBack">
+    <div *ngFor="let score of scores; let i = index" class="skipped">
       {{score.index}}
     </div>
   </div>

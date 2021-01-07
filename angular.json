@@ -58,9 +58,9 @@
               "projects/quml-demo-app/src/assets"
             ],
             "styles": [
+              "projects/quml-demo-app/src/styles.css",
               "./node_modules/@project-sunbird/sb-styles/assets/_styles.scss",
               "./node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "projects/quml-demo-app/src/styles.css",
               "./node_modules/katex/dist/katex.min.css"
             ],
             "scripts": [
