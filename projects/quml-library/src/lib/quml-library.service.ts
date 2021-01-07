@@ -32,10 +32,11 @@ export class QumlLibraryService {
     this.channel = config.context.channel;
     this.contentSessionId = this.utilService.uniqueId();
     this.playSessionId = this.utilService.uniqueId();
+    this.channel = config.context.channel;
     this.pdata = this.context.pdata;
     this.sid =  this.context.sid;
     this.uid =  this.context.uid;
-    this.rollup = this.context.contextRollup
+    this.rollup = this.context.contextRollup;
     if (!CsTelemetryModule.instance.isInitialised) {
       CsTelemetryModule.instance.init({});
       CsTelemetryModule.instance.telemetryService.initTelemetry(

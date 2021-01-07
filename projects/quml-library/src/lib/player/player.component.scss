@@ -57,7 +57,7 @@
 }
 
 .lanscape-mode-left {
-  position: fixed;
+  position: absolute;
   margin-top: 16px;
   grid-area: left;
   text-align: center;
@@ -73,7 +73,7 @@
 }
 
 .lanscape-mode-right {
-  position: fixed;
+  position: absolute;
   right: 20px;
   color: #ababab;
   font-size: 13px;
