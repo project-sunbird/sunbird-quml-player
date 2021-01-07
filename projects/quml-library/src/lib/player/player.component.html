@@ -43,11 +43,17 @@
         </slide>
       </carousel>
       <div class="lanscape-mode-right" [hidden]="endPageReached">
-        <ul>
+        <ul *ngIf="!showFeedBack">
           <li [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlide(0)">i
           </li>
           <li *ngFor="let question of questions; let i = index"
             [ngClass]="attemptedQuestions.includes(i+1) ? 'att-color': '' " (click)="goToSlide(i+1)">{{i+1}}</li>
+        </ul>
+        <ul *ngIf="showFeedBack">
+          <li [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlide(0)">i
+          </li>
+          <li *ngFor="let q of progressBarClass; let i = index"
+            [ngClass]="q.class" (click)="goToSlide(q.index)">{{q.index}}</li>
         </ul>
       </div>
     </div>
@@ -58,7 +64,7 @@
       (replayContent)="replayContent()" (exitContent)="exitContent($event)" [showExit]="true"></sb-player-end-page>
   </div>
   <quml-scoreboard *ngIf="loadScoreBoard && requiresSubmit && !endPageReached" (submitClicked)="inScoreBoardSubmitClicked()"
-    [scores]="scoreBoard" (submitClicked)="scoreBoardSubmitClicked($event)"></quml-scoreboard>
+    [scores]="scoreBoard" [totalNoOfQuestions]="questions.length" [showFeedBack]="showFeedBack" (emitQuestionNo)="goToQuestion($event)"  (submitClicked)="scoreBoardSubmitClicked($event)"></quml-scoreboard>
   <quml-alert *ngIf="showAlert && showFeedBack" [alertType]="alertType" [showSolutionButton]="showUserSolution"
     (showSolution)="viewSolution()" (closeAlert)="closeAlertBox($event)"></quml-alert>
   <quml-solutions [hidden]="!showSolution" [question]="currentQuestion" [options]="currentOptions"

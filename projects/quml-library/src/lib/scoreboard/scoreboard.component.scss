@@ -2,21 +2,22 @@
     padding: 2rem 0px;
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
-    height: 100vh;
+    // justify-content: space-around;
+    // height: 100vh;
 }
 
 .scoreboard-scores {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    grid-gap: 32px;
-    justify-items: center;
-    margin-top: 2rem;
-    margin-bottom: 2rem;
-    padding: 0 32px;
-    min-height: 60%;
+    display: flex;
+    -ms-grid-columns: (100px);
+    justify-content: center;
+    margin: 2rem auto 0 auto;
+    flex-wrap: wrap;
+    height: 100%;
+    width: 368px;
     overflow-y: auto;
+    height: calc(100vh - 336px);
 }
+
 
 .scoreboard-header {
     color: var(--primary-color);
@@ -64,6 +65,7 @@
     height: 24px;
     display: flex;
     align-items: center;
+    margin: 16px 32px;
 }
 
 .correct {

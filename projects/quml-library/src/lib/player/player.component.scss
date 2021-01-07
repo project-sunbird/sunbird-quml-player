@@ -351,3 +351,18 @@
     visibility: visible;
   }
 } */
+
+.correct {
+  color:var(--white);
+  background: linear-gradient(90deg,#70d4ad 0,#47a480 100%);
+}
+
+.wrong {
+  color:var(--white);
+  background: linear-gradient(134.51deg, #F1635D 0%, #F97A74 100%);
+}
+
+.skipped {
+  color: #ABABAB;
+  border: 0.5px solid #ABABAB;
+}

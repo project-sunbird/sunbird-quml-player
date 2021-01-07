@@ -43,9 +43,9 @@ export class McqComponent implements OnInit, AfterViewInit {
       this.layout = 'DEFAULT';
     } else if (this.question.templateId === "mcq-horizontal") {
       this.layout = 'IMAGEGRID';
-    } else if (this.question.templateId === "mcq-vertical mcq-split") {
+    } else if (this.question.templateId === "mcq-vertical-split") {
       this.layout = 'IMAGEQAGRID';
-    } else if (this.question.templateId === "mcq-grid mcq-split") {
+    } else if (this.question.templateId === "mcq-grid-split") {
       this.layout = 'MULTIIMAGEGRID';
     }
     this.renderLatex();

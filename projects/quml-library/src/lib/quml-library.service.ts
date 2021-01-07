@@ -15,6 +15,10 @@ export class QumlLibraryService {
   private telemetryObject: any;
   private contentSessionId: string;
   private playSessionId: string;
+  private pdata: any;
+  private sid: string;
+  private uid: string;
+  private rollup: any;
 
   constructor(
     public utilService: UtilService
@@ -28,6 +32,10 @@ export class QumlLibraryService {
     this.channel = config.context.channel;
     this.contentSessionId = this.utilService.uniqueId();
     this.playSessionId = this.utilService.uniqueId();
+    this.pdata = this.context.pdata;
+    this.sid =  this.context.sid;
+    this.uid =  this.context.uid;
+    this.rollup = this.context.contextRollup
     if (!CsTelemetryModule.instance.isInitialised) {
       CsTelemetryModule.instance.init({});
       CsTelemetryModule.instance.telemetryService.initTelemetry(
@@ -158,13 +166,13 @@ export class QumlLibraryService {
       object: this.telemetryObject,
       context: {
         channel: this.channel,
-        pdata: this.context.pdata,
+        pdata: this.pdata,
         env: 'ContentPlayer',
-        sid: this.context.sid,
-        uid: this.context.uid,
+        sid: this.sid,
+        uid: this.uid,
         cdata: [{ id: this.contentSessionId, type: 'ContentSession' },
         { id: this.playSessionId, type: 'PlaySession' }],
-        rollup: this.context.contextRollup || {}
+        rollup: this.rollup || {}
       }
     });
   }
