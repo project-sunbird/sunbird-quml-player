@@ -108,9 +108,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.maxScore = this.QumlPlayerConfig.data.maxScore;
     this.userName = this.QumlPlayerConfig.context.userData.firstName + ' ' + this.QumlPlayerConfig.context.userData.lastName;
     this.contentName = this.QumlPlayerConfig.data.name;
-    // if (this.QumlPlayerConfig.data.shuffle) {
-    //   this.questions = this.QumlPlayerConfig.data.children.sort(() => Math.random() - 0.5);
-    // }
+    if (this.QumlPlayerConfig.data.shuffle) {
+      this.questions = this.QumlPlayerConfig.data.children.sort(() => Math.random() - 0.5);
+    }
     this.userService.raiseStartEvent(this.car.getCurrentSlideIndex());
     this.addClassToQuestion();
   }
