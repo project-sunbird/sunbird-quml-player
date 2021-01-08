@@ -309,21 +309,21 @@ export const data1 = {
                     "response1": {
                         "type": "choice",
                         "options": [{
-                                "label": "<p>2 September 1929</p>",
-                                "value": 0
-                            },
-                            {
-                                "label": "<p>15 October 1931</p>",
-                                "value": 1
-                            },
-                            {
-                                "label": "<p>15 August 1923</p>",
-                                "value": 2
-                            },
-                            {
-                                "label": "<p>29 February 1936</p>",
-                                "value": 3
-                            }
+                            "label": "<p>2 September 1929</p>",
+                            "value": 0
+                        },
+                        {
+                            "label": "<p>15 October 1931</p>",
+                            "value": 1
+                        },
+                        {
+                            "label": "<p>15 August 1923</p>",
+                            "value": 2
+                        },
+                        {
+                            "label": "<p>29 February 1936</p>",
+                            "value": 3
+                        }
                         ]
                     }
                 },
@@ -425,21 +425,21 @@ export const data1 = {
                     "response1": {
                         "type": "choice",
                         "options": [{
-                                "label": "<p>2 September 1929</p>",
-                                "value": 0
-                            },
-                            {
-                                "label": "<p>15 October 1931</p>",
-                                "value": 1
-                            },
-                            {
-                                "label": "<p>15 August 1923</p>",
-                                "value": 2
-                            },
-                            {
-                                "label": "<p>29 February 1936</p>",
-                                "value": 3
-                            }
+                            "label": "<p>2 September 1929</p>",
+                            "value": 0
+                        },
+                        {
+                            "label": "<p>15 October 1931</p>",
+                            "value": 1
+                        },
+                        {
+                            "label": "<p>15 August 1923</p>",
+                            "value": 2
+                        },
+                        {
+                            "label": "<p>29 February 1936</p>",
+                            "value": 3
+                        }
                         ]
                     }
                 },
@@ -541,21 +541,21 @@ export const data1 = {
                     "response1": {
                         "type": "choice",
                         "options": [{
-                                "label": "<p>2 September 1929</p>",
-                                "value": 0
-                            },
-                            {
-                                "label": "<p>15 October 1931</p>",
-                                "value": 1
-                            },
-                            {
-                                "label": "<p>15 August 1923</p>",
-                                "value": 2
-                            },
-                            {
-                                "label": "<p>29 February 1936</p>",
-                                "value": 3
-                            }
+                            "label": "<p>2 September 1929</p>",
+                            "value": 0
+                        },
+                        {
+                            "label": "<p>15 October 1931</p>",
+                            "value": 1
+                        },
+                        {
+                            "label": "<p>15 August 1923</p>",
+                            "value": 2
+                        },
+                        {
+                            "label": "<p>29 February 1936</p>",
+                            "value": 3
+                        }
                         ]
                     }
                 },
@@ -633,22 +633,18 @@ export const data1 = {
                 ]
             },
             {
-                "request": {
-                    "question": {
-                        "code": "a3fb49c5-94ee-3112-08ff-ff2c1f63ae81",
-                        "body": "<p>4.what is the capital of india?</p>",
-                        "answer": "<p>New Delhi</p>",
-                        "templateId": "",
-                        "status": "Draft",
-                        "name": "SA",
-                        "qType": "SA",
-                        "mimeType": "application/vnd.sunbird.question",
-                        "primaryCategory": "Subjective Question",
-                        "editorState": {
-                            "question": "<p>what is the capital of india?</p>",
-                            "answer": "<p>New Delhi</p>"
-                        }
-                    }
+                "code": "a3fb49c5-94ee-3112-08ff-ff2c1f63ae81",
+                "body": "<p>4.what is the capital of india?</p>",
+                "answer": "<p>New Delhi</p>",
+                "templateId": "",
+                "status": "Draft",
+                "name": "SA",
+                "qType": "SA",
+                "mimeType": "application/vnd.sunbird.question",
+                "primaryCategory": "Subjective Question",
+                "editorState": {
+                    "question": "<p>what is the capital of india?</p>",
+                    "answer": "<p>New Delhi</p>"
                 }
             }
         ]

@@ -34,11 +34,11 @@
             [maxScore]="maxScore" [time]="timeLimit" [contentName]="contentName"></quml-startpage>
         </slide>
         <slide *ngFor="let question of questions; let i= index">
-          <div *ngIf="question?.qType === 'MCQ'">
+          <div *ngIf="question?.primaryCategory === 'Practice Question Set'">
             <quml-mcq [question]='question' (optionSelected)="getOptionSelected($event)" [identifier]="question.id"
               id={{question.id}}></quml-mcq>
           </div>
-          <div *ngIf="question?.request?.question.qType === 'SA'">
+          <div *ngIf="question?.primaryCategory === 'Subjective Question'">
             <quml-sa [questions]='question'></quml-sa>
           </div>
         </slide>
