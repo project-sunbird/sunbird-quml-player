@@ -3,7 +3,7 @@
         <div class="option-border"
             [ngClass]="(mcqOption.selected==true)?'option-border option-border-selected':'option-border'">
             <div class="option"
-                [innerHTML]="mcqOption.value.label">
+                [innerHTML]="mcqOption.label">
             </div>
             <label class="container">
                 <input type="radio" name="radio" [checked]="(mcqOption.selected)== true? 'checked': null">
