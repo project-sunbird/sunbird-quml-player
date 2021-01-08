@@ -144,9 +144,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.active = false;
     this.showAlert = false;
     this.optionSelectedObj = undefined;
-    if (!this.attemptedQuestions.includes(this.car.getCurrentSlideIndex())) {
-      this.attemptedQuestions.push(this.car.getCurrentSlideIndex());
-    }
     if (this.intervalRef) {
       clearInterval(this.intervalRef);
     }
@@ -155,12 +152,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   prevSlide() {
     this.userService.raiseHeartBeatEvent(eventName.prevClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
     this.showAlert = false;
-    if (this.attemptedQuestions.includes(this.car.getCurrentSlideIndex())) {
-      const index = this.attemptedQuestions.indexOf(this.car.getCurrentSlideIndex());
-      this.attemptedQuestions.splice(index, 1);
-    } else if (this.car.getCurrentSlideIndex() === 0) {
-      this.attemptedQuestions = [];
-    }
     if (this.currentSlideIndex > 0) {
       this.currentSlideIndex = this.currentSlideIndex - 1;
     }
@@ -172,9 +163,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       const index = this.questions.length;
       this.car.selectSlide(index);
       this.loadScoreBoard = false;
-    }
-    if (!this.attemptedQuestions.includes(this.car.getCurrentSlideIndex())) {
-      this.attemptedQuestions.push(this.car.getCurrentSlideIndex());
     }
   }
 
@@ -240,6 +228,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
           this.showAlert = true;
           this.alertType = true;
           this.correctFeedBackTimeOut();
+          if(!this.showFeedBack){
+            this.nextSlide();
+          }
           this.progressBarClass[this.car.getCurrentSlideIndex() - 1].class="correct";
       } else if (!Boolean(option.option.value.value == correctOptionValue)) {
           this.scoreBoardObject['index'] = this.car.getCurrentSlideIndex();
@@ -248,6 +239,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
           this.showAlert = true;
           this.alertType = false;
           this.progressBarClass[this.car.getCurrentSlideIndex() - 1].class="wrong";
+          if(!this.showFeedBack){
+            this.nextSlide();
+          }
       }
       this.optionSelectedObj = undefined;
     } else if (this.optionSelectedObj === undefined && !this.active) {
@@ -298,9 +292,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.endPageReached = false;
     this.loadScoreBoard = false;
     this.currentSlideIndex = 1;
-    this.attemptedQuestions = [];
-    this.attemptedQuestions.push(1);
     this.car.selectSlide(1);
+    document.getElementById('p-0').click();
   }
 
   inScoreBoardSubmitClicked() {

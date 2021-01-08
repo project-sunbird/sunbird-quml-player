@@ -7,11 +7,12 @@
       [endPageReached]="endPageReached" [initializeTimer]="initializeTimer" [hidden]="endPageReached">
     </quml-header>
     <sb-player-side-menu-icon class="notVisible"></sb-player-side-menu-icon>
-    <sb-player-sidebar [title]="contentName" (sidebarEvent)="sideBarEvents($event)" [config]="sideMenuConfig"></sb-player-sidebar>
+    <sb-player-sidebar [title]="contentName" (sidebarEvent)="sideBarEvents($event)" [config]="sideMenuConfig">
+    </sb-player-sidebar>
     <div class="landscape-mode" [hidden]="endPageReached">
       <div class="lanscape-mode-left">
         <div class="current-slide">
-          {{currentSlideIndex}}/{{questions.length}}
+          {{car.getCurrentSlideIndex()}}/{{questions.length}}
         </div>
         <!-- <div>
           <quml-bookmark></quml-bookmark>
@@ -47,13 +48,14 @@
           <li [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlide(0)">i
           </li>
           <li *ngFor="let question of questions; let i = index"
-            [ngClass]="attemptedQuestions.includes(i+1) ? 'att-color': '' " (click)="goToSlide(i+1)">{{i+1}}</li>
+            [ngClass]="(i+1) === car.getCurrentSlideIndex() ? 'progressBar-border': (i+1) < car.getCurrentSlideIndex() ? 'att-color' : '' "
+            (click)="goToSlide(i+1)" id=p-{{i}}>{{i+1}}</li>
         </ul>
         <ul *ngIf="showFeedBack">
           <li [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlide(0)">i
           </li>
-          <li *ngFor="let q of progressBarClass; let i = index"
-            [ngClass]="q.class" (click)="goToSlide(q.index)">{{q.index}}</li>
+          <li *ngFor="let q of progressBarClass; let i = index" [ngClass]="q.class" (click)="goToSlide(q.index)">
+            {{q.index}}</li>
         </ul>
       </div>
     </div>
@@ -63,8 +65,10 @@
       [outcomeLabel]="'score : '" [userName]="userName" [timeSpentLabel]="durationSpent"
       (replayContent)="replayContent()" (exitContent)="exitContent($event)" [showExit]="true"></sb-player-end-page>
   </div>
-  <quml-scoreboard *ngIf="loadScoreBoard && requiresSubmit && !endPageReached" (submitClicked)="inScoreBoardSubmitClicked()"
-    [scores]="scoreBoard" [totalNoOfQuestions]="questions.length" [showFeedBack]="showFeedBack" (emitQuestionNo)="goToQuestion($event)"  (submitClicked)="scoreBoardSubmitClicked($event)"></quml-scoreboard>
+  <quml-scoreboard *ngIf="loadScoreBoard && requiresSubmit && !endPageReached"
+    (submitClicked)="inScoreBoardSubmitClicked()" [contentName]="contentName" [scores]="scoreBoard" [totalNoOfQuestions]="questions.length"
+    [showFeedBack]="showFeedBack" (emitQuestionNo)="goToQuestion($event)"
+    (submitClicked)="scoreBoardSubmitClicked($event)"></quml-scoreboard>
   <quml-alert *ngIf="showAlert && showFeedBack" [alertType]="alertType" [showSolutionButton]="showUserSolution"
     (showSolution)="viewSolution()" (closeAlert)="closeAlertBox($event)"></quml-alert>
   <quml-solutions [hidden]="!showSolution" [question]="currentQuestion" [options]="currentOptions"

@@ -16,6 +16,17 @@
     height: calc(100vh - 336px);
 }
 
+.unattempted {
+    border: 1px solid var(--primary-color) !important;
+    color: var(--primary-color) !important;
+  }
+
+.attempted{
+    background-color: var(--primary-color) !important;
+    border: 1px solid var(--primary-color) !important;
+    color: white;
+  }
+
 
 .scoreboard-header {
     color: var(--primary-color);
