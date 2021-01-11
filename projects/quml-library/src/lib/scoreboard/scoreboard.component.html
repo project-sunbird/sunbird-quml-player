@@ -1,13 +1,19 @@
 <div class="scoreboard">
   <div class="scoreboard-header">
-    Are you ready to submit
+    Are you ready to submit?
     <br>
     <span class="scoreboard-title">
-      central Nervous system
+       {{contentName}}
     </span>
   </div>
-  <div class="scoreboard-scores">
-    <div *ngFor="let score of scores; let i = index" [ngClass]="score.class">
+  <div class="scoreboard-scores" *ngIf="showFeedBack">
+    <div *ngFor="let score of scores | slice:1; let i = index" (click)="goToQuestion(i+1)" [ngClass]="score.class">
+      {{score.index}}
+    </div>
+  </div>
+
+  <div class="scoreboard-scores" *ngIf="!showFeedBack">
+    <div *ngFor="let score of scores | slice:1; let i = index" (click)="goToQuestion(i+1)" [ngClass]="score.class === 'correct' ? 'attempted': score.class === 'wrong' ? 'attempted' : 'unattempted'">
       {{score.index}}
     </div>
   </div>
