@@ -6,7 +6,7 @@
                 [innerHTML]="mcqOption.label">
             </div>
             <label class="container">
-                <input type="radio" name="radio" [checked]="(mcqOption.selected)== true? 'checked': null">
+                <input type="radio" name="radio" [checked]="mcqOption.selected">
                 <span class="checkmark"></span>
             </label>
         </div>
