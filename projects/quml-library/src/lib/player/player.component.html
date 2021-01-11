@@ -24,7 +24,7 @@
           <quml-share></quml-share>
         </div> -->
         <div>
-          <quml-ans></quml-ans>
+          <quml-ans ></quml-ans>
         </div>
       </div>
       <carousel class="landscape-center" [interval]="slideInterval" [showIndicators]="showIndicator"
@@ -34,11 +34,11 @@
             [maxScore]="maxScore" [time]="timeLimit" [contentName]="contentName"></quml-startpage>
         </slide>
         <slide *ngFor="let question of questions; let i= index">
-          <div *ngIf="question?.primaryCategory === 'Practice Question Set'">
+          <div *ngIf="question?.primaryCategory.toLowerCase() === 'practice question set'">
             <quml-mcq [question]='question' (optionSelected)="getOptionSelected($event)" [identifier]="question.id"
               id={{question.id}}></quml-mcq>
           </div>
-          <div *ngIf="question?.primaryCategory === 'Subjective Question'">
+          <div *ngIf="question?.primaryCategory.toLowerCase() === 'subjective question'">
             <quml-sa [questions]='question'></quml-sa>
           </div>
         </slide>
