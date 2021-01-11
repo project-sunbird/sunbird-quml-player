@@ -97,13 +97,13 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.noWrapSlides = true;
     this.questions = this.QumlPlayerConfig.data.children;
     this.timeLimit = this.QumlPlayerConfig.data.timeLimit ?
-                     this.QumlPlayerConfig.data.timeLimit :  (this.questions.length * 350000);
+      this.QumlPlayerConfig.data.timeLimit : (this.questions.length * 350000);
     this.showTimer = this.QumlPlayerConfig.data.showTimer;
     this.showFeedBack = this.QumlPlayerConfig.data.showFeedback;
     this.showUserSolution = this.QumlPlayerConfig.data.showSolutions;
     this.startPageInstruction = this.QumlPlayerConfig.data.instructions;
     this.linearNavigation = this.QumlPlayerConfig.data.navigationMode === 'non-linear' ? false : true;
-    this.requiresSubmit = this.QumlPlayerConfig.data.requiresSubmit ? this.QumlPlayerConfig.data.requiresSubmit : false; 
+    this.requiresSubmit = this.QumlPlayerConfig.data.requiresSubmit ? this.QumlPlayerConfig.data.requiresSubmit : false;
     this.noOfQuestions = this.QumlPlayerConfig.data.totalQuestions;
     this.maxScore = this.QumlPlayerConfig.data.maxScore;
     this.userName = this.QumlPlayerConfig.context.userData.firstName + ' ' + this.QumlPlayerConfig.context.userData.lastName;
@@ -121,7 +121,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   nextSlide() {
     this.userService.raiseHeartBeatEvent(eventName.nextClicked, TelemetryType.interact, this.currentSlideIndex);
-    if(this.loadScoreBoard) {
+    if (this.loadScoreBoard) {
       this.endPageReached = true;
     }
     if (this.currentSlideIndex !== this.questions.length) {
@@ -166,8 +166,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     }
   }
 
-  sideBarEvents(event){
-    this.userService.raiseHeartBeatEvent(event, TelemetryType.interact , this.car.getCurrentSlideIndex());
+  sideBarEvents(event) {
+    this.userService.raiseHeartBeatEvent(event, TelemetryType.interact, this.car.getCurrentSlideIndex());
   }
 
 
@@ -214,34 +214,38 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       let keys = Object.keys(this.questions[currentIndex].responseDeclaration);
       let key;
       keys.forEach((ele) => {
-        if(ele.includes('response')){
-           key = ele;
+        if (ele.includes('response')) {
+          key = ele;
         }
       })
       const correctOptionValue = this.questions[currentIndex].responseDeclaration[key].correctResponse.value;
       this.currentQuestion = this.questions[currentIndex].body;
       this.currentOptions = this.questions[currentIndex].interactions.response1.options;
       if (Boolean(option.option.value.value == correctOptionValue)) {
-          this.scoreBoardObject['index'] = this.car.getCurrentSlideIndex();
-          this.scoreBoardObject['status'] = true;
-          this.scoreBoardObject['class'] = 'correct';
-          this.showAlert = true;
-          this.alertType = true;
-          this.correctFeedBackTimeOut();
-          if(!this.showFeedBack){
-            this.nextSlide();
-          }
-          this.progressBarClass[this.car.getCurrentSlideIndex() - 1].class="correct";
+        this.scoreBoardObject['index'] = this.car.getCurrentSlideIndex();
+        this.scoreBoardObject['status'] = true;
+        this.scoreBoardObject['class'] = 'correct';
+        this.showAlert = true;
+        this.alertType = true;
+        this.correctFeedBackTimeOut();
+        if (!this.showFeedBack) {
+          this.nextSlide();
+        }
+        if (this.showFeedBack) {
+          this.progressBarClass[this.car.getCurrentSlideIndex() - 1].class = "correct";
+        }
       } else if (!Boolean(option.option.value.value == correctOptionValue)) {
-          this.scoreBoardObject['index'] = this.car.getCurrentSlideIndex();
-          this.scoreBoardObject['status'] = false;
-          this.scoreBoardObject['class'] = 'wrong';
-          this.showAlert = true;
-          this.alertType = false;
-          this.progressBarClass[this.car.getCurrentSlideIndex() - 1].class="wrong";
-          if(!this.showFeedBack){
-            this.nextSlide();
-          }
+        this.scoreBoardObject['index'] = this.car.getCurrentSlideIndex();
+        this.scoreBoardObject['status'] = false;
+        this.scoreBoardObject['class'] = 'wrong';
+        this.showAlert = true;
+        this.alertType = false;
+        if (this.showFeedBack) {
+          this.progressBarClass[this.car.getCurrentSlideIndex() - 1].class = "wrong";
+        }
+        if (!this.showFeedBack) {
+          this.nextSlide();
+        }
       }
       this.optionSelectedObj = undefined;
     } else if (this.optionSelectedObj === undefined && !this.active) {
@@ -249,7 +253,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       this.scoreBoardObject['status'] = false;
       this.scoreBoardObject['class'] = 'skipped';
       this.nextSlide();
-      this.progressBarClass[this.car.getCurrentSlideIndex() - 1].class="skipped";
+      if (this.showFeedBack) {
+        this.progressBarClass[this.car.getCurrentSlideIndex() - 1].class = "skipped";
+      }
     } else if (this.optionSelectedObj === undefined && this.active) {
       this.nextSlide();
     }
@@ -264,7 +270,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       this.scoreBoard.push(this.scoreBoardObject);
     }
   }
- 
+
   correctFeedBackTimeOut() {
     this.intervalRef = setTimeout(() => {
       this.showAlert = false;
@@ -307,14 +313,14 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   scoreBoardSubmitClicked(event) {
-      if (event.type = 'submit-clicked') {
-        this.endPageReached = true;
-      }
+    if (event.type = 'submit-clicked') {
+      this.endPageReached = true;
+    }
   }
 
   addClassToQuestion() {
     this.questions.forEach((ele, index) => {
-      this.progressBarClass.push({index: (index+1) , class: 'skipped'});
+      this.progressBarClass.push({ index: (index + 1), class: 'skipped' });
     })
   }
 
