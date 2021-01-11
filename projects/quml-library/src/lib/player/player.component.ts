@@ -308,6 +308,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   goToSlide(index) {
+    if(index === 0 ){
+      this.optionSelectedObj = undefined;
+    }
     this.currentSlideIndex = index;
     this.car.selectSlide(index);
   }
