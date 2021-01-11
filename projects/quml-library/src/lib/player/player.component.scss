@@ -57,7 +57,7 @@
 }
 
 .lanscape-mode-left {
-  position: fixed;
+  position: absolute;
   margin-top: 16px;
   grid-area: left;
   text-align: center;
@@ -69,10 +69,11 @@
 
 .landscape-center {
   grid-area: center;
+  margin-top: -1rem;
 }
 
 .lanscape-mode-right {
-  position: fixed;
+  position: absolute;
   right: 20px;
   color: #ababab;
   font-size: 13px;
@@ -83,7 +84,7 @@
 
 .lanscape-mode-right ul {
   list-style: none;
-  margin: 0;
+  margin-top: 8px;
   padding: 0;
   text-align: center;
   position: relative;
@@ -102,16 +103,16 @@
 }
 
 .lanscape-mode-right li {
-  background-color:var(--white);
+  // background-color:var(--white);
   border-radius: 50%;
-  width: 24px;
+  width: 20px;
   padding: 4px;
-  height: 24px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   border: 1px solid rgba(204, 204, 204, 0.5);
-  margin-bottom: 30px;
+  margin-bottom: 36px;
 }
 
 .current-slide {
@@ -123,9 +124,9 @@
 
 .lanscape-mode-right li:hover,
 .lanscape-mode-right li.active {
-  background-color: var(--primary-color);
+  // background-color: var(--primary-color);
   border: 1px solid var(--primary-color);
-  color: white;
+  color:var(--primary-color);
 }
 
 @media only screen and (max-width: 480px) {
@@ -153,25 +154,28 @@
   .lanscape-mode-right ul li {
     
     border-radius: 50%;
-    width: 22px;
+    width: 20px;
     padding: 4px;
-    height: 22px;
+    height: 20px;
     display: -webkit-box;
     display: flex;
     align-items: center;
     justify-content: center;
     // background-color: #fff;
     // border: 1px solid rgba(204, 204, 204, .5);
-    margin-right: 32px;
+    margin-right: 48px;
     &:last-child {
       margin-right: 0px;
     }
   }
+  .landscape-center {
+    margin-top: 2rem;
+  }
 
   .lanscape-mode-right li:hover {
-    background-color: var(--primary-color);
+    // background-color: var(--primary-color);
     border: 1px solid var(--primary-color);
-    color:var(--white);
+    color:var(--primary-color);
   }
 
   .lanscape-mode-right ul::before {
@@ -347,3 +351,23 @@
     visibility: visible;
   }
 } */
+
+.progressBar-border {
+  border: 1px solid var(--primary-color) !important;
+  color: var(--primary-color) !important;
+}
+
+.correct {
+  color:var(--white);
+  background: linear-gradient(90deg,#70d4ad 0,#47a480 100%);
+}
+
+.wrong {
+  color:var(--white);
+  background: linear-gradient(134.51deg, #F1635D 0%, #F97A74 100%);
+}
+
+.skipped {
+  color: #ABABAB;
+  border: 0.5px solid #ABABAB;
+}

@@ -2,21 +2,31 @@
     padding: 2rem 0px;
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
-    height: 100vh;
 }
 
 .scoreboard-scores {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    grid-gap: 32px;
-    justify-items: center;
-    margin-top: 2rem;
-    margin-bottom: 2rem;
-    padding: 0 32px;
-    min-height: 60%;
+    display: flex;
+    -ms-grid-columns: (100px);
+    justify-content: center;
+    margin: 2rem auto 0 auto;
+    flex-wrap: wrap;
+    height: 100%;
+    width: 368px;
     overflow-y: auto;
+    height: calc(100vh - 336px);
 }
+
+.unattempted {
+    border: 1px solid var(--primary-color) !important;
+    color: var(--primary-color) !important;
+  }
+
+.attempted{
+    background-color: var(--primary-color) !important;
+    border: 1px solid var(--primary-color) !important;
+    color: white;
+  }
+
 
 .scoreboard-header {
     color: var(--primary-color);
@@ -29,9 +39,7 @@
 
 .scoreboard-title {
     color: #6D7278;
-    font-size: 12px;
-    letter-spacing: 0;
-    line-height: 17px;
+    font-size: 14px;
     text-align: center;
     display: block;
 }
@@ -42,7 +50,7 @@
     font-weight: 500;
     text-align: center;
     border: none;
-    padding: 6px 16px;
+    padding: 6px 24px;
     border-radius: 16px;
     background-color: var(--primary-color);
     box-shadow: inset 0 -1px 2px 0 rgba(0, 0, 0, .5);
@@ -51,10 +59,13 @@
 
 .scoreboard-button-container {
     text-align: center;
+    position: fixed;
+    left: 45%;
+    bottom: 8%;
 }
 
 .scoreboard-scores div {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 500;
     border-radius: 50%;
     text-align: center;
@@ -63,6 +74,7 @@
     height: 24px;
     display: flex;
     align-items: center;
+    margin: 16px 32px;
 }
 
 .correct {
@@ -78,4 +90,24 @@
 .skipped {
     color: #ABABAB;
     border: 0.5px solid #ABABAB;
+}
+
+@media only screen and (max-width: 480px) {
+    .scoreboard-button-container {
+        text-align: center;
+        position: fixed;
+        left: 36%;
+        bottom: 24%;
+    }
+
+    .scoreboard-scores{
+        display: -ms-grid;
+        display: grid;
+        grid-template-columns: repeat(4,80px);
+        justify-content: center;
+        align-items: center;
+        grid-gap: 8px;
+        margin-left: 10%;
+        margin-top: 2rem;
+    }
 }

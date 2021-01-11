@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { data1 , data2 } from './quml-library-data';
+import { data1 } from './quml-library-data';
 
 @Component({
   selector: 'app-root',
@@ -8,13 +8,13 @@ import { data1 , data2 } from './quml-library-data';
 })
 export class AppComponent {
   title = 'quml-demo-app';
-  QumlPlayerConfig = data2;
+  QumlPlayerConfig = data1;
 
   getPlayerEvents(event) {
-    console.log('get player events', event);
+    console.log('get player events', JSON.stringify(event));
   }
 
   getTelemetryEvents(event) {
-    console.log('event is for telemetry', event);
+    console.log('event is for telemetry', JSON.stringify(event));
   }
 }
