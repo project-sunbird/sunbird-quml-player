@@ -34,7 +34,7 @@
             [maxScore]="maxScore" [time]="timeLimit" [contentName]="contentName"></quml-startpage>
         </slide>
         <slide *ngFor="let question of questions; let i= index">
-          <div *ngIf="question?.primaryCategory.toLowerCase() === 'practice question set'">
+          <div *ngIf="question?.primaryCategory.toLowerCase() === 'multiple choice question'">
             <quml-mcq [question]='question' (optionSelected)="getOptionSelected($event)" [identifier]="question.id"
               id={{question.id}}></quml-mcq>
           </div>
@@ -54,7 +54,7 @@
         <ul *ngIf="showFeedBack">
           <li [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlide(0)">i
           </li>
-          <li *ngFor="let q of progressBarClass; let i = index" [ngClass]="q.class" (click)="goToSlide(q.index)">
+          <li *ngFor="let q of progressBarClass; let i = index" class="showFeedBack-progressBar" [ngClass]="(i+1) === car.getCurrentSlideIndex() ? 'progressBar-border' : q.class" (click)="goToSlide(q.index)">
             {{q.index}}</li>
         </ul>
       </div>

@@ -70,6 +70,7 @@
 .landscape-center {
   grid-area: center;
   margin-top: -1rem;
+  width: 100%;
 }
 
 .lanscape-mode-right {
@@ -124,9 +125,11 @@
 
 .lanscape-mode-right li:hover,
 .lanscape-mode-right li.active {
-  // background-color: var(--primary-color);
-  border: 1px solid var(--primary-color);
-  color:var(--primary-color);
+  border: 1px solid!important;
+  color: var(--primary-color)!important;
+  border-style: double !important;
+  border-width: 3px !important;
+  background-color: white;
 }
 
 @media only screen and (max-width: 480px) {
@@ -173,9 +176,11 @@
   }
 
   .lanscape-mode-right li:hover {
-    // background-color: var(--primary-color);
-    border: 1px solid var(--primary-color);
-    color:var(--primary-color);
+    border: 1px solid!important;
+    color: var(--primary-color)!important;
+    border-style: double !important;
+    border-width: 3px !important;
+    background-color: white;
   }
 
   .lanscape-mode-right ul::before {
@@ -352,10 +357,18 @@
   }
 } */
 
-.progressBar-border {
-  border: 1px solid var(--primary-color) !important;
-  color: var(--primary-color) !important;
+.progressBar-border , .showFeedBack-progressBar:hover  {
+  border: 1px solid !important;
+  color: var(--primary-color)!important;
+  border-style: double !important;
+  border-width: 3px !important;
+  background-color: white;
+  &.wrong:hover , &.correct:hover {
+    border-color: 1px solid var(--primary-color) !important;
+    color: white !important;
+  }
 }
+
 
 .correct {
   color:var(--white);
@@ -366,6 +379,7 @@
   color:var(--white);
   background: linear-gradient(134.51deg, #F1635D 0%, #F97A74 100%);
 }
+
 
 .skipped {
   color: #ABABAB;
