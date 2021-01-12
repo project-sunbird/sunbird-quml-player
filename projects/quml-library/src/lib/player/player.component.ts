@@ -208,9 +208,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   async validateSelectedOption(option) {
     this.scoreBoardObject = {};
+    const currentIndex = this.car.getCurrentSlideIndex() - 1;
     let updated = false;
     if (this.optionSelectedObj !== undefined) {
-      const currentIndex = this.car.getCurrentSlideIndex() - 1;
       let keys = Object.keys(this.questions[currentIndex].responseDeclaration);
       let key;
       keys.forEach((ele) => {
@@ -221,7 +221,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       const correctOptionValue = this.questions[currentIndex].responseDeclaration[key].correctResponse.value;
       this.currentQuestion = this.questions[currentIndex].body;
       this.currentOptions = this.questions[currentIndex].interactions.response1.options;
-      if (Boolean(option.option.value.value == correctOptionValue)) {
+      if (Boolean(option.option.value == correctOptionValue)) {
         this.scoreBoardObject['index'] = this.car.getCurrentSlideIndex();
         this.scoreBoardObject['status'] = true;
         this.scoreBoardObject['class'] = 'correct';
@@ -232,7 +232,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
           this.nextSlide();
         }
         if (this.showFeedBack) {
-          this.progressBarClass[this.car.getCurrentSlideIndex() - 1].class = "correct";
+          this.progressBarClass[currentIndex].class = "correct";
         }
       } else if (!Boolean(option.option.value.value == correctOptionValue)) {
         this.scoreBoardObject['index'] = this.car.getCurrentSlideIndex();
@@ -241,7 +241,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
         this.showAlert = true;
         this.alertType = false;
         if (this.showFeedBack) {
-          this.progressBarClass[this.car.getCurrentSlideIndex() - 1].class = "wrong";
+          this.progressBarClass[currentIndex].class = "wrong";
         }
         if (!this.showFeedBack) {
           this.nextSlide();
@@ -254,7 +254,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       this.scoreBoardObject['class'] = 'skipped';
       this.nextSlide();
       if (this.showFeedBack) {
-        this.progressBarClass[this.car.getCurrentSlideIndex() - 1].class = "skipped";
+        this.progressBarClass[currentIndex].class = "skipped";
       }
     } else if (this.optionSelectedObj === undefined && this.active) {
       this.nextSlide();

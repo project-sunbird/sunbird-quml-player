@@ -5,6 +5,7 @@
     grid-template-columns: calculateRem(360px) calculateRem(100px);
     grid-gap: calculateRem(16px);
     justify-items: start;
+    justify-content: center;
     margin-top: calculateRem(20px);
 }
 .startpage-info {

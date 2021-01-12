@@ -54,7 +54,7 @@
         <ul *ngIf="showFeedBack">
           <li [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlide(0)">i
           </li>
-          <li *ngFor="let q of progressBarClass; let i = index" [ngClass]="q.class" (click)="goToSlide(q.index)">
+          <li *ngFor="let q of progressBarClass; let i = index" class="showFeedBack-progressBar" [ngClass]="(i+1) === car.getCurrentSlideIndex() ? 'progressBar-border' : q.class" (click)="goToSlide(q.index)">
             {{q.index}}</li>
         </ul>
       </div>
