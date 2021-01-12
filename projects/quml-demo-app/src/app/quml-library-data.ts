@@ -390,7 +390,7 @@ export const data1 = {
                 ],
                 "qType": "MCQ",
                 "mimeType": "application/vnd.ekstep.qml-archive",
-                "primaryCategory": "Practice Question Set",
+                "primaryCategory": "Multiple Choice Question",
                 "solutions": [
                     {
                         "id": "293d752e-844d-24c6-dd48-1ac78bb2793c",
@@ -506,7 +506,7 @@ export const data1 = {
                 ],
                 "qType": "MCQ",
                 "mimeType": "application/vnd.ekstep.qml-archive",
-                "primaryCategory": "Practice Question Set",
+                "primaryCategory": "Multiple Choice Question",
                 "solutions": [
                     {
                         "id": "293d752e-844d-24c6-dd48-1ac78bb2793c",
@@ -622,7 +622,7 @@ export const data1 = {
                 ],
                 "qType": "MCQ",
                 "mimeType": "application/vnd.ekstep.qml-archive",
-                "primaryCategory": "Practice Question Set",
+                "primaryCategory": "Multiple Choice Question",
                 "solutions": [
                     {
                         "id": "293d752e-844d-24c6-dd48-1ac78bb2793c",
@@ -632,19 +632,43 @@ export const data1 = {
                 ]
             },
             {
-                "code": "a3fb49c5-94ee-3112-08ff-ff2c1f63ae81",
-                "body": "<p>4.what is the capital of india?</p>",
-                "answer": "<p>New Delhi</p>",
-                "templateId": "",
-                "status": "Draft",
-                "name": "SA",
-                "qType": "SA",
-                "mimeType": "application/vnd.sunbird.question",
-                "primaryCategory": "Subjective Question",
+                "code": "questionId",
+                "media": [{
+                        "id": "do_11310507846892748812026",
+                        "type": "image",
+                        "src": "https://dockstorage.blob.core.windows.net/sunbird-content-dock/content/do_11310507846892748812026/artifact/icon.png",
+                        "baseUrl": "https://dock.sunbirded.org"
+                    },
+                    {
+                        "id": "do_11318931140144332811620",
+                        "type": "image",
+                        "src": "https://dockstorage.blob.core.windows.net/sunbird-content-dock/content/do_11318931140144332811620/artifact/i.png",
+                        "baseUrl": "https://dock.sunbirded.org"
+                    }
+                ],
+                "body": "<p>capital of india is?&nbsp;</p><figure class=\"image\"><img src=\"https://dockstorage.blob.core.windows.net/sunbird-content-dock/content/do_11310507846892748812026/artifact/icon.png\" alt=\"do_11310507846892748812026\" data-asset-variable=\"do_11310507846892748812026\"></figure>",
                 "editorState": {
-                    "question": "<p>what is the capital of india?</p>",
-                    "answer": "<p>New Delhi</p>"
-                }
+                    "answer": "<p>new delhi&nbsp;</p><figure class=\"image\"><img src=\"https://dockstorage.blob.core.windows.net/sunbird-content-dock/content/do_11318931140144332811620/artifact/i.png\" alt=\"do_11318931140144332811620\" data-asset-variable=\"do_11318931140144332811620\"></figure>",
+                    "question": "<p>capital of india is?&nbsp;</p><figure class=\"image\"><img src=\"https://dockstorage.blob.core.windows.net/sunbird-content-dock/content/do_11310507846892748812026/artifact/icon.png\" alt=\"do_11310507846892748812026\" data-asset-variable=\"do_11310507846892748812026\"></figure>",
+                    "solutions": [{
+                        "id": "6f1efbba-82cb-7847-2868-409f8b58bf10",
+                        "type": "html",
+                        "value": "<p>New Delhi is the solution&nbsp;</p><figure class=\"image\"><img src=\"https://dockstorage.blob.core.windows.net/sunbird-content-dock/content/do_11318931140144332811620/artifact/i.png\" alt=\"do_11318931140144332811620\" data-asset-variable=\"do_11318931140144332811620\"></figure>"
+                    }]
+                },
+                "primaryCategory": "Subjective Question",
+                "identifier": "do_113192172820889600114",
+                "solutions": [{
+                    "id": "6f1efbba-82cb-7847-2868-409f8b58bf10",
+                    "type": "html",
+                    "value": "<p>New Delhi is the solution&nbsp;</p><figure class=\"image\"><img src=\"https://dockstorage.blob.core.windows.net/sunbird-content-dock/content/do_11318931140144332811620/artifact/i.png\" alt=\"do_11318931140144332811620\" data-asset-variable=\"do_11318931140144332811620\"></figure>"
+                }],
+                "qType": "SA",
+                "languageCode": [
+                    "en"
+                ],
+                "answer": "<p>new delhi&nbsp;</p><figure class=\"image\"><img src=\"https://dockstorage.blob.core.windows.net/sunbird-content-dock/content/do_11318931140144332811620/artifact/i.png\" alt=\"do_11318931140144332811620\" data-asset-variable=\"do_11318931140144332811620\"></figure>",
+                "name": "Subjective"
             }
         ]
     }

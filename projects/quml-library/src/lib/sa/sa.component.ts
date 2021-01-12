@@ -25,8 +25,9 @@ export class SaComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.question = this.questions.editorState.question;
-    this.solutions = this.questions.editorState.answer;
+    this.question = this.questions.body;
+    this.answer = this.questions.answer;
+    this.solutions = this.questions.solutions;
   }
 
 }

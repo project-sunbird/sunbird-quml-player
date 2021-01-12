@@ -7,5 +7,7 @@
 </div>
 <div class="option-container-blurred" [ngClass]="showAnswer ? 'option-container-blurred-out': 'option-container-blurred'">
   <div class="sa-title">Answer</div>
-  <div class="option-body" [innerHTML]="solutions"></div>
+  <div class="option-body" [innerHTML]="answer"></div>
+  <div class="sa-title">solutions</div>
+  <div class="solutions" *ngFor="let solution of solutions" [innerHTML]="solution.value"></div>
 </div>
