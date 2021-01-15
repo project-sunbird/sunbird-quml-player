@@ -37,7 +37,7 @@ export class UserService {
     this.qumlPlayerStartTime = this.qumlPlayerLastPageTime = new Date().getTime();
     this.currentQuestionIndex = 1;
     this.contentName = config.data.name;
-    this.src = config.metadata.artifactUrl;
+    this.src = config.metadata.artifactUrl || '';
     if (config.context.userData) {
       this.userName = config.context.userData.firstName + ' ' + config.context.userData.lastName;
     }

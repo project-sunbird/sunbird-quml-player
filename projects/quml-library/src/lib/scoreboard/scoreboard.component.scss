@@ -13,7 +13,8 @@
     height: 100%;
     width: 368px;
     overflow-y: auto;
-    height: calc(100vh - 336px);
+    height: 15vh;
+    margin-bottom: 50px;
 }
 
 .unattempted {
@@ -59,7 +60,7 @@
 
 .scoreboard-button-container {
     text-align: center;
-    position: fixed;
+    position: absolute;
     left: 45%;
     bottom: 8%;
 }

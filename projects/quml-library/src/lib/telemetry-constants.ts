@@ -16,7 +16,8 @@ export enum eventName {
     closedFeedBack = 'CLOSED_FEEDBACK',
     tryAgain = 'TRY_AGAIN',
     optionClicked = 'OPTION_CLICKED',
-    scoreBoardSubmitClicked = 'SCORE_BOARD_SUBMIT_CLICKED'
+    scoreBoardSubmitClicked = 'SCORE_BOARD_SUBMIT_CLICKED',
+    endPageExitClicked = 'EXIT'
 
 }
 

@@ -27,7 +27,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   scoreBoard = [];
   endPageReached: boolean;
-  slides: any;
+  // slides: any;
   slideInterval: number;
   showIndicator: Boolean;
   noWrapSlides: Boolean;
@@ -35,6 +35,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   showAlert: Boolean;
   currentOptions: any;
   currentQuestion: any;
+  media: any;
   currentSolutions: any;
   showSolution: any;
   active = false;
@@ -62,6 +63,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   loadingScreen = true;
   private intervalRef: any;
   progressBarClass = [];
+  progressBarSet = new Set();
   CarouselConfig = {
     NEXT: 1,
     PREV: 2
@@ -98,17 +100,18 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.questions = this.QumlPlayerConfig.data.children;
     this.timeLimit = this.QumlPlayerConfig.data.timeLimit ?
       this.QumlPlayerConfig.data.timeLimit : (this.questions.length * 350000);
-    this.showTimer = this.QumlPlayerConfig.data.showTimer;
-    this.showFeedBack = this.QumlPlayerConfig.data.showFeedback;
-    this.showUserSolution = this.QumlPlayerConfig.data.showSolutions;
+    this.showTimer = this.QumlPlayerConfig.data.showTimer === 'Yes' ? true : false;
+    this.showFeedBack = this.QumlPlayerConfig.data.showFeedback === 'Yes' ? true : false;
+    this.showUserSolution = this.QumlPlayerConfig.data.showSolutions === 'Yes' ? true : false;
     this.startPageInstruction = this.QumlPlayerConfig.data.instructions;
     this.linearNavigation = this.QumlPlayerConfig.data.navigationMode === 'non-linear' ? false : true;
-    this.requiresSubmit = this.QumlPlayerConfig.data.requiresSubmit ? this.QumlPlayerConfig.data.requiresSubmit : false;
+    this.requiresSubmit = this.QumlPlayerConfig.data.requiresSubmit === 'Yes' ? true : false;
     this.noOfQuestions = this.QumlPlayerConfig.data.totalQuestions;
     this.maxScore = this.QumlPlayerConfig.data.maxScore;
     this.userName = this.QumlPlayerConfig.context.userData.firstName + ' ' + this.QumlPlayerConfig.context.userData.lastName;
     this.contentName = this.QumlPlayerConfig.data.name;
-    if (this.QumlPlayerConfig.data.shuffle) {
+    this.shuffleQuestions = this.QumlPlayerConfig.data.shuffle === 'Yes' ? true : false;
+    if (this.shuffleQuestions) {
       this.questions = this.QumlPlayerConfig.data.children.sort(() => Math.random() - 0.5);
     }
     this.userService.raiseStartEvent(this.car.getCurrentSlideIndex());
@@ -144,6 +147,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.active = false;
     this.showAlert = false;
     this.optionSelectedObj = undefined;
+    this.currentQuestion = undefined;
+    this.currentOptions = undefined;
+    this.currentSolutions = undefined;
     if (this.intervalRef) {
       clearInterval(this.intervalRef);
     }
@@ -172,9 +178,11 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
 
   getOptionSelected(optionSelected) {
+    const currentIndex = this.car.getCurrentSlideIndex() -1;
     this.userService.raiseHeartBeatEvent(eventName.optionClicked, TelemetryType.interact, pageId.startPage);
     this.optionSelectedObj = optionSelected;
     this.currentSolutions = optionSelected.solutions;
+    this.media = this.questions[currentIndex].media;
     this.active = true;
   }
 
@@ -196,7 +204,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   exitContent(event) {
     if (event.type === 'EXIT') {
-      this.userService.raiseEndEvent(this.currentSlideIndex, this.currentSlideIndex - 1, this.endPageReached);
+      this.userService.raiseHeartBeatEvent(eventName.endPageExitClicked, TelemetryType.interact , 'endPage')
+      this.userService.raiseEndEvent(this.currentSlideIndex, this.currentSlideIndex - 1, 'endPage');
     }
   }
 
@@ -221,10 +230,12 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       const correctOptionValue = this.questions[currentIndex].responseDeclaration[key].correctResponse.value;
       this.currentQuestion = this.questions[currentIndex].body;
       this.currentOptions = this.questions[currentIndex].interactions.response1.options;
+      console.log('option', option);
       if (Boolean(option.option.value == correctOptionValue)) {
         this.scoreBoardObject['index'] = this.car.getCurrentSlideIndex();
         this.scoreBoardObject['status'] = true;
         this.scoreBoardObject['class'] = 'correct';
+        this.scoreBoardObject['value'] = option ? option.option.value : undefined;
         this.showAlert = true;
         this.alertType = true;
         this.correctFeedBackTimeOut();
@@ -238,6 +249,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
         this.scoreBoardObject['index'] = this.car.getCurrentSlideIndex();
         this.scoreBoardObject['status'] = false;
         this.scoreBoardObject['class'] = 'wrong';
+        this.scoreBoardObject['value'] = option ? option.option.value : undefined;
         this.showAlert = true;
         this.alertType = false;
         if (this.showFeedBack) {
@@ -252,18 +264,19 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       this.scoreBoardObject['index'] = this.car.getCurrentSlideIndex();
       this.scoreBoardObject['status'] = false;
       this.scoreBoardObject['class'] = 'skipped';
+      this.scoreBoardObject['value'] = option ? option.option.value : undefined;
       this.nextSlide();
-      if (this.showFeedBack) {
-        this.progressBarClass[currentIndex].class = "skipped";
-      }
     } else if (this.optionSelectedObj === undefined && this.active) {
       this.nextSlide();
     }
     this.scoreBoard.forEach((ele) => {
-      if (ele.index === this.scoreBoardObject['index']) {
+      if (ele.index === this.scoreBoardObject['index'] && this.scoreBoardObject['class'] != 'skipped') {
         ele['status'] = this.scoreBoardObject['status'];
         ele['class'] = this.scoreBoardObject['class'];
         updated = true;
+      } else if (ele.index === this.scoreBoardObject['index'] && this.scoreBoardObject['class'] === 'skipped' && this.scoreBoardObject['value'] !== undefined) {
+        ele['status'] = this.scoreBoardObject['status'];
+        ele['class'] = this.scoreBoardObject['class'];
       }
     });
     if (!updated && Object.keys(this.scoreBoardObject).length > 0) {
@@ -281,6 +294,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       }
     }, 3000)
   }
+
   nextSlideClicked(event) {
     if (event.type === 'next') {
       this.validateSelectedOption(this.optionSelectedObj);
@@ -299,7 +313,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.loadScoreBoard = false;
     this.currentSlideIndex = 1;
     this.car.selectSlide(1);
-    document.getElementById('p-0').click();
   }
 
   inScoreBoardSubmitClicked() {
@@ -310,6 +323,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   goToSlide(index) {
     if(index === 0 ){
       this.optionSelectedObj = undefined;
+    }
+    if(this.loadScoreBoard){
+      this.loadScoreBoard = false;
     }
     this.currentSlideIndex = index;
     this.car.selectSlide(index);
@@ -330,5 +346,17 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   goToQuestion(event) {
     this.car.selectSlide(event.questionNo);
     this.loadScoreBoard = false;
+  }
+
+  getSolutions(){
+    const currentIndex = this.car.getCurrentSlideIndex() -1;
+    this.currentQuestion = this.questions[currentIndex].body;
+    this.currentOptions = this.questions[currentIndex].interactions.response1.options;
+    if(this.currentSolutions) {
+      this.showSolution = true;
+    }
+    if(this.intervalRef){
+      clearInterval(this.intervalRef)
+    }
   }
 }

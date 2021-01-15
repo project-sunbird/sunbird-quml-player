@@ -23,8 +23,8 @@
         <!-- <div>
           <quml-share></quml-share>
         </div> -->
-        <div>
-          <quml-ans ></quml-ans>
+        <div *ngIf="this.currentSolutions"> 
+          <quml-ans (click)="getSolutions()"></quml-ans>
         </div>
       </div>
       <carousel class="landscape-center" [interval]="slideInterval" [showIndicators]="showIndicator"
@@ -48,14 +48,19 @@
           <li [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlide(0)">i
           </li>
           <li *ngFor="let question of questions; let i = index"
-            [ngClass]="(i+1) === car.getCurrentSlideIndex() ? 'progressBar-border': (i+1) < car.getCurrentSlideIndex() ? 'att-color' : '' "
+            [ngClass]="this.loadScoreBoard ? 'att-color' : (i+1) === car.getCurrentSlideIndex() ? 'progressBar-border': (i+1) < car.getCurrentSlideIndex()  ? 'att-color' : '' "
             (click)="goToSlide(i+1)" id=p-{{i}}>{{i+1}}</li>
+            <li *ngIf="!this.loadScoreBoard"><quml-flag-inactive></quml-flag-inactive></li>
+            <li *ngIf="this.loadScoreBoard"><quml-flag-active></quml-flag-active></li>
         </ul>
         <ul *ngIf="showFeedBack">
           <li [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlide(0)">i
           </li>
-          <li *ngFor="let q of progressBarClass; let i = index" class="showFeedBack-progressBar" [ngClass]="(i+1) === car.getCurrentSlideIndex() ? 'progressBar-border' : q.class" (click)="goToSlide(q.index)">
+          <li *ngFor="let q of progressBarClass; let i = index" class="showFeedBack-progressBar" 
+          [ngClass]="this.loadScoreBoard ? q.class : (i+1) === car.getCurrentSlideIndex() ? 'progressBar-border' : q.class" (click)="goToSlide(q.index)">
             {{q.index}}</li>
+            <li *ngIf="!this.loadScoreBoard"><quml-flag-inactive></quml-flag-inactive></li>
+            <li *ngIf="this.loadScoreBoard"><quml-flag-active></quml-flag-active></li>
         </ul>
       </div>
     </div>
@@ -72,5 +77,5 @@
   <quml-alert *ngIf="showAlert && showFeedBack" [alertType]="alertType" [showSolutionButton]="showUserSolution"
     (showSolution)="viewSolution()" (closeAlert)="closeAlertBox($event)"></quml-alert>
   <quml-solutions [hidden]="!showSolution" [question]="currentQuestion" [options]="currentOptions"
-    [solutions]="currentSolutions" (close)="closeSolution()"></quml-solutions>
+    [solutions]="currentSolutions" [media]="media"  (close)="closeSolution()"></quml-solutions>
 </div>
