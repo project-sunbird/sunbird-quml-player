@@ -28,6 +28,15 @@ export class SaComponent implements OnInit {
     this.question = this.questions.body;
     this.answer = this.questions.answer;
     this.solutions = this.questions.solutions;
+    this.questions.solutions.forEach(ele => {
+      if (ele.type === 'video') {
+        this.questions.media.forEach(e => {
+          if (ele.value === e.id) {
+            ele.src = e.src;
+            ele.thumbnail = e.thumbnail;
+          }
+        });
+      }
+    });
   }
-
 }

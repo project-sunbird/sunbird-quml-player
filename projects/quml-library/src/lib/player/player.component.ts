@@ -115,7 +115,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       this.questions = this.QumlPlayerConfig.data.children.sort(() => Math.random() - 0.5);
     }
     this.userService.raiseStartEvent(this.car.getCurrentSlideIndex());
-    this.addClassToQuestion();
+    this.setInitialScores();
   }
 
   ngAfterViewInit() {
@@ -217,6 +217,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   async validateSelectedOption(option) {
     this.scoreBoardObject = {};
+    const selectedOptionValue = option ? option.option.value : undefined;
+    console.log('selected option value', selectedOptionValue);
     const currentIndex = this.car.getCurrentSlideIndex() - 1;
     let updated = false;
     if (this.optionSelectedObj !== undefined) {
@@ -230,30 +232,24 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       const correctOptionValue = this.questions[currentIndex].responseDeclaration[key].correctResponse.value;
       this.currentQuestion = this.questions[currentIndex].body;
       this.currentOptions = this.questions[currentIndex].interactions.response1.options;
-      console.log('option', option);
       if (Boolean(option.option.value == correctOptionValue)) {
-        this.scoreBoardObject['index'] = this.car.getCurrentSlideIndex();
-        this.scoreBoardObject['status'] = true;
-        this.scoreBoardObject['class'] = 'correct';
-        this.scoreBoardObject['value'] = option ? option.option.value : undefined;
         this.showAlert = true;
         this.alertType = true;
+        this.updateScores(currentIndex +1, 'attempted',  selectedOptionValue);
         this.correctFeedBackTimeOut();
         if (!this.showFeedBack) {
           this.nextSlide();
         }
         if (this.showFeedBack) {
-          this.progressBarClass[currentIndex].class = "correct";
+          this.updateScores( ((currentIndex + 1)) , 'correct');
         }
       } else if (!Boolean(option.option.value.value == correctOptionValue)) {
-        this.scoreBoardObject['index'] = this.car.getCurrentSlideIndex();
-        this.scoreBoardObject['status'] = false;
-        this.scoreBoardObject['class'] = 'wrong';
-        this.scoreBoardObject['value'] = option ? option.option.value : undefined;
+        this.updateScores(currentIndex +1, 'attempted' , selectedOptionValue);
+
         this.showAlert = true;
         this.alertType = false;
         if (this.showFeedBack) {
-          this.progressBarClass[currentIndex].class = "wrong";
+          this.updateScores((currentIndex + 1) , 'wrong');
         }
         if (!this.showFeedBack) {
           this.nextSlide();
@@ -261,26 +257,31 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       }
       this.optionSelectedObj = undefined;
     } else if (this.optionSelectedObj === undefined && !this.active) {
-      this.scoreBoardObject['index'] = this.car.getCurrentSlideIndex();
-      this.scoreBoardObject['status'] = false;
-      this.scoreBoardObject['class'] = 'skipped';
-      this.scoreBoardObject['value'] = option ? option.option.value : undefined;
+      // this.updateScores(currentIndex +1, 'unattempted' , selectedOptionValue);
       this.nextSlide();
     } else if (this.optionSelectedObj === undefined && this.active) {
       this.nextSlide();
     }
-    this.scoreBoard.forEach((ele) => {
-      if (ele.index === this.scoreBoardObject['index'] && this.scoreBoardObject['class'] != 'skipped') {
-        ele['status'] = this.scoreBoardObject['status'];
-        ele['class'] = this.scoreBoardObject['class'];
-        updated = true;
-      } else if (ele.index === this.scoreBoardObject['index'] && this.scoreBoardObject['class'] === 'skipped' && this.scoreBoardObject['value'] !== undefined) {
-        ele['status'] = this.scoreBoardObject['status'];
-        ele['class'] = this.scoreBoardObject['class'];
-      }
-    });
-    if (!updated && Object.keys(this.scoreBoardObject).length > 0) {
-      this.scoreBoard.push(this.scoreBoardObject);
+  }
+
+
+
+  updateScores(index, classToBeUpdated, optionValue?) {
+    if(this.showFeedBack) {
+      this.progressBarClass.forEach((ele) => {
+        if (ele.index === index) {
+          ele.class = classToBeUpdated;
+          ele.qType  = this.questions[index-1].primaryCategory.toLowerCase() === 'multiple choice question' ? 'MCQ' : 'SA';
+        }
+      })
+    } else if(!this.showFeedBack) {
+      console.log('here');
+       this.progressBarClass.forEach((ele) =>{
+         if(ele.index === index) {
+           ele.class = classToBeUpdated;
+          ele.value = optionValue
+         }
+       })
     }
   }
 
@@ -306,6 +307,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       this.prevSlide();
     }
   }
+
   replayContent() {
     this.userService.raiseHeartBeatEvent(eventName.replayClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
     this.userService.raiseStartEvent(this.car.getCurrentSlideIndex());
@@ -337,10 +339,20 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     }
   }
 
-  addClassToQuestion() {
-    this.questions.forEach((ele, index) => {
-      this.progressBarClass.push({ index: (index + 1), class: 'skipped' });
-    })
+  setInitialScores() {
+    if (this.showFeedBack) {
+      this.questions.forEach((ele, index) => {
+        this.progressBarClass.push({ index: (index + 1), class: 'skipped',
+        qType:this.questions[index].primaryCategory.toLowerCase() === 'multiple choice question' ? 'MCQ' : 'SA'
+      });
+      })
+    } else if (!this.showFeedBack) {
+      this.questions.forEach((ele, index) => {
+        this.progressBarClass.push({ index: (index + 1), class: 'unattempted', value: undefined ,
+        qType:this.questions[index].primaryCategory.toLowerCase() === 'multiple choice question' ? 'MCQ' : 'SA'
+      });
+      })
+    }
   }
 
   goToQuestion(event) {

@@ -9,5 +9,12 @@
   <div class="sa-title">Answer</div>
   <div class="option-body" [innerHTML]="answer"></div>
   <div class="sa-title">solutions</div>
-  <div class="solutions" *ngFor="let solution of solutions" [innerHTML]="solution.value"></div>
+  <div class="solutions" *ngFor="let solution of solutions">
+    <div *ngIf="solution.type==='html'"  [innerHTML]="solution.value"></div>
+    <div *ngIf="solution.type==='video'">
+      <video width="400" controls poster= {{solution.thumbnail}}>
+        <source src={{solution.src}} type="video/mp4">
+    </video>
+    </div>
+  </div>
 </div>

@@ -50,7 +50,7 @@
           <li *ngFor="let question of questions; let i = index"
             [ngClass]="this.loadScoreBoard ? 'att-color' : (i+1) === car.getCurrentSlideIndex() ? 'progressBar-border': (i+1) < car.getCurrentSlideIndex()  ? 'att-color' : '' "
             (click)="goToSlide(i+1)" id=p-{{i}}>{{i+1}}</li>
-            <li *ngIf="!this.loadScoreBoard"><quml-flag-inactive></quml-flag-inactive></li>
+            <li *ngIf="!this.loadScoreBoard" (click)="this.loadScoreBoard = true;"><quml-flag-inactive></quml-flag-inactive></li>
             <li *ngIf="this.loadScoreBoard"><quml-flag-active></quml-flag-active></li>
         </ul>
         <ul *ngIf="showFeedBack">
@@ -59,7 +59,7 @@
           <li *ngFor="let q of progressBarClass; let i = index" class="showFeedBack-progressBar" 
           [ngClass]="this.loadScoreBoard ? q.class : (i+1) === car.getCurrentSlideIndex() ? 'progressBar-border' : q.class" (click)="goToSlide(q.index)">
             {{q.index}}</li>
-            <li *ngIf="!this.loadScoreBoard"><quml-flag-inactive></quml-flag-inactive></li>
+            <li *ngIf="!this.loadScoreBoard" (click)="this.loadScoreBoard = true;"><quml-flag-inactive></quml-flag-inactive></li>
             <li *ngIf="this.loadScoreBoard"><quml-flag-active></quml-flag-active></li>
         </ul>
       </div>
@@ -71,7 +71,7 @@
       (replayContent)="replayContent()" (exitContent)="exitContent($event)" [showExit]="true"></sb-player-end-page>
   </div>
   <quml-scoreboard *ngIf="loadScoreBoard && requiresSubmit && !endPageReached"
-    (submitClicked)="inScoreBoardSubmitClicked()" [contentName]="contentName" [scores]="scoreBoard" [totalNoOfQuestions]="questions.length"
+    (submitClicked)="inScoreBoardSubmitClicked()" [contentName]="contentName" [scores]="this.progressBarClass" [totalNoOfQuestions]="questions.length"
     [showFeedBack]="showFeedBack" (emitQuestionNo)="goToQuestion($event)"
     (submitClicked)="scoreBoardSubmitClicked($event)"></quml-scoreboard>
   <quml-alert *ngIf="showAlert && showFeedBack" [alertType]="alertType" [showSolutionButton]="showUserSolution"
