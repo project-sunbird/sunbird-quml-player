@@ -50,8 +50,8 @@
           <li *ngFor="let question of questions; let i = index"
             [ngClass]="this.loadScoreBoard ? 'att-color' : (i+1) === car.getCurrentSlideIndex() ? 'progressBar-border': (i+1) < car.getCurrentSlideIndex()  ? 'att-color' : '' "
             (click)="goToSlide(i+1)" id=p-{{i}}>{{i+1}}</li>
-            <li *ngIf="!this.loadScoreBoard" (click)="this.loadScoreBoard = true;"><quml-flag-inactive></quml-flag-inactive></li>
-            <li *ngIf="this.loadScoreBoard"><quml-flag-active></quml-flag-active></li>
+            <li *ngIf="!this.loadScoreBoard" (click)="this.loadScoreBoard = true;"><img src="./assets/flag_inactive.svg"></li>
+            <li *ngIf="this.loadScoreBoard"><img src="./assets/flag_active.svg"></li>
         </ul>
         <ul *ngIf="showFeedBack">
           <li [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlide(0)">i
@@ -59,8 +59,8 @@
           <li *ngFor="let q of progressBarClass; let i = index" class="showFeedBack-progressBar" 
           [ngClass]="this.loadScoreBoard ? q.class : (i+1) === car.getCurrentSlideIndex() ? 'progressBar-border' : q.class" (click)="goToSlide(q.index)">
             {{q.index}}</li>
-            <li *ngIf="!this.loadScoreBoard" (click)="this.loadScoreBoard = true;"><quml-flag-inactive></quml-flag-inactive></li>
-            <li *ngIf="this.loadScoreBoard"><quml-flag-active></quml-flag-active></li>
+            <li *ngIf="!this.loadScoreBoard" (click)="this.loadScoreBoard = true;"><img src="./assets/flag_inactive.svg"></li>
+            <li *ngIf="this.loadScoreBoard"><img src="./assets/flag_active.svg"></li>
         </ul>
       </div>
     </div>
@@ -76,6 +76,6 @@
     (submitClicked)="scoreBoardSubmitClicked($event)"></quml-scoreboard>
   <quml-alert *ngIf="showAlert && showFeedBack" [alertType]="alertType" [showSolutionButton]="showUserSolution"
     (showSolution)="viewSolution()" (closeAlert)="closeAlertBox($event)"></quml-alert>
-  <quml-solutions [hidden]="!showSolution" [question]="currentQuestion" [options]="currentOptions"
-    [solutions]="currentSolutions" [media]="media"  (close)="closeSolution()"></quml-solutions>
+  <quml-mcq-solutions [hidden]="!showSolution" [question]="currentQuestion" [options]="currentOptions"
+    [solutions]="currentSolutions" [media]="media"  (close)="closeSolution()"></quml-mcq-solutions>
 </div>

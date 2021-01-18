@@ -13,9 +13,13 @@
         <div *ngFor="let solution of solutions" >
            <div  *ngIf="solution.type === 'html'"[innerHtml]="solution.value"></div>
            <div *ngIf="solution.type === 'video'" class="video-container">
-            <video width="400" controls poster= {{solution.thumbnail}}>
+            <video width="400" #solutionVideoPlayer controls poster= {{solution.thumbnail}}>
                 <source src={{solution.src}} type="video/mp4">
+                <source src={{solution.src}} type="video/webm">
             </video>
+           </div>
+           <div *ngIf="solution.type === 'image'">
+               <img src='solution.src'>
            </div>
         </div>
     </div>

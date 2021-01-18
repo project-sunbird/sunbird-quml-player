@@ -30,7 +30,7 @@ import { PreviousActiveComponent } from './icon/previous-active/previous-active.
 import { NextActiveComponent } from './icon/next-active/next-active.component';
 import { AlertComponent } from './alert/alert.component';
 import { CloseComponent } from './icon/close/close.component';
-import { SolutionsComponent } from './solutions/solutions.component';
+import { McqSolutionsComponent } from './mcq-solutions/mcq-solutions.component';
 import { DurationtimerComponent } from './icon/durationtimer/durationtimer.component';
 import { AudioComponent } from './icon/audio/audio.component';
 import { WrongComponent } from './icon/wrong/wrong.component';
@@ -72,7 +72,7 @@ import { FlagActiveComponent } from './icon/flag-active/flag-active.component';
     NextActiveComponent,
     AlertComponent,
     CloseComponent,
-    SolutionsComponent,
+    McqSolutionsComponent,
     DurationtimerComponent,
     AudioComponent,
     WrongComponent,

@@ -27,7 +27,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   scoreBoard = [];
   endPageReached: boolean;
-  // slides: any;
   slideInterval: number;
   showIndicator: Boolean;
   noWrapSlides: Boolean;
@@ -59,6 +58,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   currentSlideIndex = 0;
   attemptedQuestions = [];
   loadScoreBoard = false;
+  totalScore = [];
   // need to see
   loadingScreen = true;
   private intervalRef: any;
@@ -178,12 +178,25 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
 
   getOptionSelected(optionSelected) {
-    const currentIndex = this.car.getCurrentSlideIndex() -1;
+    this.active = true;
+    const currentIndex = this.car.getCurrentSlideIndex() - 1;
     this.userService.raiseHeartBeatEvent(eventName.optionClicked, TelemetryType.interact, pageId.startPage);
     this.optionSelectedObj = optionSelected;
     this.currentSolutions = optionSelected.solutions;
     this.media = this.questions[currentIndex].media;
-    this.active = true;
+    if (this.currentSolutions) {
+      this.currentSolutions.forEach((ele, index) => {
+        if (ele.type === 'video') {
+          this.media.forEach((e) => {
+            if (e.id === this.currentSolutions[index].value) {
+              this.currentSolutions[index].type = 'video'
+              this.currentSolutions[index].src = e.src;
+              this.currentSolutions[index].thumbnail = e.thumbnail;
+            }
+          })
+        }
+      })
+    }
   }
 
   closeAlertBox(event) {
@@ -204,7 +217,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   exitContent(event) {
     if (event.type === 'EXIT') {
-      this.userService.raiseHeartBeatEvent(eventName.endPageExitClicked, TelemetryType.interact , 'endPage')
+      this.userService.raiseHeartBeatEvent(eventName.endPageExitClicked, TelemetryType.interact, 'endPage')
       this.userService.raiseEndEvent(this.currentSlideIndex, this.currentSlideIndex - 1, 'endPage');
     }
   }
@@ -218,7 +231,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   async validateSelectedOption(option) {
     this.scoreBoardObject = {};
     const selectedOptionValue = option ? option.option.value : undefined;
-    console.log('selected option value', selectedOptionValue);
     const currentIndex = this.car.getCurrentSlideIndex() - 1;
     let updated = false;
     if (this.optionSelectedObj !== undefined) {
@@ -235,21 +247,21 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       if (Boolean(option.option.value == correctOptionValue)) {
         this.showAlert = true;
         this.alertType = true;
-        this.updateScores(currentIndex +1, 'attempted',  selectedOptionValue);
+        this.updateScoreBoard(currentIndex + 1, 'attempted', selectedOptionValue);
         this.correctFeedBackTimeOut();
         if (!this.showFeedBack) {
           this.nextSlide();
         }
         if (this.showFeedBack) {
-          this.updateScores( ((currentIndex + 1)) , 'correct');
+          this.updateScoreBoard(((currentIndex + 1)), 'correct');
         }
       } else if (!Boolean(option.option.value.value == correctOptionValue)) {
-        this.updateScores(currentIndex +1, 'attempted' , selectedOptionValue);
+        this.updateScoreBoard(currentIndex + 1, 'attempted', selectedOptionValue);
 
         this.showAlert = true;
         this.alertType = false;
         if (this.showFeedBack) {
-          this.updateScores((currentIndex + 1) , 'wrong');
+          this.updateScoreBoard((currentIndex + 1), 'wrong');
         }
         if (!this.showFeedBack) {
           this.nextSlide();
@@ -266,22 +278,21 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
 
 
-  updateScores(index, classToBeUpdated, optionValue?) {
-    if(this.showFeedBack) {
+  updateScoreBoard(index, classToBeUpdated, optionValue?) {
+    if (this.showFeedBack) {
       this.progressBarClass.forEach((ele) => {
         if (ele.index === index) {
           ele.class = classToBeUpdated;
-          ele.qType  = this.questions[index-1].primaryCategory.toLowerCase() === 'multiple choice question' ? 'MCQ' : 'SA';
+          ele.qType = this.questions[index - 1].primaryCategory.toLowerCase() === 'multiple choice question' ? 'MCQ' : 'SA';
         }
       })
-    } else if(!this.showFeedBack) {
-      console.log('here');
-       this.progressBarClass.forEach((ele) =>{
-         if(ele.index === index) {
-           ele.class = classToBeUpdated;
+    } else if (!this.showFeedBack) {
+      this.progressBarClass.forEach((ele) => {
+        if (ele.index === index) {
+          ele.class = classToBeUpdated;
           ele.value = optionValue
-         }
-       })
+        }
+      })
     }
   }
 
@@ -323,10 +334,10 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   goToSlide(index) {
-    if(index === 0 ){
+    if (index === 0) {
       this.optionSelectedObj = undefined;
     }
-    if(this.loadScoreBoard){
+    if (this.loadScoreBoard) {
       this.loadScoreBoard = false;
     }
     this.currentSlideIndex = index;
@@ -342,15 +353,17 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   setInitialScores() {
     if (this.showFeedBack) {
       this.questions.forEach((ele, index) => {
-        this.progressBarClass.push({ index: (index + 1), class: 'skipped',
-        qType:this.questions[index].primaryCategory.toLowerCase() === 'multiple choice question' ? 'MCQ' : 'SA'
-      });
+        this.progressBarClass.push({
+          index: (index + 1), class: 'skipped',
+          qType: this.questions[index].primaryCategory.toLowerCase() === 'multiple choice question' ? 'MCQ' : 'SA'
+        });
       })
     } else if (!this.showFeedBack) {
       this.questions.forEach((ele, index) => {
-        this.progressBarClass.push({ index: (index + 1), class: 'unattempted', value: undefined ,
-        qType:this.questions[index].primaryCategory.toLowerCase() === 'multiple choice question' ? 'MCQ' : 'SA'
-      });
+        this.progressBarClass.push({
+          index: (index + 1), class: 'unattempted', value: undefined,
+          qType: this.questions[index].primaryCategory.toLowerCase() === 'multiple choice question' ? 'MCQ' : 'SA'
+        });
       })
     }
   }
@@ -360,14 +373,14 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.loadScoreBoard = false;
   }
 
-  getSolutions(){
-    const currentIndex = this.car.getCurrentSlideIndex() -1;
+  getSolutions() {
+    const currentIndex = this.car.getCurrentSlideIndex() - 1;
     this.currentQuestion = this.questions[currentIndex].body;
     this.currentOptions = this.questions[currentIndex].interactions.response1.options;
-    if(this.currentSolutions) {
+    if (this.currentSolutions) {
       this.showSolution = true;
     }
-    if(this.intervalRef){
+    if (this.intervalRef) {
       clearInterval(this.intervalRef)
     }
   }

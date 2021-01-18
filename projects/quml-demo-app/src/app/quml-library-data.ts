@@ -271,7 +271,7 @@ export const data1 = {
         'allowSkip': 'Yes',
         'requiresSubmit': 'Yes',
         'shuffle': 'Yes',
-        'showFeedback': 'Yes',
+        'showFeedback': 'No',
         'showSolutions': 'Yes',
         'quMLVersion': 1.5,
         'showTimer': 'Yes',
@@ -758,7 +758,114 @@ export const data1 = {
                 ],
                 "answer": "<p>answer&nbsp;</p><figure class=\"image\"><img src=\"https://dockstorage.blob.core.windows.net/sunbird-content-dock/content/do_11318931140144332811620/artifact/i.png\" alt=\"do_11318931140144332811620\" data-asset-variable=\"do_11318931140144332811620\"></figure>",
                 "name": "Subjective"
-            }
+            },
+            {
+                "responseDeclaration": {
+                    "maxScore": 1,
+                  "response1": {
+                    "cardinality": "single",
+                    "type": "integer",
+                    "correctResponse": {
+                      "value": "1",
+                      "outcomes": {
+                        "SCORE": 1
+                      }
+                    }
+                  }
+                },
+                "mimeType": "application/vnd.sunbird.question",
+                "media": [
+                  {
+                    "id": "do_113143851323514880165",
+                    "type": "image",
+                    "src": "https://dockstorage.blob.core.windows.net/sunbird-content-dock/content/do_113143851323514880165/artifact/icon24.png",
+                    "baseUrl": "https://dock.sunbirded.org"
+                  }
+                ],
+                "body": "<div class='question-body'><div class='mcq-title'><p>MCQ solution html</p></div><div data-choice-interaction='response1' class='mcq-vertical'></div></div>",
+                "editorState": {
+                  "options": [
+                    {
+                      "answer": false,
+                      "value": {
+                        "body": "<p>Option 111</p>",
+                        "value": 0
+                      }
+                    },
+                    {
+                      "answer": true,
+                      "value": {
+                        "body": "<p>Option 222<br><br data-cke-filler=\"true\"></p><figure class=\"image\"><img src=\"https://dockstorage.blob.core.windows.net/sunbird-content-dock/content/do_113143851323514880165/artifact/icon24.png\" alt=\"do_113143851323514880165\" data-asset-variable=\"do_113143851323514880165\"></figure>",
+                        "value": 1
+                      }
+                    },
+                    {
+                      "answer": false,
+                      "value": {
+                        "body": "<p>Option 333</p>",
+                        "value": 2
+                      }
+                    },
+                    {
+                      "answer": false,
+                      "value": {
+                        "body": "<p>Option 444</p>",
+                        "value": 3
+                      }
+                    }
+                  ],
+                  "question": "<p>MCQ solution html</p>",
+                  "solutions": [
+                    {
+                      "id": "d418da85-529f-6ae3-6f5b-4394c57a84b7",
+                      "type": "html",
+                      "value": "<p>This is solution&nbsp;<br><br data-cke-filler=\"true\"></p><figure class=\"image\"><img src=\"data:image/png;base64,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\" data-mathtext=\"A%3D%5Cpi%20r%5E2\" advanced=\"false\"></figure><p><br data-cke-filler=\"true\"></p><figure class=\"image\"><img src=\"https://dockstorage.blob.core.windows.net/sunbird-content-dock/content/do_113143851323514880165/artifact/icon24.png\" alt=\"do_113143851323514880165\" data-asset-variable=\"do_113143851323514880165\"></figure>"
+                    }
+                  ]
+                },
+                "templateId": "mcq-vertical",
+                "interactions": {
+                  "response1": {
+                    "type": "choice",
+                    "options": [
+                      {
+                        "label": "<p>Option 111</p>",
+                        "value": 0
+                      },
+                      {
+                        "label": "<p>Option 222<br><br data-cke-filler=\"true\"></p><figure class=\"image\"><img src=\"https://dockstorage.blob.core.windows.net/sunbird-content-dock/content/do_113143851323514880165/artifact/icon24.png\" alt=\"do_113143851323514880165\" data-asset-variable=\"do_113143851323514880165\"></figure>",
+                        "value": 1
+                      },
+                      {
+                        "label": "<p>Option 333</p>",
+                        "value": 2
+                      },
+                      {
+                        "label": "<p>Option 444</p>",
+                        "value": 3
+                      }
+                    ]
+                  }
+                },
+                "primaryCategory": "Multiple Choice Question",
+                "identifier": "do_113193463656955904143",
+                "solutions": [
+                  {
+                    "id": "d418da85-529f-6ae3-6f5b-4394c57a84b7",
+                    "type": "html",
+                    "value": "<p>This is solution&nbsp;<br><br data-cke-filler=\"true\"></p><figure class=\"image\"><img src=\"data:image/png;base64,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\" data-mathtext=\"A%3D%5Cpi%20r%5E2\" advanced=\"false\"></figure><p><br data-cke-filler=\"true\"></p><figure class=\"image\"><img src=\"https://dockstorage.blob.core.windows.net/sunbird-content-dock/content/do_113143851323514880165/artifact/icon24.png\" alt=\"do_113143851323514880165\" data-asset-variable=\"do_113143851323514880165\"></figure>"
+                  }
+                ],
+                "qType": "MCQ",
+                "languageCode": [
+                  "en"
+                ],
+                "interactionTypes": [
+                  "choice"
+                ],
+                "answer": "1",
+                "name": "Multiple Choice"
+              }
         ]
     }
 }
