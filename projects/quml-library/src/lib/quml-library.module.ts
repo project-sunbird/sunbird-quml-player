@@ -37,8 +37,6 @@ import { WrongComponent } from './icon/wrong/wrong.component';
 import { MenuComponent } from './icon/menu/menu.component';
 import {SunbirdPlayerSdkModule} from '@project-sunbird/sunbird-player-sdk';
 import { QumlLibraryService } from './quml-library.service';
-import { FlagInactiveComponent } from './icon/flag-inactive/flag-inactive.component';
-import { FlagActiveComponent } from './icon/flag-active/flag-active.component';
 
 
 @NgModule({
@@ -77,8 +75,6 @@ import { FlagActiveComponent } from './icon/flag-active/flag-active.component';
     AudioComponent,
     WrongComponent,
     MenuComponent,
-    FlagInactiveComponent,
-    FlagActiveComponent
   ],
   imports: [
     CommonModule,
