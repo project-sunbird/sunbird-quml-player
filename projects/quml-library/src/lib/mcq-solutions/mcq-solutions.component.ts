@@ -10,8 +10,6 @@ export class McqSolutionsComponent implements OnInit {
   @Input() question: any;
   @Input() options: any;
   @Input() solutions: any;
-  @Input() media: any;
-  videoUrl: string;
   showVideoSolution: boolean;
   @ViewChild('solutionVideoPlayer') solutionVideoPlayer: ElementRef;
 

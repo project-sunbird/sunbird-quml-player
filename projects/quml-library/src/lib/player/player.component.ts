@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, Output, EventEmitter, AfterViewInit, ChangeDetectorRef, HostListener } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Output, EventEmitter, AfterViewInit, ChangeDetectorRef, HostListener, ElementRef } from '@angular/core';
 import { CarouselComponent } from 'ngx-bootstrap/carousel';
 import { QumlLibraryService } from '../quml-library.service';
 import { QumlPlayerConfig } from '../quml-library-interface';
@@ -13,19 +13,14 @@ import { eventName, TelemetryType, pageId } from '../telemetry-constants';
   styleUrls: ['./player.component.scss']
 })
 export class PlayerComponent implements OnInit, AfterViewInit {
-  @Input() questions: any;
   @Input() QumlPlayerConfig: QumlPlayerConfig;
-  @Input() linearNavigation: boolean;
-  @Input() duration: any;
-  @Output() componentLoaded = new EventEmitter<any>();
   @Output() playerEvent = new EventEmitter<any>();
   @Output() telemetryEvent = new EventEmitter<any>();
-  @Output() previousClicked = new EventEmitter<any>();
-  @Output() nextClicked = new EventEmitter<any>();
-  @Output() questionClicked = new EventEmitter<any>();
   @ViewChild('car') car: CarouselComponent;
 
-  scoreBoard = [];
+
+  questions: any;
+  linearNavigation: boolean;
   endPageReached: boolean;
   slideInterval: number;
   showIndicator: Boolean;
@@ -40,7 +35,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   active = false;
   alertType: boolean;
   previousOption: any;
-  scoreBoardObject = {};
   timeLimit: any;
   showTimer: any;
   showFeedBack: boolean;
@@ -59,11 +53,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   attemptedQuestions = [];
   loadScoreBoard = false;
   totalScore = [];
-  // need to see
-  loadingScreen = true;
   private intervalRef: any;
   progressBarClass = [];
-  progressBarSet = new Set();
   CarouselConfig = {
     NEXT: 1,
     PREV: 2
@@ -100,9 +91,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.questions = this.QumlPlayerConfig.data.children;
     this.timeLimit = this.QumlPlayerConfig.data.timeLimit ?
       this.QumlPlayerConfig.data.timeLimit : (this.questions.length * 350000);
-    this.showTimer = this.QumlPlayerConfig.data.showTimer === 'Yes' ? true : false;
-    this.showFeedBack = this.QumlPlayerConfig.data.showFeedback === 'Yes' ? true : false;
-    this.showUserSolution = this.QumlPlayerConfig.data.showSolutions === 'Yes' ? true : false;
+    this.showTimer = this.QumlPlayerConfig.data.showTimer.toLowerCase() === 'yes' ? true : false;
+    this.showFeedBack = this.QumlPlayerConfig.data.showFeedback.toLowerCase() === 'yes' ? true : false;
+    this.showUserSolution = this.QumlPlayerConfig.data.showSolutions.toLowerCase() === 'yes' ? true : false;
     this.startPageInstruction = this.QumlPlayerConfig.data.instructions;
     this.linearNavigation = this.QumlPlayerConfig.data.navigationMode === 'non-linear' ? false : true;
     this.requiresSubmit = this.QumlPlayerConfig.data.requiresSubmit === 'Yes' ? true : false;
@@ -229,7 +220,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   async validateSelectedOption(option) {
-    this.scoreBoardObject = {};
     const selectedOptionValue = option ? option.option.value : undefined;
     const currentIndex = this.car.getCurrentSlideIndex() - 1;
     let updated = false;
@@ -269,7 +259,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       }
       this.optionSelectedObj = undefined;
     } else if (this.optionSelectedObj === undefined && !this.active) {
-      // this.updateScores(currentIndex +1, 'unattempted' , selectedOptionValue);
       this.nextSlide();
     } else if (this.optionSelectedObj === undefined && this.active) {
       this.nextSlide();
