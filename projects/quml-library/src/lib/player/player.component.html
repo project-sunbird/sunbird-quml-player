@@ -50,7 +50,7 @@
           <li *ngFor="let question of questions; let i = index"
             [ngClass]="loadScoreBoard ? 'att-color' : (i+1) === car.getCurrentSlideIndex() ? 'progressBar-border': (i+1) < car.getCurrentSlideIndex()  ? 'att-color' : '' "
             (click)="goToSlide(i+1)" id=p-{{i}}>{{i+1}}</li>
-            <li *ngIf="!loadScoreBoard" (click)="this.loadScoreBoard = true;"><img src="./assets/flag_inactive.svg"></li>
+            <li *ngIf="!loadScoreBoard" (click)="loadScoreBoard = true;"><img src="./assets/flag_inactive.svg"></li>
             <li *ngIf="loadScoreBoard"><img src="./assets/flag_active.svg"></li>
         </ul>
         <ul *ngIf="showFeedBack">
@@ -59,7 +59,7 @@
           <li *ngFor="let q of progressBarClass; let i = index" class="showFeedBack-progressBar" 
           [ngClass]="loadScoreBoard ? q.class : (i+1) === car.getCurrentSlideIndex() ? 'progressBar-border' : q.class" (click)="goToSlide(q.index)">
             {{q.index}}</li>
-            <li *ngIf="!loadScoreBoard" (click)="this.loadScoreBoard = true;"><img src="./assets/flag_inactive.svg"></li>
+            <li *ngIf="!loadScoreBoard" (click)="loadScoreBoard = true;"><img src="./assets/flag_inactive.svg"></li>
             <li *ngIf="loadScoreBoard"><img src="./assets/flag_active.svg"></li>
         </ul>
       </div>
