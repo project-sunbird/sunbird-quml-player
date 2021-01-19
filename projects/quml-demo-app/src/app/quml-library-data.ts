@@ -271,7 +271,7 @@ export const data1 = {
         'allowSkip': 'Yes',
         'requiresSubmit': 'Yes',
         'shuffle': 'Yes',
-        'showFeedback': 'No',
+        'showFeedback': 'Yes',
         'showSolutions': 'Yes',
         'quMLVersion': 1.5,
         'showTimer': 'Yes',

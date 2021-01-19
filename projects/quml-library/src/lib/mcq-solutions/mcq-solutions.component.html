@@ -14,13 +14,13 @@
             <ng-container [ngSwitch]="solution.type">
                 <div *ngSwitchCase="'html'" [innerHtml]="solution.value"></div>
                 <div *ngSwitchCase="'video'" class="video-container">
-                    <video width="400" #solutionVideoPlayer controls poster={{solution.thumbnail}}>
-                        <source src={{solution.src}} type="video/mp4">
-                        <source src={{solution.src}} type="video/webm">
+                    <video width="400" #solutionVideoPlayer controls [poster]="solution.thumbnail">
+                        <source [src]="solution.src" type="video/mp4">
+                        <source [src]="solution.src" type="video/webm">
                     </video>
                 </div>
                 <div *ngSwitchCase="'image'">
-                    <img src={{solution.src}}>
+                    <img [src]="solution.src">
                 </div>
             </ng-container>
         </div>
