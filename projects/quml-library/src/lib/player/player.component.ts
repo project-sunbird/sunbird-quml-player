@@ -96,12 +96,12 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.showUserSolution = this.QumlPlayerConfig.data.showSolutions.toLowerCase() === 'yes' ? true : false;
     this.startPageInstruction = this.QumlPlayerConfig.data.instructions;
     this.linearNavigation = this.QumlPlayerConfig.data.navigationMode === 'non-linear' ? false : true;
-    this.requiresSubmit = this.QumlPlayerConfig.data.requiresSubmit === 'Yes' ? true : false;
+    this.requiresSubmit = this.QumlPlayerConfig.data.requiresSubmit.toLowerCase() === 'yes' ? true : false;
     this.noOfQuestions = this.QumlPlayerConfig.data.totalQuestions;
     this.maxScore = this.QumlPlayerConfig.data.maxScore;
     this.userName = this.QumlPlayerConfig.context.userData.firstName + ' ' + this.QumlPlayerConfig.context.userData.lastName;
     this.contentName = this.QumlPlayerConfig.data.name;
-    this.shuffleQuestions = this.QumlPlayerConfig.data.shuffle === 'Yes' ? true : false;
+    this.shuffleQuestions = this.QumlPlayerConfig.data.shuffle.toLowerCase() === 'yes' ? true : false;
     if (this.shuffleQuestions) {
       this.questions = this.QumlPlayerConfig.data.children.sort(() => Math.random() - 0.5);
     }
