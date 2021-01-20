@@ -1,0 +1,31 @@
+<div class="solutions">
+    <div class="close-icon" (click)="closeSolution()">
+        <quml-close></quml-close>
+    </div>
+    <div class="solution-header">Question</div>
+    <div [innerHtml]="question"></div>
+    <div class="solution-header">option</div>
+    <div class="solution-options" *ngFor="let option of options">
+        <div [innerHtml]="option.label"></div>
+    </div>
+    <div class="solution-header">solutions</div>
+    <div *ngIf="!showVideoSolution">
+        <div *ngFor="let solution of solutions">
+            <ng-container [ngSwitch]="solution.type">
+                <div *ngSwitchCase="'html'" [innerHtml]="solution.value"></div>
+                <div *ngSwitchCase="'video'" class="video-container">
+                    <video width="400" #solutionVideoPlayer controls [poster]="solution.thumbnail">
+                        <source [src]="solution.src" type="video/mp4">
+                        <source [src]="solution.src" type="video/webm">
+                    </video>
+                </div>
+                <div *ngSwitchCase="'image'">
+                    <img [src]="solution.src">
+                </div>
+            </ng-container>
+        </div>
+    </div>
+    <div class="scoreboard-button-container">
+        <button type="submit" class="scoreboard-quml-btn" (click)="closeSolution()">Done</button>
+    </div>
+</div>

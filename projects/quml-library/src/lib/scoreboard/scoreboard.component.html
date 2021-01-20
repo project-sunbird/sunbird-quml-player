@@ -7,13 +7,13 @@
     </span>
   </div>
   <div class="scoreboard-scores" *ngIf="showFeedBack">
-    <div *ngFor="let score of scores | slice:1; let i = index" (click)="goToQuestion(i+1)" [ngClass]="score.class">
+    <div *ngFor="let score of scores; let i = index" (click)="goToQuestion(i+1)" [ngClass]="score.class">
       {{score.index}}
     </div>
   </div>
 
   <div class="scoreboard-scores" *ngIf="!showFeedBack">
-    <div *ngFor="let score of scores | slice:1; let i = index" (click)="goToQuestion(i+1)" [ngClass]="score.class === 'correct' ? 'attempted': score.class === 'wrong' ? 'attempted' : 'unattempted'">
+    <div *ngFor="let score of scores; let i = index" (click)="goToQuestion(i+1)" [ngClass]="score.qType === 'MCQ' ? score.class : 'attempted'">
       {{score.index}}
     </div>
   </div>

@@ -1,6 +1,6 @@
 <div class="quml-container">
   <div [hidden]="showSolution">
-    <quml-header class="main-header" (durationEnds)="this.endPageReached = true"
+    <quml-header class="main-header" (durationEnds)="endPageReached = true"
       [disablePreviousNavigation]="linearNavigation" [duration]="timeLimit" [showTimer]="showTimer"
       (nextSlideClicked)="nextSlideClicked($event)" (prevSlideClicked)="previousSlideClicked($event)"
       [currentSlideIndex]="currentSlideIndex" [totalNoOfQuestions]="questions.length" [active]="active"
@@ -23,8 +23,8 @@
         <!-- <div>
           <quml-share></quml-share>
         </div> -->
-        <div>
-          <quml-ans ></quml-ans>
+        <div *ngIf="currentSolutions"> 
+          <quml-ans (click)="getSolutions()"></quml-ans>
         </div>
       </div>
       <carousel class="landscape-center" [interval]="slideInterval" [showIndicators]="showIndicator"
@@ -48,14 +48,19 @@
           <li [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlide(0)">i
           </li>
           <li *ngFor="let question of questions; let i = index"
-            [ngClass]="(i+1) === car.getCurrentSlideIndex() ? 'progressBar-border': (i+1) < car.getCurrentSlideIndex() ? 'att-color' : '' "
+            [ngClass]="loadScoreBoard ? 'att-color' : (i+1) === car.getCurrentSlideIndex() ? 'progressBar-border': (i+1) < car.getCurrentSlideIndex()  ? 'att-color' : '' "
             (click)="goToSlide(i+1)" id=p-{{i}}>{{i+1}}</li>
+            <li *ngIf="!loadScoreBoard" (click)="loadScoreBoard = true;"><img src="./assets/flag_inactive.svg"></li>
+            <li *ngIf="loadScoreBoard"><img src="./assets/flag_active.svg"></li>
         </ul>
         <ul *ngIf="showFeedBack">
           <li [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlide(0)">i
           </li>
-          <li *ngFor="let q of progressBarClass; let i = index" class="showFeedBack-progressBar" [ngClass]="(i+1) === car.getCurrentSlideIndex() ? 'progressBar-border' : q.class" (click)="goToSlide(q.index)">
+          <li *ngFor="let q of progressBarClass; let i = index" class="showFeedBack-progressBar" 
+          [ngClass]="loadScoreBoard ? q.class : (i+1) === car.getCurrentSlideIndex() ? 'progressBar-border' : q.class" (click)="goToSlide(q.index)">
             {{q.index}}</li>
+            <li *ngIf="!loadScoreBoard" (click)="loadScoreBoard = true;"><img src="./assets/flag_inactive.svg"></li>
+            <li *ngIf="loadScoreBoard"><img src="./assets/flag_active.svg"></li>
         </ul>
       </div>
     </div>
@@ -66,11 +71,11 @@
       (replayContent)="replayContent()" (exitContent)="exitContent($event)" [showExit]="true"></sb-player-end-page>
   </div>
   <quml-scoreboard *ngIf="loadScoreBoard && requiresSubmit && !endPageReached"
-    (submitClicked)="inScoreBoardSubmitClicked()" [contentName]="contentName" [scores]="scoreBoard" [totalNoOfQuestions]="questions.length"
+    (submitClicked)="inScoreBoardSubmitClicked()" [contentName]="contentName" [scores]="progressBarClass" [totalNoOfQuestions]="questions.length"
     [showFeedBack]="showFeedBack" (emitQuestionNo)="goToQuestion($event)"
     (submitClicked)="scoreBoardSubmitClicked($event)"></quml-scoreboard>
   <quml-alert *ngIf="showAlert && showFeedBack" [alertType]="alertType" [showSolutionButton]="showUserSolution"
     (showSolution)="viewSolution()" (closeAlert)="closeAlertBox($event)"></quml-alert>
-  <quml-solutions [hidden]="!showSolution" [question]="currentQuestion" [options]="currentOptions"
-    [solutions]="currentSolutions" (close)="closeSolution()"></quml-solutions>
+  <quml-mcq-solutions [hidden]="!showSolution" [question]="currentQuestion" [options]="currentOptions"
+    [solutions]="currentSolutions" (close)="closeSolution()"></quml-mcq-solutions>
 </div>

@@ -63,9 +63,9 @@ export class QumlLibraryService {
     }
 
     this.telemetryObject = {
-      id: config.metadata.identifier,
-      type: 'Content',
-      ver: config.metadata.pkgVersion + '',
+      id: config.metadata.identifier  || config.data.identifier,
+      type: 'Content', 
+      ver: config.metadata.pkgVersion || config.data.pkgVersion + '',
       rollup: this.context.objectRollup || {}
     };
   }

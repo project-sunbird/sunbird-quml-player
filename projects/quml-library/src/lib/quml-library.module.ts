@@ -5,10 +5,8 @@ import { McqComponent } from './mcq/mcq.component';
 import { SaComponent } from './sa/sa.component';
 import { PlayerComponent } from './player/player.component';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
-import { EndpageComponent } from './endpage/endpage.component';
 import { HeaderComponent } from './header/header.component';
 import { McqQuestionComponent } from './mcq-question/mcq-question.component';
-import { PortraitHeaderComponent } from './portrait-header/portrait-header.component';
 import { McqOptionComponent } from './mcq-option/mcq-option.component';
 import { QumlPopupComponent } from './quml-popup/quml-popup.component';
 import { McqImageOptionComponent } from './mcq-image-option/mcq-image-option.component';
@@ -30,7 +28,7 @@ import { PreviousActiveComponent } from './icon/previous-active/previous-active.
 import { NextActiveComponent } from './icon/next-active/next-active.component';
 import { AlertComponent } from './alert/alert.component';
 import { CloseComponent } from './icon/close/close.component';
-import { SolutionsComponent } from './solutions/solutions.component';
+import { McqSolutionsComponent } from './mcq-solutions/mcq-solutions.component';
 import { DurationtimerComponent } from './icon/durationtimer/durationtimer.component';
 import { AudioComponent } from './icon/audio/audio.component';
 import { WrongComponent } from './icon/wrong/wrong.component';
@@ -46,9 +44,7 @@ import { QumlLibraryService } from './quml-library.service';
     HeaderComponent,
     SaComponent,
     PlayerComponent,
-    EndpageComponent,
     McqQuestionComponent,
-    PortraitHeaderComponent,
     McqOptionComponent,
     QumlPopupComponent,
     McqImageOptionComponent,
@@ -70,11 +66,11 @@ import { QumlLibraryService } from './quml-library.service';
     NextActiveComponent,
     AlertComponent,
     CloseComponent,
-    SolutionsComponent,
+    McqSolutionsComponent,
     DurationtimerComponent,
     AudioComponent,
     WrongComponent,
-    MenuComponent
+    MenuComponent,
   ],
   imports: [
     CommonModule,
