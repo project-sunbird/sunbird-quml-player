@@ -35,6 +35,9 @@ import { WrongComponent } from './icon/wrong/wrong.component';
 import { MenuComponent } from './icon/menu/menu.component';
 import {SunbirdPlayerSdkModule} from '@project-sunbird/sunbird-player-sdk';
 import { QumlLibraryService } from './quml-library.service';
+import { BannerCorrectComponent } from './icon/banner-correct/banner-correct.component';
+import { BannerWrongComponent } from './icon/banner-wrong/banner-wrong.component';
+import { ViewHintComponent } from './icon/view-hint/view-hint.component';
 
 
 @NgModule({
@@ -71,6 +74,9 @@ import { QumlLibraryService } from './quml-library.service';
     AudioComponent,
     WrongComponent,
     MenuComponent,
+    BannerCorrectComponent,
+    BannerWrongComponent,
+    ViewHintComponent,
   ],
   imports: [
     CommonModule,
