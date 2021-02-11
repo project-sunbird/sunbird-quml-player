@@ -35,4 +35,21 @@ export class UtilService {
         })
     }
 
+    public getMultiselectScore(options, mappings) {
+        return new Promise((resolve, reject) => {
+            let score = 0;
+            options.forEach((option, index) => {
+                mappings.forEach((mapping) => {
+                    if (option.value === mapping.response) {
+                        score = score + mapping.outcomes.score
+                    }
+                })
+                if (index === options.length - 1) {
+                     resolve(score);
+                }
+            })
+        });
+
+    }
+
 }

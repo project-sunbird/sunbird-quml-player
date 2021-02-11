@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, SecurityContext, Output, EventEmitter, AfterViewInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { katex } from 'katex';
+import { UtilService } from '../util-service';
 
 declare var katex: any;
 
@@ -25,10 +26,13 @@ export class McqComponent implements OnInit, AfterViewInit {
   selectedOptionTarget: any;
   showQumlPopup = false;
   solutions: Array<[]>;
+  cardinality: string;
 
 
 
-  constructor(public domSanitizer: DomSanitizer) {
+  constructor(
+    public domSanitizer: DomSanitizer , 
+    public utilService: UtilService) {
   }
 
   async ngOnInit() {
@@ -36,6 +40,8 @@ export class McqComponent implements OnInit, AfterViewInit {
     if (this.question.solutions) {
       this.solutions = this.question.solutions;
     }
+    let  key:any = await this.utilService.getKeyValue(Object.keys(this.question.responseDeclaration));
+    this.cardinality = this.question.responseDeclaration[key]['cardinality'];
     if (this.question.templateId === "mcq-vertical") {
       this.layout = 'DEFAULT';
     } else if (this.question.templateId === "mcq-horizontal") {
@@ -48,13 +54,6 @@ export class McqComponent implements OnInit, AfterViewInit {
     this.renderLatex();
     this.mcqQuestion = this.domSanitizer.sanitize(SecurityContext.HTML,
       this.domSanitizer.bypassSecurityTrustHtml(this.question.body));
-    let keys = Object.keys(this.question.interactions);
-    let key;
-    keys.forEach((ele) => {
-      if (ele.includes('response')){
-        key = ele
-      }
-    });
     this.options = this.question.interactions[key].options;
     this.initOptions();
   }

@@ -72,7 +72,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   constructor(
     public qumlLibraryService: QumlLibraryService,
     public userService: UserService,
-    public utilService : UtilService
+    public utilService: UtilService
   ) {
     this.endPageReached = false;
     this.userService.qumlPlayerEvent.asObservable().subscribe((res) => {
@@ -231,29 +231,54 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     let updated = false;
     if (this.optionSelectedObj !== undefined) {
       let key: any = await this.utilService.getKeyValue(Object.keys(this.questions[currentIndex].responseDeclaration));
-      const correctOptionValue = this.questions[currentIndex].responseDeclaration[key].correctResponse.value;
       this.currentQuestion = this.questions[currentIndex].body;
-      this.currentOptions = this.questions[currentIndex].interactions.response1.options;
-      if (Boolean(option.option.value == correctOptionValue)) {
-        this.currentScore = this.getScore(currentIndex , key);
-        this.showAlert = true;
-        this.alertType = true;
-        this.updateScoreBoard(currentIndex + 1, 'attempted', selectedOptionValue , this.currentScore);
-        this.correctFeedBackTimeOut();
-        if (!this.showFeedBack) {
-          this.nextSlide();
+      this.currentOptions = this.questions[currentIndex].interactions[key].options;
+      if (option.cardinality === 'single') {
+        const correctOptionValue = this.questions[currentIndex].responseDeclaration[key].correctResponse.value;
+        if (Boolean(option.option.value == correctOptionValue)) {
+          this.currentScore = this.getScore(currentIndex, key);
+          this.showAlert = true;
+          this.alertType = true;
+          this.updateScoreBoard(currentIndex + 1, 'attempted', selectedOptionValue, this.currentScore);
+          this.correctFeedBackTimeOut();
+          if (!this.showFeedBack) {
+            this.nextSlide();
+          }
+          if (this.showFeedBack) {
+            this.updateScoreBoard(((currentIndex + 1)), 'correct', undefined, this.currentScore);
+          }
+        } else if (!Boolean(option.option.value.value == correctOptionValue)) {
+          this.showAlert = true;
+          this.alertType = false;
+          if (this.showFeedBack) {
+            this.updateScoreBoard((currentIndex + 1), 'wrong');
+          }
+          if (!this.showFeedBack) {
+            this.nextSlide();
+          }
         }
-        if (this.showFeedBack) {
-          this.updateScoreBoard(((currentIndex + 1)), 'correct' , undefined , this.currentScore);
-        }
-      } else if (!Boolean(option.option.value.value == correctOptionValue)) {
-        this.showAlert = true;
-        this.alertType = false;
-        if (this.showFeedBack) {
-          this.updateScoreBoard((currentIndex + 1), 'wrong');
-        }
-        if (!this.showFeedBack) {
-          this.nextSlide();
+      }
+      if (option.cardinality === 'multiple') {
+        let key:any  = await this.utilService.getKeyValue(Object.keys(this.questions[currentIndex].responseDeclaration));
+        const mapping = this.questions[currentIndex].responseDeclaration[key].mapping;
+        this.currentScore = await this.utilService.getMultiselectScore(option.option, mapping);
+        if(this.currentScore > 0) {
+          if (this.showFeedBack) {
+            this.updateScoreBoard(((currentIndex + 1)), 'correct', undefined, this.currentScore);
+            this.correctFeedBackTimeOut();
+            this.showAlert = true;
+            this.alertType = true;
+          } else if(!this.showFeedBack) {
+             this.nextSlide();
+          }
+        } else if(this.currentScore === 0){
+          if(this.showFeedBack) {
+            this.showAlert = true;
+            this.alertType = false;
+            this.updateScoreBoard((currentIndex + 1), 'wrong');
+          } else if(!this.showFeedBack) {
+             this.nextSlide();
+          }
         }
       }
       this.optionSelectedObj = undefined;
@@ -266,12 +291,12 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
 
 
-  updateScoreBoard(index, classToBeUpdated, optionValue? , score?) {
+  updateScoreBoard(index, classToBeUpdated, optionValue?, score?) {
     if (this.showFeedBack) {
       this.progressBarClass.forEach((ele) => {
         if (ele.index === index) {
           ele.class = classToBeUpdated;
-          ele.score = score ? score : 0 
+          ele.score = score ? score : 0
           ele.qType = this.questions[index - 1].primaryCategory.toLowerCase() === 'multiple choice question' ? 'MCQ' : 'SA';
         }
       })
@@ -286,8 +311,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     }
   }
 
-  calculateScore(){
-    this.progressBarClass.forEach((ele) =>{
+  calculateScore() {
+    this.progressBarClass.forEach((ele) => {
       this.finalScore = this.finalScore + ele.score;
     })
   }
@@ -383,7 +408,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     }
   }
 
-  getScore(currentIndex , key){
+  getScore(currentIndex, key) {
     return this.questions[currentIndex].responseDeclaration.maxScore ? this.questions[currentIndex].responseDeclaration.maxScore : this.questions[currentIndex].responseDeclaration[key].correctResponse.outcomes;
   }
 }

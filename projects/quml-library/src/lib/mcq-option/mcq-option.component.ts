@@ -10,8 +10,10 @@ export class McqOptionComponent implements OnInit {
   @Input() mcqOptions: any;
   @Input() solutions: any;
   @Input() layout: any;
+  @Input() cardinality: any;
   @Output() showPopup = new EventEmitter();
   @Output() optionSelected = new EventEmitter<any>();
+  selectedOption = []; 
 
   constructor() { }
 
@@ -20,20 +22,29 @@ export class McqOptionComponent implements OnInit {
 
   onOptionSelect(event, mcqOption) {
     this.mcqOptions.forEach((ele) => {
+      if (this.cardinality === 'single') {
         if (ele.label === mcqOption.label) {
-            ele.selected = true;
+          ele.selected = true;
         } else {
-            ele.selected = false;
+          ele.selected = false;
         }
+      } else if(this.cardinality === 'multiple') {
+        if (ele.label === mcqOption.label) {
+          ele.selected = true;
+          this.selectedOption.push(mcqOption)
+        }
+      }
     });
     this.optionSelected.emit(
       {
         name: 'optionSelect',
-        option: mcqOption,
+        option: this.cardinality === 'single' ? mcqOption : this.selectedOption,
+        cardinality: this.cardinality,
         solutions: this.solutions
       }
     );
   }
+
   onImageOptionSelected(event) {
     this.onOptionSelect(event, event.option);
   }
