@@ -83,7 +83,6 @@ export class QumlLibraryService {
     );
   }
   public end(duration, currentQuestionIndex, totalNoofQuestions, visitedQuestions, endpageseen) {
-    console.log(currentQuestionIndex, totalNoofQuestions);
     const durationSec = Number((duration / 1e3).toFixed(2));
     const endEvent = {
       edata: {
@@ -131,7 +130,6 @@ export class QumlLibraryService {
       },
       options: this.getEventOptions()
     });
-    console.log('end event in raw is here', endEvent);
   }
 
   public interact(id, currentPage) {

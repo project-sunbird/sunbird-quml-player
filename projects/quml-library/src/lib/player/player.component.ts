@@ -4,6 +4,7 @@ import { QumlLibraryService } from '../quml-library.service';
 import { QumlPlayerConfig } from '../quml-library-interface';
 import { UserService } from '../user-service';
 import { eventName, TelemetryType, pageId } from '../telemetry-constants';
+import { UtilService } from '../util-service';
 
 
 
@@ -54,7 +55,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   loadScoreBoard = false;
   totalScore = [];
   private intervalRef: any;
+  public finalScore = 0;
   progressBarClass = [];
+  currentScore
   CarouselConfig = {
     NEXT: 1,
     PREV: 2
@@ -68,7 +71,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   constructor(
     public qumlLibraryService: QumlLibraryService,
-    public userService: UserService
+    public userService: UserService,
+    public utilService : UtilService
   ) {
     this.endPageReached = false;
     this.userService.qumlPlayerEvent.asObservable().subscribe((res) => {
@@ -91,17 +95,17 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.questions = this.QumlPlayerConfig.data.children;
     this.timeLimit = this.QumlPlayerConfig.data.timeLimit ?
       this.QumlPlayerConfig.data.timeLimit : (this.questions.length * 350000);
-    this.showTimer = this.QumlPlayerConfig.data.showTimer.toLowerCase() === 'yes' ? true : false;
-    this.showFeedBack = this.QumlPlayerConfig.data.showFeedback.toLowerCase() === 'yes' ? true : false;
-    this.showUserSolution = this.QumlPlayerConfig.data.showSolutions.toLowerCase() === 'yes' ? true : false;
+    this.showTimer = this.QumlPlayerConfig.data.showTimer;
+    this.showFeedBack = this.QumlPlayerConfig.data.showFeedback;
+    this.showUserSolution = this.QumlPlayerConfig.data.showSolutions;
     this.startPageInstruction = this.QumlPlayerConfig.data.instructions;
     this.linearNavigation = this.QumlPlayerConfig.data.navigationMode === 'non-linear' ? false : true;
-    this.requiresSubmit = this.QumlPlayerConfig.data.requiresSubmit.toLowerCase() === 'yes' ? true : false;
+    this.requiresSubmit = this.QumlPlayerConfig.data.requiresSubmit;
     this.noOfQuestions = this.QumlPlayerConfig.data.totalQuestions;
     this.maxScore = this.QumlPlayerConfig.data.maxScore;
     this.userName = this.QumlPlayerConfig.context.userData.firstName + ' ' + this.QumlPlayerConfig.context.userData.lastName;
     this.contentName = this.QumlPlayerConfig.data.name;
-    this.shuffleQuestions = this.QumlPlayerConfig.data.shuffle.toLowerCase() === 'yes' ? true : false;
+    this.shuffleQuestions = this.QumlPlayerConfig.data.shuffle;
     if (this.shuffleQuestions) {
       this.questions = this.QumlPlayerConfig.data.children.sort(() => Math.random() - 0.5);
     }
@@ -116,6 +120,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   nextSlide() {
     this.userService.raiseHeartBeatEvent(eventName.nextClicked, TelemetryType.interact, this.currentSlideIndex);
     if (this.loadScoreBoard) {
+      this.calculateScore();
       this.endPageReached = true;
     }
     if (this.currentSlideIndex !== this.questions.length) {
@@ -128,6 +133,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       const spentTime = (new Date().getTime() - this.initialTime) / 10000;
       this.durationSpent = spentTime.toFixed(2);
       if (!this.requiresSubmit) {
+        this.calculateScore();
         this.endPageReached = true;
         this.userService.raiseEndEvent(this.currentSlideIndex, this.attemptedQuestions.length, this.endPageReached);
       } else {
@@ -224,30 +230,23 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     const currentIndex = this.car.getCurrentSlideIndex() - 1;
     let updated = false;
     if (this.optionSelectedObj !== undefined) {
-      let keys = Object.keys(this.questions[currentIndex].responseDeclaration);
-      let key;
-      keys.forEach((ele) => {
-        if (ele.includes('response')) {
-          key = ele;
-        }
-      })
+      let key: any = await this.utilService.getKeyValue(Object.keys(this.questions[currentIndex].responseDeclaration));
       const correctOptionValue = this.questions[currentIndex].responseDeclaration[key].correctResponse.value;
       this.currentQuestion = this.questions[currentIndex].body;
       this.currentOptions = this.questions[currentIndex].interactions.response1.options;
       if (Boolean(option.option.value == correctOptionValue)) {
+        this.currentScore = this.getScore(currentIndex , key);
         this.showAlert = true;
         this.alertType = true;
-        this.updateScoreBoard(currentIndex + 1, 'attempted', selectedOptionValue);
+        this.updateScoreBoard(currentIndex + 1, 'attempted', selectedOptionValue , this.currentScore);
         this.correctFeedBackTimeOut();
         if (!this.showFeedBack) {
           this.nextSlide();
         }
         if (this.showFeedBack) {
-          this.updateScoreBoard(((currentIndex + 1)), 'correct');
+          this.updateScoreBoard(((currentIndex + 1)), 'correct' , undefined , this.currentScore);
         }
       } else if (!Boolean(option.option.value.value == correctOptionValue)) {
-        this.updateScoreBoard(currentIndex + 1, 'attempted', selectedOptionValue);
-
         this.showAlert = true;
         this.alertType = false;
         if (this.showFeedBack) {
@@ -267,11 +266,12 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
 
 
-  updateScoreBoard(index, classToBeUpdated, optionValue?) {
+  updateScoreBoard(index, classToBeUpdated, optionValue? , score?) {
     if (this.showFeedBack) {
       this.progressBarClass.forEach((ele) => {
         if (ele.index === index) {
           ele.class = classToBeUpdated;
+          ele.score = score ? score : 0 
           ele.qType = this.questions[index - 1].primaryCategory.toLowerCase() === 'multiple choice question' ? 'MCQ' : 'SA';
         }
       })
@@ -279,10 +279,17 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       this.progressBarClass.forEach((ele) => {
         if (ele.index === index) {
           ele.class = classToBeUpdated;
+          ele.score = score ? score : 0;
           ele.value = optionValue
         }
       })
     }
+  }
+
+  calculateScore(){
+    this.progressBarClass.forEach((ele) =>{
+      this.finalScore = this.finalScore + ele.score;
+    })
   }
 
   correctFeedBackTimeOut() {
@@ -344,6 +351,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       this.questions.forEach((ele, index) => {
         this.progressBarClass.push({
           index: (index + 1), class: 'skipped',
+          score: 0,
           qType: this.questions[index].primaryCategory.toLowerCase() === 'multiple choice question' ? 'MCQ' : 'SA'
         });
       })
@@ -351,6 +359,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       this.questions.forEach((ele, index) => {
         this.progressBarClass.push({
           index: (index + 1), class: 'unattempted', value: undefined,
+          score: 0,
           qType: this.questions[index].primaryCategory.toLowerCase() === 'multiple choice question' ? 'MCQ' : 'SA'
         });
       })
@@ -372,5 +381,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     if (this.intervalRef) {
       clearInterval(this.intervalRef)
     }
+  }
+
+  getScore(currentIndex , key){
+    return this.questions[currentIndex].responseDeclaration.maxScore ? this.questions[currentIndex].responseDeclaration.maxScore : this.questions[currentIndex].responseDeclaration[key].correctResponse.outcomes;
   }
 }

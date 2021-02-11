@@ -12,11 +12,11 @@
         </div>
     </div>
 </div>
-<div class="" *ngIf="layout=='IMAGEGRID'">
+<div *ngIf="layout=='IMAGEGRID'">
     <div class="qumlImageOption">
         <div class="wrapper">
             <div *ngFor="let mcqOption of mcqOptions">
-                <quml-mcq-image-option (imgOptionSelected)="onImageOptionSelected($event)" [mcqOption]='mcqOption'></quml-mcq-image-option>
+                <quml-mcq-image-option (imgOptionSelected)="onOptionSelect($event , mcqOption)" [mcqOption]='mcqOption'></quml-mcq-image-option>
             </div>
         </div>
     </div>

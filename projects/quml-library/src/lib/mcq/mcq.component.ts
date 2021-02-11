@@ -36,9 +36,6 @@ export class McqComponent implements OnInit, AfterViewInit {
     if (this.question.solutions) {
       this.solutions = this.question.solutions;
     }
-    // this.componentLoaded.emit({ event: 'mcq component has been loaded' });
-    // this.layout = this.question.templateId;
-    // console.log('--->', this.question);
     if (this.question.templateId === "mcq-vertical") {
       this.layout = 'DEFAULT';
     } else if (this.question.templateId === "mcq-horizontal") {

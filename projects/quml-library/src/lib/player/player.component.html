@@ -14,15 +14,17 @@
         <div class="current-slide">
           {{car.getCurrentSlideIndex()}}/{{questions.length}}
         </div>
+        <!-- Not in scope ,  later release-->
         <!-- <div>
           <quml-bookmark></quml-bookmark>
         </div> -->
-        <div>
+        <!-- <div>
           <quml-hint></quml-hint>
-        </div>
+        </div> -->
         <!-- <div>
           <quml-share></quml-share>
         </div> -->
+        <!-- Not in scope -->
         <div *ngIf="currentSolutions"> 
           <quml-ans (click)="getSolutions()"></quml-ans>
         </div>
@@ -66,8 +68,8 @@
     </div>
   </div>
   <div class="endPage-container">
-    <sb-player-end-page *ngIf="endPageReached" [contentName]="contentName" [outcome]="noOfQuestions"
-      [outcomeLabel]="'score : '" [userName]="userName" [timeSpentLabel]="durationSpent"
+    <sb-player-end-page *ngIf="endPageReached" [contentName]="contentName" [outcome]="finalScore"
+      [outcomeLabel]="'score'" [userName]="userName" [timeSpentLabel]="durationSpent"
       (replayContent)="replayContent()" (exitContent)="exitContent($event)" [showExit]="true"></sb-player-end-page>
   </div>
   <quml-scoreboard *ngIf="loadScoreBoard && requiresSubmit && !endPageReached"

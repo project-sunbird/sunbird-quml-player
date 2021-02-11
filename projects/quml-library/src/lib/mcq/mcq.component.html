@@ -8,7 +8,7 @@
 <!--Image Grid Layout-->
 <div class="quml-mcq" *ngIf="layout=='IMAGEGRID'">
     <quml-mcq-question [mcqQuestion]="mcqQuestion" [layout]="layout"></quml-mcq-question>
-    <quml-mcq-option [mcqOptions]="mcqOptions" [layout]="layout" [solutions]="solutions" (optionSelected)="optionSelectedInImage($event)">
+    <quml-mcq-option [mcqOptions]="options" [layout]="layout" [solutions]="solutions" (optionSelected)="getSelectedOptionAndResult($event)">
     </quml-mcq-option>
 </div>
 <!--End of Grid Layout-->
@@ -17,7 +17,7 @@
     <div class="imageqa-wrapper">
 
     <quml-mcq-question [mcqQuestion]="mcqQuestion" [layout]="layout"></quml-mcq-question>
-    <quml-mcq-option [mcqOptions]="mcqOptions" [solutions]="solutions" (optionSelected)="optionSelectedInImage($event)" [layout]="layout"></quml-mcq-option>
+    <quml-mcq-option [mcqOptions]="options" [solutions]="solutions" (optionSelected)="getSelectedOptionAndResult($event)" [layout]="layout"></quml-mcq-option>
     </div>
 </div>
 <!--End of Image Multi Grid Layout-->
@@ -25,7 +25,7 @@
 <div class="quml-mcq" *ngIf="layout=='IMAGEQAGRID'">
     <div class="imageqa-wrapper">
         <quml-mcq-question [mcqQuestion]="mcqQuestion" [layout]="layout"></quml-mcq-question>
-        <quml-mcq-option [mcqOptions]="mcqOptions" [solutions]="solutions"  (optionSelected)="optionSelectedInImage($event)" [layout]="layout"></quml-mcq-option>
+        <quml-mcq-option [mcqOptions]="options" [solutions]="solutions"  (optionSelected)="getSelectedOptionAndResult($event)" [layout]="layout"></quml-mcq-option>
     </div>
 </div>
 <!--End of Image QA Grid Layout-->
@@ -35,7 +35,7 @@
         <quml-mcq-question [mcqQuestion]="mcqQuestion" [layout]="layout"></quml-mcq-question>
     </div>
     <div class="columnBlock">
-        <quml-mcq-option [mcqOptions]="mcqOptions" [solutions]="solutions" [layout]="layout" (optionSelected)="optionSelectedInImage($event)">
+        <quml-mcq-option [mcqOptions]="options" [solutions]="solutions" [layout]="layout" (optionSelected)="getSelectedOptionAndResult($event)">
         </quml-mcq-option>
     </div>
 </div>
