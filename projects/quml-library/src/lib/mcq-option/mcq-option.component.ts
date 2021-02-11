@@ -10,7 +10,7 @@ export class McqOptionComponent implements OnInit {
   @Input() mcqOptions: any;
   @Input() solutions: any;
   @Input() layout: any;
-  @Input() cardinality: any;
+  @Input() cardinality: string;
   @Output() showPopup = new EventEmitter();
   @Output() optionSelected = new EventEmitter<any>();
   selectedOption = []; 
