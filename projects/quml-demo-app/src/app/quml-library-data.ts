@@ -268,13 +268,13 @@ export const data1 = {
         'visibility': 'default',
         'setType': 'materialised',
         'navigationMode': 'non-linear',
-        'allowSkip': 'Yes',
-        'requiresSubmit': 'Yes',
-        'shuffle': 'Yes',
-        'showFeedback': 'Yes',
-        'showSolutions': 'Yes',
+        'allowSkip': true,
+        'requiresSubmit': true,
+        'shuffle': true,
+        'showFeedback': true,
+        'showSolutions': true,
         'quMLVersion': 1.5,
-        'showTimer': 'Yes',
+        'showTimer': true,
         'outcomeProcessing': {
             'template': 'AVG_OF_SCORES',
             'ignoreNullValues': false
@@ -285,9 +285,9 @@ export const data1 = {
         'children': [
             {
                 "code": "29768037-4c37-a10f-8823-5218826db206",
-                "templateId": "mcq-vertical",
+                "templateId": "mcq-grid-split",
                 "name": "untitled mcq",
-                "body": "<div class='question-body'><div class='mcq-title'><p>1. What does a dummy-variable regression analysis examine?</p><p><br data-cke-filler=\"true\"></p><figure class=\"image\"><img src=\"data:image/png;base64,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\" data-mathtext=\"A%3D%5Cpi%20r%5E2\" advanced=\"false\"></figure></div><div data-choice-interaction='response1' class='mcq-vertical'></div></div>",
+                "body": "<div class='question-body'><div class='mcq-title'><p>1. What does ..... a dummy-variable regression analysis examine?</p><p><br data-cke-filler=\"true\"></p><figure class=\"image\"><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAI4AAAAnCAYAAADZ7nAuAAAABmJLR0QA/wD/AP+gvaeTAAAGLUlEQVR4nO2ca2wVRRSAv7aA0NJWHtJiKtbEJ0+lYoxFMBaJUSRoFBM1pimigi9+GImoGA0mxRCFGB4JP4REYhoFifiKWvH9A19FRYX6IBUplqK2gNqCvf44u9nZvbt79/bOXG7Lfsmmszuzc2Z3z5w5M2duISYGpgAvA23AcWA/8BJwxQlsU0yOUwt0Axut9CJgB5CwjlVA3glqW0yOMhlRmlrP9XzgRRzlWZrdZsXkOpuAw8DjwCBP3mjgb0Rx/gFOy27TYnKZPThWZYFP/jYl/1Y1I99402JymU4l7bU4AD8q6Uo1Y4CJ1gAjLEG7gSOGZMRkzt2I/7IXWO+Tf4qS/st0Y0qBfQSbv5i+wxc4Q9UFpoU9qwh70rSwGGNU4XzHraaFjUWmd7bAdaYFxhghD3gH+Yb7gNNNC3wLR2kSwBbTAmOMcC/y/X4lC0PUjbiVJgF8bFpojHamAl3AD8AY08KGAL+QrDjNpgXHaOUcJF71OVla8HsCUZSNuBWnIxvCY7QwGvgJaASKPXk1iLOslbOQpelmoATowa08g3ULjNHOMGAnsBn32o3Nl8CduoVuQRTkGuu8HbfiGB8nYzJiMPAR8DxQ4JNfChwDrlQvZrpyXANcj8Q03rCutSIrxzZlQEuGcmLMkI8EOqcgw9QaxOIUIkpUAgxH9GSPLqEDgG8QD/xc5bo9/7ePa3UJjEkiH3EVRoaUGYT4L36xqOUkT2j8jg48e3IysTj3A+OBp3BrY6un3KgMZPQXxgC3ABcRvCmqELd/cRRZTLXpAh5D4koAZyBuwsXW+Q5k/eUz67wGeBS4HLEeR4GVVh0Jq8xtEdv/vXJPRpQjWtgCFHnyVuDW1sU6BPZh6pBAb5SenepYYtVZhExGmoGFQJOV3w1U48xyvwMeAubjxJ0W6nio3lqc5cj4dweiySqHPOdlvZQRxChgqOY6/TiAzBYzYSnyEXXQgeNHLkGGqEnALuA/JLwzEHgdcWjXI0rSAzwNjLPuvQnxZbLOZVZjGgPy5+PuJZs0yi5GdqPp6L2pjtcybOs9Vj1dwHPAXGAmMAOZ9iaQoWKGchxChgX7vBpZP5mEdFQQa/Mn0KDIWuxp+1acIfFmT94HGT4XkL7FKQBWIxq+KKCM1+KUp9uoEA4D9+GetZnikwzunQA8g6ymzwG+9uSvBQ4incr2Hc5EZjBvA++G1H01cCruDnmhku4E5in1jsPN9khPoBm7F60IKTMNt4Z/m4V25RqvIpOESp+8S5D3stlzfa51fVmKutciPpO6sPozzvte6Sk/AYlwH0esaGHK1mtmBLK4dwAZQ4MYi1tx2s03LeeoBCoC8lYh7+UBz/V663pdirpnIQFlmwrc77sm4D6/6XivSWeoqsdRniD/BpIbOBxx2o6l17Q+zd6A6wWIZYHkd2jHgv5IUbfX95qupLuATwPu6w64bpQqxK/praMZ1PtONmYi72M/yes5bYRbjCDW4bznrPkvUSxOPjJ9y0PiFU0R7mnCHaMqQ8bZk51a628j7gW1EpxtDOlOWKYp6ZxSnHmIQ7eB6A1rw604OmdWVUg01zS7kR1wuqjA8U28s6ZKJZ3OGtVI4Hzl/L30m2WGYYgSdJLex38T91CVyuGLit+2DVNHmB/XG2zn12/onq7kPZhGnXOU+46g2QEOI5XFWYaY0IeR2VRUDnrOdVmcTmS4zMbutK801lWILIyChAG8w7YatpmYRr3VSvpDsugAhynOZOAuxFx71wZS4Z2C6ww7vK+xrmxxOzK7BCdsoKL6O1chfmVPhHqnKmndFjKUoJ8An41EXguAF4B/06zXpOL0NfJwr9m84lNGjfeV40S8wxiCdG6brCqOzUDE6ZyNxFXUaO4u4AZS7+SbiITw63D/AjCBbBKaDVwKnIf/TrP+yiyc9/Ab/p21COmcdrn6CPWqflF7QL3GWUBqZzFs4/n4CPerx3UmHiJHacB57tUh5bYr5bZFqPcRpXxDirLasX2cNuRfd4GsPtrbCYYi1gjCncUe5X77XFW0YkVWF5kFEPsaO5HV4t+RcEMQa5B/ndZKtK0YLcii7GEkoBrTDykn2lS5kPT+bVop8a9IYmJi+j3/A8o03ZLHDA7mAAAAAElFTkSuQmCC\" data-mathtext=\"A%3D%5Cpi%20r%5E2\" advanced=\"false\"></figure></div><div data-choice-interaction='response1' class='mcq-vertical'></div></div>",
                 "responseDeclaration": {
                     "maxScore": 1,
                     "response1": {

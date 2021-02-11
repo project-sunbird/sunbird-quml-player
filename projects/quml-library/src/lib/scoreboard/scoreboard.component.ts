@@ -5,7 +5,7 @@ import { Component, Input, OnInit, Output , EventEmitter } from '@angular/core';
   templateUrl: './scoreboard.component.html',
   styleUrls: ['./scoreboard.component.scss']
 })
-export class ScoreboardComponent implements OnInit {
+export class ScoreboardComponent {
   @Input() scores: Array<[]>;
   @Input() totalNoOfQuestions: number;
   @Input() contentName: string;
@@ -14,8 +14,6 @@ export class ScoreboardComponent implements OnInit {
   @Output() emitQuestionNo = new EventEmitter<any>();
   constructor() { }
 
-  ngOnInit() {
-  }
 
   goToQuestion(index){
     this.emitQuestionNo.emit({questionNo: index})

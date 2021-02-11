@@ -15,6 +15,7 @@ export class McqImageOptionComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+    
   }
 
   showPopup(image) {

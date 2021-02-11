@@ -25,4 +25,14 @@ export class UtilService {
         return (minutes + ':' + (seconds < 10 ? '0' : '') + seconds);
     }
 
+    public getKeyValue(keys) {
+        return new Promise((resolve, reject) => {
+            keys.forEach((ele) => {
+                if (ele.includes('response')) {
+                    resolve(ele);
+                }
+            })
+        })
+    }
+
 }
