@@ -14,9 +14,9 @@
   margin-bottom: 0;
 }
 
-.option-border label.container {
-  margin-bottom: 0;
-}
+.quml-option label.container {
+  margin-bottom: 0;	
+}	
 
 .quml-option-card {
   display: grid;
@@ -25,7 +25,7 @@
   margin-bottom: 16px;
 }
 
-.option-border {
+.quml-option {
   border: 2px solid transparent;
   border-radius: 8px;
   display: grid;
@@ -38,9 +38,16 @@
   margin: 0px 8px;
   box-shadow: 0 2px 14px 0 rgba(0,0,0,0.10);
 }
-
-.option-border-selected {
+.quml-option--selected {
   border: 2px solid #08539f;
+}
+.quml-option {
+  &.quml-option--correct {
+    border: 1px solid #31A679;
+  }
+  &.quml-option--wrong {
+    border: 1px solid #F1635D;
+  }
 }
 
 .quml-option-card .option {
@@ -63,8 +70,8 @@
 /* Create a custom radio button */
 .checkmark {
   display: block;
-  height: 18px;
-  width: 18px;
+  height: 20px;
+  width: 20px;
   border-radius: 50%;
   border: 2px solid #cdcdcd;
 }
@@ -78,6 +85,7 @@
 
 /* When the radio button is checked, add a blue background */
 .container input:checked~.checkmark {
+  position: relative;
   background-color: white;
   border: 2px solid #024f9d;
 }
@@ -102,6 +110,34 @@
   height: 10px;
   border-radius: 50%;
   background: #024f9d;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: 0;
+  transform: translate(-50%, -50%);
+}
+.quml-option--correct .container input:checked ~ .checkmark {
+  border-color: #31A679;
+  background-color: #31A679;
+  &:after {
+    content: '\2714';
+    color: #fff;
+  }
+}
+.quml-option--wrong .container input:checked ~ .checkmark {
+  border-color: #F1635D;
+  &:after {
+    content: '\2716';
+    color: #F1635D;
+  }
+}
+.quml-option--wrong, .quml-option--correct {
+  .container input:checked ~ .checkmark:after {
+    width: auto;
+    height: auto;
+    background-color: transparent;
+    font-size: 12px;
+  }
 }
 
 img {
