@@ -40,7 +40,7 @@ export class McqComponent implements OnInit, AfterViewInit {
     if (this.question.solutions) {
       this.solutions = this.question.solutions;
     }
-    let  key:any = await this.utilService.getKeyValue(Object.keys(this.question.responseDeclaration));
+    let  key:any = this.utilService.getKeyValue(Object.keys(this.question.responseDeclaration));
     this.cardinality = this.question.responseDeclaration[key]['cardinality'];
     if (this.question.templateId === "mcq-vertical") {
       this.layout = 'DEFAULT';

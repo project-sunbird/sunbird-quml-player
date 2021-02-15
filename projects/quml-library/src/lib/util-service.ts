@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import  * as _ from 'lodash';
 
 
 @Injectable({
@@ -26,30 +27,29 @@ export class UtilService {
     }
 
     public getKeyValue(keys) {
-        return new Promise((resolve, reject) => {
-            keys.forEach((ele) => {
-                if (ele.includes('response')) {
-                    resolve(ele);
-                }
-            })
+        let key = keys.find((k) => {
+           return k.includes('response');
         })
+        return key;
     }
 
-    public getMultiselectScore(options, mappings) {
-        return new Promise((resolve, reject) => {
-            let score = 0;
-            options.forEach((option, index) => {
-                mappings.forEach((mapping) => {
-                    if (option.value === mapping.response) {
-                        score = score + mapping.outcomes.score
-                    }
-                })
-                if (index === options.length - 1) {
-                     resolve(score);
-                }
-            })
-        });
+    public getMultiselectScore(options, responseDeclaration) {
+        console.log(options , responseDeclaration);
+        let key: any = this.getKeyValue(Object.keys(responseDeclaration));
+        const selectedOptionValue = options.map(option => option.value);
+        let score = responseDeclaration[key].correct_response.outcomes.score ? responseDeclaration[key].correct_response.outcomes.score : responseDeclaration.maxScore;
+        let correctValues = responseDeclaration[key].correct_response.value;
+        let mapping = responseDeclaration[key]['mapping'];
+        if (_.isEqual(correctValues , selectedOptionValue)) {
+            return score;
+        } else if( !_.isEqual(correctValues , selectedOptionValue)){
+        return selectedOptionValue.reduce((sum, index) => { sum += (mapping[index] ? mapping[index].outcomes.score : 0); return sum;  }, 0);
+        }
+    }
 
+    hasDuplicates(selectedOptions, option) {
+        let duplicate = selectedOptions.find((o) => { return o.value === option.value });
+        return duplicate;
     }
 
 }

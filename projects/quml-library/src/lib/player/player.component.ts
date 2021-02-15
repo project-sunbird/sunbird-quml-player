@@ -230,7 +230,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     const currentIndex = this.car.getCurrentSlideIndex() - 1;
     let updated = false;
     if (this.optionSelectedObj !== undefined) {
-      let key: any = await this.utilService.getKeyValue(Object.keys(this.questions[currentIndex].responseDeclaration));
+      let key: any = this.utilService.getKeyValue(Object.keys(this.questions[currentIndex].responseDeclaration));
       this.currentQuestion = this.questions[currentIndex].body;
       this.currentOptions = this.questions[currentIndex].interactions[key].options;
       if (option.cardinality === 'single') {
@@ -259,9 +259,10 @@ export class PlayerComponent implements OnInit, AfterViewInit {
         }
       }
       if (option.cardinality === 'multiple') {
-        let key:any  = await this.utilService.getKeyValue(Object.keys(this.questions[currentIndex].responseDeclaration));
-        const mapping = this.questions[currentIndex].responseDeclaration[key].mapping;
-        this.currentScore = await this.utilService.getMultiselectScore(option.option, mapping);
+        let key:any  = this.utilService.getKeyValue(Object.keys(this.questions[currentIndex].responseDeclaration));
+        const responseDeclaration = this.questions[currentIndex].responseDeclaration;
+        this.currentScore = this.utilService.getMultiselectScore(option.option, responseDeclaration);
+        console.log('current score is', this.currentScore);
         if(this.currentScore > 0) {
           if (this.showFeedBack) {
             this.updateScoreBoard(((currentIndex + 1)), 'correct', undefined, this.currentScore);

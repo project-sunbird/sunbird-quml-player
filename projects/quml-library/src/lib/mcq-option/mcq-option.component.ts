@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, AfterViewInit } from '@angular/core';
+import { UtilService } from '../util-service';
 
 @Component({
   selector: 'quml-mcq-option',
@@ -15,7 +16,9 @@ export class McqOptionComponent implements OnInit {
   @Output() optionSelected = new EventEmitter<any>();
   selectedOption = []; 
 
-  constructor() { }
+  constructor(
+    public utilService : UtilService
+  ) { }
 
   ngOnInit() {
   }
@@ -29,7 +32,7 @@ export class McqOptionComponent implements OnInit {
           ele.selected = false;
         }
       } else if(this.cardinality === 'multiple') {
-        if (ele.label === mcqOption.label) {
+        if (ele.label === mcqOption.label && !this.utilService.hasDuplicates(this.selectedOption , mcqOption)) {
           ele.selected = true;
           this.selectedOption.push(mcqOption)
         }
