@@ -12,7 +12,7 @@
     <div class="landscape-mode" [hidden]="endPageReached">
       <div class="lanscape-mode-left">
         <div class="current-slide">
-          {{car.getCurrentSlideIndex()}}/{{questions.length}}
+          {{startPageInstruction? car.getCurrentSlideIndex() : car.getCurrentSlideIndex() + 1}}/{{questions.length}}
         </div>
         <!-- Not in scope ,  later release-->
         <!-- <div>
@@ -31,7 +31,7 @@
       </div>
       <carousel class="landscape-center" [interval]="slideInterval" [showIndicators]="showIndicator"
         [noWrap]="noWrapSlides" #car [hidden]="endPageReached || loadScoreBoard">
-        <slide>
+        <slide *ngIf="startPageInstruction"> 
           <quml-startpage [instructions]="startPageInstruction" [totalNoOfQuestions]="noOfQuestions"
             [maxScore]="maxScore" [time]="timeLimit" [contentName]="contentName"></quml-startpage>
         </slide>
@@ -47,20 +47,36 @@
       </carousel>
       <div class="lanscape-mode-right" [hidden]="endPageReached">
         <ul *ngIf="!showFeedBack">
-          <li [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlide(0)">i
+          <li *ngIf="startPageInstruction" [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlide(0)">i
           </li>
-          <li *ngFor="let question of questions; let i = index"
-            [ngClass]="loadScoreBoard ? 'att-color' : (i+1) === car.getCurrentSlideIndex() ? 'progressBar-border': (i+1) < car.getCurrentSlideIndex()  ? 'att-color' : '' "
-            (click)="goToSlide(i+1)" id=p-{{i}}>{{i+1}}</li>
+          <ng-container *ngIf="startPageInstruction">
+            <li *ngFor="let question of questions; let i = index"
+              [ngClass]="loadScoreBoard ? 'att-color' : (i+1) === car.getCurrentSlideIndex() ? 'progressBar-border': (i+1) < car.getCurrentSlideIndex()  ? 'att-color' : '' "
+              (click)="goToSlide(i+1)" >{{i+1}}</li>
+          </ng-container>
+          <ng-container *ngIf="!startPageInstruction">
+            <li *ngFor="let question of questions; let i = index"
+              [ngClass]="loadScoreBoard ? 'att-color' : (i) === car.getCurrentSlideIndex() ? 'progressBar-border': (i) < car.getCurrentSlideIndex()  ? 'att-color' : '' "
+              (click)="goToSlide(i)">{{i+1}}</li>
+          </ng-container>
             <li *ngIf="!loadScoreBoard" (click)="loadScoreBoard = true;"><img src="./assets/flag_inactive.svg"></li>
             <li *ngIf="loadScoreBoard"><img src="./assets/flag_active.svg"></li>
         </ul>
         <ul *ngIf="showFeedBack">
-          <li [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlide(0)">i
+          <li *ngIf="startPageInstruction" [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlide(0)">i
           </li>
-          <li *ngFor="let q of progressBarClass; let i = index" class="showFeedBack-progressBar" 
-          [ngClass]="loadScoreBoard ? q.class : (i+1) === car.getCurrentSlideIndex() ? 'progressBar-border' : q.class" (click)="goToSlide(q.index)">
-            {{q.index}}</li>
+          <ng-container *ngIf="startPageInstruction">
+            <li *ngFor="let q of progressBarClass; let i = index" class="showFeedBack-progressBar"
+              [ngClass]="loadScoreBoard ? q.class : (i+1) === car.getCurrentSlideIndex() ? 'progressBar-border' : q.class"
+              (click)="goToSlide(q.index)">
+              {{q.index}}</li>
+          </ng-container>
+          <ng-container *ngIf="!startPageInstruction">
+            <li *ngFor="let q of progressBarClass; let i = index" class="showFeedBack-progressBar"
+              [ngClass]="loadScoreBoard ? q.class : (i) === car.getCurrentSlideIndex() ? 'progressBar-border' : q.class"
+              (click)="goToSlide(q.index -1)">
+              {{q.index}}</li>
+          </ng-container>
             <li *ngIf="!loadScoreBoard" (click)="loadScoreBoard = true;"><img src="./assets/flag_inactive.svg"></li>
             <li *ngIf="loadScoreBoard"><img src="./assets/flag_active.svg"></li>
         </ul>

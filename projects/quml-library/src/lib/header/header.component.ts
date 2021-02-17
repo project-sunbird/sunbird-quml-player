@@ -39,7 +39,9 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnChanges() {
     if (this.duration && this.showTimer && this.initializeTimer && !this.intervalRef) {
-      this.timer();
+      this.countDown();
+    } else if(this.duration === undefined && this.showTimer && this.initializeTimer && !this.intervalRef) {
+       this.showCountUp();
     }
   }
 
@@ -59,17 +61,7 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  openNav() {
-    document.getElementById('mySidenav').style.width = '100%';
-    document.body.style.backgroundColor = 'rgba(0,0,0,0.4)';
-  }
-
-  closeNav() {
-    document.getElementById('mySidenav').style.width = '0';
-    document.body.style.backgroundColor = 'white';
-  }
-
-  timer() {
+  countDown() {
     const durationInSec = this.duration / 1000;
     let min = ~~(durationInSec / 60);
     let sec = (durationInSec % 60);
@@ -89,6 +81,22 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
         this.time = min + ':' + '0' + sec--;
       } else {
         this.time = min + ':' + sec--;
+      }
+    }, 1000);
+  }
+
+  showCountUp() {
+    let min = 0;
+    let sec = 0;
+    this.intervalRef = setInterval(() => {
+      if (sec === 59) {
+        sec = 0;
+        min = min + 1;
+      }
+      if (sec < 10) {
+        this.time = min + ':' + '0' + sec++;
+      } else {
+        this.time = min + ':' + sec++;
       }
     }, 1000);
   }

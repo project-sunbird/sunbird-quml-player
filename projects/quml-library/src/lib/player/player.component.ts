@@ -58,6 +58,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   public finalScore = 0;
   progressBarClass = [];
   currentScore
+  maxQuestions: number;
+  allowSkip: boolean;
   CarouselConfig = {
     NEXT: 1,
     PREV: 2
@@ -93,8 +95,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.showIndicator = false;
     this.noWrapSlides = true;
     this.questions = this.QumlPlayerConfig.data.children;
-    this.timeLimit = this.QumlPlayerConfig.data.timeLimit ?
-      this.QumlPlayerConfig.data.timeLimit : (this.questions.length * 350000);
+    this.timeLimit = this.QumlPlayerConfig.data.timeLimit;
     this.showTimer = this.QumlPlayerConfig.data.showTimer;
     this.showFeedBack = this.QumlPlayerConfig.data.showFeedback;
     this.showUserSolution = this.QumlPlayerConfig.data.showSolutions;
@@ -106,8 +107,16 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.userName = this.QumlPlayerConfig.context.userData.firstName + ' ' + this.QumlPlayerConfig.context.userData.lastName;
     this.contentName = this.QumlPlayerConfig.data.name;
     this.shuffleQuestions = this.QumlPlayerConfig.data.shuffle;
+    this.maxQuestions = this.QumlPlayerConfig.data.maxQuestions;
+    this.allowSkip = this.QumlPlayerConfig.data.allowSkip;
     if (this.shuffleQuestions) {
       this.questions = this.QumlPlayerConfig.data.children.sort(() => Math.random() - 0.5);
+    }
+    if (this.maxQuestions) {
+      this.questions = this.questions.slice(0, this.maxQuestions);
+    }
+    if(!this.startPageInstruction) {
+      this.initializeTimer = true;
     }
     this.userService.raiseStartEvent(this.car.getCurrentSlideIndex());
     this.setInitialScores();
@@ -126,10 +135,21 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     if (this.currentSlideIndex !== this.questions.length) {
       this.currentSlideIndex = this.currentSlideIndex + 1;
     }
-    if (this.currentSlideIndex === 1 && (this.currentSlideIndex - 1) === 0) {
+    if (this.currentSlideIndex === 1 && (this.currentSlideIndex - 1) === 0 && this.startPageInstruction) {
       this.initializeTimer = true;
     }
-    if (this.car.getCurrentSlideIndex() === this.questions.length) {
+    if (this.car.getCurrentSlideIndex() === this.questions.length && this.startPageInstruction) {
+      const spentTime = (new Date().getTime() - this.initialTime) / 10000;
+      this.durationSpent = spentTime.toFixed(2);
+      if (!this.requiresSubmit) {
+        this.calculateScore();
+        this.endPageReached = true;
+        this.userService.raiseEndEvent(this.currentSlideIndex, this.attemptedQuestions.length, this.endPageReached);
+      } else {
+        this.loadScoreBoard = true;
+      }
+    }
+    if (this.car.getCurrentSlideIndex() + 1 === this.questions.length && !this.startPageInstruction) {
       const spentTime = (new Date().getTime() - this.initialTime) / 10000;
       this.durationSpent = spentTime.toFixed(2);
       if (!this.requiresSubmit) {
@@ -155,15 +175,12 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   prevSlide() {
     this.userService.raiseHeartBeatEvent(eventName.prevClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
     this.showAlert = false;
-    if (this.currentSlideIndex > 0) {
-      this.currentSlideIndex = this.currentSlideIndex - 1;
-    }
     if (this.car.getCurrentSlideIndex() + 1 === this.questions.length && this.endPageReached) {
       this.endPageReached = false;
     } else if (!this.loadScoreBoard) {
       this.car.move(this.CarouselConfig.PREV);
     } else if (!this.linearNavigation && this.loadScoreBoard) {
-      const index = this.questions.length;
+      const index = this.startPageInstruction ? this.questions.length : this.questions.length -1;
       this.car.selectSlide(index);
       this.loadScoreBoard = false;
     }
@@ -176,7 +193,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   getOptionSelected(optionSelected) {
     this.active = true;
-    const currentIndex = this.car.getCurrentSlideIndex() - 1;
+    const currentIndex = this.startPageInstruction ? this.car.getCurrentSlideIndex() - 1 : this.car.getCurrentSlideIndex();
     this.userService.raiseHeartBeatEvent(eventName.optionClicked, TelemetryType.interact, pageId.startPage);
     this.optionSelectedObj = optionSelected;
     this.currentSolutions = optionSelected.solutions;
@@ -227,7 +244,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   async validateSelectedOption(option) {
     const selectedOptionValue = option ? option.option.value : undefined;
-    const currentIndex = this.car.getCurrentSlideIndex() - 1;
+    const currentIndex = this.startPageInstruction ? this.car.getCurrentSlideIndex() - 1 : this.car.getCurrentSlideIndex();
     let updated = false;
     if (this.optionSelectedObj !== undefined) {
       let key: any = this.utilService.getKeyValue(Object.keys(this.questions[currentIndex].responseDeclaration));
@@ -259,33 +276,32 @@ export class PlayerComponent implements OnInit, AfterViewInit {
         }
       }
       if (option.cardinality === 'multiple') {
-        let key:any  = this.utilService.getKeyValue(Object.keys(this.questions[currentIndex].responseDeclaration));
+        let key: any = this.utilService.getKeyValue(Object.keys(this.questions[currentIndex].responseDeclaration));
         const responseDeclaration = this.questions[currentIndex].responseDeclaration;
         this.currentScore = this.utilService.getMultiselectScore(option.option, responseDeclaration);
-        console.log('current score is', this.currentScore);
-        if(this.currentScore > 0) {
+        if (this.currentScore > 0) {
           if (this.showFeedBack) {
             this.updateScoreBoard(((currentIndex + 1)), 'correct', undefined, this.currentScore);
             this.correctFeedBackTimeOut();
             this.showAlert = true;
             this.alertType = true;
-          } else if(!this.showFeedBack) {
-             this.nextSlide();
+          } else if (!this.showFeedBack) {
+            this.nextSlide();
           }
-        } else if(this.currentScore === 0){
-          if(this.showFeedBack) {
+        } else if (this.currentScore === 0) {
+          if (this.showFeedBack) {
             this.showAlert = true;
             this.alertType = false;
             this.updateScoreBoard((currentIndex + 1), 'wrong');
-          } else if(!this.showFeedBack) {
-             this.nextSlide();
+          } else if (!this.showFeedBack) {
+            this.nextSlide();
           }
         }
       }
       this.optionSelectedObj = undefined;
-    } else if (this.optionSelectedObj === undefined && !this.active) {
+    } else if (this.optionSelectedObj === undefined && this.allowSkip && this.utilService.getQuestionType(this.questions , currentIndex) === 'MCQ') {
       this.nextSlide();
-    } else if (this.optionSelectedObj === undefined && this.active) {
+    } else if (this.utilService.getQuestionType(this.questions , currentIndex) === 'SA' || this.startPageInstruction && this.car.getCurrentSlideIndex() === 0){
       this.nextSlide();
     }
   }
@@ -330,6 +346,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   nextSlideClicked(event) {
+    const currentIndex = this.startPageInstruction ? this.car.getCurrentSlideIndex() - 1 : this.car.getCurrentSlideIndex();
     if (event.type === 'next') {
       this.validateSelectedOption(this.optionSelectedObj);
     }
@@ -346,8 +363,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.userService.raiseStartEvent(this.car.getCurrentSlideIndex());
     this.endPageReached = false;
     this.loadScoreBoard = false;
-    this.currentSlideIndex = 1;
-    this.car.selectSlide(1);
+    const index = this.startPageInstruction ? 1 : 0;
+    console.log(index);
+    this.car.selectSlide(index);
   }
 
   inScoreBoardSubmitClicked() {
@@ -393,12 +411,13 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   goToQuestion(event) {
-    this.car.selectSlide(event.questionNo);
+    const index = this.startPageInstruction ? event.questionNo : event.questionNo -1; 
+    this.car.selectSlide(index);
     this.loadScoreBoard = false;
   }
 
   getSolutions() {
-    const currentIndex = this.car.getCurrentSlideIndex() - 1;
+    const currentIndex = !this.startPageInstruction ? this.car.getCurrentSlideIndex() - 1 : this.car.getCurrentSlideIndex();
     this.currentQuestion = this.questions[currentIndex].body;
     this.currentOptions = this.questions[currentIndex].interactions.response1.options;
     if (this.currentSolutions) {

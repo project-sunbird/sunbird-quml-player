@@ -271,7 +271,7 @@ export const data1 = {
         'allowSkip': true,
         'requiresSubmit': true,
         'shuffle': true,
-        'showFeedback': true,
+        'showFeedback': false,
         'showSolutions': true,
         'quMLVersion': 1.5,
         'showTimer': true,
@@ -279,8 +279,8 @@ export const data1 = {
             'template': 'AVG_OF_SCORES',
             'ignoreNullValues': false
         },
-        'totalQuestions': 4,
-        'maxQuestions': 3,
+        'totalQuestions': 7,
+        'maxQuestions': 5,
         'maxScore': 3,
         'children': [
             {
