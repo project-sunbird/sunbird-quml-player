@@ -32,13 +32,13 @@
       <carousel class="landscape-center" [interval]="slideInterval" [showIndicators]="showIndicator"
         [noWrap]="noWrapSlides" #car [hidden]="endPageReached || loadScoreBoard">
         <slide *ngIf="startPageInstruction"> 
-          <quml-startpage [instructions]="startPageInstruction" [totalNoOfQuestions]="noOfQuestions"
-            [maxScore]="maxScore" [time]="timeLimit" [contentName]="contentName"></quml-startpage>
+          <quml-startpage [instructions]="startPageInstruction" [totalNoOfQuestions]="questions.length"
+            [points]="points" [time]="timeLimit" [contentName]="contentName"></quml-startpage>
         </slide>
         <slide *ngFor="let question of questions; let i= index">
           <div *ngIf="question?.primaryCategory.toLowerCase() === 'multiple choice question'">
             <quml-mcq [question]='question' (optionSelected)="getOptionSelected($event)" [identifier]="question.id"
-              id={{question.id}}></quml-mcq>
+            ></quml-mcq>
           </div>
           <div *ngIf="question?.primaryCategory.toLowerCase() === 'subjective question'">
             <quml-sa [questions]='question'></quml-sa>
@@ -59,8 +59,8 @@
               [ngClass]="loadScoreBoard ? 'att-color' : (i) === car.getCurrentSlideIndex() ? 'progressBar-border': (i) < car.getCurrentSlideIndex()  ? 'att-color' : '' "
               (click)="goToSlide(i)">{{i+1}}</li>
           </ng-container>
-            <li *ngIf="!loadScoreBoard" (click)="loadScoreBoard = true;"><img src="./assets/flag_inactive.svg"></li>
-            <li *ngIf="loadScoreBoard"><img src="./assets/flag_active.svg"></li>
+            <li *ngIf="!loadScoreBoard && requiresSubmit" (click)="loadScoreBoard = true;"><img src="./assets/flag_inactive.svg"></li>
+            <li *ngIf="loadScoreBoard && requiresSubmit"><img src="./assets/flag_active.svg"></li>
         </ul>
         <ul *ngIf="showFeedBack">
           <li *ngIf="startPageInstruction" [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlide(0)">i
@@ -77,8 +77,8 @@
               (click)="goToSlide(q.index -1)">
               {{q.index}}</li>
           </ng-container>
-            <li *ngIf="!loadScoreBoard" (click)="loadScoreBoard = true;"><img src="./assets/flag_inactive.svg"></li>
-            <li *ngIf="loadScoreBoard"><img src="./assets/flag_active.svg"></li>
+            <li *ngIf="!loadScoreBoard && requiresSubmit " (click)="loadScoreBoard = true;"><img src="./assets/flag_inactive.svg"></li>
+            <li *ngIf="loadScoreBoard && requiresSubmit"><img src="./assets/flag_active.svg"></li>
         </ul>
       </div>
     </div>
@@ -90,10 +90,13 @@
   </div>
   <quml-scoreboard *ngIf="loadScoreBoard && requiresSubmit && !endPageReached"
     (submitClicked)="inScoreBoardSubmitClicked()" [contentName]="contentName" [scores]="progressBarClass" [totalNoOfQuestions]="questions.length"
-    [showFeedBack]="showFeedBack" (emitQuestionNo)="goToQuestion($event)"
-    (submitClicked)="scoreBoardSubmitClicked($event)"></quml-scoreboard>
+    [showFeedBack]="showFeedBack" (emitQuestionNo)="goToQuestion($event)" (scoreBoardLoaded)="scoreBoardLoaded($event)"
+     ></quml-scoreboard>
   <quml-alert *ngIf="showAlert && showFeedBack" [alertType]="alertType" [showSolutionButton]="showUserSolution"
     (showSolution)="viewSolution()" (closeAlert)="closeAlertBox($event)"></quml-alert>
   <quml-mcq-solutions [hidden]="!showSolution" [question]="currentQuestion" [options]="currentOptions"
     [solutions]="currentSolutions" (close)="closeSolution()"></quml-mcq-solutions>
+</div>
+<div class="info-popup" *ngIf="infoPopup">
+   Please attempt the question
 </div>

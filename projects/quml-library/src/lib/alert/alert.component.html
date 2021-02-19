@@ -1,8 +1,8 @@
-<div class="quml-alert">
+<div class="quml-alert" *ngIf="!infoPopup">
   <div class="quml-alert__overlay" (click)="closeAlert.emit({type:'close'})"></div>
   <div class="quml-alert__container">
     <div class="quml-alert__body">
-      <div class="quml-alert__image quml-alert__image--correct" *ngIf="alertType">
+      <div class="quml-alert__image quml-alert__image--correct" *ngIf="alertType === 'correct'">
         <div class="quml-alert__icon-container">
           <img class="quml-alert__icon" src="../assets/quml-correct.svg">
 
@@ -10,7 +10,7 @@
         <div class="quml-alert__icon-empty"></div>
         <img class="quml-alert__banner" src="../assets/banner-correct.svg">
       </div>
-      <div class="quml-alert__image quml-alert__image--wrong" *ngIf="!alertType">
+      <div class="quml-alert__image quml-alert__image--wrong" *ngIf="alertType === 'wrong'">
         <div class="quml-alert__icon-container">
           <img class="quml-alert__icon" src="../assets/quml-wrong.svg">
         </div>
@@ -18,12 +18,11 @@
       <div class="quml-alert__icon-empty"></div>
       <img class="quml-alert__banner" src="../assets/banner-wrong.svg">
       <div class="quml-alert__try-again">
-        <span *ngIf="!alertType" (click)="closeAlert.emit({type:'tryAgain'})">Try again</span>
-        <span *ngIf="alertType && showSolutionButton" (click)="viewSolution()">View Solution</span>
+        <span *ngIf="alertType === 'wrong'" (click)="closeAlert.emit({type:'tryAgain'})">Try again</span>
+        <span *ngIf="alertType === 'correct' && showSolutionButton" (click)="viewSolution()">View Solution</span>
       </div>
       <div class="quml-alert__view-hint quml-alert__view-hint--disabled">
         <img class="view-hint-icon" src="../assets/view-hint.svg">
-
       </div>
     </div>
   </div>

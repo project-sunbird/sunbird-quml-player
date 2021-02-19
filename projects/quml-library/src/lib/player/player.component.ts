@@ -34,7 +34,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   currentSolutions: any;
   showSolution: any;
   active = false;
-  alertType: boolean;
+  alertType: string;
   previousOption: any;
   timeLimit: any;
   showTimer: any;
@@ -45,6 +45,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   requiresSubmit: boolean;
   noOfQuestions: number;
   maxScore: number;
+  points: number;
   initialTime: number;
   initializeTimer: boolean;
   durationSpent: string;
@@ -60,6 +61,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   currentScore
   maxQuestions: number;
   allowSkip: boolean;
+  infoPopup: boolean;
   CarouselConfig = {
     NEXT: 1,
     PREV: 2
@@ -90,6 +92,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.qumlLibraryService.initializeTelemetry(this.QumlPlayerConfig);
     this.userService.initialize(this.QumlPlayerConfig);
+
     this.initialTime = new Date().getTime();
     this.slideInterval = 0;
     this.showIndicator = false;
@@ -104,6 +107,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.requiresSubmit = this.QumlPlayerConfig.data.requiresSubmit;
     this.noOfQuestions = this.QumlPlayerConfig.data.totalQuestions;
     this.maxScore = this.QumlPlayerConfig.data.maxScore;
+    this.points = this.QumlPlayerConfig.data.points;
     this.userName = this.QumlPlayerConfig.context.userData.firstName + ' ' + this.QumlPlayerConfig.context.userData.lastName;
     this.contentName = this.QumlPlayerConfig.data.name;
     this.shuffleQuestions = this.QumlPlayerConfig.data.shuffle;
@@ -115,7 +119,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     if (this.maxQuestions) {
       this.questions = this.questions.slice(0, this.maxQuestions);
     }
-    if(!this.startPageInstruction) {
+    if (!this.startPageInstruction) {
       this.initializeTimer = true;
     }
     this.userService.raiseStartEvent(this.car.getCurrentSlideIndex());
@@ -129,7 +133,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   nextSlide() {
     this.userService.raiseHeartBeatEvent(eventName.nextClicked, TelemetryType.interact, this.currentSlideIndex);
     if (this.loadScoreBoard) {
-      this.calculateScore();
       this.endPageReached = true;
     }
     if (this.currentSlideIndex !== this.questions.length) {
@@ -142,7 +145,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       const spentTime = (new Date().getTime() - this.initialTime) / 10000;
       this.durationSpent = spentTime.toFixed(2);
       if (!this.requiresSubmit) {
-        this.calculateScore();
         this.endPageReached = true;
         this.userService.raiseEndEvent(this.currentSlideIndex, this.attemptedQuestions.length, this.endPageReached);
       } else {
@@ -153,13 +155,16 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       const spentTime = (new Date().getTime() - this.initialTime) / 10000;
       this.durationSpent = spentTime.toFixed(2);
       if (!this.requiresSubmit) {
-        this.calculateScore();
         this.endPageReached = true;
         this.userService.raiseEndEvent(this.currentSlideIndex, this.attemptedQuestions.length, this.endPageReached);
       } else {
         this.loadScoreBoard = true;
       }
     }
+    if (this.car.isLast(this.car.getCurrentSlideIndex())) {
+      this.calculateScore();
+    }
+
     this.car.move(this.CarouselConfig.NEXT);
     this.active = false;
     this.showAlert = false;
@@ -180,7 +185,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     } else if (!this.loadScoreBoard) {
       this.car.move(this.CarouselConfig.PREV);
     } else if (!this.linearNavigation && this.loadScoreBoard) {
-      const index = this.startPageInstruction ? this.questions.length : this.questions.length -1;
+      const index = this.startPageInstruction ? this.questions.length : this.questions.length - 1;
       this.car.selectSlide(index);
       this.loadScoreBoard = false;
     }
@@ -255,18 +260,18 @@ export class PlayerComponent implements OnInit, AfterViewInit {
         if (Boolean(option.option.value == correctOptionValue)) {
           this.currentScore = this.getScore(currentIndex, key);
           this.showAlert = true;
-          this.alertType = true;
+          this.alertType = 'correct';
           this.updateScoreBoard(currentIndex + 1, 'attempted', selectedOptionValue, this.currentScore);
-          this.correctFeedBackTimeOut();
           if (!this.showFeedBack) {
             this.nextSlide();
           }
           if (this.showFeedBack) {
+            this.correctFeedBackTimeOut();
             this.updateScoreBoard(((currentIndex + 1)), 'correct', undefined, this.currentScore);
           }
         } else if (!Boolean(option.option.value.value == correctOptionValue)) {
           this.showAlert = true;
-          this.alertType = false;
+          this.alertType = 'wrong';
           if (this.showFeedBack) {
             this.updateScoreBoard((currentIndex + 1), 'wrong');
           }
@@ -284,14 +289,14 @@ export class PlayerComponent implements OnInit, AfterViewInit {
             this.updateScoreBoard(((currentIndex + 1)), 'correct', undefined, this.currentScore);
             this.correctFeedBackTimeOut();
             this.showAlert = true;
-            this.alertType = true;
+            this.alertType = 'correct';
           } else if (!this.showFeedBack) {
             this.nextSlide();
           }
         } else if (this.currentScore === 0) {
           if (this.showFeedBack) {
             this.showAlert = true;
-            this.alertType = false;
+            this.alertType = 'wrong';
             this.updateScoreBoard((currentIndex + 1), 'wrong');
           } else if (!this.showFeedBack) {
             this.nextSlide();
@@ -299,14 +304,28 @@ export class PlayerComponent implements OnInit, AfterViewInit {
         }
       }
       this.optionSelectedObj = undefined;
-    } else if (this.optionSelectedObj === undefined && this.allowSkip && this.utilService.getQuestionType(this.questions , currentIndex) === 'MCQ') {
+    } else if (this.optionSelectedObj === undefined && this.allowSkip && this.utilService.getQuestionType(this.questions, currentIndex) === 'MCQ') {
       this.nextSlide();
-    } else if (this.utilService.getQuestionType(this.questions , currentIndex) === 'SA' || this.startPageInstruction && this.car.getCurrentSlideIndex() === 0){
+    } else if (this.utilService.getQuestionType(this.questions, currentIndex) === 'SA' || this.startPageInstruction && this.car.getCurrentSlideIndex() === 0) {
+      this.nextSlide();
+    } else if(this.startPageInstruction && this.optionSelectedObj === undefined && !this.active && !this.allowSkip && this.car.getCurrentSlideIndex() > 0 &&  this.utilService.getQuestionType(this.questions, currentIndex) === 'MCQ'
+      && !this.loadScoreBoard){
+        this.infopopupTimeOut();
+    } else if(this.optionSelectedObj === undefined && !this.active && !this.allowSkip && this.car.getCurrentSlideIndex() >= 0 &&  this.utilService.getQuestionType(this.questions, currentIndex) === 'MCQ'
+    && !this.loadScoreBoard) {
+        this.infopopupTimeOut();
+    } else if(!this.optionSelectedObj && this.active){
       this.nextSlide();
     }
   }
 
 
+  infopopupTimeOut(){
+    this.infoPopup = true;
+    setTimeout(() => {
+      this.infoPopup = false;
+    }, 2000)
+  }
 
   updateScoreBoard(index, classToBeUpdated, optionValue?, score?) {
     if (this.showFeedBack) {
@@ -329,24 +348,31 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   calculateScore() {
+    this.finalScore = 0;
     this.progressBarClass.forEach((ele) => {
       this.finalScore = this.finalScore + ele.score;
     })
+  }
+
+  scoreBoardLoaded(event) {
+    if (event.scoreBoardLoaded) {
+      this.calculateScore();
+    }
   }
 
   correctFeedBackTimeOut() {
     this.intervalRef = setTimeout(() => {
       this.showAlert = false;
       if (!this.car.isLast(this.car.getCurrentSlideIndex())) {
-        this.car.move(this.CarouselConfig.NEXT);
+        this.nextSlide();
       } else if (this.car.isLast(this.car.getCurrentSlideIndex())) {
         this.endPageReached = true;
+        this.calculateScore();
       }
     }, 3000)
   }
 
   nextSlideClicked(event) {
-    const currentIndex = this.startPageInstruction ? this.car.getCurrentSlideIndex() - 1 : this.car.getCurrentSlideIndex();
     if (event.type === 'next') {
       this.validateSelectedOption(this.optionSelectedObj);
     }
@@ -374,20 +400,13 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   goToSlide(index) {
-    if (index === 0) {
-      this.optionSelectedObj = undefined;
-    }
-    if (this.loadScoreBoard) {
-      this.loadScoreBoard = false;
-    }
-    this.currentSlideIndex = index;
-    this.car.selectSlide(index);
-  }
-
-  scoreBoardSubmitClicked(event) {
-    if (event.type = 'submit-clicked') {
-      this.endPageReached = true;
-    }
+      if (index === 0) {
+        this.optionSelectedObj = undefined;
+      }
+      if (this.loadScoreBoard) {
+        this.loadScoreBoard = false;
+      }
+      this.car.selectSlide(index);
   }
 
   setInitialScores() {
@@ -411,13 +430,13 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   goToQuestion(event) {
-    const index = this.startPageInstruction ? event.questionNo : event.questionNo -1; 
+    const index = this.startPageInstruction ? event.questionNo : event.questionNo - 1;
     this.car.selectSlide(index);
     this.loadScoreBoard = false;
   }
 
   getSolutions() {
-    const currentIndex = !this.startPageInstruction ? this.car.getCurrentSlideIndex() - 1 : this.car.getCurrentSlideIndex();
+    const currentIndex = this.car.getCurrentSlideIndex();
     this.currentQuestion = this.questions[currentIndex].body;
     this.currentOptions = this.questions[currentIndex].interactions.response1.options;
     if (this.currentSolutions) {

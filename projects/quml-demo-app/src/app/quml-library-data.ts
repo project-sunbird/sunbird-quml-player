@@ -269,10 +269,11 @@ export const data1 = {
         'setType': 'materialised',
         'navigationMode': 'non-linear',
         'allowSkip': true,
-        'requiresSubmit': true,
+        'requiresSubmit': false,
         'shuffle': true,
-        'showFeedback': false,
+        'showFeedback': true,
         'showSolutions': true,
+        'instructions': 'this is instructions',
         'quMLVersion': 1.5,
         'showTimer': true,
         'outcomeProcessing': {
