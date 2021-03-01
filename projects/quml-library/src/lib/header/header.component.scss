@@ -1,4 +1,22 @@
 @import '../../../../../node_modules/@project-sunbird/sb-styles/assets/mixins/mixins';
+
+.blink {
+  animation: blink 1s steps(1, end) infinite;
+  color: red;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 .quml-header {
   background: #cccccc;
   display: flow-root;

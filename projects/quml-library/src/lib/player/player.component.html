@@ -1,7 +1,7 @@
 <div class="quml-container">
   <div [hidden]="showSolution">
     <quml-header class="main-header" (durationEnds)="endPageReached = true"
-      [disablePreviousNavigation]="linearNavigation" [duration]="timeLimit" [showTimer]="showTimer"
+      [disablePreviousNavigation]="linearNavigation" [duration]="timeLimit" [warningTime]="warningTime" [showTimer]="showTimer"
       (nextSlideClicked)="nextSlideClicked($event)" (prevSlideClicked)="previousSlideClicked($event)"
       [currentSlideIndex]="currentSlideIndex" [totalNoOfQuestions]="questions.length" [active]="active"
       [endPageReached]="endPageReached" [initializeTimer]="initializeTimer" [hidden]="endPageReached">

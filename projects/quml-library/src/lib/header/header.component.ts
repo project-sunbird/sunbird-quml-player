@@ -10,6 +10,7 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() questions?: any;
   @Input() duration?: any;
+  @Input() warningTime?: any;
   @Input() disablePreviousNavigation: boolean;
   @Input() showTimer: boolean;
   @Input() totalNoOfQuestions: any;
@@ -23,6 +24,7 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
   minutes: number;
   seconds: number;
   private intervalRef?;
+  showWarning = false;
 
   time: any;
   constructor() {
@@ -31,7 +33,8 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnInit() {
     if (this.duration && this.showTimer) {
-      const durationInSec = this.duration / 1000;
+      // const durationInSec = this.duration / 1000;
+      const durationInSec = this.duration;
       this.minutes = ~~(durationInSec / 60);
       this.seconds = (durationInSec % 60);
     }
@@ -70,26 +73,57 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   timer() {
-    const durationInSec = this.duration / 1000;
-    let min = ~~(durationInSec / 60);
-    let sec = (durationInSec % 60);
+    // const durationInSec = this.duration / 1000;
+    let durationInSec = this.duration;
     this.intervalRef = setInterval(() => {
-      if (sec === -1) {
-        sec = 59;
-        min = min - 1;
-      } else if (sec === -1) {
-        min = min - 1;
-        sec = 59;
+      let min = ~~(durationInSec / 60);
+      let sec = (durationInSec % 60);
+      if (sec < 10) {
+        this.time = min + ':' + '0' + sec;
+      } else {
+        this.time = min + ':' + sec;
       }
-      if (min === -1) {
+      if (durationInSec === 0) {
         this.durationEnds.emit(true);
         return false;
       }
-      if (sec < 10) {
-        this.time = min + ':' + '0' + sec--;
-      } else {
-        this.time = min + ':' + sec--;
+      durationInSec--;
+      if (durationInSec < this.warningTime) {
+        this.showWarning = true;
       }
+
+
+      // console.log('min', min)
+      // console.log('sec', sec)
+      // if (sec === -1) {
+      //   sec = 59;
+      //   min = min - 1;
+      // } else if (sec === -1) {
+      //   min = min - 1;
+      //   sec = 59;
+      // }
+      // if (min === -1) {
+      //   this.durationEnds.emit(true);
+      //   return false;
+      // }
+      // if (sec < 10) {
+      //   this.time = min + ':' + '0' + sec--;
+      // } else {
+      //   this.time = min + ':' + sec--;
+      // }
+
+
+
+
+
+
+
+
+
+
+
+
+
     }, 1000);
   }
 }
