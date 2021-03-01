@@ -86,44 +86,11 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
       if (durationInSec === 0) {
         this.durationEnds.emit(true);
         return false;
-      }
-      durationInSec--;
-      if (durationInSec < this.warningTime) {
+      }      
+      if (durationInSec <= this.warningTime) {
         this.showWarning = true;
       }
-
-
-      // console.log('min', min)
-      // console.log('sec', sec)
-      // if (sec === -1) {
-      //   sec = 59;
-      //   min = min - 1;
-      // } else if (sec === -1) {
-      //   min = min - 1;
-      //   sec = 59;
-      // }
-      // if (min === -1) {
-      //   this.durationEnds.emit(true);
-      //   return false;
-      // }
-      // if (sec < 10) {
-      //   this.time = min + ':' + '0' + sec--;
-      // } else {
-      //   this.time = min + ':' + sec--;
-      // }
-
-
-
-
-
-
-
-
-
-
-
-
-
+      durationInSec--;
     }, 1000);
   }
 }
