@@ -1,15 +1,6 @@
 @import '../../../../../node_modules/@project-sunbird/sb-styles/assets/mixins/mixins';
-
 .startpage {
-    display: grid;
-    grid-template-columns: calculateRem(360px) calculateRem(100px);
-    grid-gap: calculateRem(16px);
-    justify-items: start;
-    justify-content: center;
     margin-top: calculateRem(20px);
-}
-.startpage-info {
-    padding: 0px 8px;
 }
 .startpage .header {
     color: var(--primary-color);
@@ -19,20 +10,15 @@
     line-height: calculateRem(24px);
     margin-bottom: calculateRem(16px);
 }
-
 .potrait-header {
     display: none;
 }
-
 .landscape-header {
     display: block;
     color: var(--primary-color);
     font-size: 18px;
     margin-bottom: 1rem;
 }
-
-
-
 .startpage .border {
     box-sizing: border-box;
     height: 60vh;
@@ -40,7 +26,6 @@
     border: calculateRem(1px) solid #6D7278;
     opacity: 0.2;
 }
-
 .startpage .sub-header {
     color: #6D7278;
     font-size: calculateRem(13px);
@@ -49,38 +34,31 @@
     line-height: calculateRem(18px);
     margin-bottom: calculateRem(16px);
 }
-
 .startpage .startpage-guidelines {
     color: #6D7278;
     font-size: calculateRem(13px);
     letter-spacing: 0;
     line-height: calculateRem(18px);
 }
-
 .questions,
 .points,
 .score {
     margin-bottom: calculateRem(16px);
 }
-
 .points {
-    margin-bottom: calculateRem(16px);
+    margin: 0 calculateRem(64px) calculateRem(16px) 0;
 }
-
 .minutes {
     margin-bottom: calculateRem(16px);
 }
-
 .startpage-guidelines p {
     margin-bottom: calculateRem(14px);
     font-size: calculateRem(13px);
 }
-
 .score-heading {
     color: #6D7278;
     font-size: calculateRem(13px);
 }
-
 .scores {
     color: var(--primary-color);
     font-size: calculateRem(18px);
@@ -89,7 +67,6 @@
     line-height: calculateRem(24px);
     text-align: center;
 }
-
 .icon {
     padding-right: calculateRem(8px);
     display: flex;
@@ -100,35 +77,17 @@
     display: flex;
     justify-items: center;
 }
-
 .question-scores {
     display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    margin-top: 24px;
-    margin-left: -24px;
-    border-left: 1px solid #eee;
-    padding-left: 24px;
+    border-bottom: 1px solid #eee;
+    align-items: center;
 }
-
+.startpage-instructions {
+    padding: 16px 0;
+    max-height: calc(100vh - 164px);
+    overflow-y: auto;
+}
 @media only screen and (max-width: 480px) {
-    .startpage {
-        display: flex;
-        -ms-grid-columns: 200px 10px 100px;
-        flex-direction: column-reverse;
-        justify-items: center;
-    }
-    .question-scores {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        margin-top: 0;
-        margin-left: 0;
-        border-bottom: 1px solid #eee;
-        padding-top: 16px;
-        border-left: 0;
-        padding: 0px 16px;
-    }
     .landscape-header {
         display: none;
     }
@@ -137,6 +96,6 @@
         color: var(--primary-color);
         font-size: 18px;
         font-weight: 700;
-        margin-top: 3rem;
+        margin-top: calculateRem(16px);
     }
 }

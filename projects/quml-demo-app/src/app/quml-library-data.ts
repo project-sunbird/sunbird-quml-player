@@ -216,6 +216,7 @@ export const data1 = {
         'depth': ''
     },
     'data': {
+        "instructions": "<div>General Instruction</div><b style='color:red;'>bold text 123</b><p style='font-weight: bold; font-style: italic; text-decoration: underline;'>Bold Italic Underline</p><ul><li>Bullet list for testing</li><li>Bullet list for testing</li><li>Bullet list for testing</li></ul><ol><li>Number list for testing</li><li>Number list for testing</li><li>Number list for testing</li></ol><h1>Heading 1</h1><h2>Heading 2</h2><h3>Heading 3</h3><table style='width:100%'><tr> <th>Firstname</th><th>Lastname</th><th>Age</th></tr><tr><td>Jill</td><td>Smith</td><td>50</td></tr><tr><td>Eve</td><td>Jackson</td><td>94</td></tr></table><div class='startpage-guidelines'><p>Read and understand the test guidelines</p><p>Click on audio icon to play sound</p><p>Tap on the zoom icon to enlarge the image</p><p>Tap on the option to select answer</p></div>",
         'name': 'Pre number concepts | Chapter Assessment | English | Grade 1',
         'description': 'Test question set with 5 MCQ questions',
         'mimeType': 'application/vnd.sunbird.quml',
