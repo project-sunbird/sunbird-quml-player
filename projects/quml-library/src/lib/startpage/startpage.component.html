@@ -6,34 +6,26 @@
     <div class="landscape-header">
       {{contentName}}
     </div>
-    <div class="sub-header">
-      General Instructions
-    </div>
-    <div class="startpage-guidelines">
-      <p>Read and understand the test guidelines</p>
-      <p>Click on audio icon to play sound</p>
-      <p>Tap on the zoom icon to enlarge the image</p>
-      <p>Tap on the option to select answer</p>
-    </div>
-  </div>
-  <div class="question-scores">
-    <div class="points">
-      <div class="score-heading">Questions</div>
-      <div class="icon-section">
-        <quml-content class="icon"></quml-content><span class="scores">{{totalNoOfQuestions}}</span>
+    <div class="question-scores">
+      <div class="points">
+        <div class="score-heading">Questions</div>
+        <div class="icon-section">
+          <quml-content class="icon"></quml-content><span class="scores">{{totalNoOfQuestions}}</span>
+        </div>
+      </div>
+      <div class="points">
+        <div class="score-heading">Minutes</div>
+        <div class="icon-section">
+          <quml-timer class="icon"></quml-timer><span class="scores">{{minutes}}:{{seconds}}</span>
+        </div>
+      </div>
+      <div class="points">
+        <div class="score-heading">Points</div>
+        <div class="icon-section">
+          <quml-startpagestaricon class="icon">i</quml-startpagestaricon><span class="scores">{{maxScore}}</span>
+        </div>
       </div>
     </div>
-    <div class="points">
-      <div class="score-heading">Minutes</div>
-      <div class="icon-section">
-        <quml-timer class="icon"></quml-timer><span class="scores">{{minutes}}:{{seconds}}</span>
-      </div>
-    </div>
-    <div class="points">
-      <div class="score-heading">Points</div>
-      <div class="icon-section">
-        <quml-startpagestaricon class="icon">i</quml-startpagestaricon><span class="scores">{{maxScore}}</span>
-      </div>
-    </div>
+    <div [innerHTML]= "instructions" class="startpage-instructions"> </div>
   </div>
 </div>

@@ -98,7 +98,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.showTimer = this.QumlPlayerConfig.data.showTimer;
     this.showFeedBack = this.QumlPlayerConfig.data.showFeedback;
     this.showUserSolution = this.QumlPlayerConfig.data.showSolutions;
-    this.startPageInstruction = this.QumlPlayerConfig.data.instructions;
+    this.startPageInstruction = this.QumlPlayerConfig.metadata.instructions;
     this.linearNavigation = this.QumlPlayerConfig.data.navigationMode === 'non-linear' ? false : true;
     this.requiresSubmit = this.QumlPlayerConfig.data.requiresSubmit;
     this.noOfQuestions = this.QumlPlayerConfig.data.totalQuestions;
