@@ -33,7 +33,6 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnInit() {
     if (this.duration && this.showTimer) {
-      // const durationInSec = this.duration / 1000;
       const durationInSec = this.duration;
       this.minutes = ~~(durationInSec / 60);
       this.seconds = (durationInSec % 60);
@@ -73,7 +72,6 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   timer() {
-    // const durationInSec = this.duration / 1000;
     let durationInSec = this.duration;
     this.intervalRef = setInterval(() => {
       let min = ~~(durationInSec / 60);

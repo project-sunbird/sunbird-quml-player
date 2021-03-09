@@ -94,9 +94,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.showIndicator = false;
     this.noWrapSlides = true;
     this.questions = this.QumlPlayerConfig.data.children;
-    this.timeLimit = this.QumlPlayerConfig.data.timeLimits.totalTime ?
-      this.QumlPlayerConfig.data.timeLimits.totalTime : (this.questions.length * 350000);
-    this.warningTime = this.QumlPlayerConfig.data.timeLimits.warningTime;
+    this.timeLimit = this.QumlPlayerConfig.data.timeLimits && this.QumlPlayerConfig.data.timeLimits.totalTime ?
+      this.QumlPlayerConfig.data.timeLimits.totalTime : (this.questions.length * 350);
+    this.warningTime = this.QumlPlayerConfig.data.timeLimits && this.QumlPlayerConfig.data.timeLimits.warningTime ? this.QumlPlayerConfig.data.timeLimits.warningTime : 0;
     this.showTimer = this.QumlPlayerConfig.data.showTimer;
     this.showFeedBack = this.QumlPlayerConfig.data.showFeedback;
     this.showUserSolution = this.QumlPlayerConfig.data.showSolutions;
