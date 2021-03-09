@@ -8,7 +8,7 @@
       <span><quml-durationtimer></quml-durationtimer></span><span>{{minutes}}:{{seconds}}</span>
     </div>
     <div class="duration mr-8" *ngIf="duration && showTimer && initializeTimer && time">
-      <span><quml-durationtimer></quml-durationtimer></span><span>{{time}}</span>
+      <span><quml-durationtimer></quml-durationtimer></span><span [ngClass]="{'blink': showWarning}">{{time}}</span>
     </div>
     <!-- <div class="star-container">
       <span div class="star">

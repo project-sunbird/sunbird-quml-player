@@ -217,6 +217,10 @@ export const data1 = {
         'depth': ''
     },
     'data': {
+        "timeLimits": {
+            "totalTime": 60,
+            "warningTime": 40
+        },
         'name': 'Pre number concepts | Chapter Assessment | English | Grade 1',
         'description': 'Test question set with 5 MCQ questions',
         'mimeType': 'application/vnd.sunbird.quml',
