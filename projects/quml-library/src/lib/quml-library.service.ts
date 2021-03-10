@@ -23,7 +23,7 @@ export class QumlLibraryService {
   constructor(
     public utilService: UtilService
   ) {
-
+  
   }
 
   initializeTelemetry(config: QumlPlayerConfig) {
@@ -73,6 +73,13 @@ export class QumlLibraryService {
   // public onTelemetry(callback: () => void) {
 
   // }
+
+  public startAssesEvent(assesEvent){
+    CsTelemetryModule.instance.telemetryService.raiseAssesTelemetry(
+        assesEvent,
+        this.getEventOptions()
+      );
+  }
 
   public start(duration) {
     CsTelemetryModule.instance.telemetryService.raiseStartTelemetry(

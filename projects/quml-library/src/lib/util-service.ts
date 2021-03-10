@@ -57,4 +57,9 @@ export class UtilService {
         
     }
 
+    canGo(progressBarClass){
+    let attemptedParams = ['correct', 'wrong', 'attempted'];
+     return attemptedParams.includes(progressBarClass);
+    }
+
 }

@@ -112,7 +112,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.contentName = this.QumlPlayerConfig.data.name;
     this.shuffleQuestions = this.QumlPlayerConfig.data.shuffle;
     this.maxQuestions = this.QumlPlayerConfig.data.maxQuestions;
-    this.allowSkip = this.QumlPlayerConfig.data.allowSkip;
+    this.allowSkip = !this.QumlPlayerConfig.data.allowSkip ? this.QumlPlayerConfig.data.allowSkip: true;
     if (this.shuffleQuestions) {
       this.questions = this.QumlPlayerConfig.data.children.sort(() => Math.random() - 0.5);
     }
@@ -164,7 +164,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     if (this.car.isLast(this.car.getCurrentSlideIndex())) {
       this.calculateScore();
     }
-
+  
     this.car.move(this.CarouselConfig.NEXT);
     this.active = false;
     this.showAlert = false;
@@ -259,6 +259,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
         const correctOptionValue = this.questions[currentIndex].responseDeclaration[key].correctResponse.value;
         if (Boolean(option.option.value == correctOptionValue)) {
           this.currentScore = this.getScore(currentIndex, key);
+          this.userService.raiseAssesEvent(this.currentQuestion , currentIndex , 'Yes' , this.currentScore , option.option , new Date().getTime());
           this.showAlert = true;
           this.alertType = 'correct';
           this.updateScoreBoard(currentIndex + 1, 'attempted', selectedOptionValue, this.currentScore);
@@ -270,6 +271,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
             this.updateScoreBoard(((currentIndex + 1)), 'correct', undefined, this.currentScore);
           }
         } else if (!Boolean(option.option.value.value == correctOptionValue)) {
+          this.currentScore = this.getScore(currentIndex, key);
+          this.userService.raiseAssesEvent(this.currentQuestion , currentIndex , 'No' , this.currentScore , option.option , new Date().getTime());
           this.showAlert = true;
           this.alertType = 'wrong';
           if (this.showFeedBack) {
@@ -308,19 +311,19 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       this.nextSlide();
     } else if (this.utilService.getQuestionType(this.questions, currentIndex) === 'SA' || this.startPageInstruction && this.car.getCurrentSlideIndex() === 0) {
       this.nextSlide();
-    } else if(this.startPageInstruction && this.optionSelectedObj === undefined && !this.active && !this.allowSkip && this.car.getCurrentSlideIndex() > 0 &&  this.utilService.getQuestionType(this.questions, currentIndex) === 'MCQ'
-      && !this.loadScoreBoard){
-        this.infopopupTimeOut();
-    } else if(this.optionSelectedObj === undefined && !this.active && !this.allowSkip && this.car.getCurrentSlideIndex() >= 0 &&  this.utilService.getQuestionType(this.questions, currentIndex) === 'MCQ'
-    && !this.loadScoreBoard) {
-        this.infopopupTimeOut();
-    } else if(!this.optionSelectedObj && this.active){
+    } else if (this.startPageInstruction && this.optionSelectedObj === undefined && !this.active && !this.allowSkip && this.car.getCurrentSlideIndex() > 0 && this.utilService.getQuestionType(this.questions, currentIndex) === 'MCQ'
+      && !this.loadScoreBoard && this.utilService.canGo(this.progressBarClass[this.car.getCurrentSlideIndex()])) {
+      this.infopopupTimeOut();
+    } else if (this.optionSelectedObj === undefined && !this.active && !this.allowSkip && this.car.getCurrentSlideIndex() >= 0 && this.utilService.getQuestionType(this.questions, currentIndex) === 'MCQ'
+      && !this.loadScoreBoard && this.utilService.canGo(this.progressBarClass[this.car.getCurrentSlideIndex()])) {
+      this.infopopupTimeOut();
+    } else if (!this.optionSelectedObj && this.active) {
       this.nextSlide();
     }
   }
 
 
-  infopopupTimeOut(){
+  infopopupTimeOut() {
     this.infoPopup = true;
     setTimeout(() => {
       this.infoPopup = false;
@@ -400,13 +403,17 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   goToSlide(index) {
-      if (index === 0) {
-        this.optionSelectedObj = undefined;
-      }
-      if (this.loadScoreBoard) {
-        this.loadScoreBoard = false;
-      }
+    if (index === 0) {
+      this.optionSelectedObj = undefined;
+    }
+    if (this.loadScoreBoard) {
+      this.loadScoreBoard = false;
+    }
+    if (!this.allowSkip && this.utilService.canGo(this.progressBarClass[(index-1)]['class'])) {
       this.car.selectSlide(index);
+    } else if(this.allowSkip) {
+      this.car.selectSlide(index);
+    }
   }
 
   setInitialScores() {

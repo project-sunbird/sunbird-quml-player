@@ -108,7 +108,7 @@ export class UserService {
     }
 
   }
-
+  
   raiseErrorEvent(error: Error) {
     const errorEvent = {
       eid: 'ERROR',
@@ -121,6 +121,19 @@ export class UserService {
     };
     this.qumlPlayerEvent.emit(errorEvent);
     this.qumlLibraryService.error(error);
+  }
+
+  raiseAssesEvent(questionData , index , pass , score , resValues , duration){
+    const assessEvent = {
+          item: questionData,
+          index: index,
+          pass: pass, 
+          score: score, 
+          resvalues: resValues, 
+          duration: duration 
+    }
+    this.qumlPlayerEvent.emit(assessEvent);
+    this.qumlLibraryService.startAssesEvent(assessEvent);
   }
 
 }
