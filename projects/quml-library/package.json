@@ -15,6 +15,7 @@
   },
   "whitelistedNonPeerDependencies": [
     "carousel",
-    "@project-sunbird/sunbird-player-sdk"
+    "@project-sunbird/sunbird-player-sdk",
+    "lodash"
   ]
 }
