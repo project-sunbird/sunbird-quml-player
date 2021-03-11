@@ -1,11 +1,11 @@
 import { TestBed } from '@angular/core/testing';
-import { UserService } from './user-service';
-import { mockData } from './user-service.data';
+import { ViewerService } from './viewer-service';
+import { mockData } from './viewer-service.data';
 import { QumlLibraryService } from '../../quml-library.service';
 import { UtilService } from '../../util-service';
 import {TelemetryType} from '../../telemetry-constants';
  
-describe('UserService', () => {
+describe('ViewerService', () => {
     beforeEach(() => {
       TestBed.configureTestingModule({
         providers: [UtilService, QumlLibraryService]
@@ -13,19 +13,19 @@ describe('UserService', () => {
     });
 
     it('should be created', () => {
-        const service: UserService = TestBed.get(UserService);
+        const service: ViewerService = TestBed.get(ViewerService);
         expect(service).toBeTruthy();
       });
 
       it('should initialize player config', () => {
-        const service = TestBed.get(UserService);
+        const service = TestBed.get(ViewerService);
         service.initialize(mockData.playerConfig);
         expect(service.src).toEqual(mockData.playerConfig.metadata.artifactUrl);
         expect(service.endPageSeen).toBeFalsy();
       });
 
       it('should raise Start event ', () => {
-        const service = TestBed.get(UserService);
+        const service = TestBed.get(ViewerService);
         const qumlLibraryService = TestBed.get(QumlLibraryService);
         spyOn(service.qumlPlayerEvent, 'emit');
         spyOn(qumlLibraryService, 'start');
@@ -35,7 +35,7 @@ describe('UserService', () => {
       });
 
       it('should raise interact event' , () => {
-        const service = TestBed.get(UserService);
+        const service = TestBed.get(ViewerService);
         const qumlLibraryService = TestBed.get(QumlLibraryService);
         spyOn(qumlLibraryService , 'interact');
         service.raiseHeartBeatEvent('type', 'Interact',  1);
@@ -44,7 +44,7 @@ describe('UserService', () => {
 
 
       it('should raise error event', () => {
-        const service: UserService = TestBed.get(UserService);
+        const service: ViewerService = TestBed.get(ViewerService);
         const qumlLibraryService = TestBed.get(QumlLibraryService);
         spyOn(service.qumlPlayerEvent , 'emit');
         spyOn(service.qumlLibraryService, 'error');

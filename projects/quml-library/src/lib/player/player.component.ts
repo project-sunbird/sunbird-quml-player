@@ -2,7 +2,7 @@ import { Component, OnInit, Input, ViewChild, Output, EventEmitter, AfterViewIni
 import { CarouselComponent } from 'ngx-bootstrap/carousel';
 import { QumlLibraryService } from '../quml-library.service';
 import { QumlPlayerConfig } from '../quml-library-interface';
-import { UserService } from '../user-service';
+import { ViewerService } from '../services/viewer-service/viewer-service';
 import { eventName, TelemetryType, pageId } from '../telemetry-constants';
 import { UtilService } from '../util-service';
 
@@ -76,11 +76,11 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   constructor(
     public qumlLibraryService: QumlLibraryService,
-    public userService: UserService,
+    public viewerService: ViewerService,
     public utilService: UtilService
   ) {
     this.endPageReached = false;
-    this.userService.qumlPlayerEvent.asObservable().subscribe((res) => {
+    this.viewerService.qumlPlayerEvent.asObservable().subscribe((res) => {
       this.playerEvent.emit(res);
     });
   }
@@ -92,7 +92,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.qumlLibraryService.initializeTelemetry(this.QumlPlayerConfig);
-    this.userService.initialize(this.QumlPlayerConfig);
+    this.viewerService.initialize(this.QumlPlayerConfig);
 
     this.initialTime = new Date().getTime();
     this.slideInterval = 0;
@@ -125,16 +125,16 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     if (!this.startPageInstruction) {
       this.initializeTimer = true;
     }
-    this.userService.raiseStartEvent(this.car.getCurrentSlideIndex());
+    this.viewerService.raiseStartEvent(this.car.getCurrentSlideIndex());
     this.setInitialScores();
   }
 
   ngAfterViewInit() {
-    this.userService.raiseHeartBeatEvent(eventName.startPageLoaded, TelemetryType.impression, pageId.startPage);
+    this.viewerService.raiseHeartBeatEvent(eventName.startPageLoaded, TelemetryType.impression, pageId.startPage);
   }
 
   nextSlide() {
-    this.userService.raiseHeartBeatEvent(eventName.nextClicked, TelemetryType.interact, this.currentSlideIndex);
+    this.viewerService.raiseHeartBeatEvent(eventName.nextClicked, TelemetryType.interact, this.currentSlideIndex);
     if (this.loadScoreBoard) {
       this.endPageReached = true;
     }
@@ -149,7 +149,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       this.durationSpent = spentTime.toFixed(2);
       if (!this.requiresSubmit) {
         this.endPageReached = true;
-        this.userService.raiseEndEvent(this.currentSlideIndex, this.attemptedQuestions.length, this.endPageReached);
+        this.viewerService.raiseEndEvent(this.currentSlideIndex, this.attemptedQuestions.length, this.endPageReached);
       } else {
         this.loadScoreBoard = true;
       }
@@ -159,7 +159,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       this.durationSpent = spentTime.toFixed(2);
       if (!this.requiresSubmit) {
         this.endPageReached = true;
-        this.userService.raiseEndEvent(this.currentSlideIndex, this.attemptedQuestions.length, this.endPageReached);
+        this.viewerService.raiseEndEvent(this.currentSlideIndex, this.attemptedQuestions.length, this.endPageReached);
       } else {
         this.loadScoreBoard = true;
       }
@@ -181,7 +181,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   prevSlide() {
-    this.userService.raiseHeartBeatEvent(eventName.prevClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
+    this.viewerService.raiseHeartBeatEvent(eventName.prevClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
     this.showAlert = false;
     if (this.car.getCurrentSlideIndex() + 1 === this.questions.length && this.endPageReached) {
       this.endPageReached = false;
@@ -195,14 +195,14 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   sideBarEvents(event) {
-    this.userService.raiseHeartBeatEvent(event, TelemetryType.interact, this.car.getCurrentSlideIndex());
+    this.viewerService.raiseHeartBeatEvent(event, TelemetryType.interact, this.car.getCurrentSlideIndex());
   }
 
 
   getOptionSelected(optionSelected) {
     this.active = true;
     const currentIndex = this.startPageInstruction ? this.car.getCurrentSlideIndex() - 1 : this.car.getCurrentSlideIndex();
-    this.userService.raiseHeartBeatEvent(eventName.optionClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
+    this.viewerService.raiseHeartBeatEvent(eventName.optionClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
     this.optionSelectedObj = optionSelected;
     this.currentSolutions = optionSelected.solutions;
     this.media = this.questions[currentIndex].media;
@@ -223,15 +223,15 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   closeAlertBox(event) {
     if (event.type === 'close') {
-      this.userService.raiseHeartBeatEvent(eventName.closedFeedBack, TelemetryType.interact, this.car.getCurrentSlideIndex());
+      this.viewerService.raiseHeartBeatEvent(eventName.closedFeedBack, TelemetryType.interact, this.car.getCurrentSlideIndex());
     } else if (event.type === 'tryAgain') {
-      this.userService.raiseHeartBeatEvent(eventName.tryAgain, TelemetryType.interact, this.car.getCurrentSlideIndex());
+      this.viewerService.raiseHeartBeatEvent(eventName.tryAgain, TelemetryType.interact, this.car.getCurrentSlideIndex());
     }
     this.showAlert = false;
   }
 
   viewSolution() {
-    this.userService.raiseHeartBeatEvent(eventName.viewSolutionClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
+    this.viewerService.raiseHeartBeatEvent(eventName.viewSolutionClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
     this.showSolution = true;
     this.showAlert = false;
     clearTimeout(this.intervalRef);
@@ -239,13 +239,13 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   exitContent(event) {
     if (event.type === 'EXIT') {
-      this.userService.raiseHeartBeatEvent(eventName.endPageExitClicked, TelemetryType.interact, 'endPage')
-      this.userService.raiseEndEvent(this.currentSlideIndex, this.currentSlideIndex - 1, 'endPage');
+      this.viewerService.raiseHeartBeatEvent(eventName.endPageExitClicked, TelemetryType.interact, 'endPage')
+      this.viewerService.raiseEndEvent(this.currentSlideIndex, this.currentSlideIndex - 1, 'endPage');
     }
   }
 
   closeSolution() {
-    this.userService.raiseHeartBeatEvent(eventName.solutionClosed, TelemetryType.interact, this.car.getCurrentSlideIndex());
+    this.viewerService.raiseHeartBeatEvent(eventName.solutionClosed, TelemetryType.interact, this.car.getCurrentSlideIndex());
     this.showSolution = false;
     this.car.selectSlide(this.currentSlideIndex);
   }
@@ -262,7 +262,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
         const correctOptionValue = this.questions[currentIndex].responseDeclaration[key].correctResponse.value;
         if (Boolean(option.option.value == correctOptionValue)) {
           this.currentScore = this.getScore(currentIndex, key);
-          this.userService.raiseAssesEvent(this.currentQuestion , currentIndex , 'Yes' , this.currentScore , option.option , new Date().getTime());
+          this.viewerService.raiseAssesEvent(this.currentQuestion , currentIndex , 'Yes' , this.currentScore , option.option , new Date().getTime());
           this.showAlert = true;
           this.alertType = 'correct';
           this.updateScoreBoard(currentIndex + 1, 'attempted', selectedOptionValue, this.currentScore);
@@ -275,7 +275,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
           }
         } else if (!Boolean(option.option.value.value == correctOptionValue)) {
           this.currentScore = this.getScore(currentIndex, key);
-          this.userService.raiseAssesEvent(this.currentQuestion , currentIndex , 'No' , this.currentScore , option.option , new Date().getTime());
+          this.viewerService.raiseAssesEvent(this.currentQuestion , currentIndex , 'No' , this.currentScore , option.option , new Date().getTime());
           this.showAlert = true;
           this.alertType = 'wrong';
           if (this.showFeedBack) {
@@ -391,8 +391,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   replayContent() {
-    this.userService.raiseHeartBeatEvent(eventName.replayClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
-    this.userService.raiseStartEvent(this.car.getCurrentSlideIndex());
+    this.viewerService.raiseHeartBeatEvent(eventName.replayClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
+    this.viewerService.raiseStartEvent(this.car.getCurrentSlideIndex());
     this.endPageReached = false;
     this.loadScoreBoard = false;
     const index = this.startPageInstruction ? 1 : 0;
@@ -401,7 +401,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   inScoreBoardSubmitClicked() {
-    this.userService.raiseHeartBeatEvent(eventName.scoreBoardSubmitClicked, TelemetryType.interact, pageId.submitPage);
+    this.viewerService.raiseHeartBeatEvent(eventName.scoreBoardSubmitClicked, TelemetryType.interact, pageId.submitPage);
     this.endPageReached = true;
   }
 

@@ -8,7 +8,7 @@ import { eventName, TelemetryType } from '../../telemetry-constants';
 @Injectable({
   providedIn: 'root'
 })
-export class UserService {
+export class ViewerService {
   public qumlPlayerEvent = new EventEmitter<any>();
   zoom: string;
   rotation: number;
