@@ -6,14 +6,14 @@
     "@angular/core": "^7.1.0",
     "katex": "^0.11.1",
     "ngx-bootstrap": "^5.3.2",
+    "lodash": "^4.17.20"
   },
   "dependencies": {
     "@project-sunbird/client-services": "^3.4.9",
     "@project-sunbird/sunbird-player-sdk": "0.0.16",
-    "lodash": "^4.17.20"
   },
   "whitelistedNonPeerDependencies": [
     "carousel",
-    "@project-sunbird/sunbird-player-sdk",
+    "@project-sunbird/sunbird-player-sdk"
   ]
 }
