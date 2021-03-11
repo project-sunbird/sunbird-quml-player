@@ -72,6 +72,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     showReplay: false,
     showExit: true,
   };
+  warningTime: number;
 
   constructor(
     public qumlLibraryService: QumlLibraryService,
@@ -98,11 +99,13 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.showIndicator = false;
     this.noWrapSlides = true;
     this.questions = this.QumlPlayerConfig.data.children;
-    this.timeLimit = this.QumlPlayerConfig.data.timeLimit;
+    this.timeLimit = this.QumlPlayerConfig.data.timeLimits && this.QumlPlayerConfig.data.timeLimits.totalTime ?
+      this.QumlPlayerConfig.data.timeLimits.totalTime : (this.questions.length * 350);
+    this.warningTime = this.QumlPlayerConfig.data.timeLimits && this.QumlPlayerConfig.data.timeLimits.warningTime ? this.QumlPlayerConfig.data.timeLimits.warningTime : 0;
     this.showTimer = this.QumlPlayerConfig.data.showTimer;
     this.showFeedBack = this.QumlPlayerConfig.data.showFeedback;
     this.showUserSolution = this.QumlPlayerConfig.data.showSolutions;
-    this.startPageInstruction = this.QumlPlayerConfig.data.instructions;
+    this.startPageInstruction = this.QumlPlayerConfig.metadata.instructions;
     this.linearNavigation = this.QumlPlayerConfig.data.navigationMode === 'non-linear' ? false : true;
     this.requiresSubmit = this.QumlPlayerConfig.data.requiresSubmit;
     this.noOfQuestions = this.QumlPlayerConfig.data.totalQuestions;
