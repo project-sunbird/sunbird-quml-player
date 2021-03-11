@@ -124,7 +124,6 @@ export class UserService {
   }
 
   raiseAssesEvent(questionData , index , pass , score , resValues , duration){
-    console.log('----------->>>>>>>');
     const assessEvent = {
           item: questionData,
           index: index,

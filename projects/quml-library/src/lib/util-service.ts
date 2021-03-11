@@ -36,8 +36,8 @@ export class UtilService {
     public getMultiselectScore(options, responseDeclaration) {
         let key: any = this.getKeyValue(Object.keys(responseDeclaration));
         const selectedOptionValue = options.map(option => option.value);
-        let score = responseDeclaration[key].correct_response.outcomes.score ? responseDeclaration[key].correct_response.outcomes.score : responseDeclaration.maxScore;
-        let correctValues = responseDeclaration[key].correct_response.value;
+        let score = responseDeclaration[key].correctResponse.outcomes.score ? responseDeclaration[key].correctResponse.outcomes.score : responseDeclaration.maxScore;
+        let correctValues = responseDeclaration[key].correctResponse.value;
         let mapping = responseDeclaration[key]['mapping'];
         if (_.isEqual(correctValues, selectedOptionValue)) {
             return score;

@@ -3,7 +3,7 @@ export const responseDeclaration = {
     response1: {
         cardinality: "single",
         type: "integer",
-        correct_response: {
+        correctResponse: {
             value: 1,
             outcomes: {
                 SCORE: 1

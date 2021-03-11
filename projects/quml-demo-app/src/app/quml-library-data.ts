@@ -218,7 +218,7 @@ export const data1 = {
     },
     'data': {
         "timeLimits": {
-            "totalTime": 60,
+            "totalTime": 6000,
             "warningTime": 40
         },
         'name': 'Pre number concepts | Chapter Assessment | English | Grade 1',
@@ -882,7 +882,7 @@ export const data1 = {
                     "response1": {
                         "cardinality": "multiple",
                         "type": "integer",
-                        "correct_response": {
+                        "correctResponse": {
                             "value": [
                                 0,
                                 1,
