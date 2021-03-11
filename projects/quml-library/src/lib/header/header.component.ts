@@ -41,7 +41,7 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnChanges() {
     if (this.duration && this.showTimer && this.initializeTimer && !this.intervalRef) {
-      this.countDown();
+      this.timer();
     } else if(this.duration === undefined && this.showTimer && this.initializeTimer && !this.intervalRef) {
        this.showCountUp();
     }
