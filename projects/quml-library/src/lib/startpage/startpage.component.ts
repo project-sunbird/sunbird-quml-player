@@ -10,7 +10,7 @@ export class StartpageComponent implements OnInit {
 
   @Input() instructions: any;
   @Input() totalNoOfQuestions: number;
-  @Input() maxScore: number;
+  @Input() points: number;
   @Input() time: number;
   @Input() contentName: string;
   minutes: number;

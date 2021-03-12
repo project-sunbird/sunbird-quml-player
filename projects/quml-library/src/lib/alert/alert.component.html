@@ -1,15 +1,29 @@
-<div class="quml-correct-alert">
-  <div class="close-icon"><quml-close (click)="closeAlert.emit({type:'close'})" ></quml-close></div>
-  <div class="quml-alert-body">
-      <quml-correct *ngIf="alertType"></quml-correct>
-      <quml-wrong *ngIf="!alertType"></quml-wrong>
-      <div>
-        <div class="alert-text" *ngIf="alertType">You got it Right</div>
-        <div class="alert-text" *ngIf="!alertType"> Not the right one</div>
-        <div class="view-solution">
-          <span class="padding-right" (click)="viewSolution()" *ngIf="showSolutionButton">View Solution</span>
-          <span *ngIf="!alertType" (click)="closeAlert.emit({type:'tryAgain'})">Try again</span>
+<div class="quml-alert">
+  <div class="quml-alert__overlay" (click)="closeAlert.emit({type:'close'})"></div>
+  <div class="quml-alert__container">
+    <div class="quml-alert__body">
+      <div class="quml-alert__image quml-alert__image--correct" *ngIf="alertType === 'correct'">
+        <div class="quml-alert__icon-container">
+          <img class="quml-alert__icon" src="../assets/quml-correct.svg">
+
         </div>
+        <div class="quml-alert__icon-empty"></div>
+        <img class="quml-alert__banner" src="../assets/banner-correct.svg">
+      </div>
+      <div class="quml-alert__image quml-alert__image--wrong" *ngIf="alertType === 'wrong'">
+        <div class="quml-alert__icon-container">
+          <img class="quml-alert__icon" src="../assets/quml-wrong.svg">
+        </div>
+      </div>
+      <div class="quml-alert__icon-empty"></div>
+      <img class="quml-alert__banner" src="../assets/banner-wrong.svg">
+      <div class="quml-alert__try-again">
+        <span *ngIf="alertType === 'wrong'" (click)="closeAlert.emit({type:'tryAgain'})">Try again</span>
+        <span *ngIf="alertType === 'correct' && showSolutionButton" (click)="viewSolution()">View Solution</span>
+      </div>
+      <div class="quml-alert__view-hint quml-alert__view-hint--disabled">
+        <img class="view-hint-icon" src="../assets/view-hint.svg">
       </div>
     </div>
   </div>
+</div>

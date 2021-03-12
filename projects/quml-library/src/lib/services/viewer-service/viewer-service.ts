@@ -1,14 +1,14 @@
 import { EventEmitter, Injectable } from '@angular/core';
-import { QumlPlayerConfig } from './quml-library-interface';
-import { QumlLibraryService } from './quml-library.service';
-import { UtilService } from './util-service';
-import { eventName, TelemetryType } from '././telemetry-constants';
+import { QumlPlayerConfig } from '../../quml-library-interface';
+import { QumlLibraryService } from '../../quml-library.service';
+import { UtilService } from '../../util-service';
+import { eventName, TelemetryType } from '../../telemetry-constants';
 
 
 @Injectable({
   providedIn: 'root'
 })
-export class UserService {
+export class ViewerService {
   public qumlPlayerEvent = new EventEmitter<any>();
   zoom: string;
   rotation: number;
@@ -108,7 +108,7 @@ export class UserService {
     }
 
   }
-
+  
   raiseErrorEvent(error: Error) {
     const errorEvent = {
       eid: 'ERROR',
@@ -121,6 +121,19 @@ export class UserService {
     };
     this.qumlPlayerEvent.emit(errorEvent);
     this.qumlLibraryService.error(error);
+  }
+
+  raiseAssesEvent(questionData , index , pass , score , resValues , duration){
+    const assessEvent = {
+          item: questionData,
+          index: index,
+          pass: pass, 
+          score: score, 
+          resvalues: resValues, 
+          duration: duration 
+    }
+    this.qumlPlayerEvent.emit(assessEvent);
+    this.qumlLibraryService.startAssesEvent(assessEvent);
   }
 
 }

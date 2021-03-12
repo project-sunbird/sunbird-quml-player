@@ -244,6 +244,16 @@
   padding: 8px;
 }
 
+.info-popup {
+  position: absolute;
+  top: 18%;
+  right: 10%;
+  font-size: 13px;
+  font-family: noto-sans;
+  box-shadow: 0 2px 14px 0 rgba(0,0,0,.1);
+  padding: 11px;
+}
+
 .quml-menu {
   width: 24px;
   height: 24px;

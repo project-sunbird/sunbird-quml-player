@@ -7,7 +7,6 @@
 .scoreboard-scores {
     display: flex;
     -ms-grid-columns: (100px);
-    justify-content: center;
     margin: 2rem auto 0 auto;
     flex-wrap: wrap;
     height: 100%;
@@ -105,7 +104,6 @@
         display: -ms-grid;
         display: grid;
         grid-template-columns: repeat(4,80px);
-        justify-content: center;
         align-items: center;
         grid-gap: 8px;
         margin-left: 10%;
