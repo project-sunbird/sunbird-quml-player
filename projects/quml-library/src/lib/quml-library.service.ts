@@ -31,7 +31,7 @@ export class QumlLibraryService {
     this.context = config.context;
     this.contentSessionId = this.utilService.uniqueId();
     this.playSessionId = this.utilService.uniqueId();
-    this.channel = config.context.channel || '';
+    this.channel = this.context.channel || '';
     this.pdata = this.context.pdata;
     this.sid =  this.context.sid;
     this.uid =  this.context.uid;
@@ -41,18 +41,18 @@ export class QumlLibraryService {
       CsTelemetryModule.instance.telemetryService.initTelemetry(
         {
           config: {
-            pdata: config.context.pdata,
+            pdata: this.context.pdata,
             env: 'ContentPlayer',
-            channel: config.context.channel,
-            did: config.context.did,
-            authtoken: config.context.authToken || '',
-            uid: config.context.uid || '',
-            sid: config.context.sid,
+            channel: this.context.channel,
+            did: this.context.did,
+            authtoken: this.context.authToken || '',
+            uid: this.context.uid || '',
+            sid: this.context.sid,
             batchsize: 20,
-            mode: config.context.mode,
-            host: config.context.host || '',
-            endpoint: config.context.endpoint || '/data/v3/telemetry',
-            tags: config.context.tags,
+            mode: this.context.mode,
+            host: this.context.host || '',
+            endpoint: this.context.endpoint || '/data/v3/telemetry',
+            tags: this.context.tags,
             cdata: [{ id: this.contentSessionId, type: 'ContentSession' },
             { id: this.playSessionId, type: 'PlaySession' }]
           },
@@ -62,16 +62,12 @@ export class QumlLibraryService {
     }
 
     this.telemetryObject = {
-      id: config.metadata.identifier  || config.data.identifier,
+      id: config.metadata.identifier  || '',
       type: 'Content', 
-      ver: config.metadata.pkgVersion || config.data.pkgVersion + '',
+      ver: config.metadata.pkgVersion ? config.metadata.pkgVersion.toString() : '',
       rollup: this.context.objectRollup || {}
     };
   }
-
-  // public onTelemetry(callback: () => void) {
-
-  // }
 
   public startAssesEvent(assesEvent){
     CsTelemetryModule.instance.telemetryService.raiseAssesTelemetry(
