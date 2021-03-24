@@ -3,6 +3,7 @@ import { QumlPlayerConfig } from '../../quml-library-interface';
 import { QumlLibraryService } from '../../quml-library.service';
 import { UtilService } from '../../util-service';
 import { eventName, TelemetryType } from '../../telemetry-constants';
+import { QuestionCursor } from '../../quml-abstract.service';
 
 
 @Injectable({
@@ -10,6 +11,7 @@ import { eventName, TelemetryType } from '../../telemetry-constants';
 })
 export class ViewerService {
   public qumlPlayerEvent = new EventEmitter<any>();
+  public qumlQuestionEvent = new EventEmitter<any>();
   zoom: string;
   rotation: number;
   qumlPlayerStartTime: number;
@@ -24,14 +26,19 @@ export class ViewerService {
   metaData: any;
   loadingProgress: number;
   endPageSeen: boolean;
+  identifiers: any;
+  threshold: number;
 
   constructor(
     public qumlLibraryService: QumlLibraryService,
-    public utilService: UtilService
+    public utilService: UtilService,
+    public questionCursor: QuestionCursor
   ) {
   }
 
-  initialize(config: QumlPlayerConfig) {
+  initialize(config: QumlPlayerConfig , threshold, questionIds) {
+    this.identifiers = questionIds;
+    this.threshold = threshold;
     this.rotation = 0;
     this.totalNumberOfQuestions = config.data.totalQuestions;
     this.qumlPlayerStartTime = this.qumlPlayerLastPageTime = new Date().getTime();
@@ -134,6 +141,24 @@ export class ViewerService {
     }
     this.qumlPlayerEvent.emit(assessEvent);
     this.qumlLibraryService.startAssesEvent(assessEvent);
+  }
+
+
+  getQuestions() {
+    let noOfTimesApiCalled = 0;
+      let indentifersForQuestions = this.identifiers.splice(0, this.threshold);
+      this.questionCursor.getQuestions(indentifersForQuestions).subscribe((question) => {
+        this.qumlQuestionEvent.emit({ question, noOfTimesApiCalled });
+      })
+  } 
+
+  getQuestion() {
+    let noOfTimesApiCalled = 0;
+    let indentiferForQuestion = this.identifiers.splice(0 , this.threshold);
+    this.questionCursor.getQuestion(indentiferForQuestion).subscribe((question) => {
+      noOfTimesApiCalled = noOfTimesApiCalled + 1;
+      this.qumlQuestionEvent.emit({ question, noOfTimesApiCalled });
+    })
   }
 
 }

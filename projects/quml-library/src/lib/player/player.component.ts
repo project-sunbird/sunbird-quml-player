@@ -5,22 +5,24 @@ import { QumlPlayerConfig } from '../quml-library-interface';
 import { ViewerService } from '../services/viewer-service/viewer-service';
 import { eventName, TelemetryType, pageId } from '../telemetry-constants';
 import { UtilService } from '../util-service';
+import { QuestionCursor } from '../quml-abstract.service';
 
 
 
 @Component({
   selector: 'quml-player',
   templateUrl: './player.component.html',
-  styleUrls: ['./player.component.scss']
+  styleUrls: ['./player.component.scss'],
 })
 export class PlayerComponent implements OnInit, AfterViewInit {
   @Input() QumlPlayerConfig: QumlPlayerConfig;
+  @Input() questionIds: Array<[]>;
   @Output() playerEvent = new EventEmitter<any>();
   @Output() telemetryEvent = new EventEmitter<any>();
   @ViewChild('car') car: CarouselComponent;
 
-
-  questions: any;
+  threshold: number;
+  questions = [];
   linearNavigation: boolean;
   endPageReached: boolean;
   slideInterval: number;
@@ -62,6 +64,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   maxQuestions: number;
   allowSkip: boolean;
   infoPopup: boolean;
+  loadView: Boolean;
+  noOfTimesApiCalled: number = 0;
   CarouselConfig = {
     NEXT: 1,
     PREV: 2
@@ -77,12 +81,24 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   constructor(
     public qumlLibraryService: QumlLibraryService,
     public viewerService: ViewerService,
-    public utilService: UtilService
+    public utilService: UtilService,
+    public questionCursor: QuestionCursor,
+    private element: ElementRef,
+    private cdRef: ChangeDetectorRef
   ) {
     this.endPageReached = false;
     this.viewerService.qumlPlayerEvent.asObservable().subscribe((res) => {
       this.playerEvent.emit(res);
     });
+
+    this.viewerService.qumlQuestionEvent.subscribe((res) => {
+      this.questions = this.questions.concat(res.question.questions);
+      if(this.shuffleQuestions) {
+         this.questions = this.questions.sort(() => Math.random() - 0.5);
+      }
+      this.noOfTimesApiCalled++;
+      this.loadView = true;
+    })
   }
 
   @HostListener('document:TelemetryEvent', ['$event'])
@@ -91,49 +107,57 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    this.threshold = this.QumlPlayerConfig.metadata.threshold || 3;
+    this.noOfQuestions = this.questionIds.length;
     this.qumlLibraryService.initializeTelemetry(this.QumlPlayerConfig);
-    this.viewerService.initialize(this.QumlPlayerConfig);
-
+    this.viewerService.initialize(this.QumlPlayerConfig , this.threshold , this.questionIds);
     this.initialTime = new Date().getTime();
     this.slideInterval = 0;
     this.showIndicator = false;
     this.noWrapSlides = true;
-    this.questions = this.QumlPlayerConfig.data.children;
-    this.timeLimit = this.QumlPlayerConfig.data.timeLimits && this.QumlPlayerConfig.data.timeLimits.totalTime ?
-      this.QumlPlayerConfig.data.timeLimits.totalTime : (this.questions.length * 350);
-    this.warningTime = this.QumlPlayerConfig.data.timeLimits && this.QumlPlayerConfig.data.timeLimits.warningTime ? this.QumlPlayerConfig.data.timeLimits.warningTime : 0;
-    this.showTimer = this.QumlPlayerConfig.data.showTimer;
-    this.showFeedBack = this.QumlPlayerConfig.data.showFeedback;
-    this.showUserSolution = this.QumlPlayerConfig.data.showSolutions;
+    this.timeLimit = this.QumlPlayerConfig.metadata.timeLimits && this.QumlPlayerConfig.metadata.timeLimits.totalTime ? this.QumlPlayerConfig.metadata.timeLimits.totalTime : 0 ;
+    this.warningTime = this.QumlPlayerConfig.metadata.timeLimits && this.QumlPlayerConfig.data.timeLimits.warningTime ? this.QumlPlayerConfig.data.timeLimits.warningTime : 0;
+    this.showTimer = this.QumlPlayerConfig.metadata.showTimer ? this.QumlPlayerConfig.data.showTimer: false;
+    this.showFeedBack = this.QumlPlayerConfig.metadata.showFeedback.toLowerCase() === 'no' ? false: true;
+    this.showUserSolution = this.QumlPlayerConfig.metadata.showSolutions.toLowerCase() === 'no' ? false: true;
     this.startPageInstruction = this.QumlPlayerConfig.metadata.instructions;
-    this.linearNavigation = this.QumlPlayerConfig.data.navigationMode === 'non-linear' ? false : true;
-    this.requiresSubmit = this.QumlPlayerConfig.data.requiresSubmit;
-    this.noOfQuestions = this.QumlPlayerConfig.data.totalQuestions;
-    this.maxScore = this.QumlPlayerConfig.data.maxScore;
-    this.points = this.QumlPlayerConfig.data.points;
+    this.linearNavigation = this.QumlPlayerConfig.metadata.navigationMode === 'non-linear' ? false : true;
+    this.requiresSubmit = this.QumlPlayerConfig.metadata.requiresSubmit.toLowerCase() === 'no' ? false : true;
+    this.maxScore = this.QumlPlayerConfig.metadata.maxScore;
+    this.points = this.QumlPlayerConfig.metadata.points;
     this.userName = this.QumlPlayerConfig.context.userData.firstName + ' ' + this.QumlPlayerConfig.context.userData.lastName;
     this.contentName = this.QumlPlayerConfig.data.name;
-    this.shuffleQuestions = this.QumlPlayerConfig.data.shuffle;
-    this.maxQuestions = this.QumlPlayerConfig.data.maxQuestions;
-    this.allowSkip = !this.QumlPlayerConfig.data.allowSkip ? this.QumlPlayerConfig.data.allowSkip: true;
-    if (this.shuffleQuestions) {
-      this.questions = this.QumlPlayerConfig.data.children.sort(() => Math.random() - 0.5);
-    }
+    this.shuffleQuestions = this.QumlPlayerConfig.metadata.shuffle ? this.QumlPlayerConfig.metadata.shuffle : false;
+    this.maxQuestions = this.QumlPlayerConfig.metadata.maxQuestions;
+    this.allowSkip =  this.QumlPlayerConfig.metadata.allowSkip;
     if (this.maxQuestions) {
       this.questions = this.questions.slice(0, this.maxQuestions);
     }
     if (!this.startPageInstruction) {
       this.initializeTimer = true;
     }
-    this.viewerService.raiseStartEvent(this.car.getCurrentSlideIndex());
     this.setInitialScores();
+    if (this.threshold === 1) {
+      this.viewerService.getQuestion();
+    } else if (this.threshold > 1) {
+      this.viewerService.getQuestions();
+    }
   }
 
   ngAfterViewInit() {
-    this.viewerService.raiseHeartBeatEvent(eventName.startPageLoaded, TelemetryType.impression, pageId.startPage);
+    this.viewerService.raiseStartEvent(1);
+    this.viewerService.raiseHeartBeatEvent(eventName.startPageLoaded, TelemetryType.impression, 1);
   }
 
   nextSlide() {
+    if(this.car.getCurrentSlideIndex() > 0 && ((this.threshold * this.noOfTimesApiCalled) - 1) === this.car.getCurrentSlideIndex()
+     && this.threshold * this.noOfTimesApiCalled >= this.questions.length)  {
+        if(this.threshold === 1) {
+          this.viewerService.getQuestion();
+        } else if(this.threshold > 1){
+           this.viewerService.getQuestions();
+        }
+    }
     this.viewerService.raiseHeartBeatEvent(eventName.nextClicked, TelemetryType.interact, this.currentSlideIndex);
     if (this.loadScoreBoard) {
       this.endPageReached = true;
@@ -144,24 +168,23 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     if (this.currentSlideIndex === 1 && (this.currentSlideIndex - 1) === 0 && this.startPageInstruction) {
       this.initializeTimer = true;
     }
-    if (this.car.getCurrentSlideIndex() === this.questions.length && this.startPageInstruction) {
+    if(this.car.getCurrentSlideIndex() === this.noOfQuestions && this.requiresSubmit){
+       this.loadScoreBoard = true;
+    }
+    if (this.car.getCurrentSlideIndex() === this.noOfQuestions && this.startPageInstruction) {
       const spentTime = (new Date().getTime() - this.initialTime) / 10000;
       this.durationSpent = spentTime.toFixed(2);
       if (!this.requiresSubmit) {
         this.endPageReached = true;
         this.viewerService.raiseEndEvent(this.currentSlideIndex, this.attemptedQuestions.length, this.endPageReached);
-      } else {
-        this.loadScoreBoard = true;
       }
     }
-    if (this.car.getCurrentSlideIndex() + 1 === this.questions.length && !this.startPageInstruction) {
+    if (this.car.getCurrentSlideIndex() + 1 === this.noOfQuestions && !this.startPageInstruction) {
       const spentTime = (new Date().getTime() - this.initialTime) / 10000;
       this.durationSpent = spentTime.toFixed(2);
       if (!this.requiresSubmit) {
         this.endPageReached = true;
         this.viewerService.raiseEndEvent(this.currentSlideIndex, this.attemptedQuestions.length, this.endPageReached);
-      } else {
-        this.loadScoreBoard = true;
       }
     }
     if (this.car.isLast(this.car.getCurrentSlideIndex())) {
@@ -271,7 +294,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
           }
           if (this.showFeedBack) {
             this.correctFeedBackTimeOut();
-            this.updateScoreBoard(((currentIndex + 1)), 'correct', undefined, this.currentScore);
+            this.updateScoreBoard(((currentIndex)), 'correct', undefined, this.currentScore);
           }
         } else if (!Boolean(option.option.value.value == correctOptionValue)) {
           this.currentScore = this.getScore(currentIndex, key);
@@ -279,7 +302,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
           this.showAlert = true;
           this.alertType = 'wrong';
           if (this.showFeedBack) {
-            this.updateScoreBoard((currentIndex + 1), 'wrong');
+            this.updateScoreBoard((currentIndex), 'wrong');
           }
           if (!this.showFeedBack) {
             this.nextSlide();
@@ -339,7 +362,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
         if (ele.index === index) {
           ele.class = classToBeUpdated;
           ele.score = score ? score : 0
-          ele.qType = this.questions[index - 1].primaryCategory.toLowerCase() === 'multiple choice question' ? 'MCQ' : 'SA';
         }
       })
     } else if (!this.showFeedBack) {
@@ -391,13 +413,11 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   replayContent() {
-    this.viewerService.raiseHeartBeatEvent(eventName.replayClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
-    this.viewerService.raiseStartEvent(this.car.getCurrentSlideIndex());
+    this.viewerService.raiseHeartBeatEvent(eventName.replayClicked, TelemetryType.interact, 1);
+    // this.viewerService.raiseStartEvent(1);
     this.endPageReached = false;
     this.loadScoreBoard = false;
-    const index = this.startPageInstruction ? 1 : 0;
-    console.log(index);
-    this.car.selectSlide(index);
+    this.car.selectSlide(1);
   }
 
   inScoreBoardSubmitClicked() {
@@ -421,19 +441,17 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   setInitialScores() {
     if (this.showFeedBack) {
-      this.questions.forEach((ele, index) => {
+      this.questionIds.forEach((ele, index) => {
         this.progressBarClass.push({
           index: (index + 1), class: 'skipped',
           score: 0,
-          qType: this.questions[index].primaryCategory.toLowerCase() === 'multiple choice question' ? 'MCQ' : 'SA'
         });
       })
     } else if (!this.showFeedBack) {
-      this.questions.forEach((ele, index) => {
+      this.questionIds.forEach((ele, index) => {
         this.progressBarClass.push({
           index: (index + 1), class: 'unattempted', value: undefined,
           score: 0,
-          qType: this.questions[index].primaryCategory.toLowerCase() === 'multiple choice question' ? 'MCQ' : 'SA'
         });
       })
     }
@@ -441,7 +459,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   goToQuestion(event) {
     const index = this.startPageInstruction ? event.questionNo : event.questionNo - 1;
-    this.car.selectSlide(index);
+    this.car.selectSlide(index + 1);
     this.loadScoreBoard = false;
   }
 
@@ -458,6 +476,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   getScore(currentIndex, key) {
-    return this.questions[currentIndex].responseDeclaration.maxScore ? this.questions[currentIndex].responseDeclaration.maxScore : this.questions[currentIndex].responseDeclaration[key].correctResponse.outcomes;
+    return this.questions[currentIndex].responseDeclaration.maxScore ? this.questions[currentIndex].responseDeclaration.maxScore : this.questions[currentIndex].responseDeclaration[key].correctResponse.outcomes.SCORE;
   }
 }
