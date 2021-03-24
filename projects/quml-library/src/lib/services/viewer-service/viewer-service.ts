@@ -147,7 +147,6 @@ export class ViewerService {
   getQuestions() {
     let noOfTimesApiCalled = 0;
       let indentifersForQuestions = this.identifiers.splice(0, this.threshold);
-      console.log('identifiers', this.identifiers);
       this.questionCursor.getQuestions(indentifersForQuestions).subscribe((question) => {
         this.qumlQuestionEvent.emit({ question, noOfTimesApiCalled });
       })

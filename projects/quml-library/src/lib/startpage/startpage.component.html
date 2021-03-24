@@ -26,8 +26,8 @@
         </div>
       </div>
     </div>
-    <ng-container *ngIf="instructions">
-    <div [innerHTML]= "instructions" class="startpage-instructions"> </div>
+    <ng-container *ngIf="instructions?.SafeHtmlImpl?.changingThisBreaksApplicationSecurity">
+    <div [innerHTML]="instructions" class="startpage-instructions"> </div>
   </ng-container>
   </div>
 </div>

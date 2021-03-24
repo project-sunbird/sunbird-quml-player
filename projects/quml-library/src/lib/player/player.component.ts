@@ -16,13 +16,12 @@ import { QuestionCursor } from '../quml-abstract.service';
 })
 export class PlayerComponent implements OnInit, AfterViewInit {
   @Input() QumlPlayerConfig: QumlPlayerConfig;
-  @Input() threshold: number = 10;
   @Input() questionIds: Array<[]>;
   @Output() playerEvent = new EventEmitter<any>();
   @Output() telemetryEvent = new EventEmitter<any>();
   @ViewChild('car') car: CarouselComponent;
 
-
+  threshold: number;
   questions = [];
   linearNavigation: boolean;
   endPageReached: boolean;
@@ -108,6 +107,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    this.threshold = this.QumlPlayerConfig.metadata.threshold || 3;
     this.noOfQuestions = this.questionIds.length;
     this.qumlLibraryService.initializeTelemetry(this.QumlPlayerConfig);
     this.viewerService.initialize(this.QumlPlayerConfig , this.threshold , this.questionIds);
@@ -118,7 +118,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.timeLimit = this.QumlPlayerConfig.metadata.timeLimits && this.QumlPlayerConfig.metadata.timeLimits.totalTime ? this.QumlPlayerConfig.metadata.timeLimits.totalTime : 0 ;
     this.warningTime = this.QumlPlayerConfig.metadata.timeLimits && this.QumlPlayerConfig.data.timeLimits.warningTime ? this.QumlPlayerConfig.data.timeLimits.warningTime : 0;
     this.showTimer = this.QumlPlayerConfig.metadata.showTimer ? this.QumlPlayerConfig.data.showTimer: false;
-    this.showFeedBack = this.QumlPlayerConfig.metadata.showFeedBack.toLowerCase() === 'no' ? false: true;
+    this.showFeedBack = this.QumlPlayerConfig.metadata.showFeedback.toLowerCase() === 'no' ? false: true;
     this.showUserSolution = this.QumlPlayerConfig.metadata.showSolutions.toLowerCase() === 'no' ? false: true;
     this.startPageInstruction = this.QumlPlayerConfig.metadata.instructions;
     this.linearNavigation = this.QumlPlayerConfig.metadata.navigationMode === 'non-linear' ? false : true;
@@ -171,7 +171,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     if(this.car.getCurrentSlideIndex() === this.noOfQuestions && this.requiresSubmit){
        this.loadScoreBoard = true;
     }
-    if (this.car.getCurrentSlideIndex() === this.questions.length && this.startPageInstruction) {
+    if (this.car.getCurrentSlideIndex() === this.noOfQuestions && this.startPageInstruction) {
       const spentTime = (new Date().getTime() - this.initialTime) / 10000;
       this.durationSpent = spentTime.toFixed(2);
       if (!this.requiresSubmit) {
@@ -179,7 +179,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
         this.viewerService.raiseEndEvent(this.currentSlideIndex, this.attemptedQuestions.length, this.endPageReached);
       }
     }
-    if (this.car.getCurrentSlideIndex() + 1 === this.questions.length && !this.startPageInstruction) {
+    if (this.car.getCurrentSlideIndex() + 1 === this.noOfQuestions && !this.startPageInstruction) {
       const spentTime = (new Date().getTime() - this.initialTime) / 10000;
       this.durationSpent = spentTime.toFixed(2);
       if (!this.requiresSubmit) {
