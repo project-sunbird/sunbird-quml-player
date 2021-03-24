@@ -52,7 +52,7 @@ export class UtilService {
     }
 
     getQuestionType(questions, currentIndex) {
-            let index = currentIndex === -1 ? 0 : currentIndex;
+            let index = currentIndex - 1 === -1 ? 0 : currentIndex-1;
             return questions[index]['qType'];
         
     }

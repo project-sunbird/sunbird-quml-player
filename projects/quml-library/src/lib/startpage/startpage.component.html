@@ -13,19 +13,21 @@
           <quml-content class="icon"></quml-content><span class="scores">{{totalNoOfQuestions}}</span>
         </div>
       </div>
-      <div class="points">
+      <div class="points" *ngIf="time > 0">
         <div class="score-heading">Minutes</div>
         <div class="icon-section">
           <quml-timer class="icon"></quml-timer><span class="scores">{{minutes}}:{{seconds}}</span>
         </div>
       </div>
-      <div class="points">
+      <div class="points" *ngIf="points">
         <div class="score-heading">Points</div>
         <div class="icon-section">
-          <quml-startpagestaricon class="icon">i</quml-startpagestaricon><span class="scores">{{maxScore}}</span>
+          <quml-startpagestaricon class="icon">i</quml-startpagestaricon><span class="scores">{{points}}</span>
         </div>
       </div>
     </div>
+    <ng-container *ngIf="instructions">
     <div [innerHTML]= "instructions" class="startpage-instructions"> </div>
+  </ng-container>
   </div>
 </div>

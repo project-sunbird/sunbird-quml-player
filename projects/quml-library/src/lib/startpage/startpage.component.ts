@@ -19,7 +19,6 @@ export class StartpageComponent implements OnInit {
   constructor(private _sanitizer: DomSanitizer) { }
 
   ngOnInit() {
-    this.instructions = this._sanitizer.bypassSecurityTrustHtml(this.instructions);
     const durationInSec = this.time / 1000;
     this.minutes = ~~(durationInSec / 60);
     this.seconds = (durationInSec % 60);

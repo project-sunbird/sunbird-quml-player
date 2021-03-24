@@ -29,10 +29,9 @@ export class QumlLibraryService {
   initializeTelemetry(config: QumlPlayerConfig) {
     this.duration = new Date().getTime();
     this.context = config.context;
-    this.channel = config.context.channel;
     this.contentSessionId = this.utilService.uniqueId();
     this.playSessionId = this.utilService.uniqueId();
-    this.channel = config.context.channel;
+    this.channel = config.context.channel || '';
     this.pdata = this.context.pdata;
     this.sid =  this.context.sid;
     this.uid =  this.context.uid;
@@ -171,7 +170,7 @@ export class QumlLibraryService {
     return ({
       object: this.telemetryObject,
       context: {
-        channel: this.channel,
+        channel: this.channel || '',
         pdata: this.pdata,
         env: 'ContentPlayer',
         sid: this.sid,

@@ -48,3 +48,21 @@ export interface QumlPlayerConfig {
     metadata: any;
     data: any;
 }
+
+
+export interface Question {
+    code: string;
+    templateId: string;
+    name: string;
+    body: string;
+    responseDeclaration: any;
+    interactionTypes: Array<string>;
+    interactions: any;
+    editorState: any;
+    status: string,
+    media: Array<any>,
+    qType: string;
+    mimeType: string;
+    primaryCategory: string;
+    solutions:any;
+}
