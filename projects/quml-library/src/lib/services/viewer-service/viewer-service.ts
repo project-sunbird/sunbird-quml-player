@@ -37,13 +37,14 @@ export class ViewerService {
   }
 
   initialize(config: QumlPlayerConfig , threshold, questionIds) {
+    this.qumlLibraryService.initializeTelemetry(config);
     this.identifiers = questionIds;
     this.threshold = threshold;
     this.rotation = 0;
-    this.totalNumberOfQuestions = config.data.totalQuestions;
+    this.totalNumberOfQuestions = config.metadata.childNodes.length || 0;
     this.qumlPlayerStartTime = this.qumlPlayerLastPageTime = new Date().getTime();
     this.currentQuestionIndex = 1;
-    this.contentName = config.data.name;
+    this.contentName = config.metadata.name;
     this.src = config.metadata.artifactUrl || '';
     if (config.context.userData) {
       this.userName = config.context.userData.firstName + ' ' + config.context.userData.lastName;

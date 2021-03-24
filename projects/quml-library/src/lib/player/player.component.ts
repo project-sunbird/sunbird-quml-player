@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter, AfterViewInit, ChangeDetectorRef, HostListener, ElementRef } from '@angular/core';
 import { CarouselComponent } from 'ngx-bootstrap/carousel';
-import { QumlLibraryService } from '../quml-library.service';
 import { QumlPlayerConfig } from '../quml-library-interface';
 import { ViewerService } from '../services/viewer-service/viewer-service';
 import { eventName, TelemetryType, pageId } from '../telemetry-constants';
@@ -79,7 +78,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   warningTime: number;
 
   constructor(
-    public qumlLibraryService: QumlLibraryService,
     public viewerService: ViewerService,
     public utilService: UtilService,
     public questionCursor: QuestionCursor,
@@ -109,15 +107,14 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.threshold = this.QumlPlayerConfig.metadata.threshold || 3;
     this.noOfQuestions = this.questionIds.length;
-    this.qumlLibraryService.initializeTelemetry(this.QumlPlayerConfig);
     this.viewerService.initialize(this.QumlPlayerConfig , this.threshold , this.questionIds);
     this.initialTime = new Date().getTime();
     this.slideInterval = 0;
     this.showIndicator = false;
     this.noWrapSlides = true;
     this.timeLimit = this.QumlPlayerConfig.metadata.timeLimits && this.QumlPlayerConfig.metadata.timeLimits.totalTime ? this.QumlPlayerConfig.metadata.timeLimits.totalTime : 0 ;
-    this.warningTime = this.QumlPlayerConfig.metadata.timeLimits && this.QumlPlayerConfig.data.timeLimits.warningTime ? this.QumlPlayerConfig.data.timeLimits.warningTime : 0;
-    this.showTimer = this.QumlPlayerConfig.metadata.showTimer ? this.QumlPlayerConfig.data.showTimer: false;
+    this.warningTime = this.QumlPlayerConfig.metadata.timeLimits && this.QumlPlayerConfig.metadata.timeLimits.warningTime ? this.QumlPlayerConfig.metadata.timeLimits.warningTime : 0;
+    this.showTimer = this.QumlPlayerConfig.metadata.showTimer ? this.QumlPlayerConfig.metadata.showTimer: false;
     this.showFeedBack = this.QumlPlayerConfig.metadata.showFeedback.toLowerCase() === 'no' ? false: true;
     this.showUserSolution = this.QumlPlayerConfig.metadata.showSolutions.toLowerCase() === 'no' ? false: true;
     this.startPageInstruction = this.QumlPlayerConfig.metadata.instructions;
@@ -126,7 +123,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.maxScore = this.QumlPlayerConfig.metadata.maxScore;
     this.points = this.QumlPlayerConfig.metadata.points;
     this.userName = this.QumlPlayerConfig.context.userData.firstName + ' ' + this.QumlPlayerConfig.context.userData.lastName;
-    this.contentName = this.QumlPlayerConfig.data.name;
+    this.contentName = this.QumlPlayerConfig.metadata.name;
     this.shuffleQuestions = this.QumlPlayerConfig.metadata.shuffle ? this.QumlPlayerConfig.metadata.shuffle : false;
     this.maxQuestions = this.QumlPlayerConfig.metadata.maxQuestions;
     this.allowSkip =  this.QumlPlayerConfig.metadata.allowSkip;

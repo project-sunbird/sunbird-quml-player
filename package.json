@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build quml-library --watch=true",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
@@ -12,7 +12,9 @@
     "link-player": "npm link @project-sunbird/sunbird-quml-player",
     "build-lib": "ng build quml-library && node scripts/copyAssets.js",
     "build-link-lib": "npm run build-lib && npm run create-player-link && npm run link-player",
-    "test-lib": "ng test quml-library"
+    "test-lib": "ng test quml-library",
+    "mybuild": "npm run build",
+    "serve": "npm link ./dist/quml-library && ng serve"
   },
   "private": true,
   "dependencies": {
