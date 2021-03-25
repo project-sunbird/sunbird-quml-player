@@ -280,9 +280,15 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       this.currentOptions = this.questions[currentIndex].interactions[key].options;
       if (option.cardinality === 'single') {
         const correctOptionValue = this.questions[currentIndex].responseDeclaration[key].correctResponse.value;
+        const edataItem = {
+          'id': this.questions[currentIndex].identifier,
+          'title': this.questions[currentIndex].name,
+          'desc': this.questions[currentIndex].description,
+          'maxscore': this.questions[currentIndex].maxscore || 0,
+      }
         if (Boolean(option.option.value == correctOptionValue)) {
           this.currentScore = this.getScore(currentIndex, key);
-          this.viewerService.raiseAssesEvent(this.currentQuestion , currentIndex , 'Yes' , this.currentScore , option.option , new Date().getTime());
+          this.viewerService.raiseAssesEvent(edataItem , currentIndex , 'Yes' , this.currentScore , [option.option] , new Date().getTime());
           this.showAlert = true;
           this.alertType = 'correct';
           this.updateScoreBoard(currentIndex + 1, 'attempted', selectedOptionValue, this.currentScore);
@@ -295,7 +301,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
           }
         } else if (!Boolean(option.option.value.value == correctOptionValue)) {
           this.currentScore = this.getScore(currentIndex, key);
-          this.viewerService.raiseAssesEvent(this.currentQuestion , currentIndex , 'No' , this.currentScore , option.option , new Date().getTime());
+          this.viewerService.raiseAssesEvent(edataItem , currentIndex , 'No' , this.currentScore , [option.option] , new Date().getTime());
           this.showAlert = true;
           this.alertType = 'wrong';
           if (this.showFeedBack) {
