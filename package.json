@@ -26,7 +26,7 @@
     "@angular/platform-browser": "~7.1.0",
     "@angular/platform-browser-dynamic": "~7.1.0",
     "@angular/router": "~7.1.0",
-    "@project-sunbird/client-services": "^3.8.2",
+    "@project-sunbird/client-services": "^3.8.5",
     "@project-sunbird/sb-styles": "0.0.7",
     "@project-sunbird/sunbird-player-sdk": "0.0.16",
     "@project-sunbird/sunbird-quml-player": "file:dist/quml-library",

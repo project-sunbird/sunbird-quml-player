@@ -1,4 +1,3 @@
-import {Injectable} from '@angular/core';
 import { Observable } from 'rxjs';
 import { Question } from './quml-library-interface';
 
