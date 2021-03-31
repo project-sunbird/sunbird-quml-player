@@ -90,11 +90,10 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     });
 
     this.viewerService.qumlQuestionEvent.subscribe((res) => {
-      this.questions = this.questions.concat(res.question);
+      this.questions = this.questions.concat(res.questions);
       if(this.shuffleQuestions) {
          this.questions = this.questions.sort(() => Math.random() - 0.5);
       }
-      console.log('res', this.questions);
       this.noOfTimesApiCalled++;
       this.loadView = true;
     })

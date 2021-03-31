@@ -153,14 +153,14 @@ export class ViewerService {
       indentifersForQuestions = this.identifiers.splice(0, this.threshold);
     }
       this.questionCursor.getQuestions(indentifersForQuestions).subscribe((question) => {
-        this.qumlQuestionEvent.emit({ question});
+        this.qumlQuestionEvent.emit(question);
       });
   } 
 
   getQuestion() {
     let indentiferForQuestion = this.identifiers.splice(0, this.threshold);
       this.questionCursor.getQuestion(indentiferForQuestion).subscribe((question) => {
-        this.qumlQuestionEvent.emit({ question});
+        this.qumlQuestionEvent.emit(question);
       })
   }
 
