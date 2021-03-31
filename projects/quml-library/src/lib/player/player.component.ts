@@ -174,14 +174,14 @@ export class PlayerComponent implements OnInit, AfterViewInit {
        this.loadScoreBoard = true;
     }
     if (this.car.getCurrentSlideIndex() === this.noOfQuestions) {
-      const spentTime = (new Date().getTime() - this.initialTime) / 10000;
-      this.durationSpent = spentTime.toFixed(2);
+      this.durationSpent = this.utilService.getTimeSpentText(this.initialTime);
+      
       if (!this.requiresSubmit) {
         this.endPageReached = true;
         this.viewerService.raiseEndEvent(this.currentSlideIndex, this.attemptedQuestions.length, this.endPageReached);
       }
     }
-    if (this.car.isLast(this.car.getCurrentSlideIndex())) {
+    if (this.car.isLast(this.car.getCurrentSlideIndex()) || this.noOfQuestions === this.car.getCurrentSlideIndex()) {
       this.calculateScore();
     }
   
@@ -288,7 +288,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
           this.viewerService.raiseAssesEvent(edataItem , currentIndex , 'Yes' , this.currentScore , [option.option] , new Date().getTime());
           this.showAlert = true;
           this.alertType = 'correct';
-          this.updateScoreBoard(currentIndex + 1, 'attempted', selectedOptionValue, this.currentScore);
+          this.updateScoreBoard(currentIndex, 'attempted', selectedOptionValue, this.currentScore);
           if (!this.showFeedBack) {
             this.nextSlide();
           }
@@ -302,7 +302,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
           this.showAlert = true;
           this.alertType = 'wrong';
           if (this.showFeedBack) {
-            this.updateScoreBoard((currentIndex), 'wrong');
+            this.updateScoreBoard((currentIndex), 'wrong' , selectedOptionValue , 0);
           }
           if (!this.showFeedBack) {
             this.nextSlide();

@@ -45,7 +45,7 @@ export const data1 = {
     },
     'metadata': {
         "childNodes": [1,2,3,4],
-        "showFeedback": "Yes",
+        "showFeedback": "No",
         "showSolutions": "No",
         "navigationMode": "non-linear",
         "requiresSubmit": "No",
