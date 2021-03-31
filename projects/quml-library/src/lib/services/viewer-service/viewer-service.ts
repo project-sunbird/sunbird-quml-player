@@ -3,7 +3,7 @@ import { QumlPlayerConfig } from '../../quml-library-interface';
 import { QumlLibraryService } from '../../quml-library.service';
 import { UtilService } from '../../util-service';
 import { eventName, TelemetryType } from '../../telemetry-constants';
-import { QuestionCursor } from '../../quml-abstract.service';
+import { QuestionCursor } from '../../quml-question-cursor.service';
 
 
 @Injectable({
@@ -41,7 +41,7 @@ export class ViewerService {
     this.identifiers = questionIds;
     this.threshold = threshold;
     this.rotation = 0;
-    this.totalNumberOfQuestions = config.metadata.childNodes.length || 0;
+    this.totalNumberOfQuestions = config.metadata.questionIds.length || 0;
     this.qumlPlayerStartTime = this.qumlPlayerLastPageTime = new Date().getTime();
     this.currentQuestionIndex = 1;
     this.contentName = config.metadata.name;
@@ -145,21 +145,23 @@ export class ViewerService {
   }
 
 
-  getQuestions() {
-    let noOfTimesApiCalled = 0;
-      let indentifersForQuestions = this.identifiers.splice(0, this.threshold);
+  getQuestions(currentIndex?: number  , index?: number) {
+    let indentifersForQuestions;
+    if(currentIndex && index) {
+      indentifersForQuestions = this.identifiers.splice((currentIndex + this.threshold), index);
+    }else if(!currentIndex && !index){
+      indentifersForQuestions = this.identifiers.splice(0, this.threshold);
+    }
       this.questionCursor.getQuestions(indentifersForQuestions).subscribe((question) => {
-        this.qumlQuestionEvent.emit({ question, noOfTimesApiCalled });
-      })
+        this.qumlQuestionEvent.emit({ question});
+      });
   } 
 
   getQuestion() {
-    let noOfTimesApiCalled = 0;
-    let indentiferForQuestion = this.identifiers.splice(0 , this.threshold);
-    this.questionCursor.getQuestion(indentiferForQuestion).subscribe((question) => {
-      noOfTimesApiCalled = noOfTimesApiCalled + 1;
-      this.qumlQuestionEvent.emit({ question, noOfTimesApiCalled });
-    })
+    let indentiferForQuestion = this.identifiers.splice(0, this.threshold);
+      this.questionCursor.getQuestion(indentiferForQuestion).subscribe((question) => {
+        this.qumlQuestionEvent.emit({ question});
+      })
   }
 
 }

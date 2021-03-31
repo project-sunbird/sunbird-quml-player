@@ -4,7 +4,7 @@ import { QumlPlayerConfig } from '../quml-library-interface';
 import { ViewerService } from '../services/viewer-service/viewer-service';
 import { eventName, TelemetryType, pageId } from '../telemetry-constants';
 import { UtilService } from '../util-service';
-import { QuestionCursor } from '../quml-abstract.service';
+import { QuestionCursor } from '../quml-question-cursor.service';
 
 
 
@@ -15,7 +15,6 @@ import { QuestionCursor } from '../quml-abstract.service';
 })
 export class PlayerComponent implements OnInit, AfterViewInit {
   @Input() QumlPlayerConfig: QumlPlayerConfig;
-  @Input() questionIds: Array<[]>;
   @Output() playerEvent = new EventEmitter<any>();
   @Output() telemetryEvent = new EventEmitter<any>();
   @ViewChild('car') car: CarouselComponent;
@@ -65,6 +64,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   infoPopup: boolean;
   loadView: Boolean;
   noOfTimesApiCalled: number = 0;
+  questionIds: Array<[]>;
   CarouselConfig = {
     NEXT: 1,
     PREV: 2
@@ -90,10 +90,11 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     });
 
     this.viewerService.qumlQuestionEvent.subscribe((res) => {
-      this.questions = this.questions.concat(res.question.questions);
+      this.questions = this.questions.concat(res.question);
       if(this.shuffleQuestions) {
          this.questions = this.questions.sort(() => Math.random() - 0.5);
       }
+      console.log('res', this.questions);
       this.noOfTimesApiCalled++;
       this.loadView = true;
     })
@@ -106,6 +107,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.threshold = this.QumlPlayerConfig.metadata.threshold || 3;
+    this.questionIds = this.QumlPlayerConfig.metadata.questionIds;
     this.noOfQuestions = this.questionIds.length;
     this.viewerService.initialize(this.QumlPlayerConfig , this.threshold , this.questionIds);
     this.initialTime = new Date().getTime();
@@ -125,7 +127,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.userName = this.QumlPlayerConfig.context.userData.firstName + ' ' + this.QumlPlayerConfig.context.userData.lastName;
     this.contentName = this.QumlPlayerConfig.metadata.name;
     this.shuffleQuestions = this.QumlPlayerConfig.metadata.shuffle ? this.QumlPlayerConfig.metadata.shuffle : false;
-    this.maxQuestions = this.QumlPlayerConfig.metadata.maxQuestions;
     this.allowSkip =  this.QumlPlayerConfig.metadata.allowSkip;
     if (this.maxQuestions) {
       this.questions = this.questions.slice(0, this.maxQuestions);
@@ -134,7 +135,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       this.initializeTimer = true;
     }
     this.setInitialScores();
-    if (this.threshold === 1) {
+     if (this.threshold === 1) {
       this.viewerService.getQuestion();
     } else if (this.threshold > 1) {
       this.viewerService.getQuestions();
@@ -148,13 +149,18 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   nextSlide() {
     if(this.car.getCurrentSlideIndex() > 0 && ((this.threshold * this.noOfTimesApiCalled) - 1) === this.car.getCurrentSlideIndex()
-     && this.threshold * this.noOfTimesApiCalled >= this.questions.length)  {
-        if(this.threshold === 1) {
-          this.viewerService.getQuestion();
-        } else if(this.threshold > 1){
+     && this.threshold * this.noOfTimesApiCalled >= this.questions.length && this.threshold > 1)  {
            this.viewerService.getQuestions();
-        }
     }
+
+    if(this.car.getCurrentSlideIndex()> 0 && this.questions[this.car.getCurrentSlideIndex()] === undefined && this.threshold > 1) {
+      this.viewerService.getQuestions();
+    }
+    
+    if(this.threshold === 1 && this.car.getCurrentSlideIndex() >= 0) {
+      this.viewerService.getQuestion();
+    }
+
     this.viewerService.raiseHeartBeatEvent(eventName.nextClicked, TelemetryType.interact, this.currentSlideIndex);
     if (this.loadScoreBoard) {
       this.endPageReached = true;
@@ -162,21 +168,13 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     if (this.currentSlideIndex !== this.questions.length) {
       this.currentSlideIndex = this.currentSlideIndex + 1;
     }
-    if (this.currentSlideIndex === 1 && (this.currentSlideIndex - 1) === 0 && this.startPageInstruction) {
+    if (this.currentSlideIndex === 1 && (this.currentSlideIndex - 1) === 0) {
       this.initializeTimer = true;
     }
     if(this.car.getCurrentSlideIndex() === this.noOfQuestions && this.requiresSubmit){
        this.loadScoreBoard = true;
     }
-    if (this.car.getCurrentSlideIndex() === this.noOfQuestions && this.startPageInstruction) {
-      const spentTime = (new Date().getTime() - this.initialTime) / 10000;
-      this.durationSpent = spentTime.toFixed(2);
-      if (!this.requiresSubmit) {
-        this.endPageReached = true;
-        this.viewerService.raiseEndEvent(this.currentSlideIndex, this.attemptedQuestions.length, this.endPageReached);
-      }
-    }
-    if (this.car.getCurrentSlideIndex() + 1 === this.noOfQuestions && !this.startPageInstruction) {
+    if (this.car.getCurrentSlideIndex() === this.noOfQuestions) {
       const spentTime = (new Date().getTime() - this.initialTime) / 10000;
       this.durationSpent = spentTime.toFixed(2);
       if (!this.requiresSubmit) {
@@ -272,7 +270,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   async validateSelectedOption(option) {
     const selectedOptionValue = option ? option.option.value : undefined;
-    const currentIndex = this.startPageInstruction ? this.car.getCurrentSlideIndex() - 1 : this.car.getCurrentSlideIndex();
+    const currentIndex = this.car.getCurrentSlideIndex();
     let updated = false;
     if (this.optionSelectedObj !== undefined) {
       let key: any = this.utilService.getKeyValue(Object.keys(this.questions[currentIndex].responseDeclaration));
@@ -435,10 +433,11 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     if (this.loadScoreBoard) {
       this.loadScoreBoard = false;
     }
-    if (!this.allowSkip && this.utilService.canGo(this.progressBarClass[(index-1)]['class'])) {
-      this.car.selectSlide(index);
-    } else if(this.allowSkip) {
-      this.car.selectSlide(index);
+    if (this.questions[index] === undefined) {
+        this.viewerService.getQuestions(this.car.getCurrentSlideIndex()  , index + 1);
+        this.car.selectSlide(index);
+    } else if(this.questions[index] !== undefined) {
+       this.car.selectSlide(index);
     }
   }
 

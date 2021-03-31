@@ -1,8 +1,7 @@
 @import '../../../../../node_modules/@project-sunbird/sb-styles/assets/mixins/mixins';
 .quml-mcq-questions {
   display: flex;
-    justify-content: start;
-    align-items: flex-start;
+  padding: 16px;
   }
   .quml-mcq-image-questions {
     display: flex;
