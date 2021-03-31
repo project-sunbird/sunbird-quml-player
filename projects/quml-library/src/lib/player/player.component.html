@@ -1,4 +1,4 @@
-<div class="quml-container" *ngIf="loadView && questions.length > 0">
+<div class="quml-container" *ngIf="loadView">
   <div [hidden]="showSolution">
     <quml-header class="main-header" (durationEnds)="endPageReached = true"
       [disablePreviousNavigation]="linearNavigation" [duration]="timeLimit" [warningTime]="warningTime" [showTimer]="showTimer"
@@ -50,7 +50,7 @@
           <li [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlide(0)">i</li>
           <ng-container *ngIf="startPageInstruction">
             <li *ngFor="let question of progressBarClass; let i = index"
-              [ngClass]="loadScoreBoard ? 'att-color' : (i) === car.getCurrentSlideIndex() ? 'progressBar-border': (i) < car.getCurrentSlideIndex()  ? 'att-color' : '' "
+              [ngClass]="loadScoreBoard ? 'att-color' : (i + 1) === car.getCurrentSlideIndex() ? 'progressBar-border': (i + 1) < car.getCurrentSlideIndex()  ? 'att-color' : '' "
               (click)="goToSlide(i+1)" >{{i+1}}</li>
           </ng-container>
           <ng-container *ngIf="!startPageInstruction">
