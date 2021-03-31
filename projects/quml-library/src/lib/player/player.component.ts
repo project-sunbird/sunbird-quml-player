@@ -106,8 +106,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.threshold = this.QumlPlayerConfig.metadata.threshold || 3;
-    this.questionIds = this.QumlPlayerConfig.metadata.questionIds;
+    this.threshold = this.QumlPlayerConfig.context.threshold || 3;
+    this.questionIds = this.QumlPlayerConfig.metadata.childNodes;
     this.noOfQuestions = this.questionIds.length;
     this.viewerService.initialize(this.QumlPlayerConfig , this.threshold , this.questionIds);
     this.initialTime = new Date().getTime();

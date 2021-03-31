@@ -1,5 +1,6 @@
 export interface Context {
     mode: string;
+    threshold?: number;
     authToken?: string;
     sid: string;
     did: string;

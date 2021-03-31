@@ -41,7 +41,7 @@ export class ViewerService {
     this.identifiers = questionIds;
     this.threshold = threshold;
     this.rotation = 0;
-    this.totalNumberOfQuestions = config.metadata.questionIds.length || 0;
+    this.totalNumberOfQuestions = config.metadata.childNodes.length || 0;
     this.qumlPlayerStartTime = this.qumlPlayerLastPageTime = new Date().getTime();
     this.currentQuestionIndex = 1;
     this.contentName = config.metadata.name;
