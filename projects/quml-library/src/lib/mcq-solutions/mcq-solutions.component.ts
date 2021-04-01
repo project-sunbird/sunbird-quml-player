@@ -11,7 +11,7 @@ export class McqSolutionsComponent implements OnInit {
   @Input() options: any;
   @Input() solutions: any;
   showVideoSolution: boolean;
-  @ViewChild('solutionVideoPlayer') solutionVideoPlayer: ElementRef;
+  @ViewChild('solutionVideoPlayer' , {static: true}) solutionVideoPlayer: ElementRef;
 
   constructor() { }
 
