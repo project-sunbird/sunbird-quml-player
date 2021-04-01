@@ -55,7 +55,12 @@
             "tsConfig": "projects/quml-demo-app/tsconfig.app.json",
             "assets": [
               "projects/quml-demo-app/src/favicon.ico",
-              "projects/quml-demo-app/src/assets"
+              "projects/quml-demo-app/src/assets",
+              {
+                "glob": "**/*",
+                "input": "node_modules/@project-sunbird/sunbird-quml-player-v8/lib/assets/",
+                "output": "/assets/"
+              }
             ],
             "styles": [
               "projects/quml-demo-app/src/styles.css",
