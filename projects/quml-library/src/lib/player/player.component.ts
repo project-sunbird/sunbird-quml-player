@@ -17,7 +17,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   @Input() QumlPlayerConfig: QumlPlayerConfig;
   @Output() playerEvent = new EventEmitter<any>();
   @Output() telemetryEvent = new EventEmitter<any>();
-  @ViewChild('car') car: CarouselComponent;
+  @ViewChild('car' , {static: false}) car: CarouselComponent;
 
   threshold: number;
   questions = [];

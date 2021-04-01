@@ -1,4 +1,4 @@
-import { QuestionCursor } from '@project-sunbird/sunbird-quml-player';
+import { QuestionCursor } from '@project-sunbird/sunbird-quml-player-v8';
 import { Observable, of } from 'rxjs';
 
 export class QuestionCursorImplementationService extends QuestionCursor {
