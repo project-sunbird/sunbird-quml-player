@@ -269,7 +269,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   async validateSelectedOption(option) {
     const selectedOptionValue = option ? option.option.value : undefined;
-    const currentIndex = this.car.getCurrentSlideIndex();
+    const currentIndex = this.car.getCurrentSlideIndex() - 1;
     let updated = false;
     if (this.optionSelectedObj !== undefined) {
       let key: any = this.utilService.getKeyValue(Object.keys(this.questions[currentIndex].responseDeclaration));
@@ -288,8 +288,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
           this.viewerService.raiseAssesEvent(edataItem , currentIndex , 'Yes' , this.currentScore , [option.option] , new Date().getTime());
           this.showAlert = true;
           this.alertType = 'correct';
-          this.updateScoreBoard(currentIndex, 'attempted', selectedOptionValue, this.currentScore);
           if (!this.showFeedBack) {
+            this.updateScoreBoard(currentIndex, 'attempted', selectedOptionValue, this.currentScore);
             this.nextSlide();
           }
           if (this.showFeedBack) {
@@ -305,6 +305,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
             this.updateScoreBoard((currentIndex), 'wrong' , selectedOptionValue , 0);
           }
           if (!this.showFeedBack) {
+            this.updateScoreBoard((currentIndex), 'unattempted' , selectedOptionValue , 0);
             this.nextSlide();
           }
         }
@@ -359,14 +360,14 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   updateScoreBoard(index, classToBeUpdated, optionValue?, score?) {
     if (this.showFeedBack) {
       this.progressBarClass.forEach((ele) => {
-        if (ele.index === index) {
+        if (ele.index - 1 === index) {
           ele.class = classToBeUpdated;
           ele.score = score ? score : 0
         }
       })
     } else if (!this.showFeedBack) {
       this.progressBarClass.forEach((ele) => {
-        if (ele.index === index) {
+        if (ele.index - 1 === index) {
           ele.class = classToBeUpdated;
           ele.score = score ? score : 0;
           ele.value = optionValue
@@ -401,6 +402,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   nextSlideClicked(event) {
+    if(this.car.getCurrentSlideIndex() === 0) {
+      return this.nextSlide();
+    }
     if (event.type === 'next') {
       this.validateSelectedOption(this.optionSelectedObj);
     }
