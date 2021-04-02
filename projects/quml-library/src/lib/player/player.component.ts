@@ -222,7 +222,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.viewerService.raiseHeartBeatEvent(eventName.optionClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
     this.optionSelectedObj = optionSelected;
     this.currentSolutions = optionSelected.solutions;
-    this.media = this.questions[currentIndex].media;
+    this.media = this.questions[currentIndex - 1].media;
     if (this.currentSolutions) {
       this.currentSolutions.forEach((ele, index) => {
         if (ele.type === 'video') {
@@ -269,7 +269,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   async validateSelectedOption(option) {
     const selectedOptionValue = option ? option.option.value : undefined;
-    const currentIndex = this.car.getCurrentSlideIndex();
+    const currentIndex = this.car.getCurrentSlideIndex() - 1;
     let updated = false;
     if (this.optionSelectedObj !== undefined) {
       let key: any = this.utilService.getKeyValue(Object.keys(this.questions[currentIndex].responseDeclaration));
@@ -284,12 +284,12 @@ export class PlayerComponent implements OnInit, AfterViewInit {
           'maxscore': this.questions[currentIndex].maxscore || 0,
       }
         if (Boolean(option.option.value == correctOptionValue)) {
-          this.currentScore = this.getScore(currentIndex, key);
+          this.currentScore = this.getScore(currentIndex, key, true);
           this.viewerService.raiseAssesEvent(edataItem , currentIndex , 'Yes' , this.currentScore , [option.option] , new Date().getTime());
           this.showAlert = true;
           this.alertType = 'correct';
-          this.updateScoreBoard(currentIndex, 'attempted', selectedOptionValue, this.currentScore);
           if (!this.showFeedBack) {
+            this.updateScoreBoard(currentIndex, 'attempted', selectedOptionValue, this.currentScore);
             this.nextSlide();
           }
           if (this.showFeedBack) {
@@ -297,14 +297,15 @@ export class PlayerComponent implements OnInit, AfterViewInit {
             this.updateScoreBoard(((currentIndex)), 'correct', undefined, this.currentScore);
           }
         } else if (!Boolean(option.option.value.value == correctOptionValue)) {
-          this.currentScore = this.getScore(currentIndex, key);
+          this.currentScore = this.getScore(currentIndex, key, false, option);
           this.viewerService.raiseAssesEvent(edataItem , currentIndex , 'No' , this.currentScore , [option.option] , new Date().getTime());
           this.showAlert = true;
           this.alertType = 'wrong';
           if (this.showFeedBack) {
-            this.updateScoreBoard((currentIndex), 'wrong' , selectedOptionValue , 0);
+            this.updateScoreBoard((currentIndex), 'wrong' , selectedOptionValue , this.currentScore);
           }
           if (!this.showFeedBack) {
+            this.updateScoreBoard((currentIndex), 'unattempted' , selectedOptionValue , this.currentScore);
             this.nextSlide();
           }
         }
@@ -359,14 +360,14 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   updateScoreBoard(index, classToBeUpdated, optionValue?, score?) {
     if (this.showFeedBack) {
       this.progressBarClass.forEach((ele) => {
-        if (ele.index === index) {
+        if (ele.index - 1 === index) {
           ele.class = classToBeUpdated;
           ele.score = score ? score : 0
         }
       })
     } else if (!this.showFeedBack) {
       this.progressBarClass.forEach((ele) => {
-        if (ele.index === index) {
+        if (ele.index - 1 === index) {
           ele.class = classToBeUpdated;
           ele.score = score ? score : 0;
           ele.value = optionValue
@@ -401,6 +402,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   nextSlideClicked(event) {
+    if(this.car.getCurrentSlideIndex() === 0) {
+      return this.nextSlide();
+    }
     if (event.type === 'next') {
       this.validateSelectedOption(this.optionSelectedObj);
     }
@@ -417,6 +421,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     // this.viewerService.raiseStartEvent(1);
     this.endPageReached = false;
     this.loadScoreBoard = false;
+    this.currentSlideIndex = 1;
     this.car.selectSlide(1);
   }
 
@@ -434,9 +439,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     }
     if (this.questions[index] === undefined) {
         this.viewerService.getQuestions(this.car.getCurrentSlideIndex()  , index + 1);
-        this.car.selectSlide(index);
+        this.car.selectSlide(index + 1);
     } else if(this.questions[index] !== undefined) {
-       this.car.selectSlide(index);
+       this.car.selectSlide(index + 1);
     }
   }
 
@@ -476,7 +481,23 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     }
   }
 
-  getScore(currentIndex, key) {
-    return this.questions[currentIndex].responseDeclaration.maxScore ? this.questions[currentIndex].responseDeclaration.maxScore : this.questions[currentIndex].responseDeclaration[key].correctResponse.outcomes.SCORE;
+  getScore(currentIndex, key, isCorrectAnswer, selectedOption?) {
+    if (isCorrectAnswer) {
+      return this.questions[currentIndex].responseDeclaration[key].correctResponse.outcomes.SCORE ? this.questions[currentIndex].responseDeclaration[key].correctResponse.outcomes.SCORE : this.questions[currentIndex].responseDeclaration[key].maxScore || 1;
+    } else {
+      const selectedOptionValue = selectedOption.option.value;
+      let mapping = this.questions[currentIndex].responseDeclaration.mapping;
+      let score = 0;
+      if (mapping) {
+        mapping.forEach((val) => {
+          if (selectedOptionValue === val.response) {
+            score = val.outcomes.SCORE || 0;
+          }
+        });
+        return score;
+      } else {
+        return score;
+      }
+    }
   }
 }
