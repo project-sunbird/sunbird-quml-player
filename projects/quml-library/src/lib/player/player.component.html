@@ -72,14 +72,14 @@
           <ng-container *ngIf="startPageInstruction">
             <li *ngFor="let q of progressBarClass; let i = index" class="showFeedBack-progressBar"
               [ngClass]="loadScoreBoard ? q.class : (i+1) === car.getCurrentSlideIndex() ? 'progressBar-border' : q.class"
-              (click)="goToSlide(q.index)">
-              {{q.index}}</li>
+              (click)="goToSlide(i+1)">
+              {{i+1}}</li>
           </ng-container>
           <ng-container *ngIf="!startPageInstruction">
             <li *ngFor="let q of progressBarClass; let i = index" class="showFeedBack-progressBar"
               [ngClass]="loadScoreBoard ? q.class : (i + 1) === car.getCurrentSlideIndex() ? 'progressBar-border' : q.class"
-              (click)="goToSlide(q.index)">
-              {{q.index}}</li>
+              (click)="goToSlide(i)">
+              {{i+1}}</li>
           </ng-container>
             <li *ngIf="!loadScoreBoard && requiresSubmit " (click)="loadScoreBoard = true;"><img src="./assets/flag_inactive.svg"></li>
             <li *ngIf="loadScoreBoard && requiresSubmit"><img src="./assets/flag_active.svg"></li>
