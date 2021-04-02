@@ -147,14 +147,16 @@ export class ViewerService {
 
   getQuestions(currentIndex?: number  , index?: number) {
     let indentifersForQuestions;
-    if(currentIndex && index) {
-      indentifersForQuestions = this.identifiers.splice((currentIndex + this.threshold), index);
+    if(currentIndex !== undefined && index) {
+      indentifersForQuestions = this.identifiers.splice(currentIndex, this.threshold);
     }else if(!currentIndex && !index){
       indentifersForQuestions = this.identifiers.splice(0, this.threshold);
     }
+    if(indentifersForQuestions != undefined) {
       this.questionCursor.getQuestions(indentifersForQuestions).subscribe((question) => {
         this.qumlQuestionEvent.emit(question);
       });
+    }
   } 
 
   getQuestion() {
