@@ -311,7 +311,7 @@ export const data1 = {
         'sideMenu': {
             'showShare': true,
             'showDownload': true,
-            'showReplay': false,
+            'showReplay': true,
             'showExit': false,
         }
     }
