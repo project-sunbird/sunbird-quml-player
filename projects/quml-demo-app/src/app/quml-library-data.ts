@@ -1,6 +1,6 @@
 export const data1 = {
     'context': {
-        "threshold" : 2,
+        "threshold": 2,
         'mode': 'play',
         'authToken': ' ',
         'sid': '913b3c6c-2874-26dd-ed0c-c23ddc00b718',
@@ -306,5 +306,13 @@ export const data1 = {
             "online": "https://sunbirddev.blob.core.windows.net/sunbird-content-dev/questionset/do_1132443060961198081160/questionset-26-march_1616736892762_do_1132443060961198081160_1_ONLINE.ecar"
         },
         "pkgVersion": 1
+    },
+    'config': {
+        'sideMenu': {
+            'showShare': true,
+            'showDownload': true,
+            'showReplay': true,
+            'showExit': false,
+        }
     }
 }

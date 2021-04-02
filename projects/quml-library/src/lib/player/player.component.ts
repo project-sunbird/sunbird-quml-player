@@ -76,6 +76,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     showExit: true,
   };
   warningTime: number;
+  questionsCopy;
 
   constructor(
     public viewerService: ViewerService,
@@ -90,6 +91,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     });
 
     this.viewerService.qumlQuestionEvent.subscribe((res) => {
+      this.questionsCopy = res.questions;
       this.questions = this.questions.concat(res.questions);
       if(this.shuffleQuestions) {
          this.questions = this.questions.sort(() => Math.random() - 0.5);
@@ -105,6 +107,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    this.sideMenuConfig = { ...this.sideMenuConfig, ...this.QumlPlayerConfig.config.sideMenu };
     this.threshold = this.QumlPlayerConfig.context.threshold || 3;
     this.questionIds = this.QumlPlayerConfig.metadata.childNodes;
     this.noOfQuestions = this.questionIds.length;
@@ -417,6 +420,10 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   replayContent() {
+    this.questions = this.questionsCopy;
+    this.questionIds = this.QumlPlayerConfig.metadata.children.map(({ IL_UNIQUE_ID }) => IL_UNIQUE_ID);
+    this.progressBarClass = [];
+    this.setInitialScores();
     this.viewerService.raiseHeartBeatEvent(eventName.replayClicked, TelemetryType.interact, 1);
     // this.viewerService.raiseStartEvent(1);
     this.endPageReached = false;

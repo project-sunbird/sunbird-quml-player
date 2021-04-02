@@ -44,10 +44,20 @@ export interface ObjectRollup {
     l4?: string;
 }
 
+export interface Config {
+    sideMenu?: {
+        showShare?: boolean;
+        showDownload?: boolean;
+        showReplay?: boolean;
+        showExit?: boolean;
+    };
+}
+
 export interface QumlPlayerConfig {
     context: Context;
     metadata: any;
     data: any;
+    config: Config;
 }
 
 
