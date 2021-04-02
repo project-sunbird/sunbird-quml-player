@@ -107,6 +107,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    this.sideMenuConfig = { ...this.sideMenuConfig, ...this.QumlPlayerConfig.config.sideMenu };
     this.threshold = this.QumlPlayerConfig.context.threshold || 3;
     this.questionIds = this.QumlPlayerConfig.metadata.childNodes;
     this.noOfQuestions = this.questionIds.length;
