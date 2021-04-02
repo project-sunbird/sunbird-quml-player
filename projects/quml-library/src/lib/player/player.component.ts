@@ -121,7 +121,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.noWrapSlides = true;
     this.timeLimit = this.QumlPlayerConfig.metadata.timeLimits && this.QumlPlayerConfig.metadata.timeLimits.totalTime ? this.QumlPlayerConfig.metadata.timeLimits.totalTime : 0 ;
     this.warningTime = this.QumlPlayerConfig.metadata.timeLimits && this.QumlPlayerConfig.metadata.timeLimits.warningTime ? this.QumlPlayerConfig.metadata.timeLimits.warningTime : 0;
-    this.showTimer = this.QumlPlayerConfig.metadata.showTimer ? this.QumlPlayerConfig.metadata.showTimer: false;
+    this.showTimer = this.QumlPlayerConfig.metadata.showTimer.toLowerCase() === 'no' ? false: true;
     this.showFeedBack = this.QumlPlayerConfig.metadata.showFeedback.toLowerCase() === 'no' ? false: true;
     this.showUserSolution = this.QumlPlayerConfig.metadata.showSolutions.toLowerCase() === 'no' ? false: true;
     this.startPageInstruction = this.QumlPlayerConfig.metadata.instructions;
