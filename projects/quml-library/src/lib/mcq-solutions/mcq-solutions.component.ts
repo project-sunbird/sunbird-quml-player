@@ -13,8 +13,6 @@ export class McqSolutionsComponent {
   showVideoSolution: boolean;
   @ViewChild('solutionVideoPlayer' , {static: true}) solutionVideoPlayer: ElementRef;
 
-  constructor() { }
-
   closeSolution() {
     if (this.solutionVideoPlayer) {
       this.solutionVideoPlayer.nativeElement.pause();

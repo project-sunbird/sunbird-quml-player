@@ -15,7 +15,7 @@ export class StartpageComponent implements OnInit {
   @Input() contentName: string;
   @Input() showTimer: boolean;
   minutes: number;
-  seconds: any;
+  seconds: string | number;
 
   constructor(private _sanitizer: DomSanitizer) { }
 
