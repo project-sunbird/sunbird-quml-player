@@ -45,7 +45,7 @@ export const data1 = {
     },
     'metadata': {
         "lastStatusChangedOn": "2021-03-26T05:34:39.279+0000",
-        "timeLimits": "{\"maxTime\":\"180\",\"warningTime\":\"120\" ,\"totalTime\":\"180\"}",
+        "timeLimits": "{\"maxTime\":\"180\",\"warningTime\":\"120\"}",
         "author": "Sourav",
         "children": [
             {

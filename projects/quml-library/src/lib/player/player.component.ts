@@ -120,7 +120,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.slideInterval = 0;
     this.showIndicator = false;
     this.noWrapSlides = true;
-    this.timeLimit = this.QumlPlayerConfig.metadata.timeLimits && JSON.parse(this.QumlPlayerConfig.metadata.timeLimits).totalTime ? JSON.parse(this.QumlPlayerConfig.metadata.timeLimits).totalTime : 0;
+    this.timeLimit = this.QumlPlayerConfig.metadata.timeLimits && JSON.parse(this.QumlPlayerConfig.metadata.timeLimits).maxTime ? JSON.parse(this.QumlPlayerConfig.metadata.timeLimits).maxTime : 0;
     this.warningTime = this.QumlPlayerConfig.metadata.timeLimits && JSON.parse(this.QumlPlayerConfig.metadata.timeLimits).warningTime ? JSON.parse(this.QumlPlayerConfig.metadata.timeLimits).warningTime : 0;
     this.showTimer = this.QumlPlayerConfig.metadata.showTimer.toLowerCase() === 'no' ? false: true;
     this.showFeedBack = this.QumlPlayerConfig.metadata.showFeedback.toLowerCase() === 'no' ? false: true;

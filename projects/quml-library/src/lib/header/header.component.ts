@@ -22,7 +22,7 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
   @Output() prevSlideClicked = new EventEmitter<any>();
   @Output() durationEnds = new EventEmitter<any>();
   minutes: number;
-  seconds: any;
+  seconds: string | number;
   private intervalRef?;
   showWarning = false;
 
