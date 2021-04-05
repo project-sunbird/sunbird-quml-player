@@ -45,7 +45,7 @@ export const data1 = {
     },
     'metadata': {
         "lastStatusChangedOn": "2021-03-26T05:34:39.279+0000",
-        "timeLimits": "{\"maxTime\":\"180\",\"warningTime\":\"120\"}",
+        "timeLimits": "{\"maxTime\":\"180\",\"warningTime\":\"120\" ,\"totalTime\":\"180\"}",
         "author": "Sourav",
         "children": [
             {
@@ -272,12 +272,12 @@ export const data1 = {
         "language": [
             "English"
         ],
-        "showFeedback": "Yes",
+        "showFeedback": "No",
         "lastPublishedOn": "2021-03-26T05:34:52.498+0000",
         "objectType": "QuestionSet",
         "status": "Live",
         "createdBy": "8454cb21-3ce9-4e30-85b5-fade097880d8",
-        "requiresSubmit": "No",
+        "requiresSubmit": "Yes",
         "keywords": [
             "questionset 26 march"
         ],
