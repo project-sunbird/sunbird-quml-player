@@ -5,8 +5,7 @@ import { ViewerService } from '../services/viewer-service/viewer-service';
 import { eventName, TelemetryType, pageId } from '../telemetry-constants';
 import { UtilService } from '../util-service';
 import { QuestionCursor } from '../quml-question-cursor.service';
-
-
+import * as _ from 'lodash';
 
 @Component({
   selector: 'quml-player',
@@ -77,7 +76,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     showExit: true,
   };
   warningTime: number;
-  questionsCopy;
+  showQuestions = false;
 
   constructor(
     public viewerService: ViewerService,
@@ -92,13 +91,17 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     });
 
     this.viewerService.qumlQuestionEvent.subscribe((res) => {
-      this.questionsCopy = res.questions;
-      this.questions = this.questions.concat(res.questions);
+      this.questions = _.uniqBy(this.questions.concat(res.questions), 'identifier');
       if(this.shuffleQuestions) {
          this.questions = this.questions.sort(() => Math.random() - 0.5);
       }
+      this.cdRef.detectChanges();
       this.noOfTimesApiCalled++;
       this.loadView = true;
+      this.showQuestions = true;
+      if (this.currentSlideIndex > 0) {
+        this.car.selectSlide(this.currentSlideIndex);
+      }
     })
   }
 
@@ -419,7 +422,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   replayContent() {
     this.replayed = true;
-    this.questions = this.questionsCopy;
     this.questionIds = this.QumlPlayerConfig.metadata.children.map(({ IL_UNIQUE_ID }) => IL_UNIQUE_ID);
     this.progressBarClass = [];
     this.setInitialScores();
@@ -437,17 +439,21 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   goToSlide(index) {
+    this.currentSlideIndex = index;
     if (index === 0) {
       this.optionSelectedObj = undefined;
+      this.car.selectSlide(0);
+      return;    
     }
     if (this.loadScoreBoard) {
       this.loadScoreBoard = false;
     }
-    if (this.questions[index] === undefined) {
-        this.viewerService.getQuestions(this.car.getCurrentSlideIndex()  , index + 1);
-        this.car.selectSlide(index + 1);
-    } else if(this.questions[index] !== undefined) {
-       this.car.selectSlide(index + 1);
+    if (this.questions[index - 1] === undefined) {
+      this.showQuestions = false;
+        this.viewerService.getQuestions((index - 1) - this.threshold  , index - 1);
+        this.currentSlideIndex = index;
+    } else if(this.questions[index - 1] !== undefined) {
+       this.car.selectSlide(index);
     }
   }
 
