@@ -1,7 +1,7 @@
 <div class="quml-container" *ngIf="loadView">
   <div class="endPage-container">
     <sb-player-end-page *ngIf="endPageReached" [contentName]="contentName" [outcome]="finalScore"
-      [outcomeLabel]="'Score'" [userName]="userName" [timeSpentLabel]="durationSpent"
+      [outcomeLabel]="'Score: '" [userName]="userName" [timeSpentLabel]="durationSpent"
       (replayContent)="replayContent()" (exitContent)="exitContent($event)" [showExit]="sideMenuConfig.showExit"></sb-player-end-page>
   </div>
   <div [hidden]="showSolution">
