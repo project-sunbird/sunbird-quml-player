@@ -120,7 +120,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.slideInterval = 0;
     this.showIndicator = false;
     this.noWrapSlides = true;
-    this.timeLimit = this.QumlPlayerConfig.metadata.timeLimits && this.QumlPlayerConfig.metadata.timeLimits.maxTime ? this.QumlPlayerConfig.metadata.timeLimits.maxTime : 0 ;
+    this.timeLimit = this.QumlPlayerConfig.metadata.timeLimits && this.QumlPlayerConfig.metadata.timeLimits.maxTime ? this.QumlPlayerConfig.metadata.timeLimits.maxTime : 0;
     this.warningTime = this.QumlPlayerConfig.metadata.timeLimits && this.QumlPlayerConfig.metadata.timeLimits.warningTime ? this.QumlPlayerConfig.metadata.timeLimits.warningTime : 0;
     this.showTimer = this.QumlPlayerConfig.metadata.showTimer.toLowerCase() === 'no' ? false: true;
     this.showFeedBack = this.QumlPlayerConfig.metadata.showFeedback.toLowerCase() === 'no' ? false: true;
@@ -431,7 +431,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.currentSlideIndex = 1;
     this.car.selectSlide(1);
     setTimeout(() => {
-      this.replayed = false;
+    this.replayed = false;
     }, 200)
   }
 
