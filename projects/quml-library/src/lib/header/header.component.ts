@@ -18,6 +18,7 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
   @Input() active: boolean;
   @Input() initializeTimer: boolean;
   @Input() endPageReached: boolean;
+  @Input() replayed: boolean;
   @Output() nextSlideClicked = new EventEmitter<any>();
   @Output() prevSlideClicked = new EventEmitter<any>();
   @Output() durationEnds = new EventEmitter<any>();
@@ -41,8 +42,15 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
   ngOnChanges() {
     if (this.duration && this.showTimer && this.initializeTimer && !this.intervalRef) {
       this.timer();
-    } else if(this.duration === 0 && this.showTimer && this.initializeTimer && !this.intervalRef) {
-       this.showCountUp();
+    } else if (this.duration === 0 && this.showTimer && this.initializeTimer && !this.intervalRef) {
+      this.showCountUp();
+    }
+    if (this.replayed && this.duration && this.showTimer) {
+      clearInterval(this.intervalRef)
+      this.timer();
+    } else if (this.replayed && this.duration === 0 && this.showTimer) {
+      clearInterval(this.intervalRef)
+      this.showCountUp();
     }
   }
 

@@ -204,13 +204,12 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   prevSlide() {
     this.viewerService.raiseHeartBeatEvent(eventName.prevClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
     this.showAlert = false;
-    if (this.car.getCurrentSlideIndex() + 1 === this.questions.length && this.endPageReached) {
+    if (this.car.getCurrentSlideIndex() + 1 === this.noOfQuestions && this.endPageReached) {
       this.endPageReached = false;
     } else if (!this.loadScoreBoard) {
       this.car.move(this.CarouselConfig.PREV);
     } else if (!this.linearNavigation && this.loadScoreBoard) {
-      const index = this.startPageInstruction ? this.questions.length : this.questions.length - 1;
-      this.car.selectSlide(index);
+      this.car.selectSlide(this.noOfQuestions);
       this.loadScoreBoard = false;
     }
   }
@@ -298,7 +297,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
           }
           if (this.showFeedBack) {
             this.correctFeedBackTimeOut();
-            this.updateScoreBoard(((currentIndex)), 'correct', undefined, this.currentScore);
+            this.updateScoreBoard(currentIndex, 'correct', undefined, this.currentScore);
           }
         } else if (!Boolean(option.option.value.value == correctOptionValue)) {
           this.currentScore = this.getScore(currentIndex, key, false, option);
@@ -306,10 +305,10 @@ export class PlayerComponent implements OnInit, AfterViewInit {
           this.showAlert = true;
           this.alertType = 'wrong';
           if (this.showFeedBack) {
-            this.updateScoreBoard((currentIndex), 'wrong' , selectedOptionValue , this.currentScore);
+            this.updateScoreBoard(currentIndex, 'wrong' , selectedOptionValue , this.currentScore);
           }
           if (!this.showFeedBack) {
-            this.updateScoreBoard((currentIndex), 'unattempted' , selectedOptionValue , this.currentScore);
+            this.updateScoreBoard( currentIndex, 'unattempted' , selectedOptionValue , this.currentScore);
             this.nextSlide();
           }
         }
@@ -366,7 +365,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       this.progressBarClass.forEach((ele) => {
         if (ele.index - 1 === index) {
           ele.class = classToBeUpdated;
-          ele.score = score ? score : 0
+          ele.score = score ? score : 0;
         }
       })
     } else if (!this.showFeedBack) {
@@ -374,7 +373,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
         if (ele.index - 1 === index) {
           ele.class = classToBeUpdated;
           ele.score = score ? score : 0;
-          ele.value = optionValue
+          ele.value = optionValue;
         }
       })
     }
@@ -426,11 +425,14 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.progressBarClass = [];
     this.setInitialScores();
     this.viewerService.raiseHeartBeatEvent(eventName.replayClicked, TelemetryType.interact, 1);
-    // this.viewerService.raiseStartEvent(1);
+    this.viewerService.raiseStartEvent(this.car.getCurrentSlideIndex());
     this.endPageReached = false;
     this.loadScoreBoard = false;
     this.currentSlideIndex = 1;
     this.car.selectSlide(1);
+    setTimeout(() => {
+    this.replayed = false;
+    }, 200)
   }
 
   inScoreBoardSubmitClicked() {
@@ -482,7 +484,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   getSolutions() {
-    const currentIndex = this.car.getCurrentSlideIndex();
+    const currentIndex = this.car.getCurrentSlideIndex() - 1;
     this.currentQuestion = this.questions[currentIndex].body;
     this.currentOptions = this.questions[currentIndex].interactions.response1.options;
     if (this.currentSolutions) {
