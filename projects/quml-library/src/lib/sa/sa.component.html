@@ -3,25 +3,27 @@
   <div class="question" [innerHTML]="question"></div>
 </div>
 <div class="sa-button-container">
-  <button type="submit" class="sa-round-btn" (click)="showAnswer=true;">Show Answer</button>
+  <button *ngIf="!showAnswer" type="submit" class="sa-round-btn" (click)="showAnswer=true;">Show Answer</button>
 </div>
 <div class="option-container-blurred"
   [ngClass]="showAnswer ? 'option-container-blurred-out': 'option-container-blurred'">
   <div class="sa-title">Answer</div>
   <div class="option-body" [innerHTML]="answer"></div>
-  <div class="sa-title">solutions</div>
-  <div class="solutions" *ngFor="let solution of solutions">
-    <ng-container [ngSwitch]="solution.type">
-      <div *ngSwitchCase="'html'" [innerHTML]="solution.value"></div>
-      <div *ngSwitchCase="'video'">
-        <video width="400" controls [poster]="solution.thumbnail">
-          <source [src]="solution.src" type="video/mp4">
-          <source [src]="solution.src" type="video/webm">
-        </video>
-      </div>
-      <div *ngSwitchCase="'image'">
-        <img [src]="solution.src">
-      </div>
-    </ng-container>
-  </div>
+  <ng-container *ngIf="solutions && solutions.length">
+    <div class="sa-title">solutions</div>
+    <div class="solutions" *ngFor="let solution of solutions">
+      <ng-container [ngSwitch]="solution.type">
+        <div *ngSwitchCase="'html'" [innerHTML]="solution.value"></div>
+        <div *ngSwitchCase="'video'">
+          <video width="400" controls [poster]="solution.thumbnail">
+            <source [src]="solution.src" type="video/mp4">
+            <source [src]="solution.src" type="video/webm">
+          </video>
+        </div>
+        <div *ngSwitchCase="'image'">
+          <img [src]="solution.src">
+        </div>
+      </ng-container>
+    </div>
+  </ng-container>
 </div>

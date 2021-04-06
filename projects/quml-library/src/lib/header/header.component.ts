@@ -46,6 +46,7 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
       this.showCountUp();
     }
     if (this.replayed && this.duration && this.showTimer) {
+      this.showWarning = false;
       clearInterval(this.intervalRef)
       this.timer();
     } else if (this.replayed && this.duration === 0 && this.showTimer) {
