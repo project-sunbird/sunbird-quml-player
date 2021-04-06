@@ -19,7 +19,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   @ViewChild('car' , {static: false}) car: CarouselComponent;
 
   threshold: number;
-  replayed = false;
   questions = [];
   linearNavigation: boolean;
   endPageReached: boolean;
@@ -91,30 +90,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     });
 
     this.viewerService.qumlQuestionEvent.subscribe((res) => {
-      res.questions.forEach((ele) => {
-        ele.responseDeclaration = {
-          "response1": {
-            "maxScore": 1,
-            "cardinality": "single",
-            "type": "integer",
-            "correctResponse": {
-              "value": "0",
-              "outcomes": {
-                "SCORE": 5
-              }
-            }
-          },
-          "mapping": [
-            {
-              "response": 1,
-              "outcomes": {
-                "SCORE": 0.5
-              },
-              "caseSensitive": false
-            }
-          ]
-        }
-      })
       this.questions = _.uniqBy(this.questions.concat(res.questions), 'identifier');
       if(this.shuffleQuestions) {
          this.questions = this.questions.sort(() => Math.random() - 0.5);
@@ -144,7 +119,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.slideInterval = 0;
     this.showIndicator = false;
     this.noWrapSlides = true;
-    this.timeLimit = this.QumlPlayerConfig.metadata.timeLimits && this.QumlPlayerConfig.metadata.timeLimits.maxTime ? this.QumlPlayerConfig.metadata.timeLimits.maxTime : 0;
+    this.timeLimit = this.QumlPlayerConfig.metadata.timeLimits && this.QumlPlayerConfig.metadata.timeLimits.totalTime ? this.QumlPlayerConfig.metadata.timeLimits.totalTime : 0 ;
     this.warningTime = this.QumlPlayerConfig.metadata.timeLimits && this.QumlPlayerConfig.metadata.timeLimits.warningTime ? this.QumlPlayerConfig.metadata.timeLimits.warningTime : 0;
     this.showTimer = this.QumlPlayerConfig.metadata.showTimer.toLowerCase() === 'no' ? false: true;
     this.showFeedBack = this.QumlPlayerConfig.metadata.showFeedback.toLowerCase() === 'no' ? false: true;
@@ -160,6 +135,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.allowSkip =  this.QumlPlayerConfig.metadata.allowSkip;
     if (this.maxQuestions) {
       this.questions = this.questions.slice(0, this.maxQuestions);
+    }
+    if (!this.startPageInstruction) {
+      this.initializeTimer = true;
     }
     this.setInitialScores();
      if (this.threshold === 1) {
@@ -195,7 +173,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     if (this.currentSlideIndex !== this.questions.length) {
       this.currentSlideIndex = this.currentSlideIndex + 1;
     }
-    if (this.car.getCurrentSlideIndex() === 0) {
+    if (this.currentSlideIndex === 1 && (this.currentSlideIndex - 1) === 0) {
       this.initializeTimer = true;
     }
     if(this.car.getCurrentSlideIndex() === this.noOfQuestions && this.requiresSubmit){
@@ -228,12 +206,13 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   prevSlide() {
     this.viewerService.raiseHeartBeatEvent(eventName.prevClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
     this.showAlert = false;
-    if (this.car.getCurrentSlideIndex() + 1 === this.noOfQuestions && this.endPageReached) {
+    if (this.car.getCurrentSlideIndex() + 1 === this.questions.length && this.endPageReached) {
       this.endPageReached = false;
     } else if (!this.loadScoreBoard) {
       this.car.move(this.CarouselConfig.PREV);
     } else if (!this.linearNavigation && this.loadScoreBoard) {
-      this.car.selectSlide(this.noOfQuestions);
+      const index = this.startPageInstruction ? this.questions.length : this.questions.length - 1;
+      this.car.selectSlide(index);
       this.loadScoreBoard = false;
     }
   }
@@ -321,7 +300,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
           }
           if (this.showFeedBack) {
             this.correctFeedBackTimeOut();
-            this.updateScoreBoard(currentIndex, 'correct', undefined, this.currentScore);
+            this.updateScoreBoard(((currentIndex)), 'correct', undefined, this.currentScore);
           }
         } else if (!Boolean(option.option.value.value == correctOptionValue)) {
           this.currentScore = this.getScore(currentIndex, key, false, option);
@@ -329,10 +308,10 @@ export class PlayerComponent implements OnInit, AfterViewInit {
           this.showAlert = true;
           this.alertType = 'wrong';
           if (this.showFeedBack) {
-            this.updateScoreBoard(currentIndex, 'wrong' , selectedOptionValue , this.currentScore);
+            this.updateScoreBoard((currentIndex), 'wrong' , selectedOptionValue , this.currentScore);
           }
           if (!this.showFeedBack) {
-            this.updateScoreBoard( currentIndex, 'unattempted' , selectedOptionValue , this.currentScore);
+            this.updateScoreBoard((currentIndex), 'unattempted' , selectedOptionValue , this.currentScore);
             this.nextSlide();
           }
         }
@@ -389,7 +368,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       this.progressBarClass.forEach((ele) => {
         if (ele.index - 1 === index) {
           ele.class = classToBeUpdated;
-          ele.score = score ? score : 0;
+          ele.score = score ? score : 0
         }
       })
     } else if (!this.showFeedBack) {
@@ -397,7 +376,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
         if (ele.index - 1 === index) {
           ele.class = classToBeUpdated;
           ele.score = score ? score : 0;
-          ele.value = optionValue;
+          ele.value = optionValue
         }
       })
     }
@@ -444,19 +423,15 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   replayContent() {
-    this.replayed = true;
     this.questionIds = this.QumlPlayerConfig.metadata.children.map(({ IL_UNIQUE_ID }) => IL_UNIQUE_ID);
     this.progressBarClass = [];
     this.setInitialScores();
     this.viewerService.raiseHeartBeatEvent(eventName.replayClicked, TelemetryType.interact, 1);
-    this.viewerService.raiseStartEvent(this.car.getCurrentSlideIndex());
+    // this.viewerService.raiseStartEvent(1);
     this.endPageReached = false;
     this.loadScoreBoard = false;
     this.currentSlideIndex = 1;
     this.car.selectSlide(1);
-    setTimeout(() => {
-    this.replayed = false;
-    }, 200)
   }
 
   inScoreBoardSubmitClicked() {
@@ -508,7 +483,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   getSolutions() {
-    const currentIndex = this.car.getCurrentSlideIndex() - 1;
+    const currentIndex = this.car.getCurrentSlideIndex();
     this.currentQuestion = this.questions[currentIndex].body;
     this.currentOptions = this.questions[currentIndex].interactions.response1.options;
     if (this.currentSolutions) {
