@@ -22,7 +22,7 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
   @Output() prevSlideClicked = new EventEmitter<any>();
   @Output() durationEnds = new EventEmitter<any>();
   minutes: number;
-  seconds: number;
+  seconds: string | number;
   private intervalRef?;
   showWarning = false;
 
@@ -33,16 +33,15 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnInit() {
     if (this.duration && this.showTimer) {
-      const durationInSec = this.duration;
-      this.minutes = ~~(durationInSec / 60);
-      this.seconds = (durationInSec % 60);
+      this.minutes = Math.floor(this.duration / 60);
+      this.seconds = this.duration - this.minutes * 60 <  10 ? `0${this.duration - this.minutes * 60}`  :  this.duration - this.minutes * 60;
     }
   }
 
   ngOnChanges() {
     if (this.duration && this.showTimer && this.initializeTimer && !this.intervalRef) {
       this.timer();
-    } else if(this.duration === undefined && this.showTimer && this.initializeTimer && !this.intervalRef) {
+    } else if(this.duration === 0 && this.showTimer && this.initializeTimer && !this.intervalRef) {
        this.showCountUp();
     }
   }

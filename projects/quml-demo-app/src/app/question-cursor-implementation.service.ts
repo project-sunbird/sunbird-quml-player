@@ -179,7 +179,10 @@ export class QuestionCursorImplementationService extends QuestionCursor {
           "visibility": "Parent",
           "showTimer": "No",
           "author": "Sourav",
-          "solutions": [],
+          "solutions": [{
+              "type":"html",
+              "value": "<p>This is the solution</p>"
+          }],
           "qType": "MCQ",
           "languageCode": [
               "en"

@@ -38,11 +38,11 @@
         [noWrap]="noWrapSlides" #car [hidden]="endPageReached || loadScoreBoard">
         <slide> 
           <quml-startpage [instructions]="startPageInstruction" [totalNoOfQuestions]="noOfQuestions"
-            [points]="points" [time]="timeLimit" [contentName]="contentName"></quml-startpage>
+            [points]="points" [time]="timeLimit" [contentName]="contentName" [showTimer]="showTimer"></quml-startpage>
         </slide>
         <slide *ngFor="let question of questions; let i= index">
           <div *ngIf="question?.primaryCategory.toLowerCase() === 'multiple choice question'">
-            <quml-mcq *ngIf="showQuestions" [question]='question' (optionSelected)="getOptionSelected($event)" [identifier]="question.id"
+            <quml-mcq [question]='question' [replayed]="replayed" (optionSelected)="getOptionSelected($event)" [identifier]="question.id"
             ></quml-mcq>
           </div>
           <div *ngIf="question?.primaryCategory.toLowerCase() === 'subjective question'">

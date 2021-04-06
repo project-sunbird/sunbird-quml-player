@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { UtilService } from '../util-service';
 
 @Component({
@@ -6,7 +6,7 @@ import { UtilService } from '../util-service';
   templateUrl: './mcq-option.component.html',
   styleUrls: ['./mcq-option.component.scss']
 })
-export class McqOptionComponent implements OnInit {
+export class McqOptionComponent implements OnChanges {
 
   @Input() mcqOptions: any;
   @Input() solutions: any;
@@ -15,12 +15,19 @@ export class McqOptionComponent implements OnInit {
   @Output() showPopup = new EventEmitter();
   @Output() optionSelected = new EventEmitter<any>();
   selectedOption = []; 
+  @Input() replayed : boolean;
+
 
   constructor(
     public utilService : UtilService
   ) { }
 
-  ngOnInit() {
+  ngOnChanges() {
+    if(this.replayed) {
+      this.mcqOptions.forEach((ele) => {
+         ele.selected = false;
+      })
+    }
   }
 
   onOptionSelect(event, mcqOption) {

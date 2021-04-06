@@ -8,6 +8,7 @@
     <div class="solution-options" *ngFor="let option of options">
         <div [innerHtml]="option.label"></div>
     </div>
+    <ng-container *ngIf="solutions && solutions.length">
     <div class="solution-header">solutions</div>
     <div *ngIf="!showVideoSolution">
         <div *ngFor="let solution of solutions">
@@ -25,6 +26,7 @@
             </ng-container>
         </div>
     </div>
+</ng-container>
     <div class="scoreboard-button-container">
         <button type="submit" class="scoreboard-quml-btn" (click)="closeSolution()">Done</button>
     </div>

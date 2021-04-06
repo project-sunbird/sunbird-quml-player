@@ -19,6 +19,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   @ViewChild('car' , {static: false}) car: CarouselComponent;
 
   threshold: number;
+  replayed = false;
   questions = [];
   linearNavigation: boolean;
   endPageReached: boolean;
@@ -119,7 +120,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.slideInterval = 0;
     this.showIndicator = false;
     this.noWrapSlides = true;
-    this.timeLimit = this.QumlPlayerConfig.metadata.timeLimits && this.QumlPlayerConfig.metadata.timeLimits.totalTime ? this.QumlPlayerConfig.metadata.timeLimits.totalTime : 0 ;
+    this.timeLimit = this.QumlPlayerConfig.metadata.timeLimits && this.QumlPlayerConfig.metadata.timeLimits.maxTime ? this.QumlPlayerConfig.metadata.timeLimits.maxTime : 0;
     this.warningTime = this.QumlPlayerConfig.metadata.timeLimits && this.QumlPlayerConfig.metadata.timeLimits.warningTime ? this.QumlPlayerConfig.metadata.timeLimits.warningTime : 0;
     this.showTimer = this.QumlPlayerConfig.metadata.showTimer.toLowerCase() === 'no' ? false: true;
     this.showFeedBack = this.QumlPlayerConfig.metadata.showFeedback.toLowerCase() === 'no' ? false: true;
@@ -135,9 +136,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.allowSkip =  this.QumlPlayerConfig.metadata.allowSkip;
     if (this.maxQuestions) {
       this.questions = this.questions.slice(0, this.maxQuestions);
-    }
-    if (!this.startPageInstruction) {
-      this.initializeTimer = true;
     }
     this.setInitialScores();
      if (this.threshold === 1) {
@@ -173,7 +171,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     if (this.currentSlideIndex !== this.questions.length) {
       this.currentSlideIndex = this.currentSlideIndex + 1;
     }
-    if (this.currentSlideIndex === 1 && (this.currentSlideIndex - 1) === 0) {
+    if (this.car.getCurrentSlideIndex() === 0) {
       this.initializeTimer = true;
     }
     if(this.car.getCurrentSlideIndex() === this.noOfQuestions && this.requiresSubmit){
@@ -423,6 +421,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   replayContent() {
+    this.replayed = true;
     this.questionIds = this.QumlPlayerConfig.metadata.children.map(({ IL_UNIQUE_ID }) => IL_UNIQUE_ID);
     this.progressBarClass = [];
     this.setInitialScores();

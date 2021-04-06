@@ -13,7 +13,7 @@
           <quml-content class="icon"></quml-content><span class="scores">{{totalNoOfQuestions}}</span>
         </div>
       </div>
-      <div class="points" *ngIf="time > 0">
+      <div class="points" *ngIf="showTimer && time > 0">
         <div class="score-heading">Minutes</div>
         <div class="icon-section">
           <quml-timer class="icon"></quml-timer><span class="scores">{{minutes}}:{{seconds}}</span>
