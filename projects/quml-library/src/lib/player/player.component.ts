@@ -91,6 +91,30 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     });
 
     this.viewerService.qumlQuestionEvent.subscribe((res) => {
+      res.questions.forEach((ele) => {
+        ele.responseDeclaration = {
+          "response1": {
+            "maxScore": 1,
+            "cardinality": "single",
+            "type": "integer",
+            "correctResponse": {
+              "value": "0",
+              "outcomes": {
+                "SCORE": 5
+              }
+            }
+          },
+          "mapping": [
+            {
+              "response": 1,
+              "outcomes": {
+                "SCORE": 0.5
+              },
+              "caseSensitive": false
+            }
+          ]
+        }
+      })
       this.questions = _.uniqBy(this.questions.concat(res.questions), 'identifier');
       if(this.shuffleQuestions) {
          this.questions = this.questions.sort(() => Math.random() - 0.5);
