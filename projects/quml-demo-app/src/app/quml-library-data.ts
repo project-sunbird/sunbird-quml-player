@@ -91,7 +91,7 @@ export const data1 = {
                 "contentDisposition": "inline",
                 "visibility": "Parent",
                 "qType": "MCQ",
-                "showSolutions": "No",
+                "showSolutions": "Yes",
                 "index": 1,
                 "pkgVersion": 1
             },
@@ -277,7 +277,7 @@ export const data1 = {
         "objectType": "QuestionSet",
         "status": "Live",
         "createdBy": "8454cb21-3ce9-4e30-85b5-fade097880d8",
-        "requiresSubmit": "Yes",
+        "requiresSubmit": "No",
         "keywords": [
             "questionset 26 march"
         ],
@@ -300,7 +300,7 @@ export const data1 = {
             "do_1132443084176588801179"
         ],
         "visibility": "Default",
-        "showSolutions": "No",
+        "showSolutions": "Yes",
         "variants": {
             "spine": "https://sunbirddev.blob.core.windows.net/sunbird-content-dev/questionset/do_1132443060961198081160/questionset-26-march_1616736892527_do_1132443060961198081160_1_SPINE.ecar",
             "online": "https://sunbirddev.blob.core.windows.net/sunbird-content-dev/questionset/do_1132443060961198081160/questionset-26-march_1616736892762_do_1132443060961198081160_1_ONLINE.ecar"
