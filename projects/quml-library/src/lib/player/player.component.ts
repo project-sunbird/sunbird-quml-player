@@ -270,6 +270,11 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.car.selectSlide(this.currentSlideIndex);
   }
 
+  durationEnds() {
+    this.endPageReached = true;
+    this.viewerService.raiseEndEvent(this.currentSlideIndex, this.currentSlideIndex - 1, 'endPage');
+  }
+
   async validateSelectedOption(option) {
     const selectedOptionValue = option ? option.option.value : undefined;
     const currentIndex = this.car.getCurrentSlideIndex() - 1;
@@ -421,6 +426,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   replayContent() {
     this.replayed = true;
+    this.initialTime = new Date().getTime();
     this.questionIds = this.QumlPlayerConfig.metadata.children.map(({ IL_UNIQUE_ID }) => IL_UNIQUE_ID);
     this.progressBarClass = [];
     this.setInitialScores();
