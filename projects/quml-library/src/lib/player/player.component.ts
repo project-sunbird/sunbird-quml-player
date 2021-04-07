@@ -239,6 +239,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
         }
       })
     }
+    this.validateSelectedOption(this.optionSelectedObj);
   }
 
   closeAlertBox(event) {
