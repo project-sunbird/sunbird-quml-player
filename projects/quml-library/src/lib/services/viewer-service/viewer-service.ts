@@ -4,7 +4,7 @@ import { QumlLibraryService } from '../../quml-library.service';
 import { UtilService } from '../../util-service';
 import { eventName, TelemetryType } from '../../telemetry-constants';
 import { QuestionCursor } from '../../quml-question-cursor.service';
-
+import * as _ from 'lodash';
 
 @Injectable({
   providedIn: 'root'
@@ -152,7 +152,7 @@ export class ViewerService {
     }else if(!currentIndex && !index){
       indentifersForQuestions = this.identifiers.splice(0, this.threshold);
     }
-    if(indentifersForQuestions != undefined) {
+    if(!_.isEmpty(indentifersForQuestions)) {
       this.questionCursor.getQuestions(indentifersForQuestions).subscribe((question) => {
         this.qumlQuestionEvent.emit(question);
       });
