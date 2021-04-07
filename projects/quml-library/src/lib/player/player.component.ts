@@ -53,7 +53,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   contentName: string;
   currentSlideIndex = 0;
   attemptedQuestions = [];
-  primaryCategory: String;
   loadScoreBoard = false;
   totalScore = [];
   private intervalRef: any;
