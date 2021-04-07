@@ -14,6 +14,7 @@ export class SaComponent implements OnInit {
 
   @Input() questions?: any;
   @Output() componentLoaded = new EventEmitter<any>();
+  @Output() showAnswerClicked = new EventEmitter<any>();
   showAnswer = false;
   solutions: any;
   question: any;
@@ -22,6 +23,13 @@ export class SaComponent implements OnInit {
     public domSanitizer: DomSanitizer
   ) {
 
+  }
+
+  showAnswerToUser(){
+    this.showAnswer = true;
+    this.showAnswerClicked.emit({
+      showAnswer: this.showAnswer
+    })
   }
 
   ngOnInit() {

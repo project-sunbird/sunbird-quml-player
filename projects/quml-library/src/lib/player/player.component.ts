@@ -53,6 +53,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   contentName: string;
   currentSlideIndex = 0;
   attemptedQuestions = [];
+  primaryCategory: String;
   loadScoreBoard = false;
   totalScore = [];
   private intervalRef: any;
@@ -182,7 +183,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       
       if (!this.requiresSubmit) {
         this.endPageReached = true;
-        this.viewerService.raiseEndEvent(this.currentSlideIndex, this.attemptedQuestions.length, this.endPageReached);
+        this.viewerService.raiseEndEvent(this.currentSlideIndex, this.attemptedQuestions.length, this.endPageReached , this.finalScore);
       }
     }
     if (this.car.isLast(this.car.getCurrentSlideIndex()) || this.noOfQuestions === this.car.getCurrentSlideIndex()) {
@@ -222,7 +223,13 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   getOptionSelected(optionSelected) {
     this.active = true;
     const currentIndex = this.startPageInstruction ? this.car.getCurrentSlideIndex() - 1 : this.car.getCurrentSlideIndex();
-    this.viewerService.raiseHeartBeatEvent(eventName.optionClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
+    let key: any = this.utilService.getKeyValue(Object.keys(this.questions[currentIndex].responseDeclaration));
+    const questionObj = {
+      question: this.questions[currentIndex].body,
+      option: this.questions[currentIndex].interactions[key].options,
+      selectedOption: optionSelected.option
+    }
+    this.viewerService.raiseHeartBeatEvent(eventName.optionClicked, TelemetryType.interact, this.car.getCurrentSlideIndex(), questionObj);
     this.optionSelectedObj = optionSelected;
     this.currentSolutions = optionSelected.solutions;
     this.media = this.questions[currentIndex - 1].media;
@@ -258,9 +265,10 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   exitContent(event) {
+    this.calculateScore();
     if (event.type === 'EXIT') {
       this.viewerService.raiseHeartBeatEvent(eventName.endPageExitClicked, TelemetryType.interact, 'endPage')
-      this.viewerService.raiseEndEvent(this.currentSlideIndex, this.currentSlideIndex - 1, 'endPage');
+      this.viewerService.raiseEndEvent(this.currentSlideIndex, this.currentSlideIndex - 1, 'endPage' , this.finalScore);
     }
   }
 
@@ -271,8 +279,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   durationEnds() {
+    this.calculateScore();
     this.endPageReached = true;
-    this.viewerService.raiseEndEvent(this.currentSlideIndex, this.currentSlideIndex - 1, 'endPage');
+    this.viewerService.raiseEndEvent(this.currentSlideIndex, this.currentSlideIndex - 1, 'endPage', this.finalScore);
   }
 
   async validateSelectedOption(option) {
@@ -519,5 +528,17 @@ export class PlayerComponent implements OnInit, AfterViewInit {
         return score;
       }
     }
+  }
+
+  showAnswerClicked(event) {
+    if(event.showAnswer) {
+      this.viewerService.raiseHeartBeatEvent(eventName.showAnswer, TelemetryType.interact, pageId.shortAnswer)
+    }
+  }
+
+  @HostListener('window:beforeunload')
+  ngOnDestroy() {
+    this.calculateScore();
+    this.viewerService.raiseEndEvent(this.currentSlideIndex, this.attemptedQuestions.length, this.endPageReached , this.finalScore);
   }
 }

@@ -84,7 +84,7 @@ export class QumlLibraryService {
       }
     );
   }
-  public end(duration, currentQuestionIndex, totalNoofQuestions, visitedQuestions, endpageseen) {
+  public end(duration, currentQuestionIndex, totalNoofQuestions, visitedQuestions, endpageseen , score) {
     const durationSec = Number((duration / 1e3).toFixed(2));
     const endEvent = {
       edata: {
@@ -103,6 +103,8 @@ export class QumlLibraryService {
           },
           {
             endpageseen
+          },{
+            score
           }
         ],
         duration: durationSec
@@ -126,6 +128,9 @@ export class QumlLibraryService {
           },
           {
             endpageseen
+          },
+          {
+            score
           }
         ],
         duration: durationSec
@@ -134,10 +139,10 @@ export class QumlLibraryService {
     });
   }
 
-  public interact(id, currentPage) {
+  public interact(id, currentPage , currentQuestionDetails?) {
     CsTelemetryModule.instance.telemetryService.raiseInteractTelemetry({
       options: this.getEventOptions(),
-      edata: { type: 'TOUCH', subtype: '', id, pageid: currentPage + '' }
+      edata: { type: 'TOUCH', subtype: '', id, pageid: currentPage + '' , currentQuestionDetails}
     });
   }
 
