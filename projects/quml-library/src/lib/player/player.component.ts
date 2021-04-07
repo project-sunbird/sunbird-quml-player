@@ -114,6 +114,10 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.sideMenuConfig = { ...this.sideMenuConfig, ...this.QumlPlayerConfig.config.sideMenu };
     this.threshold = this.QumlPlayerConfig.context.threshold || 3;
     this.questionIds = this.QumlPlayerConfig.metadata.childNodes;
+    this.maxQuestions = this.QumlPlayerConfig.metadata.maxQuestions;
+    if (this.maxQuestions) {
+      this.questionIds = this.questionIds.slice(0, this.maxQuestions);
+    }
     this.noOfQuestions = this.questionIds.length;
     this.viewerService.initialize(this.QumlPlayerConfig , this.threshold , this.questionIds);
     this.initialTime = new Date().getTime();
@@ -134,9 +138,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.contentName = this.QumlPlayerConfig.metadata.name;
     this.shuffleQuestions = this.QumlPlayerConfig.metadata.shuffle ? this.QumlPlayerConfig.metadata.shuffle : false;
     this.allowSkip =  this.QumlPlayerConfig.metadata.allowSkip;
-    if (this.maxQuestions) {
-      this.questions = this.questions.slice(0, this.maxQuestions);
-    }
     this.setInitialScores();
      if (this.threshold === 1) {
       this.viewerService.getQuestion();
@@ -221,11 +222,10 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   getOptionSelected(optionSelected) {
     this.active = true;
-    const currentIndex = this.startPageInstruction ? this.car.getCurrentSlideIndex() - 1 : this.car.getCurrentSlideIndex();
     this.viewerService.raiseHeartBeatEvent(eventName.optionClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
     this.optionSelectedObj = optionSelected;
     this.currentSolutions = optionSelected.solutions;
-    this.media = this.questions[currentIndex - 1].media;
+    this.media = this.questions[this.car.getCurrentSlideIndex()].media;
     if (this.currentSolutions) {
       this.currentSolutions.forEach((ele, index) => {
         if (ele.type === 'video') {
@@ -427,7 +427,10 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   replayContent() {
     this.replayed = true;
     this.initialTime = new Date().getTime();
-    this.questionIds = this.QumlPlayerConfig.metadata.children.map(({ IL_UNIQUE_ID }) => IL_UNIQUE_ID);
+    this.questionIds = this.QumlPlayerConfig.metadata.childNodes;
+    if (this.maxQuestions) {
+      this.questionIds = this.questionIds.slice(0, this.maxQuestions);
+    }
     this.progressBarClass = [];
     this.setInitialScores();
     this.viewerService.raiseHeartBeatEvent(eventName.replayClicked, TelemetryType.interact, 1);

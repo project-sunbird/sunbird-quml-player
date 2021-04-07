@@ -16,7 +16,7 @@
     </sb-player-sidebar>
     <div class="landscape-mode" [hidden]="endPageReached">
       <div class="lanscape-mode-left">
-        <div class="current-slide">
+        <div class="current-slide" [hidden]="loadScoreBoard">
           {{car.getCurrentSlideIndex() || currentSlideIndex}}/{{noOfQuestions}}
         </div>
         <!-- Not in scope ,  later release-->
