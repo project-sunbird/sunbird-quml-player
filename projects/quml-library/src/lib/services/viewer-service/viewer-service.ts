@@ -60,21 +60,6 @@ export class ViewerService {
     this.endPageSeen = false;
   }
 
-  raiseResponseEvent(currentIndex , identifier , qType){
-     const responseEvent = {
-        eid: 'RESPONSE',
-        ver: this.version,
-        edata: {
-          type: 'RESPONSE',
-          pageId: currentIndex,
-          identifier: identifier,
-          qtype: qType,
-        }
-     }
-     this.qumlPlayerEvent.emit(responseEvent);
-     this.qumlLibraryService.response(identifier, qType);
-  }
-
   raiseStartEvent(currentQuestionIndex) {
     this.currentQuestionIndex = currentQuestionIndex;
     const duration = new Date().getTime() - this.qumlPlayerStartTime;
@@ -90,7 +75,7 @@ export class ViewerService {
     };
     this.qumlPlayerEvent.emit(startEvent);
     this.qumlPlayerLastPageTime = this.qumlPlayerStartTime = new Date().getTime();
-    this.qumlLibraryService.start(duration , this.currentQuestionIndex);
+    this.qumlLibraryService.start(duration);
   }
 
   raiseEndEvent(currentQuestionIndex, noOfvisitedQuestions,  endPageSeen , score) {
@@ -113,7 +98,7 @@ export class ViewerService {
   }
 
 
-  raiseHeartBeatEvent(type: string, telemetryType: string, pageId: any, currentQuestionDetails?: any) {
+  raiseHeartBeatEvent(type: string, telemetryType: string, pageId: any) {
     const hearBeatEvent = {
       eid: 'HEARTBEAT',
       ver: this.version,
@@ -125,7 +110,7 @@ export class ViewerService {
     };
     this.qumlPlayerEvent.emit(hearBeatEvent);
     if (TelemetryType.interact === telemetryType) {
-      this.qumlLibraryService.interact(type.toLowerCase(), pageId , currentQuestionDetails);
+      this.qumlLibraryService.interact(type.toLowerCase(), pageId);
     } else if (TelemetryType.impression === telemetryType) {
       this.qumlLibraryService.impression(pageId);
     }

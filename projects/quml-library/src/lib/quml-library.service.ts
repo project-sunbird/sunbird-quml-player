@@ -76,24 +76,11 @@ export class QumlLibraryService {
       );
   }
 
-  public response(identifier , type) {
-    CsTelemetryModule.instance.telemetryService.raiseResponseTelemetry(
-       {
-        target: {
-          id: identifier,
-          ver: "1.0",
-          qType: type,
-        },
-      },
-      this.getEventOptions(),
-    )
-  }
-
-  public start(duration , questionIndex) {
+  public start(duration) {
     CsTelemetryModule.instance.telemetryService.raiseStartTelemetry(
       {
         options: this.getEventOptions(),
-        edata: { type: 'content', mode: 'play', pageid: questionIndex, duration: Number((duration / 1e3).toFixed(2)) }
+        edata: { type: 'content', mode: 'play', pageid: '', duration: Number((duration / 1e3).toFixed(2)) }
       }
     );
   }
@@ -130,11 +117,11 @@ export class QumlLibraryService {
   public interact(id, currentPage , currentQuestionDetails?) {
     CsTelemetryModule.instance.telemetryService.raiseInteractTelemetry({
       options: this.getEventOptions(),
-      edata: { type: 'TOUCH', subtype: '', id, pageid: currentPage + '' , currentQuestionDetails}
+      edata: { type: 'TOUCH', subtype: '', id, pageid: currentPage + ''}
     });
   }
 
-  
+
 
   public heartBeat(data) {
     CsTelemetryModule.instance.playerTelemetryService.onHeartBeatEvent(data, {});
