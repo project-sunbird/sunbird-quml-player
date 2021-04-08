@@ -75,7 +75,7 @@ export class ViewerService {
     };
     this.qumlPlayerEvent.emit(startEvent);
     this.qumlPlayerLastPageTime = this.qumlPlayerStartTime = new Date().getTime();
-    this.qumlLibraryService.start(duration);
+    this.qumlLibraryService.start(duration , this.currentQuestionIndex);
   }
 
   raiseEndEvent(currentQuestionIndex, noOfvisitedQuestions,  endPageSeen , score) {
@@ -109,9 +109,9 @@ export class ViewerService {
       metaData: this.metaData
     };
     this.qumlPlayerEvent.emit(hearBeatEvent);
-    if (TelemetryType.interact) {
+    if (TelemetryType.interact === telemetryType) {
       this.qumlLibraryService.interact(type.toLowerCase(), pageId , currentQuestionDetails);
-    } else if (TelemetryType.impression) {
+    } else if (TelemetryType.impression === telemetryType) {
       this.qumlLibraryService.impression(pageId);
     }
 

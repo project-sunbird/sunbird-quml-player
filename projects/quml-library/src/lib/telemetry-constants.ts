@@ -24,6 +24,6 @@ export enum eventName {
 }
 
 export enum TelemetryType {
-    interact = 'Interact',
+    interact = 'interact',
     impression = 'impression',
 }

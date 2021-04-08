@@ -76,41 +76,16 @@ export class QumlLibraryService {
       );
   }
 
-  public start(duration) {
+  public start(duration , questionIndex) {
     CsTelemetryModule.instance.telemetryService.raiseStartTelemetry(
       {
         options: this.getEventOptions(),
-        edata: { type: 'content', mode: 'play', pageid: '', duration: Number((duration / 1e3).toFixed(2)) }
+        edata: { type: 'content', mode: 'play', pageid: questionIndex, duration: Number((duration / 1e3).toFixed(2)) }
       }
     );
   }
   public end(duration, currentQuestionIndex, totalNoofQuestions, visitedQuestions, endpageseen , score) {
     const durationSec = Number((duration / 1e3).toFixed(2));
-    const endEvent = {
-      edata: {
-        type: 'content',
-        mode: 'play',
-        pageid: 'sunbird-player-Endpage',
-        summary: [
-          {
-            progress: Number(((currentQuestionIndex / totalNoofQuestions) * 100).toFixed(0))
-          },
-          {
-            totalNoofQuestions: totalNoofQuestions
-          },
-          {
-            visitedQuestions: visitedQuestions,
-          },
-          {
-            endpageseen
-          },{
-            score
-          }
-        ],
-        duration: durationSec
-      },
-      options: this.getEventOptions()
-    };
     CsTelemetryModule.instance.telemetryService.raiseEndTelemetry({
       edata: {
         type: 'content',
@@ -131,7 +106,7 @@ export class QumlLibraryService {
           },
           {
             score
-          }
+          },
         ],
         duration: durationSec
       },
