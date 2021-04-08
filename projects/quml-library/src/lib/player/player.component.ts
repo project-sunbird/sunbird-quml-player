@@ -93,9 +93,6 @@ export class PlayerComponent implements OnInit {
 
     this.viewerService.qumlQuestionEvent.subscribe((res) => {
       this.questions = _.uniqBy(this.questions.concat(res.questions), 'identifier');
-      if(this.shuffleQuestions) {
-         this.questions = this.questions.sort(() => Math.random() - 0.5);
-      }
       this.cdRef.detectChanges();
       this.noOfTimesApiCalled++;
       this.loadView = true;
@@ -115,6 +112,9 @@ export class PlayerComponent implements OnInit {
     this.sideMenuConfig = { ...this.sideMenuConfig, ...this.QumlPlayerConfig.config.sideMenu };
     this.threshold = this.QumlPlayerConfig.context.threshold || 3;
     this.questionIds = this.QumlPlayerConfig.metadata.childNodes;
+    if (this.shuffleQuestions) {
+      this.questions = _.shuffle(this.questions);
+    }
     this.questionIdsCopy = _.cloneDeep(this.QumlPlayerConfig.metadata.childNodes);
     this.maxQuestions = this.QumlPlayerConfig.metadata.maxQuestions;
     if (this.maxQuestions) {
@@ -224,7 +224,7 @@ export class PlayerComponent implements OnInit {
 
   getOptionSelected(optionSelected) {
     this.active = true;
-    const currentIndex = this.startPageInstruction ? this.car.getCurrentSlideIndex() - 1 : this.car.getCurrentSlideIndex();
+    const currentIndex = this.car.getCurrentSlideIndex() - 1;
     let key: any = this.utilService.getKeyValue(Object.keys(this.questions[currentIndex].responseDeclaration));
     const questionObj = {
       question: this.questions[currentIndex].body,
