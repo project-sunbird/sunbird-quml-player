@@ -46,7 +46,7 @@
             ></quml-mcq>
           </div>
           <div *ngIf="question?.primaryCategory.toLowerCase() === 'subjective question'">
-            <quml-sa [questions]='question'></quml-sa>
+            <quml-sa [questions]='question' (showAnswerClicked)="showAnswerClicked($event)"></quml-sa>
           </div>
         </slide>
       </carousel>
