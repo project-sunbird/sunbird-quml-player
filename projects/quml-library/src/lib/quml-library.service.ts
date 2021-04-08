@@ -76,6 +76,19 @@ export class QumlLibraryService {
       );
   }
 
+  public response(identifier , type) {
+    CsTelemetryModule.instance.telemetryService.raiseResponseTelemetry(
+       {
+        target: {
+          id: identifier,
+          ver: "1.0",
+          qType: type,
+        },
+      },
+      this.getEventOptions(),
+    )
+  }
+
   public start(duration , questionIndex) {
     CsTelemetryModule.instance.telemetryService.raiseStartTelemetry(
       {
@@ -120,6 +133,8 @@ export class QumlLibraryService {
       edata: { type: 'TOUCH', subtype: '', id, pageid: currentPage + '' , currentQuestionDetails}
     });
   }
+
+  
 
   public heartBeat(data) {
     CsTelemetryModule.instance.playerTelemetryService.onHeartBeatEvent(data, {});

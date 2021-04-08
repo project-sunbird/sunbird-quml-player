@@ -60,6 +60,21 @@ export class ViewerService {
     this.endPageSeen = false;
   }
 
+  raiseResponseEvent(currentIndex , identifier , qType){
+     const responseEvent = {
+        eid: 'RESPONSE',
+        ver: this.version,
+        edata: {
+          type: 'RESPONSE',
+          pageId: currentIndex,
+          identifier: identifier,
+          qtype: qType,
+        }
+     }
+     this.qumlPlayerEvent.emit(responseEvent);
+     this.qumlLibraryService.response(identifier, qType);
+  }
+
   raiseStartEvent(currentQuestionIndex) {
     this.currentQuestionIndex = currentQuestionIndex;
     const duration = new Date().getTime() - this.qumlPlayerStartTime;
