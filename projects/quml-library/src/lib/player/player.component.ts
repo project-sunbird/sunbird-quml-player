@@ -449,7 +449,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     }
     if (this.questions[index - 1] === undefined) {
       this.showQuestions = false;
-        this.viewerService.getQuestions((index - 1) - this.threshold  , index - 1);
+        this.viewerService.getQuestions(0  , index);
         this.currentSlideIndex = index;
     } else if(this.questions[index - 1] !== undefined) {
        this.car.selectSlide(index);

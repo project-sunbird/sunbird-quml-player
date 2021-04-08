@@ -148,7 +148,7 @@ export class ViewerService {
   getQuestions(currentIndex?: number  , index?: number) {
     let indentifersForQuestions;
     if(currentIndex !== undefined && index) {
-      indentifersForQuestions = this.identifiers.splice(currentIndex, this.threshold);
+      indentifersForQuestions = this.identifiers.splice(currentIndex, index);
     }else if(!currentIndex && !index){
       indentifersForQuestions = this.identifiers.splice(0, this.threshold);
     }
