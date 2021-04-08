@@ -1,11 +1,13 @@
 export enum pageId  {
         startPage = 'START_PAGE',
         submitPage = 'SUBMIT_PAGE',
-        endPage = 'END_PAGE'
+        endPage = 'END_PAGE',
+        shortAnswer = 'SHORT_ANSWER'
 }
 
 
 export enum eventName {
+    showAnswer = 'SHOW_ANSWER_CLICKED',
     nextClicked = 'NEXT_CLICKED',
     prevClicked = 'PREV_CLICKED',
     progressBar = 'PROGRESSBAR_CLICKED',
@@ -22,6 +24,6 @@ export enum eventName {
 }
 
 export enum TelemetryType {
-    interact = 'Interact',
+    interact = 'interact',
     impression = 'impression',
 }
