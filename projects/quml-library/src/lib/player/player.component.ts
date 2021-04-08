@@ -65,6 +65,7 @@ export class PlayerComponent implements OnInit {
   loadView: Boolean;
   noOfTimesApiCalled: number = 0;
   questionIds: Array<[]>;
+  questionIdsCopy: Array<[]>;
   CarouselConfig = {
     NEXT: 1,
     PREV: 2
@@ -114,6 +115,12 @@ export class PlayerComponent implements OnInit {
     this.sideMenuConfig = { ...this.sideMenuConfig, ...this.QumlPlayerConfig.config.sideMenu };
     this.threshold = this.QumlPlayerConfig.context.threshold || 3;
     this.questionIds = this.QumlPlayerConfig.metadata.childNodes;
+    this.questionIdsCopy = _.cloneDeep(this.QumlPlayerConfig.metadata.childNodes);
+    this.maxQuestions = this.QumlPlayerConfig.metadata.maxQuestions;
+    if (this.maxQuestions) {
+      this.questionIds = this.questionIds.slice(0, this.maxQuestions);
+      this.questionIdsCopy = this.questionIdsCopy.slice(0, this.maxQuestions);
+    }
     this.noOfQuestions = this.questionIds.length;
     this.viewerService.initialize(this.QumlPlayerConfig , this.threshold , this.questionIds);
     this.initialTime = new Date().getTime();
@@ -134,9 +141,6 @@ export class PlayerComponent implements OnInit {
     this.contentName = this.QumlPlayerConfig.metadata.name;
     this.shuffleQuestions = this.QumlPlayerConfig.metadata.shuffle ? this.QumlPlayerConfig.metadata.shuffle : false;
     this.allowSkip =  this.QumlPlayerConfig.metadata.allowSkip;
-    if (this.maxQuestions) {
-      this.questions = this.questions.slice(0, this.maxQuestions);
-    }
     this.setInitialScores();
      if (this.threshold === 1) {
       this.viewerService.getQuestion();
@@ -230,7 +234,7 @@ export class PlayerComponent implements OnInit {
     this.viewerService.raiseHeartBeatEvent(eventName.optionClicked, TelemetryType.interact, this.car.getCurrentSlideIndex(), questionObj);
     this.optionSelectedObj = optionSelected;
     this.currentSolutions = optionSelected.solutions;
-    this.media = this.questions[currentIndex - 1].media;
+    this.media = this.questions[this.car.getCurrentSlideIndex() - 1].media;
     if (this.currentSolutions) {
       this.currentSolutions.forEach((ele, index) => {
         if (ele.type === 'video') {
@@ -244,6 +248,7 @@ export class PlayerComponent implements OnInit {
         }
       })
     }
+    this.validateSelectedOption(this.optionSelectedObj);
   }
 
   closeAlertBox(event) {
@@ -303,26 +308,13 @@ export class PlayerComponent implements OnInit {
           this.viewerService.raiseAssesEvent(edataItem , currentIndex , 'Yes' , this.currentScore , [option.option] , new Date().getTime());
           this.showAlert = true;
           this.alertType = 'correct';
-          if (!this.showFeedBack) {
-            this.updateScoreBoard(currentIndex, 'attempted', selectedOptionValue, this.currentScore);
-            this.nextSlide();
-          }
-          if (this.showFeedBack) {
-            this.correctFeedBackTimeOut();
-            this.updateScoreBoard(currentIndex, 'correct', undefined, this.currentScore);
-          }
+          this.updateScoreBoard(currentIndex, 'correct', undefined, this.currentScore);
         } else if (!Boolean(option.option.value.value == correctOptionValue)) {
           this.currentScore = this.getScore(currentIndex, key, false, option);
           this.viewerService.raiseAssesEvent(edataItem , currentIndex , 'No' , this.currentScore , [option.option] , new Date().getTime());
           this.showAlert = true;
           this.alertType = 'wrong';
-          if (this.showFeedBack) {
-            this.updateScoreBoard(currentIndex, 'wrong' , selectedOptionValue , this.currentScore);
-          }
-          if (!this.showFeedBack) {
-            this.updateScoreBoard( currentIndex, 'unattempted' , selectedOptionValue , this.currentScore);
-            this.nextSlide();
-          }
+          this.updateScoreBoard(currentIndex, 'wrong' , selectedOptionValue , this.currentScore);
         }
       }
       if (option.cardinality === 'multiple') {
@@ -434,7 +426,7 @@ export class PlayerComponent implements OnInit {
   replayContent() {
     this.replayed = true;
     this.initialTime = new Date().getTime();
-    this.questionIds = this.QumlPlayerConfig.metadata.children.map(({ IL_UNIQUE_ID }) => IL_UNIQUE_ID);
+    this.questionIds = this.questionIdsCopy;
     this.progressBarClass = [];
     this.setInitialScores();
     this.viewerService.raiseHeartBeatEvent(eventName.replayClicked, TelemetryType.interact, 1);
