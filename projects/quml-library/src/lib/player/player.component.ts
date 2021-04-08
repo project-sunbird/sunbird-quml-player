@@ -112,8 +112,9 @@ export class PlayerComponent implements OnInit {
     this.sideMenuConfig = { ...this.sideMenuConfig, ...this.QumlPlayerConfig.config.sideMenu };
     this.threshold = this.QumlPlayerConfig.context.threshold || 3;
     this.questionIds = this.QumlPlayerConfig.metadata.childNodes;
+    this.shuffleQuestions = this.QumlPlayerConfig.metadata.shuffle ? this.QumlPlayerConfig.metadata.shuffle : false;
     if (this.shuffleQuestions) {
-      this.questions = _.shuffle(this.questions);
+      this.questionIds = _.shuffle(this.questionIds);
     }
     this.questionIdsCopy = _.cloneDeep(this.QumlPlayerConfig.metadata.childNodes);
     this.maxQuestions = this.QumlPlayerConfig.metadata.maxQuestions;
@@ -139,7 +140,6 @@ export class PlayerComponent implements OnInit {
     this.points = this.QumlPlayerConfig.metadata.points;
     this.userName = this.QumlPlayerConfig.context.userData.firstName + ' ' + this.QumlPlayerConfig.context.userData.lastName;
     this.contentName = this.QumlPlayerConfig.metadata.name;
-    this.shuffleQuestions = this.QumlPlayerConfig.metadata.shuffle ? this.QumlPlayerConfig.metadata.shuffle : false;
     this.allowSkip =  this.QumlPlayerConfig.metadata.allowSkip;
     this.setInitialScores();
      if (this.threshold === 1) {
