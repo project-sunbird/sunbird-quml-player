@@ -93,9 +93,6 @@ export class PlayerComponent implements OnInit {
 
     this.viewerService.qumlQuestionEvent.subscribe((res) => {
       this.questions = _.uniqBy(this.questions.concat(res.questions), 'identifier');
-      if(this.shuffleQuestions) {
-         this.questions = this.questions.sort(() => Math.random() - 0.5);
-      }
       this.cdRef.detectChanges();
       this.noOfTimesApiCalled++;
       this.loadView = true;
@@ -115,6 +112,10 @@ export class PlayerComponent implements OnInit {
     this.sideMenuConfig = { ...this.sideMenuConfig, ...this.QumlPlayerConfig.config.sideMenu };
     this.threshold = this.QumlPlayerConfig.context.threshold || 3;
     this.questionIds = this.QumlPlayerConfig.metadata.childNodes;
+    this.shuffleQuestions = this.QumlPlayerConfig.metadata.shuffle ? this.QumlPlayerConfig.metadata.shuffle : false;
+    if (this.shuffleQuestions) {
+      this.questionIds = _.shuffle(this.questionIds);
+    }
     this.questionIdsCopy = _.cloneDeep(this.QumlPlayerConfig.metadata.childNodes);
     this.maxQuestions = this.QumlPlayerConfig.metadata.maxQuestions;
     if (this.maxQuestions) {
@@ -139,7 +140,6 @@ export class PlayerComponent implements OnInit {
     this.points = this.QumlPlayerConfig.metadata.points;
     this.userName = this.QumlPlayerConfig.context.userData.firstName + ' ' + this.QumlPlayerConfig.context.userData.lastName;
     this.contentName = this.QumlPlayerConfig.metadata.name;
-    this.shuffleQuestions = this.QumlPlayerConfig.metadata.shuffle ? this.QumlPlayerConfig.metadata.shuffle : false;
     this.allowSkip =  this.QumlPlayerConfig.metadata.allowSkip;
     this.setInitialScores();
      if (this.threshold === 1) {
@@ -224,7 +224,7 @@ export class PlayerComponent implements OnInit {
 
   getOptionSelected(optionSelected) {
     this.active = true;
-    const currentIndex = this.startPageInstruction ? this.car.getCurrentSlideIndex() - 1 : this.car.getCurrentSlideIndex();
+    const currentIndex = this.car.getCurrentSlideIndex() - 1;
     let key: any = this.utilService.getKeyValue(Object.keys(this.questions[currentIndex].responseDeclaration));
     const questionObj = {
       question: this.questions[currentIndex].body,
@@ -457,7 +457,7 @@ export class PlayerComponent implements OnInit {
     }
     if (this.questions[index - 1] === undefined) {
       this.showQuestions = false;
-        this.viewerService.getQuestions((index - 1) - this.threshold  , index - 1);
+        this.viewerService.getQuestions(0  , index);
         this.currentSlideIndex = index;
     } else if(this.questions[index - 1] !== undefined) {
        this.car.selectSlide(index);
