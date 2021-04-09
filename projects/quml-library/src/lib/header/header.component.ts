@@ -10,7 +10,7 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() questions?: any;
   @Input() duration?: any;
-  @Input() warningTime?: number;
+  @Input() warningTime?: string;
   @Input() disablePreviousNavigation: boolean;
   @Input() showTimer: boolean;
   @Input() totalNoOfQuestions: any;
@@ -94,8 +94,8 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
       if (durationInSec === 0) {
         this.durationEnds.emit(true);
         return false;
-      }      
-      if (durationInSec <= this.warningTime) {
+      }   
+      if (parseInt(durationInSec) <= parseInt(this.warningTime)) {
         this.showWarning = true;
       }
       durationInSec--;

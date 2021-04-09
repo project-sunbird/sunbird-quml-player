@@ -128,6 +128,9 @@ export class PlayerComponent implements OnInit {
     this.slideInterval = 0;
     this.showIndicator = false;
     this.noWrapSlides = true;
+    if (_.get(this.QumlPlayerConfig, 'metadata.timeLimits') && typeof _.get(this.QumlPlayerConfig, 'metadata.timeLimits') === 'string') {
+      this.QumlPlayerConfig.metadata.timeLimits = JSON.parse(this.QumlPlayerConfig.metadata.timeLimits);
+    }
     this.timeLimit = this.QumlPlayerConfig.metadata.timeLimits && this.QumlPlayerConfig.metadata.timeLimits.maxTime ? this.QumlPlayerConfig.metadata.timeLimits.maxTime : 0;
     this.warningTime = this.QumlPlayerConfig.metadata.timeLimits && this.QumlPlayerConfig.metadata.timeLimits.warningTime ? this.QumlPlayerConfig.metadata.timeLimits.warningTime : 0;
     this.showTimer = this.QumlPlayerConfig.metadata.showTimer.toLowerCase() === 'no' ? false: true;
