@@ -92,6 +92,7 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
         this.time = min + ':' + sec;
       }
       if (durationInSec === 0) {
+        clearInterval(this.intervalRef);
         this.durationEnds.emit(true);
         return false;
       }   
