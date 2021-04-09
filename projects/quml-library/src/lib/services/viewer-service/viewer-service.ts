@@ -4,7 +4,7 @@ import { QumlLibraryService } from '../../quml-library.service';
 import { UtilService } from '../../util-service';
 import { eventName, TelemetryType } from '../../telemetry-constants';
 import { QuestionCursor } from '../../quml-question-cursor.service';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 
 @Injectable({
   providedIn: 'root'
