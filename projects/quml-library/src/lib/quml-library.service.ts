@@ -85,7 +85,7 @@ export class QumlLibraryService {
     );
   }
 
-  public response(identifier, version , type){
+  public response(identifier, version , type , option){
     const responseEvent = {
       target: {
         id: identifier,
@@ -93,7 +93,9 @@ export class QumlLibraryService {
         type: type
       },
       type: 'CHOOSE',
-      values: []
+      values: [{
+        option
+      }]
     }
     CsTelemetryModule.instance.telemetryService.raiseResponseTelemetry(
       responseEvent, 
