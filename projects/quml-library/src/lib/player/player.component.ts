@@ -5,7 +5,7 @@ import { ViewerService } from '../services/viewer-service/viewer-service';
 import { eventName, TelemetryType, pageId } from '../telemetry-constants';
 import { UtilService } from '../util-service';
 import { QuestionCursor } from '../quml-question-cursor.service';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 
 @Component({
   selector: 'quml-player',
@@ -297,6 +297,7 @@ export class PlayerComponent implements OnInit , AfterViewInit {
   }
 
   durationEnds() {
+    this.durationSpent = this.utilService.getTimeSpentText(this.initialTime);
     this.calculateScore();
     this.endPageReached = true;
     this.viewerService.raiseEndEvent(this.car.getCurrentSlideIndex(), this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore);
