@@ -199,17 +199,17 @@ export class PlayerComponent implements OnInit , AfterViewInit {
       this.calculateScore();
     }
 
-    if(this.car.getCurrentSlideIndex() > 0 && !this.loadScoreBoard && this.questions[this.car.getCurrentSlideIndex() -1].qType === 'MCQ') {
+    if(this.car.getCurrentSlideIndex() > 0 && !this.loadScoreBoard && this.questions[this.car.getCurrentSlideIndex() -1].qType === 'MCQ' && this.currentOptionSelected) {
       const option = this.currentOptionSelected && this.currentOptionSelected['option'] ?  this.currentOptionSelected['option'] : undefined
       const identifier = this.questions[this.car.getCurrentSlideIndex() -1].identifier;
       const qType = this.questions[this.car.getCurrentSlideIndex() -1].qType;
-
       this.viewerService.raiseResponseEvent(identifier , qType , option);
     }
     this.car.move(this.CarouselConfig.NEXT);
     this.active = false;
     this.showAlert = false;
     this.optionSelectedObj = undefined;
+    this.currentOptionSelected = undefined;
     this.currentQuestion = undefined;
     this.currentOptions = undefined;
     this.currentSolutions = undefined;
