@@ -148,13 +148,13 @@ export class ViewerService {
     const responseEvent = {
         target: {
           id: identifier,
-          ver: "1.0",
+          ver: this.version,
           type: qType
         },
         values: []
     }
     this.qumlPlayerEvent.emit(responseEvent);
-    this.qumlLibraryService.response(identifier);
+    this.qumlLibraryService.response(identifier, this.version , qType);
   }
 
 

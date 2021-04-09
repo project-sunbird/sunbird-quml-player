@@ -195,7 +195,7 @@ export class PlayerComponent implements OnInit , AfterViewInit {
       this.calculateScore();
     }
 
-    if(this.car.getCurrentSlideIndex() > 0 && !this.loadScoreBoard) {
+    if(this.car.getCurrentSlideIndex() > 0 && !this.loadScoreBoard && this.questions[this.car.getCurrentSlideIndex() -1].qType === 'MCQ') {
       const identifier = this.questions[this.car.getCurrentSlideIndex() -1].identifier;
       const qType = this.questions[this.car.getCurrentSlideIndex() -1].qType;
       this.viewerService.raiseResponseEvent(identifier , qType);
