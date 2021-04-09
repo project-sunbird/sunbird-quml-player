@@ -293,6 +293,7 @@ export class PlayerComponent implements OnInit , AfterViewInit {
   }
 
   durationEnds() {
+    this.durationSpent = this.utilService.getTimeSpentText(this.initialTime);
     this.calculateScore();
     this.endPageReached = true;
     this.viewerService.raiseEndEvent(this.car.getCurrentSlideIndex(), this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore);
