@@ -144,17 +144,19 @@ export class ViewerService {
     this.qumlLibraryService.startAssesEvent(assessEvent);
   }
 
-  raiseResponseEvent(identifier , qType){
+  raiseResponseEvent(identifier , qType , optionSelected){
     const responseEvent = {
         target: {
           id: identifier,
           ver: this.version,
           type: qType
         },
-        values: []
+        values: [{
+          optionSelected
+        }]
     }
     this.qumlPlayerEvent.emit(responseEvent);
-    this.qumlLibraryService.response(identifier, this.version , qType);
+    this.qumlLibraryService.response(identifier, this.version , qType , optionSelected);
   }
 
 
