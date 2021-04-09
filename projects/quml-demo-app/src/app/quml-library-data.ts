@@ -47,7 +47,7 @@ export const data1 = {
         "instructions": "<b>This is instructions</b>",
         "maxQuestions": 3,
         "lastStatusChangedOn": "2021-03-26T05:34:39.279+0000",
-        "timeLimits": {"maxTime":"180","warningTime":"120"},
+        "timeLimits": "{\"maxTime\":\"180\",\"warningTime\":\"60\"}",
         "author": "Sourav",
         "children": [
             {
