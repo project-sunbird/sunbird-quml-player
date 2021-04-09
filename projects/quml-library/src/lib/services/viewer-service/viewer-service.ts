@@ -75,7 +75,7 @@ export class ViewerService {
     };
     this.qumlPlayerEvent.emit(startEvent);
     this.qumlPlayerLastPageTime = this.qumlPlayerStartTime = new Date().getTime();
-    this.qumlLibraryService.start(duration , this.currentQuestionIndex);
+    this.qumlLibraryService.start(duration);
   }
 
   raiseEndEvent(currentQuestionIndex, noOfvisitedQuestions,  endPageSeen , score) {
@@ -98,7 +98,7 @@ export class ViewerService {
   }
 
 
-  raiseHeartBeatEvent(type: string, telemetryType: string, pageId: any, currentQuestionDetails?: any) {
+  raiseHeartBeatEvent(type: string, telemetryType: string, pageId: any) {
     const hearBeatEvent = {
       eid: 'HEARTBEAT',
       ver: this.version,
@@ -110,7 +110,7 @@ export class ViewerService {
     };
     this.qumlPlayerEvent.emit(hearBeatEvent);
     if (TelemetryType.interact === telemetryType) {
-      this.qumlLibraryService.interact(type.toLowerCase(), pageId , currentQuestionDetails);
+      this.qumlLibraryService.interact(type.toLowerCase(), pageId);
     } else if (TelemetryType.impression === telemetryType) {
       this.qumlLibraryService.impression(pageId);
     }
@@ -142,6 +142,19 @@ export class ViewerService {
     }
     this.qumlPlayerEvent.emit(assessEvent);
     this.qumlLibraryService.startAssesEvent(assessEvent);
+  }
+
+  raiseResponseEvent(identifier , qType){
+    const responseEvent = {
+        target: {
+          id: identifier,
+          ver: this.version,
+          type: qType
+        },
+        values: []
+    }
+    this.qumlPlayerEvent.emit(responseEvent);
+    this.qumlLibraryService.response(identifier, this.version , qType);
   }
 
 

@@ -12,7 +12,7 @@ import * as _ from 'lodash-es';
   templateUrl: './player.component.html',
   styleUrls: ['./player.component.scss'],
 })
-export class PlayerComponent implements OnInit {
+export class PlayerComponent implements OnInit , AfterViewInit {
   @Input() QumlPlayerConfig: QumlPlayerConfig;
   @Output() playerEvent = new EventEmitter<any>();
   @Output() telemetryEvent = new EventEmitter<any>();
@@ -150,6 +150,9 @@ export class PlayerComponent implements OnInit {
     } else if (this.threshold > 1) {
       this.viewerService.getQuestions();
     }
+  }
+
+  ngAfterViewInit() {
     this.viewerService.raiseStartEvent(0);
     this.viewerService.raiseHeartBeatEvent(eventName.startPageLoaded, 'impression', 0);
   }
@@ -194,7 +197,12 @@ export class PlayerComponent implements OnInit {
     if (this.car.isLast(this.car.getCurrentSlideIndex()) || this.noOfQuestions === this.car.getCurrentSlideIndex()) {
       this.calculateScore();
     }
-    
+
+    if(this.car.getCurrentSlideIndex() > 0 && !this.loadScoreBoard && this.questions[this.car.getCurrentSlideIndex() -1].qType === 'MCQ') {
+      const identifier = this.questions[this.car.getCurrentSlideIndex() -1].identifier;
+      const qType = this.questions[this.car.getCurrentSlideIndex() -1].qType;
+      this.viewerService.raiseResponseEvent(identifier , qType);
+    }
     this.car.move(this.CarouselConfig.NEXT);
     this.active = false;
     this.showAlert = false;
@@ -234,7 +242,7 @@ export class PlayerComponent implements OnInit {
       option: this.questions[currentIndex].interactions[key].options,
       selectedOption: optionSelected.option
     }
-    this.viewerService.raiseHeartBeatEvent(eventName.optionClicked, TelemetryType.interact, this.car.getCurrentSlideIndex(), questionObj);
+    this.viewerService.raiseHeartBeatEvent(eventName.optionClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
     this.optionSelectedObj = optionSelected;
     this.currentSolutions = optionSelected.solutions;
     this.media = this.questions[this.car.getCurrentSlideIndex() - 1].media;
@@ -434,6 +442,7 @@ export class PlayerComponent implements OnInit {
     this.setInitialScores();
     this.viewerService.raiseHeartBeatEvent(eventName.replayClicked, TelemetryType.interact, 1);
     this.viewerService.raiseStartEvent(this.car.getCurrentSlideIndex());
+    this.viewerService.raiseHeartBeatEvent(eventName.startPageLoaded, 'impression', 0);
     this.endPageReached = false;
     this.loadScoreBoard = false;
     this.currentSlideIndex = 1;
