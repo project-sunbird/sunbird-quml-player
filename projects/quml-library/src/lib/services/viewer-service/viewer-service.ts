@@ -144,6 +144,19 @@ export class ViewerService {
     this.qumlLibraryService.startAssesEvent(assessEvent);
   }
 
+  raiseResponseEvent(identifier , qType){
+    const responseEvent = {
+        target: {
+          id: identifier,
+          ver: "1.0",
+          type: qType
+        },
+        values: []
+    }
+    this.qumlPlayerEvent.emit(responseEvent);
+    this.qumlLibraryService.response(identifier);
+  }
+
 
   getQuestions(currentIndex?: number  , index?: number) {
     let indentifersForQuestions;

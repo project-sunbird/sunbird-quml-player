@@ -194,6 +194,12 @@ export class PlayerComponent implements OnInit , AfterViewInit {
     if (this.car.isLast(this.car.getCurrentSlideIndex()) || this.noOfQuestions === this.car.getCurrentSlideIndex()) {
       this.calculateScore();
     }
+
+    if(this.car.getCurrentSlideIndex() > 0 && !this.loadScoreBoard) {
+      const identifier = this.questions[this.car.getCurrentSlideIndex() -1].identifier;
+      const qType = this.questions[this.car.getCurrentSlideIndex() -1].qType;
+      this.viewerService.raiseResponseEvent(identifier , qType);
+    }
     this.car.move(this.CarouselConfig.NEXT);
     this.active = false;
     this.showAlert = false;

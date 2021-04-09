@@ -84,6 +84,22 @@ export class QumlLibraryService {
       }
     );
   }
+
+  public response(identifier){
+    const responseEvent = {
+      target: {
+        id: identifier,
+        ver: '1.0',
+        type: 'content'
+      },
+      type: 'content',
+      values: []
+    }
+    CsTelemetryModule.instance.telemetryService.raiseResponseTelemetry(
+      responseEvent, 
+      this.getEventOptions()
+    )
+  }
   public end(duration, currentQuestionIndex, totalNoofQuestions, visitedQuestions, endpageseen , score) {
     const durationSec = Number((duration / 1e3).toFixed(2));
     CsTelemetryModule.instance.telemetryService.raiseEndTelemetry({
