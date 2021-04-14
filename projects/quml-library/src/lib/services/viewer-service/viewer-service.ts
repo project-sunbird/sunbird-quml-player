@@ -5,6 +5,8 @@ import { UtilService } from '../../util-service';
 import { eventName, TelemetryType } from '../../telemetry-constants';
 import { QuestionCursor } from '../../quml-question-cursor.service';
 import * as _ from 'lodash-es';
+import { forkJoin } from 'rxjs';
+
 
 @Injectable({
   providedIn: 'root'
@@ -168,11 +170,18 @@ export class ViewerService {
       indentifersForQuestions = this.identifiers.splice(0, this.threshold);
     }
     if(!_.isEmpty(indentifersForQuestions)) {
-      this.questionCursor.getQuestions(indentifersForQuestions).subscribe((question) => {
-        this.qumlQuestionEvent.emit(question);
+      const requests = [];
+      const chunkArray = _.chunk(indentifersForQuestions, 10);
+      _.forEach(chunkArray, (value) => {
+        requests.push(this.questionCursor.getQuestions(value));
+      });
+      forkJoin(requests).subscribe(questions => {
+        _.forEach(questions, (value) => {
+          this.qumlQuestionEvent.emit(value);
+        });
       });
     }
-  } 
+  }
 
   getQuestion() {
     let indentiferForQuestion = this.identifiers.splice(0, this.threshold);
