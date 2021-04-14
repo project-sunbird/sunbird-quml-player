@@ -539,7 +539,7 @@ export class PlayerComponent implements OnInit , AfterViewInit {
     }
   }
 
-  viewHint(event){
+  viewHint(){
     this.viewerService.raiseHeartBeatEvent(eventName.viewHint , TelemetryType.interact ,this.car.getCurrentSlideIndex());
   }
 
