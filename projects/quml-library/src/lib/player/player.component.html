@@ -92,7 +92,7 @@
     [showFeedBack]="showFeedBack" (emitQuestionNo)="goToQuestion($event)" (scoreBoardLoaded)="scoreBoardLoaded($event)"
      ></quml-scoreboard>
   <quml-alert *ngIf="showAlert && showFeedBack" [alertType]="alertType" [showSolutionButton]="showUserSolution"
-    (showSolution)="viewSolution()" (closeAlert)="closeAlertBox($event)"></quml-alert>
+    (showSolution)="viewSolution()" (showHint)="viewHint()" (closeAlert)="closeAlertBox($event)"></quml-alert>
   <quml-mcq-solutions [hidden]="!showSolution" [question]="currentQuestion" [options]="currentOptions"
     [solutions]="currentSolutions" (close)="closeSolution()"></quml-mcq-solutions>
 </div>

@@ -8,6 +8,7 @@ export enum pageId  {
 
 export enum eventName {
     pageScrolled = 'PAGE_SCROLLED',
+    viewHint = 'VIEW_HINT',
     showAnswer = 'SHOW_ANSWER_CLICKED',
     nextClicked = 'NEXT_CLICKED',
     prevClicked = 'PREV_CLICKED',

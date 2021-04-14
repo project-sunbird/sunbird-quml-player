@@ -10,13 +10,18 @@ export class AlertComponent implements OnInit {
   @Input() showSolutionButton: boolean;
   @Output() closeAlert = new EventEmitter();
   @Output() showSolution = new EventEmitter();
+  @Output() showHint = new EventEmitter();
 
   constructor() { }
 
   ngOnInit() {
   }
 
-
+  viewHint(){
+    this.showHint.emit({
+      hint: true
+    })
+  }
   viewSolution() {
     this.showSolution.emit({
       solution: true

@@ -539,15 +539,15 @@ export class PlayerComponent implements OnInit , AfterViewInit {
     }
   }
 
-  showAnswerClicked(event) {
-    if(event.showAnswer) {
-      this.viewerService.raiseHeartBeatEvent(eventName.showAnswer, TelemetryType.interact, pageId.shortAnswer)
-    }
+  viewHint(event){
+    this.viewerService.raiseHeartBeatEvent(eventName.viewHint , TelemetryType.interact ,this.car.getCurrentSlideIndex());
   }
 
-  @HostListener('window:scroll', ['$event'])
-  onWindowScroll($event) {
-    this.viewerService.raiseHeartBeatEvent(eventName.pageScrolled, TelemetryType.impression, this.car.getCurrentSlideIndex());
+  showAnswerClicked(event) {
+    if(event.showAnswer) {
+      this.viewerService.raiseHeartBeatEvent(eventName.showAnswer, TelemetryType.interact, pageId.shortAnswer);
+      this.viewerService.raiseHeartBeatEvent(eventName.pageScrolled, TelemetryType.impression, this.car.getCurrentSlideIndex());
+    }
   }
 
   @HostListener('window:beforeunload')
