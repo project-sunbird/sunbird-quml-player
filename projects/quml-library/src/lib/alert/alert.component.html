@@ -23,7 +23,7 @@
         <span *ngIf="alertType === 'correct' && !showSolutionButton">Correct</span>
       </div>
       <div class="quml-alert__view-hint quml-alert__view-hint--disabled">
-        <img class="view-hint-icon" src="../assets/view-hint.svg">
+        <img class="view-hint-icon" (click)="viewHint()" src="../assets/view-hint.svg">
       </div>
     </div>
   </div>
