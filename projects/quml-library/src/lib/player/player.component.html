@@ -1,6 +1,6 @@
 <div class="quml-container" *ngIf="loadView">
   <div class="endPage-container">
-    <sb-player-end-page *ngIf="endPageReached" [contentName]="contentName" [outcome]="finalScore"
+    <sb-player-end-page *ngIf="endPageReached && showEndPage" [contentName]="contentName" [outcome]="finalScore"
       [outcomeLabel]="'Score: '" [userName]="userName" [timeSpentLabel]="durationSpent"
       (replayContent)="replayContent()" (exitContent)="exitContent($event)" [showExit]="sideMenuConfig.showExit"></sb-player-end-page>
   </div>
@@ -53,7 +53,7 @@
       <div class="lanscape-mode-right" [hidden]="endPageReached">
         <ul *ngIf="!showFeedBack">
           <li [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlide(0)">i</li>
-          <ng-container *ngIf="startPageInstruction">
+          <ng-container *ngIf="startPageInstruction ">
             <li *ngFor="let question of progressBarClass; let i = index"
               [ngClass]="loadScoreBoard ? 'att-color' : (i + 1) === car.getCurrentSlideIndex() ? 'progressBar-border': (i + 1) < car.getCurrentSlideIndex()  ? 'att-color' : '' "
               (click)="goToSlide(question.index)" >{{question.index}}</li>
@@ -67,7 +67,7 @@
             <li *ngIf="loadScoreBoard && requiresSubmit"><img src="./assets/flag_active.svg"></li>
         </ul>
         <ul *ngIf="showFeedBack">
-          <li [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlide(0)">i
+          <li *ngIf="showStartPage" [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlide(0)">i
           </li>
           <ng-container *ngIf="startPageInstruction">
             <li *ngFor="let q of progressBarClass; let i = index" class="showFeedBack-progressBar"

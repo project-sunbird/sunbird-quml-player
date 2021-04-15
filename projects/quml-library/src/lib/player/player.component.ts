@@ -79,6 +79,8 @@ export class PlayerComponent implements OnInit , AfterViewInit {
   };
   warningTime: number;
   showQuestions = false;
+  showStartPage = true;
+  showEndPage = true;
 
   constructor(
     public viewerService: ViewerService,
@@ -145,6 +147,9 @@ export class PlayerComponent implements OnInit , AfterViewInit {
     this.userName = this.QumlPlayerConfig.context.userData.firstName + ' ' + this.QumlPlayerConfig.context.userData.lastName;
     this.contentName = this.QumlPlayerConfig.metadata.name;
     this.allowSkip =  this.QumlPlayerConfig.metadata.allowSkip;
+    this.showStartPage = this.QumlPlayerConfig.metadata.showStartPage && this.QumlPlayerConfig.metadata.showStartPage.toLowerCase() === 'no' ? false : true
+    this.showEndPage = this.QumlPlayerConfig.metadata.showEndPage && this.QumlPlayerConfig.metadata.showEndPage.toLowerCase() === 'no' ? false : true
+    
     this.setInitialScores();
      if (this.threshold === 1) {
       this.viewerService.getQuestion();
@@ -156,6 +161,9 @@ export class PlayerComponent implements OnInit , AfterViewInit {
   ngAfterViewInit() {
     this.viewerService.raiseStartEvent(0);
     this.viewerService.raiseHeartBeatEvent(eventName.startPageLoaded, 'impression', 0);
+    if(this.showStartPage === false) {
+      setTimeout(() => {this.nextSlide()});
+    }
   }
 
   nextSlide() {
@@ -190,7 +198,7 @@ export class PlayerComponent implements OnInit , AfterViewInit {
     if (this.car.getCurrentSlideIndex() === this.noOfQuestions) {
       this.durationSpent = this.utilService.getTimeSpentText(this.initialTime);
       
-      if (!this.requiresSubmit) {
+      if (!this.requiresSubmit && this.showEndPage) {
         this.endPageReached = true;
         this.viewerService.raiseEndEvent(this.car.getCurrentSlideIndex(), this.car.getCurrentSlideIndex() - 1, this.endPageReached , this.finalScore);
       }
