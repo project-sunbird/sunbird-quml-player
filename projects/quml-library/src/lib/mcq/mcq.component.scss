@@ -66,11 +66,17 @@ img {
     font-weight: 500;
     color:#666666;
   }
-  .quml-mcq .imageqa-wrapper {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-gap: 1em;
+
+  .quml-mcq .image-grid {
+    display: flex;
+    .quml-mcq--question {
+      flex-basis: 25%;
+    }
+    .quml-mcq--option {
+      flex: 1 1 75%;
+    }
   }
+
   .imageqa-option-wrapper{
     display: grid;
     grid-template-columns: repeat(1, 1fr);
