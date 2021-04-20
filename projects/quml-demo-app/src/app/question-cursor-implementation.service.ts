@@ -5,7 +5,7 @@ import { of, throwError as observableThrowError, Observable } from 'rxjs';
 import * as _ from 'lodash-es';
 
 export class QuestionCursorImplementationService implements QuestionCursor {
-    listUrl: string = 'https://staging.sunbirded.org/api/question/v1/list'; // Define this url to call list api
+    listUrl: string; // Define this url to call list api in server
     questionsArray = {
         "questions": [{
             "copyright": "tn",
