@@ -391,3 +391,88 @@
   color: #ABABAB;
   border: 0.5px solid #ABABAB;
 }
+
+// .zoom-icon {
+//   position: absolute !important;
+//   bottom: 0 !important;
+//   right: 0 !important;
+//   width: 32px !important;
+//   height: 32px !important;
+//   background: blue !important;
+// }
+
+.image-viewer {
+  &__overlay, &__container, &__close, &__zoom {
+    position: fixed;
+  }
+  &__overlay {
+    width: 100%;
+    height: 100%;
+    background: #333;
+    z-index: 11111;
+  }
+  &__container {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 11111;
+    width: 80%;
+    height: 80%;
+    overflow: auto;
+  }
+  &__img {
+    width: 100%;
+    height: 100%;
+  }
+  &__close {
+    top: 8px;
+    right: 16px;
+    text-align: center;
+    cursor: pointer;
+    &::after {
+      content: '\2715';
+      color: white;
+      font-size: 32px;
+    }
+  }
+  &__zoom {
+    bottom: 16px;
+    right: 16px;
+    width: 28px;
+    height: 64px;
+    border-radius: 4px;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+  }
+  &__zoomin, &__zoomout {
+    text-align: center;
+    height: 37px;
+    position: relative;
+    width: 100%;
+    cursor: pointer;
+    &:hover {
+      background-color: #f2f2f2;
+    }
+    &::after {
+      font-size: 24px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
+  &__zoomin {
+    border-bottom: 1px solid #ccc;
+    &::after {
+      content: '\002B';
+    }
+  }
+  &__zoomout {
+    &::after {
+      content: '\2212';
+    }
+  }
+}

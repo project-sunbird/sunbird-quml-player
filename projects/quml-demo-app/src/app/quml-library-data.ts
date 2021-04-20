@@ -44,7 +44,9 @@ export const data1 = {
         }
     },
     'metadata': {
-        "instructions": "<b>This is instructions</b>",
+        "instructions": {
+            "default": "instructions in the specified language"
+        },
         "maxQuestions": 3,
         "lastStatusChangedOn": "2021-03-26T05:34:39.279+0000",
         "timeLimits": "{\"maxTime\":\"180\",\"warningTime\":\"60\"}",

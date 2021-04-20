@@ -1,4 +1,4 @@
-<div class="quml-container" *ngIf="loadView">
+<div class="quml-container" *ngIf="loadView" [hidden]="showZoomModal">
   <div class="endPage-container">
     <sb-player-end-page *ngIf="endPageReached && showEndPage" [contentName]="contentName" [outcome]="finalScore"
       [outcomeLabel]="'Score: '" [userName]="userName" [timeSpentLabel]="durationSpent"
@@ -41,13 +41,15 @@
             [points]="points" [time]="timeLimit" [contentName]="contentName" [showTimer]="showTimer"></quml-startpage>
         </slide>
         <slide *ngFor="let question of questions; let i= index">
-          <div *ngIf="question?.primaryCategory.toLowerCase() === 'multiple choice question'">
-            <quml-mcq [question]='question' [replayed]="replayed" (optionSelected)="getOptionSelected($event)" [identifier]="question.id"
-            ></quml-mcq>
-          </div>
-          <div *ngIf="question?.primaryCategory.toLowerCase() === 'subjective question'">
-            <quml-sa [questions]='question' (showAnswerClicked)="showAnswerClicked($event)"></quml-sa>
-          </div>
+          <div [id]="question.identifier">
+            <div *ngIf="question?.primaryCategory.toLowerCase() === 'multiple choice question'">
+              <quml-mcq [question]='question' [replayed]="replayed" (optionSelected)="getOptionSelected($event)"
+                [identifier]="question.id"></quml-mcq>
+            </div>
+            <div *ngIf="question?.primaryCategory.toLowerCase() === 'subjective question'">
+              <quml-sa [questions]='question' (showAnswerClicked)="showAnswerClicked($event)"></quml-sa>
+            </div>
+          </div>          
         </slide>
       </carousel>
       <div class="lanscape-mode-right" [hidden]="endPageReached">
@@ -98,4 +100,17 @@
 </div>
 <div class="info-popup" *ngIf="infoPopup">
    Please attempt the question
+</div>
+
+<!-- Zoom -->
+<div class="image-viewer__overlay" [hidden]="!showZoomModal">
+  <div class="image-viewer__close" (click)="closeZoom()">
+  </div>
+  <div class="image-viewer__container">
+    <img id="modalImage" class="image-viewer__img" src="{{zoomImgSrc}}" alt="image">
+  </div>
+  <div class="image-viewer__zoom">
+    <div class="image-viewer__zoomin" (click)="zoomin()"></div>
+    <div class="image-viewer__zoomout" (click)="zoomout()"></div>
+  </div>
 </div>

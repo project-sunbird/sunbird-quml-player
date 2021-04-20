@@ -81,6 +81,9 @@ export class PlayerComponent implements OnInit , AfterViewInit {
   showQuestions = false;
   showStartPage = true;
   showEndPage = true;
+  showZoomModal = false;
+  zoomImgSrc: string;
+  modalImageWidth = 0;
 
   constructor(
     public viewerService: ViewerService,
@@ -139,7 +142,7 @@ export class PlayerComponent implements OnInit , AfterViewInit {
     this.showTimer = this.QumlPlayerConfig.metadata.showTimer.toLowerCase() === 'no' ? false: true;
     this.showFeedBack = this.QumlPlayerConfig.metadata.showFeedback.toLowerCase() === 'no' ? false: true;
     this.showUserSolution = this.QumlPlayerConfig.metadata.showSolutions.toLowerCase() === 'no' ? false: true;
-    this.startPageInstruction = this.QumlPlayerConfig.metadata.instructions;
+    this.startPageInstruction = _.get(this.QumlPlayerConfig, 'metadata.instructions.default');
     this.linearNavigation = this.QumlPlayerConfig.metadata.navigationMode === 'non-linear' ? false : true;
     this.requiresSubmit = this.QumlPlayerConfig.metadata.requiresSubmit.toLowerCase() === 'no' ? false : true;
     this.maxScore = this.QumlPlayerConfig.metadata.maxScore;
@@ -167,6 +170,7 @@ export class PlayerComponent implements OnInit , AfterViewInit {
   }
 
   nextSlide() {
+    this.setImageZoom(this.currentSlideIndex);
     if(this.car.getCurrentSlideIndex() > 0 && ((this.threshold * this.noOfTimesApiCalled) - 1) === this.car.getCurrentSlideIndex()
      && this.threshold * this.noOfTimesApiCalled >= this.questions.length && this.threshold > 1)  {
            this.viewerService.getQuestions();
@@ -237,6 +241,7 @@ export class PlayerComponent implements OnInit , AfterViewInit {
       this.car.selectSlide(this.noOfQuestions);
       this.loadScoreBoard = false;
     }
+    this.setImageZoom(this.car.getCurrentSlideIndex() - 1);
   }
 
   sideBarEvents(event) {
@@ -477,6 +482,10 @@ export class PlayerComponent implements OnInit , AfterViewInit {
       this.car.selectSlide(0);
       return;    
     }
+    this.setImageZoom(this.currentSlideIndex - 1);
+    if (!this.initializeTimer) {
+      this.initializeTimer = true;
+    }
     if (this.loadScoreBoard) {
       this.loadScoreBoard = false;
     }
@@ -556,6 +565,65 @@ export class PlayerComponent implements OnInit , AfterViewInit {
       this.viewerService.raiseHeartBeatEvent(eventName.showAnswer, TelemetryType.interact, pageId.shortAnswer);
       this.viewerService.raiseHeartBeatEvent(eventName.pageScrolled, TelemetryType.impression, this.car.getCurrentSlideIndex());
     }
+  }
+
+  setImageZoom(index) {
+    const id = _.get(this.questions[index], 'identifier');
+    if (id) {
+      let images = document.getElementById(id).getElementsByTagName("img");
+      if (!_.isEmpty(images)) {
+        _.forEach(images, (image) => {
+          let divElement = document.createElement('div');
+          divElement.setAttribute("class", "zoom-icon");
+          divElement.style.position = "absolute";
+          divElement.style.bottom = "0";
+          divElement.style.right = "0";
+          divElement.style.width = "32px";
+          divElement.style.height = "32px";
+          divElement.style.background = "blue";
+          divElement.onclick = (event) => {
+            this.zoomImgSrc = image.src;
+            this.showZoomModal = true;
+            event.stopPropagation();
+          }
+          image.parentNode.insertBefore(divElement, image.nextSibling);
+        });
+      }
+    }
+  }
+
+  zoomin() {
+    let myImg = document.getElementById("modalImage");
+    let currWidth = myImg.clientWidth;
+    let currHeight = myImg.clientHeight;
+    console.log('currWidth', currWidth)
+    if (this.modalImageWidth === 0) {
+      this.modalImageWidth = currWidth; 
+    }
+    console.log('currWidth', this.modalImageWidth)
+    if (currWidth < this.modalImageWidth + 300) {
+      myImg.style.width = (currWidth + 50) + "px";
+      myImg.style.height = (currHeight + 50) + "px";
+    }
+  }
+
+  zoomout() {
+    let myImg = document.getElementById("modalImage");
+    let currWidth = myImg.clientWidth;
+    let currHeight = myImg.clientHeight;
+    if (this.modalImageWidth === 0) {
+      this.modalImageWidth = currWidth; 
+    }
+    if (currWidth > this.modalImageWidth) {
+      myImg.style.width = (currWidth - 50) + "px";
+      myImg.style.height = (currHeight - 50) + "px";
+    }
+  }
+
+  closeZoom() {
+    document.getElementById("modalImage").removeAttribute('style');
+    this.showZoomModal = false;
+    this.modalImageWidth = 0;
   }
 
   @HostListener('window:beforeunload')
