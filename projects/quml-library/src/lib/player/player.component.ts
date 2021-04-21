@@ -170,7 +170,7 @@ export class PlayerComponent implements OnInit , AfterViewInit {
   }
 
   nextSlide() {
-    this.setImageZoom(this.currentSlideIndex);
+    this.setImageZoom(_.get(this.questions[this.currentSlideIndex], 'identifier'));
     if(this.car.getCurrentSlideIndex() > 0 && ((this.threshold * this.noOfTimesApiCalled) - 1) === this.car.getCurrentSlideIndex()
      && this.threshold * this.noOfTimesApiCalled >= this.questions.length && this.threshold > 1)  {
            this.viewerService.getQuestions();
@@ -241,7 +241,7 @@ export class PlayerComponent implements OnInit , AfterViewInit {
       this.car.selectSlide(this.noOfQuestions);
       this.loadScoreBoard = false;
     }
-    this.setImageZoom(this.car.getCurrentSlideIndex() - 1);
+    this.setImageZoom(_.get(this.questions[this.car.getCurrentSlideIndex() - 1], 'identifier'));
   }
 
   sideBarEvents(event) {
@@ -292,6 +292,9 @@ export class PlayerComponent implements OnInit , AfterViewInit {
     this.viewerService.raiseHeartBeatEvent(eventName.viewSolutionClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
     this.showSolution = true;
     this.showAlert = false;
+    _.forEach(this.currentOptions, (val, key) => {
+      this.setImageZoom(String(key));
+    });
     clearTimeout(this.intervalRef);
   }
 
@@ -482,7 +485,7 @@ export class PlayerComponent implements OnInit , AfterViewInit {
       this.car.selectSlide(0);
       return;    
     }
-    this.setImageZoom(this.currentSlideIndex - 1);
+    this.setImageZoom(_.get(this.questions[this.currentSlideIndex - 1], 'identifier'));
     if (!this.initializeTimer) {
       this.initializeTimer = true;
     }
@@ -567,8 +570,7 @@ export class PlayerComponent implements OnInit , AfterViewInit {
     }
   }
 
-  setImageZoom(index) {
-    const id = _.get(this.questions[index], 'identifier');
+  setImageZoom(id: string) {
     if (id) {
       let images = document.getElementById(id).getElementsByTagName("img");
       if (!_.isEmpty(images)) {
