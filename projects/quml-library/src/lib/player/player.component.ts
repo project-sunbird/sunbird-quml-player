@@ -81,6 +81,9 @@ export class PlayerComponent implements OnInit , AfterViewInit {
   showQuestions = false;
   showStartPage = true;
   showEndPage = true;
+  showZoomModal = false;
+  zoomImgSrc: string;
+  modalImageWidth = 0;
 
   constructor(
     public viewerService: ViewerService,
@@ -139,7 +142,7 @@ export class PlayerComponent implements OnInit , AfterViewInit {
     this.showTimer = this.QumlPlayerConfig.metadata.showTimer.toLowerCase() === 'no' ? false: true;
     this.showFeedBack = this.QumlPlayerConfig.metadata.showFeedback.toLowerCase() === 'no' ? false: true;
     this.showUserSolution = this.QumlPlayerConfig.metadata.showSolutions.toLowerCase() === 'no' ? false: true;
-    this.startPageInstruction = this.QumlPlayerConfig.metadata.instructions;
+    this.startPageInstruction = _.get(this.QumlPlayerConfig, 'metadata.instructions.default');
     this.linearNavigation = this.QumlPlayerConfig.metadata.navigationMode === 'non-linear' ? false : true;
     this.requiresSubmit = this.QumlPlayerConfig.metadata.requiresSubmit.toLowerCase() === 'no' ? false : true;
     this.maxScore = this.QumlPlayerConfig.metadata.maxScore;
@@ -167,6 +170,7 @@ export class PlayerComponent implements OnInit , AfterViewInit {
   }
 
   nextSlide() {
+    this.setImageZoom(this.currentSlideIndex);
     if(this.car.getCurrentSlideIndex() > 0 && ((this.threshold * this.noOfTimesApiCalled) - 1) === this.car.getCurrentSlideIndex()
      && this.threshold * this.noOfTimesApiCalled >= this.questions.length && this.threshold > 1)  {
            this.viewerService.getQuestions();
@@ -237,6 +241,7 @@ export class PlayerComponent implements OnInit , AfterViewInit {
       this.car.selectSlide(this.noOfQuestions);
       this.loadScoreBoard = false;
     }
+    this.setImageZoom(this.car.getCurrentSlideIndex() - 1);
   }
 
   sideBarEvents(event) {
@@ -477,6 +482,10 @@ export class PlayerComponent implements OnInit , AfterViewInit {
       this.car.selectSlide(0);
       return;    
     }
+    this.setImageZoom(this.currentSlideIndex - 1);
+    if (!this.initializeTimer) {
+      this.initializeTimer = true;
+    }
     if (this.loadScoreBoard) {
       this.loadScoreBoard = false;
     }
@@ -556,6 +565,62 @@ export class PlayerComponent implements OnInit , AfterViewInit {
       this.viewerService.raiseHeartBeatEvent(eventName.showAnswer, TelemetryType.interact, pageId.shortAnswer);
       this.viewerService.raiseHeartBeatEvent(eventName.pageScrolled, TelemetryType.impression, this.car.getCurrentSlideIndex());
     }
+  }
+
+  setImageZoom(index) {
+    const id = _.get(this.questions[index], 'identifier');
+    if (id) {
+      let images = document.getElementById(id).getElementsByTagName("img");
+      if (!_.isEmpty(images)) {
+        _.forEach(images, (image) => {
+          image.setAttribute("class", "option-image");
+          let divElement = document.createElement('div');
+          divElement.setAttribute("class", "magnify-icon");
+          divElement.onclick = (event) => {
+            this.viewerService.raiseHeartBeatEvent(eventName.zoomClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
+            this.zoomImgSrc = image.src;
+            this.showZoomModal = true;
+            event.stopPropagation();
+          }
+          image.parentNode.insertBefore(divElement, image.nextSibling);
+        });
+      }
+    }
+  }
+
+  zoomin() {
+    this.viewerService.raiseHeartBeatEvent(eventName.zoomInClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
+    let myImg = document.getElementById("modalImage");
+    let currWidth = myImg.clientWidth;
+    let currHeight = myImg.clientHeight;
+    if (this.modalImageWidth === 0) {
+      this.modalImageWidth = currWidth; 
+    }
+    if (currWidth < this.modalImageWidth + 300) {
+      myImg.style.width = (currWidth + 50) + "px";
+      myImg.style.height = (currHeight + 50) + "px";
+    }
+  }
+
+  zoomout() {
+    this.viewerService.raiseHeartBeatEvent(eventName.zoomOutClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
+    let myImg = document.getElementById("modalImage");
+    let currWidth = myImg.clientWidth;
+    let currHeight = myImg.clientHeight;
+    if (this.modalImageWidth === 0) {
+      this.modalImageWidth = currWidth; 
+    }
+    if (currWidth > this.modalImageWidth) {
+      myImg.style.width = (currWidth - 50) + "px";
+      myImg.style.height = (currHeight - 50) + "px";
+    }
+  }
+
+  closeZoom() {
+    this.viewerService.raiseHeartBeatEvent(eventName.zoomCloseClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
+    document.getElementById("modalImage").removeAttribute('style');
+    this.showZoomModal = false;
+    this.modalImageWidth = 0;
   }
 
   @HostListener('window:beforeunload')

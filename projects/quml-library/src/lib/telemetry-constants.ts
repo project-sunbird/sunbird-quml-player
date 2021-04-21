@@ -21,8 +21,11 @@ export enum eventName {
     tryAgain = 'TRY_AGAIN',
     optionClicked = 'OPTION_CLICKED',
     scoreBoardSubmitClicked = 'SCORE_BOARD_SUBMIT_CLICKED',
-    endPageExitClicked = 'EXIT'
-
+    endPageExitClicked = 'EXIT',
+    zoomClicked = 'ZOOM_CLICKED',
+    zoomInClicked = 'ZOOM_IN_CLICKED',
+    zoomOutClicked = 'ZOOM_OUT_CLICKED',
+    zoomCloseClicked = 'ZOOM_CLOSE_CLICKED'
 }
 
 export enum TelemetryType {
