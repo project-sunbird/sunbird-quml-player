@@ -407,18 +407,9 @@
   border: 0.5px solid #ABABAB;
 }
 
-// .zoom-icon {
-//   position: absolute !important;
-//   bottom: 0 !important;
-//   right: 0 !important;
-//   width: 32px !important;
-//   height: 32px !important;
-//   background: blue !important;
-// }
-
 .image-viewer {
   &__overlay, &__container, &__close, &__zoom {
-    position: fixed;
+    position: absolute;
   }
   &__overlay {
     width: 100%;
@@ -427,6 +418,7 @@
     z-index: 11111;
   }
   &__container {
+    background-color: white;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -489,5 +481,34 @@
     &::after {
       content: '\2212';
     }
+  }
+}
+
+::ng-deep {
+  .magnify-icon {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    background-image: url('assets/zoom-icon.svg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  figure.image {
+    border: 1px solid #ccc;
+    overflow: hidden;
+    border-radius: 4px;
+    position: relative;
+    width: 120px;
+    height: 120px;
+  }
+
+  .option-image {
+    height: 100%;
+    width: 100%;
   }
 }

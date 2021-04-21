@@ -573,15 +573,11 @@ export class PlayerComponent implements OnInit , AfterViewInit {
       let images = document.getElementById(id).getElementsByTagName("img");
       if (!_.isEmpty(images)) {
         _.forEach(images, (image) => {
+          image.setAttribute("class", "option-image");
           let divElement = document.createElement('div');
-          divElement.setAttribute("class", "zoom-icon");
-          divElement.style.position = "absolute";
-          divElement.style.bottom = "0";
-          divElement.style.right = "0";
-          divElement.style.width = "32px";
-          divElement.style.height = "32px";
-          divElement.style.background = "blue";
+          divElement.setAttribute("class", "magnify-icon");
           divElement.onclick = (event) => {
+            this.viewerService.raiseHeartBeatEvent(eventName.zoomClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
             this.zoomImgSrc = image.src;
             this.showZoomModal = true;
             event.stopPropagation();
@@ -593,14 +589,13 @@ export class PlayerComponent implements OnInit , AfterViewInit {
   }
 
   zoomin() {
+    this.viewerService.raiseHeartBeatEvent(eventName.zoomInClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
     let myImg = document.getElementById("modalImage");
     let currWidth = myImg.clientWidth;
     let currHeight = myImg.clientHeight;
-    console.log('currWidth', currWidth)
     if (this.modalImageWidth === 0) {
       this.modalImageWidth = currWidth; 
     }
-    console.log('currWidth', this.modalImageWidth)
     if (currWidth < this.modalImageWidth + 300) {
       myImg.style.width = (currWidth + 50) + "px";
       myImg.style.height = (currHeight + 50) + "px";
@@ -608,6 +603,7 @@ export class PlayerComponent implements OnInit , AfterViewInit {
   }
 
   zoomout() {
+    this.viewerService.raiseHeartBeatEvent(eventName.zoomOutClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
     let myImg = document.getElementById("modalImage");
     let currWidth = myImg.clientWidth;
     let currHeight = myImg.clientHeight;
@@ -621,6 +617,7 @@ export class PlayerComponent implements OnInit , AfterViewInit {
   }
 
   closeZoom() {
+    this.viewerService.raiseHeartBeatEvent(eventName.zoomCloseClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
     document.getElementById("modalImage").removeAttribute('style');
     this.showZoomModal = false;
     this.modalImageWidth = 0;
