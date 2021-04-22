@@ -14,7 +14,7 @@
     "build-link-lib": "npm run build-lib && npm run create-player-link && npm run link-player",
     "test-lib": "ng test quml-library",
     "mybuild": "npm run build",
-    "serve": "npm link ./dist/quml-library && ng serve"
+    "serve": "node scripts/copyAssets.js && npm link ./dist/quml-library && ng serve"
   },
   "private": true,
   "dependencies": {
