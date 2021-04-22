@@ -28,9 +28,14 @@
 
 .option-container-blurred {
   filter: blur(4px);
+  pointer-events: none;
+  user-select: none;
 }
 
 .option-container-blurred-out {
   filter: blur(0px);
   transition: 0.4s;
+  user-select: text;
+  pointer-events: auto;
+ 
 }
