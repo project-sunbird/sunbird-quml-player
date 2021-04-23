@@ -1,6 +1,6 @@
 <div class="question-container">
   <div class="sa-title">Question</div>
-  <div class="question" [innerHTML]="question"></div>
+  <div class="question" [innerHTML]="question | safeHtml"></div>
 </div>
 <div class="sa-button-container">
   <button *ngIf="!showAnswer" type="submit" class="sa-round-btn" (click)="showAnswerToUser()">Show Answer</button>
@@ -8,12 +8,12 @@
 <div class="option-container-blurred"
   [ngClass]="showAnswer ? 'option-container-blurred-out': 'option-container-blurred'">
   <div class="sa-title">Answer</div>
-  <div class="option-body" [innerHTML]="answer"></div>
+  <div class="option-body" [innerHTML]="answer | safeHtml"></div>
   <ng-container *ngIf="solutions && solutions.length">
     <div class="sa-title">solutions</div>
     <div class="solutions" *ngFor="let solution of solutions">
       <ng-container [ngSwitch]="solution.type">
-        <div *ngSwitchCase="'html'" [innerHTML]="solution.value"></div>
+        <div *ngSwitchCase="'html'" [innerHTML]="solution.value | safeHtml"></div>
         <div *ngSwitchCase="'video'">
           <video width="400" controls [poster]="solution.thumbnail">
             <source [src]="solution.src" type="video/mp4">
