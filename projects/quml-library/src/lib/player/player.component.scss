@@ -489,9 +489,21 @@
     position: absolute;
     bottom: 0;
     right: 0;
-    width: 20px;
-    height: 20px;
+    width: calculateRem(22px);
+    height: calculateRem(22px);
+    border-top-left-radius: calculateRem(8px);
     cursor: pointer;
+    background-color: #333;
+  }
+
+  .magnify-icon::after {
+    content: '';
+    position: absolute;
+    bottom: calculateRem(2px);
+    right: calculateRem(2px);
+    z-index: 1;
+    width: calculateRem(16px);
+    height: calculateRem(16px);
     background-image: url('assets/zoom-icon.svg');
     background-size: cover;
     background-repeat: no-repeat;
