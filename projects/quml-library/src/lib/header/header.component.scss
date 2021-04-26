@@ -158,3 +158,8 @@ quml-durationtimer {
   font-family: 'Noto Sans';
   margin-left: 8px;
 }
+
+.navigation-icon-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

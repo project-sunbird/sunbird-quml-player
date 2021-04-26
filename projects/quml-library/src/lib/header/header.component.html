@@ -36,8 +36,8 @@
         <quml-previous></quml-previous>
       </span>
       <span (click)="nextSlide()">
-        <quml-next *ngIf="!active"></quml-next>
-        <quml-next-active *ngIf="active"></quml-next-active>
+        <quml-next *ngIf="!active" [ngClass]="disableNext ? 'navigation-icon-disabled': '' "></quml-next>
+        <quml-next-active *ngIf="active" [ngClass]="disableNext ? 'navigation-icon-disabled': '' "></quml-next-active>
       </span>
     </div>
   </div>
