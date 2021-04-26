@@ -3,7 +3,7 @@
         <div class="quml-option"
         [ngClass]="(mcqOption.selected==true)?'quml-option quml-option--selected':'quml-option'">
             <div class="option"
-                [innerHTML]="mcqOption.label">
+                [innerHTML]="mcqOption.label | safeHtml">
             </div>
             <label class="container">
                 <input type="radio" name="radio" [checked]="mcqOption.selected" >

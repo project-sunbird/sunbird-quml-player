@@ -3,5 +3,5 @@
   <img *ngIf="!htmlTag" src={{image}}>
 </div>
 
-<div *ngIf="htmlTag" class="htmlTag" id="htmlTag" [innerHtml]="htmlTag"></div>
+<div *ngIf="htmlTag" class="htmlTag" id="htmlTag" [innerHtml]="htmlTag | safeHtml"></div>
 

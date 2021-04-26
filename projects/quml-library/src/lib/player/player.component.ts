@@ -87,6 +87,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   showZoomModal = false;
   zoomImgSrc: string;
   modalImageWidth = 0;
+  disableNext: boolean;
 
   constructor(
     public viewerService: ViewerService,
@@ -212,6 +213,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     }
     if (this.car.getCurrentSlideIndex() === this.noOfQuestions && this.requiresSubmit) {
       this.loadScoreBoard = true;
+      this.disableNext = true;
     }
     if (this.car.getCurrentSlideIndex() === this.noOfQuestions) {
       this.durationSpent = this.utilService.getTimeSpentText(this.initialTime);
@@ -245,6 +247,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   prevSlide() {
+    this.disableNext = false;
     this.viewerService.raiseHeartBeatEvent(eventName.prevClicked, TelemetryType.interact, this.car.getCurrentSlideIndex() - 1);
     this.showAlert = false;
     if (this.car.getCurrentSlideIndex() + 1 === this.noOfQuestions && this.endPageReached) {
@@ -482,6 +485,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.viewerService.raiseHeartBeatEvent(eventName.startPageLoaded, 'impression', 0);
     this.endPageReached = false;
     this.loadScoreBoard = false;
+    this.disableNext = false;
     this.currentSlideIndex = 1;
     this.car.selectSlide(1);
     setTimeout(() => {
@@ -495,6 +499,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   goToSlide(index) {
+    this.disableNext = false;
     this.currentSlideIndex = index;
     if (index === 0) {
       this.optionSelectedObj = undefined;
@@ -547,6 +552,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     const currentIndex = this.car.getCurrentSlideIndex() - 1;
     this.currentQuestion = this.questions[currentIndex].body;
     this.currentOptions = this.questions[currentIndex].interactions.response1.options;
+    _.forEach(this.currentOptions, (val, key) => {
+      this.setImageZoom(String(key));
+    });
     if (this.currentSolutions) {
       this.showSolution = true;
     }
