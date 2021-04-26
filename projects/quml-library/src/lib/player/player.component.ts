@@ -547,6 +547,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     const currentIndex = this.car.getCurrentSlideIndex() - 1;
     this.currentQuestion = this.questions[currentIndex].body;
     this.currentOptions = this.questions[currentIndex].interactions.response1.options;
+    _.forEach(this.currentOptions, (val, key) => {
+      this.setImageZoom(String(key));
+    });
     if (this.currentSolutions) {
       this.showSolution = true;
     }
