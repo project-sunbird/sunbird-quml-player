@@ -82,27 +82,20 @@
 }
 
 /* When the radio button is checked, add a blue background */
-.container input:checked~.checkmark {
+.container input:checked~.checkmark, .quml-option--selected .checkmark {
   position: relative;
   background-color: white;
   border: 2px solid #024f9d;
 }
 
 /* Create the indicator (the dot/circle - hidden when not checked) */
-.checkmark:after {
+input:checked~.checkmark:after, .quml-option--selected .checkmark:after {
   content: "";
-  position: absolute;
-  display: none;
-}
-
-/* Show the indicator (dot/circle) when checked */
-.container input:checked~.checkmark:after {
-  display: block;
+  opacity: 1;
 }
 
 /* Style the indicator (dot/circle) */
-.container .checkmark:after {
-  display: none;
+.container .checkmark:after, .quml-option--selected .container .checkmark:after {
   margin: 2px;
   width: 10px;
   height: 10px;
@@ -113,7 +106,13 @@
   left: 50%;
   margin: 0;
   transform: translate(-50%, -50%);
+  opacity: 0;
 }
+
+.quml-option--selected .container .checkmark:after { 
+  opacity: 1;
+}
+
 .quml-option--correct .container input:checked ~ .checkmark {
   border-color: #31A679;
   background-color: #31A679;
