@@ -2,6 +2,11 @@
     padding: 2rem 0px;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .scoreboard-scores {
@@ -69,11 +74,11 @@
     font-weight: 500;
     border-radius: 50%;
     text-align: center;
-    padding: 8px;
     width: 24px;
     height: 24px;
     display: flex;
     align-items: center;
+    justify-content: center;
     margin: 16px 32px;
 }
 

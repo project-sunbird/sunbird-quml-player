@@ -22,6 +22,7 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
   @Output() nextSlideClicked = new EventEmitter<any>();
   @Output() prevSlideClicked = new EventEmitter<any>();
   @Output() durationEnds = new EventEmitter<any>();
+  @Input() disableNext?: boolean;
   minutes: number;
   seconds: string | number;
   private intervalRef?;
@@ -62,7 +63,9 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   nextSlide() {
+    if (!this.disableNext) {
       this.nextSlideClicked.emit({ type: 'next' });
+    }
   }
 
   prevSlide() {
