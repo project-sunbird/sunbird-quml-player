@@ -87,6 +87,14 @@
     max-height: calc(100vh - 164px);
     overflow-y: auto;
 }
+::ng-deep{
+    .startpage-instructions ul {
+        list-style-type: disc;
+    }
+    .startpage-instructions li {
+        margin-bottom: calculateRem(8px);
+    }    
+}
 @media only screen and (max-width: 480px) {
     .landscape-header {
         display: none;
