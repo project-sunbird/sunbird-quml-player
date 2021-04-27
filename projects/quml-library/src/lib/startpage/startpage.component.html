@@ -27,7 +27,8 @@
       </div>
     </div>
     <ng-container *ngIf="instructions">
-    <div [innerHTML]="instructions | safeHtml" class="startpage-instructions"> </div>
+      <div class="instruction-title">Instructions</div>
+      <div [innerHTML]="instructions | safeHtml" class="startpage-instructions"> </div>
   </ng-container>
   </div>
 </div>
