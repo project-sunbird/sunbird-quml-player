@@ -109,3 +109,7 @@
   .quml-option--selected .container .checkmark:after { 
     opacity: 1;
   }
+
+  .quml-option--selected {
+    border: 2px solid #08539f;
+  }
