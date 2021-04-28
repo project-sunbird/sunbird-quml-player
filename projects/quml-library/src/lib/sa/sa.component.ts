@@ -37,7 +37,7 @@ export class SaComponent implements OnInit {
     this.answer = this.questions.answer;
     this.solutions = this.questions.solutions;
     this.questions.solutions.forEach(ele => {
-      if (ele.type === ('video' || 'image')) {
+      if (ele.type === 'video' || ele.type === 'image') {
         this.questions.media.forEach(e => {
           if (ele.value === e.id) {
             ele.src = e.baseUrl ? e.baseUrl + e.src : e.src;
