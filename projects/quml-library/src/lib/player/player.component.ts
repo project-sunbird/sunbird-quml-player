@@ -88,6 +88,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   zoomImgSrc: string;
   modalImageWidth = 0;
   disableNext: boolean;
+  currentQuestionsMedia;
 
   constructor(
     public viewerService: ViewerService,
@@ -185,6 +186,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   nextSlide() {
+    this.currentQuestionsMedia = _.get(this.questions[this.currentSlideIndex], 'media');
     this.setImageZoom(_.get(this.questions[this.currentSlideIndex], 'identifier'));
     if (this.car.getCurrentSlideIndex() > 0 && ((this.threshold * this.noOfTimesApiCalled) - 1) === this.car.getCurrentSlideIndex()
       && this.threshold * this.noOfTimesApiCalled >= this.questions.length && this.threshold > 1) {
@@ -258,6 +260,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       this.car.selectSlide(this.noOfQuestions);
       this.loadScoreBoard = false;
     }
+    this.currentQuestionsMedia = _.get(this.questions[this.car.getCurrentSlideIndex() - 1], 'media');
     this.setImageZoom(_.get(this.questions[this.car.getCurrentSlideIndex() - 1], 'identifier'));
   }
 
@@ -309,6 +312,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.viewerService.raiseHeartBeatEvent(eventName.viewSolutionClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
     this.showSolution = true;
     this.showAlert = false;
+    this.currentQuestionsMedia = _.get(this.questions[this.car.getCurrentSlideIndex()], 'media');
     _.forEach(this.currentOptions, (val, key) => {
       this.setImageZoom(String(key));
     });
@@ -488,6 +492,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.disableNext = false;
     this.currentSlideIndex = 1;
     this.car.selectSlide(1);
+    this.currentQuestionsMedia = _.get(this.questions[0], 'media');
+    this.setImageZoom(_.get(this.questions[0], 'identifier'));
     setTimeout(() => {
       this.replayed = false;
     }, 200)
@@ -506,6 +512,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       this.car.selectSlide(0);
       return;
     }
+    this.currentQuestionsMedia = _.get(this.questions[this.currentSlideIndex - 1], 'media');
     this.setImageZoom(_.get(this.questions[this.currentSlideIndex - 1], 'identifier'));
     if (!this.initializeTimer) {
       this.initializeTimer = true;
@@ -552,6 +559,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     const currentIndex = this.car.getCurrentSlideIndex() - 1;
     this.currentQuestion = this.questions[currentIndex].body;
     this.currentOptions = this.questions[currentIndex].interactions.response1.options;
+    this.currentQuestionsMedia = _.get(this.questions[currentIndex], 'media');
     _.forEach(this.currentOptions, (val, key) => {
       this.setImageZoom(String(key));
     });
@@ -600,6 +608,12 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       if (!_.isEmpty(images)) {
         _.forEach(images, (image) => {
           image.setAttribute("class", "option-image");
+          let imageId = image.getAttribute("data-asset-variable");
+          _.forEach(this.currentQuestionsMedia, (val) => {
+            if (val.baseUrl && imageId === val.id) {
+                image.src = val.baseUrl + val.src;
+            }
+          });
           let divElement = document.createElement('div');
           divElement.setAttribute("class", "magnify-icon");
           divElement.onclick = (event) => {
