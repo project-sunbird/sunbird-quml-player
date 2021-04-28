@@ -40,7 +40,7 @@ export class SaComponent implements OnInit {
       if (ele.type === 'video') {
         this.questions.media.forEach(e => {
           if (ele.value === e.id) {
-            ele.src = e.src;
+            ele.src = (e.baseUrl || '') + e.src;
             ele.thumbnail = e.thumbnail;
           }
         });
