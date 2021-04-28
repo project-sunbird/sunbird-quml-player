@@ -610,9 +610,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
           image.setAttribute("class", "option-image");
           let imageId = image.getAttribute("data-asset-variable");
           _.forEach(this.currentQuestionsMedia, (val) => {
-            // code need to be removed
             if (val.baseUrl && imageId === val.id) {
-            // if (val.baseUrl && imageId === val.id) {
                 image.src = (val.baseUrl) + val.src;
             }
           });
