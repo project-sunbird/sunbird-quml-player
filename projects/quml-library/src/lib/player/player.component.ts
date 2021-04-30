@@ -88,6 +88,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   zoomImgSrc: string;
   modalImageWidth = 0;
   disableNext: boolean;
+  showHints: any;
 
   constructor(
     public viewerService: ViewerService,
@@ -164,6 +165,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.linearNavigation = this.QumlPlayerConfig.metadata.navigationMode === 'non-linear' ? false : true;
     this.requiresSubmit = this.QumlPlayerConfig.metadata.requiresSubmit.toLowerCase() === 'no' ? false : true;
     this.maxScore = this.QumlPlayerConfig.metadata.maxScore;
+    this.showHints = this.QumlPlayerConfig.metadata.showHints.toLowerCase() === 'no' ? false : true;
     this.points = this.QumlPlayerConfig.metadata.points;
     this.userName = this.QumlPlayerConfig.context.userData.firstName + ' ' + this.QumlPlayerConfig.context.userData.lastName;
     this.contentName = this.QumlPlayerConfig.metadata.name;
