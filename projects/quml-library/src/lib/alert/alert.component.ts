@@ -7,6 +7,7 @@ import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 })
 export class AlertComponent implements OnInit {
   @Input() alertType: any;
+  @Input() isHintAvailable : boolean;
   @Input() showSolutionButton: boolean;
   @Output() closeAlert = new EventEmitter();
   @Output() showSolution = new EventEmitter();

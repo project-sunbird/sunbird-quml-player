@@ -95,7 +95,7 @@
     (submitClicked)="inScoreBoardSubmitClicked()" [contentName]="contentName" [scores]="progressBarClass" [totalNoOfQuestions]="questions.length"
     [showFeedBack]="showFeedBack" (emitQuestionNo)="goToQuestion($event)" (scoreBoardLoaded)="scoreBoardLoaded($event)"
      ></quml-scoreboard>
-  <quml-alert *ngIf="showAlert && showFeedBack" [alertType]="alertType" [showSolutionButton]="showUserSolution"
+  <quml-alert *ngIf="showAlert && showFeedBack" [alertType]="alertType" [isHintAvailable]="showHints" [showSolutionButton]="showUserSolution"
     (showSolution)="viewSolution()" (showHint)="viewHint()" (closeAlert)="closeAlertBox($event)"></quml-alert>
   <quml-mcq-solutions [hidden]="!showSolution" [question]="currentQuestion" [options]="currentOptions"
     [solutions]="currentSolutions" (close)="closeSolution()"></quml-mcq-solutions>
