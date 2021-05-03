@@ -109,7 +109,7 @@
   <div class="image-viewer__close" (click)="closeZoom()">
   </div>
   <div class="image-viewer__container">
-    <img id="modalImage" class="image-viewer__img" src="{{zoomImgSrc}}" alt="image">
+    <img  #modalImage id="modalImage" class="image-viewer__img" src="{{zoomImgSrc}}" alt="image">
   </div>
   <div class="image-viewer__zoom">
     <div class="image-viewer__zoomin" (click)="zoomin()"></div>

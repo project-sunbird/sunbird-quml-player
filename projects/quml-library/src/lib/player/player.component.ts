@@ -19,6 +19,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   @Output() playerEvent = new EventEmitter<any>();
   @Output() telemetryEvent = new EventEmitter<any>();
   @ViewChild('car', { static: false }) car: CarouselComponent;
+  @ViewChild('modalImage', { static: true }) modalImage;
   destroy$: Subject<boolean> = new Subject<boolean>();
 
   threshold: number;
@@ -90,6 +91,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   disableNext: boolean;
   showHints: any;
   currentQuestionsMedia;
+  imageZoomCount = 100;
 
   constructor(
     public viewerService: ViewerService,
@@ -632,29 +634,17 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   zoomin() {
     this.viewerService.raiseHeartBeatEvent(eventName.zoomInClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
-    let myImg = document.getElementById("modalImage");
-    let currWidth = myImg.clientWidth;
-    let currHeight = myImg.clientHeight;
-    if (this.modalImageWidth === 0) {
-      this.modalImageWidth = currWidth;
-    }
-    if (currWidth < this.modalImageWidth + 300) {
-      myImg.style.width = (currWidth + 50) + "px";
-      myImg.style.height = (currHeight + 50) + "px";
-    }
+    this.imageZoomCount = this.imageZoomCount + 10;
+    this.modalImage.nativeElement.style.width = `${this.imageZoomCount}%`;
+    this.modalImage.nativeElement.style.height = `${this.imageZoomCount}%`;
   }
 
   zoomout() {
     this.viewerService.raiseHeartBeatEvent(eventName.zoomOutClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
-    let myImg = document.getElementById("modalImage");
-    let currWidth = myImg.clientWidth;
-    let currHeight = myImg.clientHeight;
-    if (this.modalImageWidth === 0) {
-      this.modalImageWidth = currWidth;
-    }
-    if (currWidth > this.modalImageWidth) {
-      myImg.style.width = (currWidth - 50) + "px";
-      myImg.style.height = (currHeight - 50) + "px";
+    if(this.imageZoomCount > 100) {
+    this.imageZoomCount = this.imageZoomCount - 10;
+    this.modalImage.nativeElement.style.width = `${this.imageZoomCount}%`;
+    this.modalImage.nativeElement.style.height = `${this.imageZoomCount}%`;
     }
   }
 
