@@ -558,6 +558,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   getSolutions() {
+    this.showAlert = false;
     this.viewerService.raiseHeartBeatEvent(eventName.showAnswer, TelemetryType.interact, this.car.getCurrentSlideIndex());
     this.viewerService.raiseHeartBeatEvent(eventName.showAnswer, TelemetryType.impression, this.car.getCurrentSlideIndex());
     const currentIndex = this.car.getCurrentSlideIndex() - 1;
