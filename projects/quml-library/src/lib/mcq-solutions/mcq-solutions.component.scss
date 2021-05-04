@@ -1,19 +1,19 @@
 @import '../../../../../node_modules/@project-sunbird/sb-styles/assets/mixins/mixins';
 
 .solutions {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     padding: 24px;
+    overflow: auto;
 }
 
 .solution-header {
     color: #333333;
     font-size: 14px;
     font-weight: bold;
-}
-
-.solution-options{
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-gap: 1em;
 }
 
 .close-icon{
