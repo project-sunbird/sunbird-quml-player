@@ -310,12 +310,16 @@
   padding-right: 12px
 }
 
-::ng-deep .carousel.slide a.left.carousel-control.carousel-control-prev {
-  display: none;
-}
+::ng-deep {
+  .carousel.slide {
+    a.left.carousel-control.carousel-control-prev, .carousel-control.carousel-control-next {
+      display: none;
+    }
+  }
 
-::ng-deep .carousel.slide .carousel-control.carousel-control-next {
-  display: none;
+  .carousel-item {
+    perspective: unset;
+  }
 }
 
 /* @media only screen and (min-width: 100px) and (max-width: 481px) and (min-width: 481px) and (max-width: 800px) {
