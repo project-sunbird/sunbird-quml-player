@@ -5,6 +5,7 @@ import { ViewerService } from '../services/viewer-service/viewer-service';
 import { eventName, TelemetryType, pageId } from '../telemetry-constants';
 import { UtilService } from '../util-service';
 import { QuestionCursor } from '../quml-question-cursor.service';
+import { ErrorService , errorCode , errorMessage } from '@project-sunbird/sunbird-player-sdk-v8';
 import * as _ from 'lodash-es';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -71,6 +72,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   currentOptionSelected: string;
   questionIds: Array<[]>;
   questionIdsCopy: Array<[]>;
+  compatibiiityLevel: number;
   CarouselConfig = {
     NEXT: 1,
     PREV: 2
@@ -92,13 +94,15 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   showHints: any;
   currentQuestionsMedia;
   imageZoomCount = 100;
+  traceId: string;
 
   constructor(
     public viewerService: ViewerService,
     public utilService: UtilService,
     public questionCursor: QuestionCursor,
     private element: ElementRef,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    public errorService: ErrorService
   ) {
     this.endPageReached = false;
     this.viewerService.qumlPlayerEvent.asObservable()
@@ -137,6 +141,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    this.traceId = this.QumlPlayerConfig.config['traceId'];
+    this.compatibiiityLevel = this.QumlPlayerConfig.metadata.compatibilityLevel;
+    this.checkCompatibilityLevel(this.compatibiiityLevel);
     this.sideMenuConfig = { ...this.sideMenuConfig, ...this.QumlPlayerConfig.config.sideMenu };
     this.threshold = this.QumlPlayerConfig.context.threshold || 3;
     this.questionIds = this.QumlPlayerConfig.metadata.childNodes;
@@ -182,11 +189,25 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     } else if (this.threshold > 1) {
       this.viewerService.getQuestions();
     }
+
+    this.errorService.getInternetConnectivityError.subscribe(event => {
+      this.viewerService.raiseExceptionLog(errorCode.internetConnectivity, errorMessage.internetConnectivity, event['error'], this.traceId)
+    });
   }
 
   ngAfterViewInit() {
     this.viewerService.raiseStartEvent(0);
     this.viewerService.raiseHeartBeatEvent(eventName.startPageLoaded, 'impression', 0);
+  }
+
+  checkCompatibilityLevel(compatibiiityLevel){
+    if (compatibiiityLevel) {
+      const checkContentCompatible = this.errorService.checkContentCompatibility(compatibiiityLevel);
+      if (!checkContentCompatible['isCompitable']) {
+        this.viewerService.raiseErrorEvent( checkContentCompatible['error'] , 'compatibility-error');
+        this.viewerService.raiseExceptionLog( errorCode.contentCompatibility , errorMessage.contentCompatibility, checkContentCompatible['error'], this.traceId)
+      }
+    }
   }
 
   nextSlide() {
@@ -558,6 +579,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   getSolutions() {
+    this.showAlert = false;
     this.viewerService.raiseHeartBeatEvent(eventName.showAnswer, TelemetryType.interact, this.car.getCurrentSlideIndex());
     this.viewerService.raiseHeartBeatEvent(eventName.showAnswer, TelemetryType.impression, this.car.getCurrentSlideIndex());
     const currentIndex = this.car.getCurrentSlideIndex() - 1;
@@ -661,5 +683,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.viewerService.raiseEndEvent(this.currentSlideIndex, this.attemptedQuestions.length, this.endPageReached, this.finalScore);
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
+    this.errorService.getInternetConnectivityError.unsubscribe();
   }
 }

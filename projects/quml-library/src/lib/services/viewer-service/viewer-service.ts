@@ -119,7 +119,7 @@ export class ViewerService {
 
   }
   
-  raiseErrorEvent(error: Error) {
+  raiseErrorEvent(error: Error , type?: string) {
     const errorEvent = {
       eid: 'ERROR',
       ver: this.version,
@@ -130,7 +130,9 @@ export class ViewerService {
       metaData: this.metaData
     };
     this.qumlPlayerEvent.emit(errorEvent);
+    if(!type){
     this.qumlLibraryService.error(error);
+    }
   }
 
   raiseAssesEvent(questionData , index , pass , score , resValues , duration){
@@ -159,6 +161,20 @@ export class ViewerService {
     }
     this.qumlPlayerEvent.emit(responseEvent);
     this.qumlLibraryService.response(identifier, this.version , qType , optionSelected);
+  }
+
+  raiseExceptionLog(errorCode: string , errorType: string , stacktrace , traceId ) {
+    const exceptionLogEvent = {
+      eid: "ERROR",
+      edata: {
+          err: errorCode,
+          errtype: errorType,
+          requestid: traceId || '',
+          stacktrace: stacktrace || '',
+      }
+    }
+    this.qumlPlayerEvent.emit(exceptionLogEvent)
+    this.qumlLibraryService.error(stacktrace, { err: errorCode, errtype: errorType });
   }
 
 
