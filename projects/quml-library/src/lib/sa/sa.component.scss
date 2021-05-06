@@ -33,7 +33,7 @@
 }
 
 .option-container-blurred-out {
-  filter: blur(0px);
+  filter: unset;
   transition: 0.4s;
   user-select: text;
   pointer-events: auto;
