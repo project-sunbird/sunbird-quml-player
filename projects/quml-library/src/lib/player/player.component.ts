@@ -58,7 +58,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   currentSlideIndex = 0;
   attemptedQuestions = [];
   loadScoreBoard = false;
-  totalScore = [];
+  totalScore: number;
   private intervalRef: any;
   public finalScore = 0;
   progressBarClass = [];
@@ -92,6 +92,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   showHints: any;
   currentQuestionsMedia;
   imageZoomCount = 100;
+  outcome: any;
 
   constructor(
     public viewerService: ViewerService,
@@ -116,6 +117,15 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       }
 
       this.questions = _.uniqBy(this.questions.concat(res.questions), 'identifier');
+      
+      this.totalScore = 0;
+      _.forEach(this.questions, (question) => {
+        if (question.responseDeclaration) {
+          let key: any = this.utilService.getKeyValue(Object.keys(question.responseDeclaration));
+          this.totalScore += question.responseDeclaration[key].correctResponse.outcomes.SCORE ? question.responseDeclaration[key].correctResponse.outcomes.SCORE : question.responseDeclaration[key].maxScore || 1;
+        }
+      });
+      
       this.cdRef.detectChanges();
       this.noOfTimesApiCalled++;
       this.loadView = true;
@@ -175,7 +185,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.allowSkip = this.QumlPlayerConfig.metadata.allowSkip;
     this.showStartPage = this.QumlPlayerConfig.metadata.showStartPage && this.QumlPlayerConfig.metadata.showStartPage.toLowerCase() === 'no' ? false : true
     this.showEndPage = this.QumlPlayerConfig.metadata.showEndPage && this.QumlPlayerConfig.metadata.showEndPage.toLowerCase() === 'no' ? false : true
-
     this.setInitialScores();
     if (this.threshold === 1) {
       this.viewerService.getQuestion();
@@ -222,7 +231,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       this.disableNext = true;
     }
     if (this.car.getCurrentSlideIndex() === this.noOfQuestions) {
-      this.durationSpent = this.utilService.getTimeSpentText(this.initialTime);
+      this.durationSpent = _.get(this.QumlPlayerConfig, 'metadata.summaryType') === 'Score' ? '' : this.utilService.getTimeSpentText(this.initialTime);
 
       if (!this.requiresSubmit && this.showEndPage) {
         this.endPageReached = true;
@@ -338,7 +347,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   durationEnds() {
-    this.durationSpent = this.utilService.getTimeSpentText(this.initialTime);
+    this.durationSpent = _.get(this.QumlPlayerConfig, 'metadata.summaryType') === 'Score' ? '' : this.utilService.getTimeSpentText(this.initialTime);
     this.calculateScore();
     this.showSolution = false;
     this.showAlert = false;
@@ -447,6 +456,21 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.progressBarClass.forEach((ele) => {
       this.finalScore = this.finalScore + ele.score;
     })
+    this.setOutCome();
+  }
+
+  setOutCome() {
+    this.outcome = this.finalScore.toString();
+    switch (_.get(this.QumlPlayerConfig, 'metadata.summaryType')) {
+      case 'Complete': {
+        this.outcome = `${this.finalScore} / ${this.totalScore}`;
+        break;
+      }
+      case 'Duration': {
+        this.outcome = '';
+        break;
+      }
+    }
   }
 
   scoreBoardLoaded(event) {
