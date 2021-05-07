@@ -1,6 +1,6 @@
 export const data1 = {
     'context': {
-        "threshold": 4,
+        "threshold": 2,
         'mode': 'play',
         'authToken': ' ',
         'sid': '913b3c6c-2874-26dd-ed0c-c23ddc00b718',
@@ -44,6 +44,7 @@ export const data1 = {
         }
     },
     'metadata': {
+        "summaryType": "Score",
         "instructions": {
             "default": "instructions in the specified language"
         },
