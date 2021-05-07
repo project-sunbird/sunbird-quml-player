@@ -31,7 +31,7 @@
         47
       </span>
     </div> -->
-    <div class="navigation-icons">
+    <div class="navigation-icons" *ngIf="!disableNext">
       <span (click)="prevSlide()">
         <quml-previous></quml-previous>
       </span>

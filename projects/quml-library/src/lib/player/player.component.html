@@ -1,6 +1,6 @@
 <div class="quml-container" *ngIf="loadView" [hidden]="showZoomModal">
   <div class="endPage-container">
-    <sb-player-end-page *ngIf="endPageReached && showEndPage" [contentName]="contentName" [outcome]="outcome"
+    <sb-player-end-page *ngIf="endPageReached && showEndPage" [contentName]="contentName" [outcome]="outcomeLabel"
       [outcomeLabel]="'Score: '" [userName]="userName" [timeSpentLabel]="durationSpent"
       (replayContent)="replayContent()" (exitContent)="exitContent($event)" [showExit]="sideMenuConfig.showExit"></sb-player-end-page>
   </div>
@@ -55,22 +55,22 @@
         </carousel>
       </div>
       <div class="lanscape-mode-right" [hidden]="endPageReached">
-        <ul *ngIf="!showFeedBack">
+        <ul *ngIf="!showFeedBack && !disableNext">
           <li [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlide(0)">i</li>
           <ng-container *ngIf="startPageInstruction ">
             <li *ngFor="let question of progressBarClass; let i = index"
-              [ngClass]="loadScoreBoard ? 'att-color' : (i + 1) === car.getCurrentSlideIndex() ? 'progressBar-border': (i + 1) < car.getCurrentSlideIndex()  ? 'att-color' : '' "
-              (click)="goToSlide(question.index)" >{{question.index}}</li>
+            [ngClass]="(i+1) === car.getCurrentSlideIndex() ? 'progressBar-border': question.class === 'skipped' ? question.class: question.class === 'unattempted' ? '' : 'att-color'"
+            (click)="goToSlide(question.index)" >{{question.index}}</li>
           </ng-container>
           <ng-container *ngIf="!startPageInstruction">
             <li *ngFor="let question of progressBarClass; let i = index"
-              [ngClass]="loadScoreBoard ? 'att-color' : (i + 1) === car.getCurrentSlideIndex() ? 'progressBar-border': (i + 1) < car.getCurrentSlideIndex()  ? 'att-color' : '' "
+              [ngClass]="(i+1) === car.getCurrentSlideIndex() ? 'progressBar-border': question.class === 'skipped' ? question.class: question.class === 'unattempted' ? '' : 'att-color'"
               (click)="goToSlide(question.index)">{{question.index}}</li>
           </ng-container>
-            <li *ngIf="!loadScoreBoard && requiresSubmit" (click)="loadScoreBoard = true;"><img src="./assets/flag_inactive.svg"></li>
+            <li *ngIf="!loadScoreBoard && requiresSubmit" (click)="loadScoreBoard = true; disableNext = true;"><img src="./assets/flag_inactive.svg"></li>
             <li *ngIf="loadScoreBoard && requiresSubmit"><img src="./assets/flag_active.svg"></li>
         </ul>
-        <ul *ngIf="showFeedBack">
+        <ul *ngIf="showFeedBack && !disableNext">
           <li *ngIf="showStartPage" [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlide(0)">i
           </li>
           <ng-container *ngIf="startPageInstruction">

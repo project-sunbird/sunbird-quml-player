@@ -10,7 +10,7 @@
   <div class="sa-title">Answer</div>
   <div class="option-body" [innerHTML]="answer | safeHtml"></div>
   <ng-container *ngIf="solutions && solutions.length">
-    <div class="sa-title">solutions</div>
+    <div class="sa-title">Solution</div>
     <div class="solutions" *ngFor="let solution of solutions">
       <ng-container [ngSwitch]="solution.type">
         <div *ngSwitchCase="'html'" [innerHTML]="solution.value | safeHtml"></div>

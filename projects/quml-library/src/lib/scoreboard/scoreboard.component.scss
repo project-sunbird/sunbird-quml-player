@@ -93,9 +93,10 @@
 }
 
 .skipped {
-    color: #ABABAB;
-    border: 0.5px solid #ABABAB;
+    color:var(--white);
+    background: linear-gradient(90deg,#ababab5e 0,#ABABAB 100%);
 }
+  
 
 @media only screen and (max-width: 480px) {
     .scoreboard-button-container {

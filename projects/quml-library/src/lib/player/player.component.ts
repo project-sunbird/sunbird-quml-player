@@ -95,7 +95,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   currentQuestionsMedia;
   imageZoomCount = 100;
   traceId: string;
-  outcome: string;
+  outcomeLabel: string;
 
   constructor(
     public viewerService: ViewerService,
@@ -183,6 +183,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.allowSkip = this.QumlPlayerConfig.metadata.allowSkip;
     this.showStartPage = this.QumlPlayerConfig.metadata.showStartPage && this.QumlPlayerConfig.metadata.showStartPage.toLowerCase() === 'no' ? false : true
     this.showEndPage = this.QumlPlayerConfig.metadata.showEndPage && this.QumlPlayerConfig.metadata.showEndPage.toLowerCase() === 'no' ? false : true
+    this.totalScore = this.QumlPlayerConfig.metadata.maxScore;
     this.setInitialScores();
     if (this.threshold === 1) {
       this.viewerService.getQuestion();
@@ -260,6 +261,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       const qType = this.questions[this.car.getCurrentSlideIndex() - 1].qType;
       this.viewerService.raiseResponseEvent(identifier, qType, option);
     }
+    if (this.questions[this.car.getCurrentSlideIndex()]) {
+      this.setSkippedClass(this.car.getCurrentSlideIndex());
+    }
     this.car.move(this.CarouselConfig.NEXT);
     this.active = false;
     this.showAlert = false;
@@ -270,6 +274,12 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.currentSolutions = undefined;
     if (this.intervalRef) {
       clearInterval(this.intervalRef);
+    }
+  }
+
+  setSkippedClass(index){
+    if (_.get(this.progressBarClass[index], 'class') === 'unattempted') {
+      this.progressBarClass[index].class = 'skipped';      
     }
   }
 
@@ -287,6 +297,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     }
     this.currentQuestionsMedia = _.get(this.questions[this.car.getCurrentSlideIndex() - 1], 'media');
     this.setImageZoom(_.get(this.questions[this.car.getCurrentSlideIndex() - 1], 'identifier'));
+    this.setSkippedClass(this.car.getCurrentSlideIndex() - 1);
   }
 
   sideBarEvents(event) {
@@ -468,18 +479,18 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.progressBarClass.forEach((ele) => {
       this.finalScore = this.finalScore + ele.score;
     })
-    this.setOutCome();
+    this.generateOutComeLabel();
   }
 
-  setOutCome() {
-    this.outcome = this.finalScore.toString();
+  generateOutComeLabel() {
+    this.outcomeLabel = this.finalScore.toString();
     switch (_.get(this.QumlPlayerConfig, 'metadata.summaryType')) {
       case 'Complete': {
-        this.outcome = this.totalScore ? `${this.finalScore} / ${this.totalScore}`: this.outcome;
+        this.outcomeLabel = this.totalScore ? `${this.finalScore} / ${this.totalScore}`: this.outcomeLabel;
         break;
       }
       case 'Duration': {
-        this.outcome = '';
+        this.outcomeLabel = '';
         break;
       }
     }
@@ -519,6 +530,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   replayContent() {
+    this.initializeTimer = true;
     this.replayed = true;
     this.initialTime = new Date().getTime();
     this.questionIds = this.questionIdsCopy;
@@ -554,6 +566,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     }
     this.currentQuestionsMedia = _.get(this.questions[this.currentSlideIndex - 1], 'media');
     this.setImageZoom(_.get(this.questions[this.currentSlideIndex - 1], 'identifier'));
+    this.setSkippedClass(this.currentSlideIndex - 1);
     if (!this.initializeTimer) {
       this.initializeTimer = true;
     }
@@ -567,29 +580,26 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     } else if (this.questions[index - 1] !== undefined) {
       this.car.selectSlide(index);
     }
+    
   }
 
   setInitialScores() {
-    if (this.showFeedBack) {
-      this.questionIds.forEach((ele, index) => {
-        this.progressBarClass.push({
-          index: (index + 1), class: 'skipped',
-          score: 0,
-        });
-      })
-    } else if (!this.showFeedBack) {
-      this.questionIds.forEach((ele, index) => {
-        this.progressBarClass.push({
-          index: (index + 1), class: 'unattempted', value: undefined,
-          score: 0,
-        });
-      })
-    }
+    this.questionIds.forEach((ele, index) => {
+      this.progressBarClass.push({
+        index: (index + 1), class: 'unattempted', value: undefined,
+        score: 0,
+      });
+    })
   }
 
   goToQuestion(event) {
-    const index = this.startPageInstruction ? event.questionNo : event.questionNo - 1;
-    this.car.selectSlide(index + 1);
+    this.disableNext = false;
+    this.initializeTimer = true;
+    this.durationSpent = _.get(this.QumlPlayerConfig, 'metadata.summaryType') === 'Score' ? '' : this.utilService.getTimeSpentText(this.initialTime);
+    const index = event.questionNo;
+    this.viewerService.getQuestions(0, index);
+    this.currentSlideIndex = index;
+    this.car.selectSlide(index);
     this.loadScoreBoard = false;
   }
 
