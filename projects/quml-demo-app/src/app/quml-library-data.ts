@@ -44,7 +44,7 @@ export const data1 = {
         }
     },
     'metadata': {
-        "summaryType": "Score",
+        "summaryType": "Complete",
         "instructions": {
             "default": "instructions in the specified language"
         },
