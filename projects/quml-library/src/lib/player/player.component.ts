@@ -117,15 +117,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       }
 
       this.questions = _.uniqBy(this.questions.concat(res.questions), 'identifier');
-      
-      this.totalScore = 0;
-      _.forEach(this.questions, (question) => {
-        if (question.responseDeclaration) {
-          let key: any = this.utilService.getKeyValue(Object.keys(question.responseDeclaration));
-          this.totalScore += question.responseDeclaration[key].correctResponse.outcomes.SCORE ? question.responseDeclaration[key].correctResponse.outcomes.SCORE : question.responseDeclaration[key].maxScore || 1;
-        }
-      });
-      
       this.cdRef.detectChanges();
       this.noOfTimesApiCalled++;
       this.loadView = true;
@@ -463,7 +454,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.outcome = this.finalScore.toString();
     switch (_.get(this.QumlPlayerConfig, 'metadata.summaryType')) {
       case 'Complete': {
-        this.outcome = `${this.finalScore} / ${this.totalScore}`;
+        this.outcome = this.totalScore ? `${this.finalScore} / ${this.totalScore}`: this.outcome;
         break;
       }
       case 'Duration': {
