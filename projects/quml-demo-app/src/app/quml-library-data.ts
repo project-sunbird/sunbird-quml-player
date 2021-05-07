@@ -103,7 +103,7 @@ export const data1 = {
         "framework": "tn_k-12_5",
         "depth": 0,
         "createdBy": "4cd4c690-eab6-4938-855a-447c7b1b8ea9",
-        "compatibilityLevel": 5,
+        "compatibilityLevel": 4,
         "navigationMode": "non-linear",
         "timeLimits": {
             "maxTime": "180",
@@ -117,7 +117,7 @@ export const data1 = {
             'showShare': true,
             'showDownload': true,
             'showReplay': true,
-            'showExit': false,
+            'showExit': true,
         }
     }
 }

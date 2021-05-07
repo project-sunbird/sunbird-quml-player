@@ -152,7 +152,7 @@ export class QumlLibraryService {
     });
   }
 
-  public error(error: Error) {
+  public error(error: Error , edata?: { err: string, errtype: string }) {
     CsTelemetryModule.instance.telemetryService.raiseErrorTelemetry({
       edata: {
         err: 'LOAD',
