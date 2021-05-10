@@ -596,7 +596,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     } else if (this.questions[index - 1] !== undefined) {
       this.car.selectSlide(index);
     }
-    
   }
 
   setInitialScores() {
