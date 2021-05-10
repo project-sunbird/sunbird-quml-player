@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'quml-startpage',
@@ -13,16 +12,14 @@ export class StartpageComponent implements OnInit {
   @Input() points: number;
   @Input() time: number;
   @Input() contentName: string;
+  @Input() showTimer: boolean;
   minutes: number;
-  seconds: number;
-
-  constructor(private _sanitizer: DomSanitizer) { }
+  seconds: string | number;
 
   ngOnInit() {
-    this.instructions = this._sanitizer.bypassSecurityTrustHtml(this.instructions);
     const durationInSec = this.time / 1000;
-    this.minutes = ~~(durationInSec / 60);
-    this.seconds = (durationInSec % 60);
+    this.minutes = Math.floor(this.time / 60);
+    this.seconds = this.time - this.minutes * 60 <  10 ? `0${this.time - this.minutes * 60}`  :  this.time - this.minutes * 60;
   }
 
 }

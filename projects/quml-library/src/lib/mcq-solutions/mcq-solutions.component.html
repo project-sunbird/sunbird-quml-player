@@ -3,16 +3,17 @@
         <quml-close></quml-close>
     </div>
     <div class="solution-header">Question</div>
-    <div [innerHtml]="question"></div>
+    <div [innerHtml]="question | safeHtml"></div>
     <div class="solution-header">option</div>
-    <div class="solution-options" *ngFor="let option of options">
-        <div [innerHtml]="option.label"></div>
+    <div class="solution-options" *ngFor="let option of options; let i= index">
+        <div [innerHtml]="option.label | safeHtml" [id]="i"></div>
     </div>
+    <ng-container *ngIf="solutions && solutions.length">
     <div class="solution-header">solutions</div>
     <div *ngIf="!showVideoSolution">
         <div *ngFor="let solution of solutions">
             <ng-container [ngSwitch]="solution.type">
-                <div *ngSwitchCase="'html'" [innerHtml]="solution.value"></div>
+                <div *ngSwitchCase="'html'" [innerHtml]="solution.value | safeHtml"></div>
                 <div *ngSwitchCase="'video'" class="video-container">
                     <video width="400" #solutionVideoPlayer controls [poster]="solution.thumbnail">
                         <source [src]="solution.src" type="video/mp4">
@@ -25,6 +26,7 @@
             </ng-container>
         </div>
     </div>
+</ng-container>
     <div class="scoreboard-button-container">
         <button type="submit" class="scoreboard-quml-btn" (click)="closeSolution()">Done</button>
     </div>

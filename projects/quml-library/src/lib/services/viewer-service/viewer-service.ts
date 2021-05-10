@@ -3,7 +3,9 @@ import { QumlPlayerConfig } from '../../quml-library-interface';
 import { QumlLibraryService } from '../../quml-library.service';
 import { UtilService } from '../../util-service';
 import { eventName, TelemetryType } from '../../telemetry-constants';
-import { QuestionCursor } from '../../quml-abstract.service';
+import { QuestionCursor } from '../../quml-question-cursor.service';
+import * as _ from 'lodash-es';
+import { forkJoin } from 'rxjs';
 
 
 @Injectable({
@@ -78,7 +80,7 @@ export class ViewerService {
     this.qumlLibraryService.start(duration);
   }
 
-  raiseEndEvent(currentQuestionIndex, noOfvisitedQuestions,  endPageSeen) {
+  raiseEndEvent(currentQuestionIndex, noOfvisitedQuestions,  endPageSeen , score) {
     const duration = new Date().getTime() - this.qumlPlayerStartTime;
     const endEvent = {
       eid: 'END',
@@ -94,7 +96,7 @@ export class ViewerService {
     this.qumlPlayerEvent.emit(endEvent);
     const visitedlength = (this.metaData.pagesHistory.filter((v, i, a) => a.indexOf(v) === i)).length;
     this.timeSpent = this.utilService.getTimeSpentText(this.qumlPlayerStartTime);
-    this.qumlLibraryService.end(duration, currentQuestionIndex, this.totalNumberOfQuestions, noOfvisitedQuestions, endPageSeen);
+    this.qumlLibraryService.end(duration, currentQuestionIndex, this.totalNumberOfQuestions, noOfvisitedQuestions, endPageSeen , score);
   }
 
 
@@ -109,15 +111,15 @@ export class ViewerService {
       metaData: this.metaData
     };
     this.qumlPlayerEvent.emit(hearBeatEvent);
-    if (TelemetryType.interact) {
+    if (TelemetryType.interact === telemetryType) {
       this.qumlLibraryService.interact(type.toLowerCase(), pageId);
-    } else if (TelemetryType.impression) {
+    } else if (TelemetryType.impression === telemetryType) {
       this.qumlLibraryService.impression(pageId);
     }
 
   }
   
-  raiseErrorEvent(error: Error) {
+  raiseErrorEvent(error: Error , type?: string) {
     const errorEvent = {
       eid: 'ERROR',
       ver: this.version,
@@ -128,7 +130,9 @@ export class ViewerService {
       metaData: this.metaData
     };
     this.qumlPlayerEvent.emit(errorEvent);
+    if(!type){
     this.qumlLibraryService.error(error);
+    }
   }
 
   raiseAssesEvent(questionData , index , pass , score , resValues , duration){
@@ -144,22 +148,62 @@ export class ViewerService {
     this.qumlLibraryService.startAssesEvent(assessEvent);
   }
 
+  raiseResponseEvent(identifier , qType , optionSelected){
+    const responseEvent = {
+        target: {
+          id: identifier,
+          ver: this.version,
+          type: qType
+        },
+        values: [{
+          optionSelected
+        }]
+    }
+    this.qumlPlayerEvent.emit(responseEvent);
+    this.qumlLibraryService.response(identifier, this.version , qType , optionSelected);
+  }
 
-  getQuestions() {
-    let noOfTimesApiCalled = 0;
-      let indentifersForQuestions = this.identifiers.splice(0, this.threshold);
-      this.questionCursor.getQuestions(indentifersForQuestions).subscribe((question) => {
-        this.qumlQuestionEvent.emit({ question, noOfTimesApiCalled });
-      })
-  } 
+  raiseExceptionLog(errorCode: string , errorType: string , stacktrace , traceId ) {
+    const exceptionLogEvent = {
+      eid: "ERROR",
+      edata: {
+          err: errorCode,
+          errtype: errorType,
+          requestid: traceId || '',
+          stacktrace: stacktrace || '',
+      }
+    }
+    this.qumlPlayerEvent.emit(exceptionLogEvent)
+    this.qumlLibraryService.error(stacktrace, { err: errorCode, errtype: errorType });
+  }
+
+
+  getQuestions(currentIndex?: number  , index?: number) {
+    let indentifersForQuestions;
+    if(currentIndex !== undefined && index) {
+      indentifersForQuestions = this.identifiers.splice(currentIndex, index);
+    }else if(!currentIndex && !index){
+      indentifersForQuestions = this.identifiers.splice(0, this.threshold);
+    }
+    if(!_.isEmpty(indentifersForQuestions)) {
+      const requests = [];
+      const chunkArray = _.chunk(indentifersForQuestions, 10);
+      _.forEach(chunkArray, (value) => {
+        requests.push(this.questionCursor.getQuestions(value));
+      });
+      forkJoin(requests).subscribe(questions => {
+        _.forEach(questions, (value) => {
+          this.qumlQuestionEvent.emit(value);
+        });
+      });
+    }
+  }
 
   getQuestion() {
-    let noOfTimesApiCalled = 0;
-    let indentiferForQuestion = this.identifiers.splice(0 , this.threshold);
-    this.questionCursor.getQuestion(indentiferForQuestion).subscribe((question) => {
-      noOfTimesApiCalled = noOfTimesApiCalled + 1;
-      this.qumlQuestionEvent.emit({ question, noOfTimesApiCalled });
-    })
+    let indentiferForQuestion = this.identifiers.splice(0, this.threshold);
+      this.questionCursor.getQuestion(indentiferForQuestion).subscribe((question) => {
+        this.qumlQuestionEvent.emit(question);
+      })
   }
 
 }

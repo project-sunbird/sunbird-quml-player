@@ -2,8 +2,10 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
-import { QumlLibraryModule } from '@project-sunbird/sunbird-quml-player'
 import {CarouselModule} from 'ngx-bootstrap/carousel';
+import { QuestionCursorImplementationService } from './question-cursor-implementation.service';
+import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml-player-v8';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -12,9 +14,13 @@ import {CarouselModule} from 'ngx-bootstrap/carousel';
   imports: [
     BrowserModule,
     QumlLibraryModule,
-    CarouselModule.forRoot()
+    CarouselModule.forRoot(),
+    HttpClientModule
   ],
-  providers: [],
+  providers: [{
+    provide: QuestionCursor,
+    useClass: QuestionCursorImplementationService
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

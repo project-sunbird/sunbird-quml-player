@@ -84,31 +84,26 @@ export class QumlLibraryService {
       }
     );
   }
-  public end(duration, currentQuestionIndex, totalNoofQuestions, visitedQuestions, endpageseen) {
-    const durationSec = Number((duration / 1e3).toFixed(2));
-    const endEvent = {
-      edata: {
-        type: 'content',
-        mode: 'play',
-        pageid: 'sunbird-player-Endpage',
-        summary: [
-          {
-            progress: Number(((currentQuestionIndex / totalNoofQuestions) * 100).toFixed(0))
-          },
-          {
-            totalNoofQuestions: totalNoofQuestions
-          },
-          {
-            visitedQuestions: visitedQuestions,
-          },
-          {
-            endpageseen
-          }
-        ],
-        duration: durationSec
+
+  public response(identifier, version , type , option){
+    const responseEvent = {
+      target: {
+        id: identifier,
+        ver: version,
+        type: type
       },
-      options: this.getEventOptions()
-    };
+      type: 'CHOOSE',
+      values: [{
+        option
+      }]
+    }
+    CsTelemetryModule.instance.telemetryService.raiseResponseTelemetry(
+      responseEvent, 
+      this.getEventOptions()
+    )
+  }
+  public end(duration, currentQuestionIndex, totalNoofQuestions, visitedQuestions, endpageseen , score) {
+    const durationSec = Number((duration / 1e3).toFixed(2));
     CsTelemetryModule.instance.telemetryService.raiseEndTelemetry({
       edata: {
         type: 'content',
@@ -126,7 +121,10 @@ export class QumlLibraryService {
           },
           {
             endpageseen
-          }
+          },
+          {
+            score
+          },
         ],
         duration: durationSec
       },
@@ -134,12 +132,14 @@ export class QumlLibraryService {
     });
   }
 
-  public interact(id, currentPage) {
+  public interact(id, currentPage , currentQuestionDetails?) {
     CsTelemetryModule.instance.telemetryService.raiseInteractTelemetry({
       options: this.getEventOptions(),
-      edata: { type: 'TOUCH', subtype: '', id, pageid: currentPage + '' }
+      edata: { type: 'TOUCH', subtype: '', id, pageid: currentPage + ''}
     });
   }
+
+
 
   public heartBeat(data) {
     CsTelemetryModule.instance.playerTelemetryService.onHeartBeatEvent(data, {});
@@ -152,7 +152,7 @@ export class QumlLibraryService {
     });
   }
 
-  public error(error: Error) {
+  public error(error: Error , edata?: { err: string, errtype: string }) {
     CsTelemetryModule.instance.telemetryService.raiseErrorTelemetry({
       edata: {
         err: 'LOAD',

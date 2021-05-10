@@ -10,7 +10,7 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() questions?: any;
   @Input() duration?: any;
-  @Input() warningTime?: number;
+  @Input() warningTime?: string;
   @Input() disablePreviousNavigation: boolean;
   @Input() showTimer: boolean;
   @Input() totalNoOfQuestions: any;
@@ -18,11 +18,13 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
   @Input() active: boolean;
   @Input() initializeTimer: boolean;
   @Input() endPageReached: boolean;
+  @Input() replayed: boolean;
   @Output() nextSlideClicked = new EventEmitter<any>();
   @Output() prevSlideClicked = new EventEmitter<any>();
   @Output() durationEnds = new EventEmitter<any>();
+  @Input() disableNext?: boolean;
   minutes: number;
-  seconds: number;
+  seconds: string | number;
   private intervalRef?;
   showWarning = false;
 
@@ -33,17 +35,24 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnInit() {
     if (this.duration && this.showTimer) {
-      const durationInSec = this.duration;
-      this.minutes = ~~(durationInSec / 60);
-      this.seconds = (durationInSec % 60);
+      this.minutes = Math.floor(this.duration / 60);
+      this.seconds = this.duration - this.minutes * 60 <  10 ? `0${this.duration - this.minutes * 60}`  :  this.duration - this.minutes * 60;
     }
   }
 
   ngOnChanges() {
     if (this.duration && this.showTimer && this.initializeTimer && !this.intervalRef) {
       this.timer();
-    } else if(this.duration === undefined && this.showTimer && this.initializeTimer && !this.intervalRef) {
-       this.showCountUp();
+    } else if (this.duration === 0 && this.showTimer && this.initializeTimer && !this.intervalRef) {
+      this.showCountUp();
+    }
+    if (this.replayed && this.duration && this.showTimer) {
+      this.showWarning = false;
+      clearInterval(this.intervalRef)
+      this.timer();
+    } else if (this.replayed && this.duration === 0 && this.showTimer) {
+      clearInterval(this.intervalRef)
+      this.showCountUp();
     }
   }
 
@@ -54,7 +63,9 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   nextSlide() {
+    if (!this.disableNext) {
       this.nextSlideClicked.emit({ type: 'next' });
+    }
   }
 
   prevSlide() {
@@ -84,10 +95,11 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
         this.time = min + ':' + sec;
       }
       if (durationInSec === 0) {
+        clearInterval(this.intervalRef);
         this.durationEnds.emit(true);
         return false;
-      }      
-      if (durationInSec <= this.warningTime) {
+      }   
+      if (parseInt(durationInSec) <= parseInt(this.warningTime)) {
         this.showWarning = true;
       }
       durationInSec--;

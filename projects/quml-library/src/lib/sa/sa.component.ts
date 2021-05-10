@@ -14,6 +14,7 @@ export class SaComponent implements OnInit {
 
   @Input() questions?: any;
   @Output() componentLoaded = new EventEmitter<any>();
+  @Output() showAnswerClicked = new EventEmitter<any>();
   showAnswer = false;
   solutions: any;
   question: any;
@@ -24,16 +25,25 @@ export class SaComponent implements OnInit {
 
   }
 
+  showAnswerToUser(){
+    this.showAnswer = true;
+    this.showAnswerClicked.emit({
+      showAnswer: this.showAnswer
+    })
+  }
+
   ngOnInit() {
     this.question = this.questions.body;
     this.answer = this.questions.answer;
     this.solutions = this.questions.solutions;
     this.questions.solutions.forEach(ele => {
-      if (ele.type === 'video') {
+      if (ele.type === 'video' || ele.type === 'image') {
         this.questions.media.forEach(e => {
           if (ele.value === e.id) {
-            ele.src = e.src;
-            ele.thumbnail = e.thumbnail;
+            ele.src = e.baseUrl ? e.baseUrl + e.src : e.src;
+            if (e.thumbnail) {
+              ele.thumbnail = e.thumbnail;
+            }
           }
         });
       }

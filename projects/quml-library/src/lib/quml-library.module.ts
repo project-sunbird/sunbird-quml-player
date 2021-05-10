@@ -33,8 +33,9 @@ import { DurationtimerComponent } from './icon/durationtimer/durationtimer.compo
 import { AudioComponent } from './icon/audio/audio.component';
 import { WrongComponent } from './icon/wrong/wrong.component';
 import { MenuComponent } from './icon/menu/menu.component';
-import {SunbirdPlayerSdkModule} from '@project-sunbird/sunbird-player-sdk';
+import {SunbirdPlayerSdkModule} from '@project-sunbird/sunbird-player-sdk-v8';
 import { QumlLibraryService } from './quml-library.service';
+import { SafeHtmlPipe } from './pipes/safe-html/safe-html.pipe'
 
 
 @NgModule({
@@ -71,6 +72,7 @@ import { QumlLibraryService } from './quml-library.service';
     AudioComponent,
     WrongComponent,
     MenuComponent,
+    SafeHtmlPipe,
   ],
   imports: [
     CommonModule,

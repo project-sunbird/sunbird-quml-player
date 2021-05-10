@@ -1,17 +1,22 @@
-<div class="quml-container" *ngIf="loadView && questions.length > 0">
-  <div [hidden]="showSolution">
-    <quml-header class="main-header" (durationEnds)="endPageReached = true"
+<div class="quml-container" *ngIf="loadView" [hidden]="showZoomModal">
+  <div class="endPage-container">
+    <sb-player-end-page *ngIf="endPageReached && showEndPage" [contentName]="contentName" [outcome]="finalScore"
+      [outcomeLabel]="'Score: '" [userName]="userName" [timeSpentLabel]="durationSpent"
+      (replayContent)="replayContent()" (exitContent)="exitContent($event)" [showExit]="sideMenuConfig.showExit"></sb-player-end-page>
+  </div>
+  <div [hidden]="showSolution" class="quml-landscape">
+    <quml-header class="main-header" (durationEnds)="durationEnds()"
       [disablePreviousNavigation]="linearNavigation" [duration]="timeLimit" [warningTime]="warningTime" [showTimer]="showTimer"
       (nextSlideClicked)="nextSlideClicked($event)" (prevSlideClicked)="previousSlideClicked($event)"
       [currentSlideIndex]="currentSlideIndex" [totalNoOfQuestions]="noOfQuestions" [active]="active"
-      [endPageReached]="endPageReached" [initializeTimer]="initializeTimer" [hidden]="endPageReached">
+      [endPageReached]="endPageReached" [initializeTimer]="initializeTimer" [hidden]="endPageReached" [replayed]="replayed" [disableNext]="disableNext">
     </quml-header>
     <sb-player-side-menu-icon class="notVisible"></sb-player-side-menu-icon>
     <sb-player-sidebar [title]="contentName" (sidebarEvent)="sideBarEvents($event)" [config]="sideMenuConfig">
     </sb-player-sidebar>
     <div class="landscape-mode" [hidden]="endPageReached">
       <div class="lanscape-mode-left">
-        <div class="current-slide">
+        <div class="current-slide" [hidden]="loadScoreBoard">
           {{car.getCurrentSlideIndex()}}/{{noOfQuestions}}
         </div>
         <!-- Not in scope ,  later release-->
@@ -29,40 +34,44 @@
           <quml-ans (click)="getSolutions()"></quml-ans>
         </div>
       </div>
-      <carousel class="landscape-center" [interval]="slideInterval" [showIndicators]="showIndicator"
-        [noWrap]="noWrapSlides" #car [hidden]="endPageReached || loadScoreBoard">
-        <slide> 
-          <quml-startpage [instructions]="startPageInstruction" [totalNoOfQuestions]="noOfQuestions"
-            [points]="points" [time]="timeLimit" [contentName]="contentName"></quml-startpage>
-        </slide>
-        <slide *ngFor="let question of questions; let i= index">
-          <div *ngIf="question?.primaryCategory.toLowerCase() === 'multiple choice question'">
-            <quml-mcq [question]='question' (optionSelected)="getOptionSelected($event)" [identifier]="question.id"
-            ></quml-mcq>
+      <div class="landscape-content">
+        <carousel class="landscape-center" [interval]="slideInterval" [showIndicators]="showIndicator"
+          [noWrap]="noWrapSlides" #car [hidden]="endPageReached || loadScoreBoard">
+          <slide> 
+            <quml-startpage [instructions]="startPageInstruction" [totalNoOfQuestions]="noOfQuestions"
+              [points]="points" [time]="timeLimit" [contentName]="contentName" [showTimer]="showTimer"></quml-startpage>
+          </slide>
+          <slide *ngFor="let question of questions; let i= index">
+            <div [id]="question.identifier">
+            <div *ngIf="question?.primaryCategory.toLowerCase() === 'multiple choice question'">
+              <quml-mcq [question]='question' [replayed]="replayed" (optionSelected)="getOptionSelected($event)" [identifier]="question.id"
+              ></quml-mcq>
+            </div>
+            <div *ngIf="question?.primaryCategory.toLowerCase() === 'subjective question'">
+              <quml-sa [questions]='question' (showAnswerClicked)="showAnswerClicked($event)"></quml-sa>
+            </div>
           </div>
-          <div *ngIf="question?.primaryCategory.toLowerCase() === 'subjective question'">
-            <quml-sa [questions]='question'></quml-sa>
-          </div>
-        </slide>
-      </carousel>
+          </slide>
+        </carousel>
+      </div>
       <div class="lanscape-mode-right" [hidden]="endPageReached">
         <ul *ngIf="!showFeedBack">
           <li [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlide(0)">i</li>
-          <ng-container *ngIf="startPageInstruction">
+          <ng-container *ngIf="startPageInstruction ">
             <li *ngFor="let question of progressBarClass; let i = index"
-              [ngClass]="loadScoreBoard ? 'att-color' : (i) === car.getCurrentSlideIndex() ? 'progressBar-border': (i) < car.getCurrentSlideIndex()  ? 'att-color' : '' "
-              (click)="goToSlide(i+1)" >{{i+1}}</li>
+              [ngClass]="loadScoreBoard ? 'att-color' : (i + 1) === car.getCurrentSlideIndex() ? 'progressBar-border': (i + 1) < car.getCurrentSlideIndex()  ? 'att-color' : '' "
+              (click)="goToSlide(question.index)" >{{question.index}}</li>
           </ng-container>
           <ng-container *ngIf="!startPageInstruction">
             <li *ngFor="let question of progressBarClass; let i = index"
               [ngClass]="loadScoreBoard ? 'att-color' : (i + 1) === car.getCurrentSlideIndex() ? 'progressBar-border': (i + 1) < car.getCurrentSlideIndex()  ? 'att-color' : '' "
-              (click)="goToSlide(i)">{{i+1}}</li>
+              (click)="goToSlide(question.index)">{{question.index}}</li>
           </ng-container>
             <li *ngIf="!loadScoreBoard && requiresSubmit" (click)="loadScoreBoard = true;"><img src="./assets/flag_inactive.svg"></li>
             <li *ngIf="loadScoreBoard && requiresSubmit"><img src="./assets/flag_active.svg"></li>
         </ul>
         <ul *ngIf="showFeedBack">
-          <li [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlide(0)">i
+          <li *ngIf="showStartPage" [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlide(0)">i
           </li>
           <ng-container *ngIf="startPageInstruction">
             <li *ngFor="let q of progressBarClass; let i = index" class="showFeedBack-progressBar"
@@ -76,26 +85,34 @@
               (click)="goToSlide(q.index)">
               {{q.index}}</li>
           </ng-container>
-            <li *ngIf="!loadScoreBoard && requiresSubmit " (click)="loadScoreBoard = true;"><img src="./assets/flag_inactive.svg"></li>
+            <li *ngIf="!loadScoreBoard && requiresSubmit " (click)="loadScoreBoard = true; disableNext = true;"><img src="./assets/flag_inactive.svg"></li>
             <li *ngIf="loadScoreBoard && requiresSubmit"><img src="./assets/flag_active.svg"></li>
         </ul>
       </div>
     </div>
   </div>
-  <div class="endPage-container">
-    <sb-player-end-page *ngIf="endPageReached" [contentName]="contentName" [outcome]="finalScore"
-      [outcomeLabel]="'score'" [userName]="userName" [timeSpentLabel]="durationSpent"
-      (replayContent)="replayContent()" (exitContent)="exitContent($event)" [showExit]="true"></sb-player-end-page>
-  </div>
   <quml-scoreboard *ngIf="loadScoreBoard && requiresSubmit && !endPageReached"
     (submitClicked)="inScoreBoardSubmitClicked()" [contentName]="contentName" [scores]="progressBarClass" [totalNoOfQuestions]="questions.length"
     [showFeedBack]="showFeedBack" (emitQuestionNo)="goToQuestion($event)" (scoreBoardLoaded)="scoreBoardLoaded($event)"
      ></quml-scoreboard>
-  <quml-alert *ngIf="showAlert && showFeedBack" [alertType]="alertType" [showSolutionButton]="showUserSolution"
-    (showSolution)="viewSolution()" (closeAlert)="closeAlertBox($event)"></quml-alert>
+  <quml-alert *ngIf="showAlert && showFeedBack" [alertType]="alertType" [isHintAvailable]="showHints" [showSolutionButton]="showUserSolution"
+    (showSolution)="viewSolution()" (showHint)="viewHint()" (closeAlert)="closeAlertBox($event)"></quml-alert>
   <quml-mcq-solutions [hidden]="!showSolution" [question]="currentQuestion" [options]="currentOptions"
     [solutions]="currentSolutions" (close)="closeSolution()"></quml-mcq-solutions>
 </div>
 <div class="info-popup" *ngIf="infoPopup">
    Please attempt the question
+</div>
+
+<!-- Zoom -->
+<div class="image-viewer__overlay" [hidden]="!showZoomModal">
+  <div class="image-viewer__close" (click)="closeZoom()">
+  </div>
+  <div class="image-viewer__container">
+    <img  #modalImage id="modalImage" class="image-viewer__img" src="{{zoomImgSrc}}" alt="image">
+  </div>
+  <div class="image-viewer__zoom">
+    <div class="image-viewer__zoomin" (click)="zoomin()"></div>
+    <div class="image-viewer__zoomout" (click)="zoomout()"></div>
+  </div>
 </div>

@@ -6,6 +6,18 @@
   position: fixed;
 }
 
+.quml-container {
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.quml-landscape {
+  width: 100%;
+  height: 100%;
+}
+
 .att-color{
   background-color: var(--primary-color) !important;
   border: 1px solid var(--primary-color) !important;
@@ -47,20 +59,24 @@
 }
 
 .landscape-mode {
-  display: grid;
-  grid-template-columns: 1fr 20fr 1fr;
-  grid-gap: 1em;
-  justify-items: center;
-  padding: 16px;
-  grid-template-areas: 'left center right';
-  padding-top:56px;
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+.landscape-content {
+  padding: 40px 56px 0 64px;
+  overflow: auto;
+  height: 100%;
+  width: 100%;
 }
 
 .lanscape-mode-left {
   position: absolute;
-  margin-top: 16px;
-  grid-area: left;
+  left: 24px;
+  top: 56px;
   text-align: center;
+  z-index: 1;
 }
 
 .lanscape-mode-left div {
@@ -68,19 +84,17 @@
 }
 
 .landscape-center {
-  grid-area: center;
-  margin-top: -1rem;
   width: 100%;
 }
 
 .lanscape-mode-right {
   position: absolute;
-  right: 20px;
+  right: 16px;
   color: #ababab;
-  font-size: 13px;
-  height: 78vh;
+  font-size: 12px;
+  height: calc(100% - 64px);
   overflow-y: scroll;
-  grid-area: right;
+  top: 56px;
 }
 
 .lanscape-mode-right ul {
@@ -127,10 +141,8 @@
 .lanscape-mode-right li:hover,
 .lanscape-mode-right li.active {
   border: 1px solid!important;
-  color: var(--white) !important;
   border-style: double !important;
   border-width: 3px !important;
-  background-color: white;
 }
 
 @media only screen and (max-width: 480px) {
@@ -168,6 +180,7 @@
     // background-color: #fff;
     // border: 1px solid rgba(204, 204, 204, .5);
     margin-right: 48px;
+    z-index: 1;
     &:last-child {
       margin-right: 0px;
     }
@@ -178,10 +191,8 @@
 
   .lanscape-mode-right li:hover {
     border: 1px solid!important;
-    color: var(--white) !important;
     border-style: double !important;
     border-width: 3px !important;
-    background-color: white;
   }
 
   .lanscape-mode-right ul::before {
@@ -194,7 +205,7 @@
     transform: translate(0, -50%);
     right: 0;
     background-color: rgba(204, 204, 204, .5);
-    z-index: -1;
+    z-index: 0;
     margin: 0 auto;
   }
 
@@ -373,7 +384,6 @@
   color: var(--primary-color)!important;
   border-style: double !important;
   border-width: 3px !important;
-  background-color: white;
   &.wrong:hover , &.correct:hover {
     border-color: 1px solid var(--primary-color) !important;
     color: white !important;
@@ -395,4 +405,122 @@
 .skipped {
   color: #ABABAB;
   border: 0.5px solid #ABABAB;
+}
+
+.image-viewer {
+  &__overlay, &__container, &__close, &__zoom {
+    position: absolute;
+  }
+  &__overlay {
+    width: 100%;
+    height: 100%;
+    background: #333;
+    z-index: 11111;
+  }
+  &__container {
+    background-color: white;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 11111;
+    width: 80%;
+    height: 80%;
+    overflow: auto;
+  }
+  &__img {
+    width: 100%;
+    height: 100%;
+  }
+  &__close {
+    top: 8px;
+    right: 16px;
+    text-align: center;
+    cursor: pointer;
+    &::after {
+      content: '\2715';
+      color: white;
+      font-size: 32px;
+    }
+  }
+  &__zoom {
+    bottom: 16px;
+    right: 16px;
+    width: 28px;
+    height: 64px;
+    border-radius: 4px;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+  }
+  &__zoomin, &__zoomout {
+    text-align: center;
+    height: 37px;
+    position: relative;
+    width: 100%;
+    cursor: pointer;
+    &:hover {
+      background-color: #f2f2f2;
+    }
+    &::after {
+      font-size: 24px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
+  &__zoomin {
+    border-bottom: 1px solid #ccc;
+    &::after {
+      content: '\002B';
+    }
+  }
+  &__zoomout {
+    &::after {
+      content: '\2212';
+    }
+  }
+}
+
+::ng-deep {
+  .magnify-icon {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: calculateRem(22px);
+    height: calculateRem(22px);
+    border-top-left-radius: calculateRem(8px);
+    cursor: pointer;
+    background-color: #333;
+  }
+
+  .magnify-icon::after {
+    content: '';
+    position: absolute;
+    bottom: calculateRem(2px);
+    right: calculateRem(2px);
+    z-index: 1;
+    width: calculateRem(16px);
+    height: calculateRem(16px);
+    background-image: url('assets/zoom-icon.svg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  figure.image {
+    border: 1px solid #ccc;
+    overflow: hidden;
+    border-radius: 4px;
+    position: relative;
+    width: 120px;
+    height: 120px;
+  }
+
+  .option-image {
+    height: 100%;
+    width: 100%;
+  }
 }
