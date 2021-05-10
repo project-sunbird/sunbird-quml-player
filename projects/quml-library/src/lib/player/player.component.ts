@@ -414,6 +414,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
           this.viewerService.raiseAssesEvent(edataItem, currentIndex, 'Yes', this.currentScore, [option.option], new Date().getTime());
           this.showAlert = true;
           this.alertType = 'correct';
+          this.correctFeedBackTimeOut();
           this.updateScoreBoard(currentIndex, 'correct', undefined, this.currentScore);
         } else if (!Boolean(option.option.value.value == correctOptionValue)) {
           this.currentScore = this.getScore(currentIndex, key, false, option);
@@ -461,7 +462,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       this.nextSlide();
     }
   }
-
 
   infopopupTimeOut() {
     this.infoPopup = true;
@@ -522,7 +522,12 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       this.showAlert = false;
       if (!this.car.isLast(this.car.getCurrentSlideIndex())) {
         this.nextSlide();
-      } else if (this.car.isLast(this.car.getCurrentSlideIndex())) {
+      }       
+      else if (this.car.isLast(this.car.getCurrentSlideIndex()) && this.requiresSubmit) {
+        this.loadScoreBoard = true;
+        this.disableNext = true;
+      }      
+      else if (this.car.isLast(this.car.getCurrentSlideIndex())) {
         this.endPageReached = true;
         this.calculateScore();
       }

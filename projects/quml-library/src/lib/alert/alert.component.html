@@ -19,7 +19,7 @@
       <img class="quml-alert__banner" src="../assets/banner-wrong.svg">
       <div class="quml-alert__try-again">
         <span *ngIf="alertType === 'wrong'" (click)="closeAlert.emit({type:'tryAgain'})">Try again</span>
-        <span *ngIf="alertType === 'correct' && showSolutionButton" (click)="viewSolution()">View Solution</span>
+        <span *ngIf="alertType === 'correct' && showSolutionButton" (click)="viewSolution()">Show Solution</span>
         <span *ngIf="alertType === 'correct' && !showSolutionButton">Correct</span>
       </div>
       <div *ngIf="isHintAvailable" class="quml-alert__view-hint quml-alert__view-hint--disabled">
