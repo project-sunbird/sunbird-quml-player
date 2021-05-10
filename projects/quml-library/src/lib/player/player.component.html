@@ -30,7 +30,7 @@
           <quml-share></quml-share>
         </div> -->
         <!-- Not in scope -->
-        <div *ngIf="currentSolutions"> 
+        <div *ngIf="currentSolutions && showUserSolution"> 
           <quml-ans (click)="getSolutions()"></quml-ans>
         </div>
       </div>
@@ -48,7 +48,7 @@
               ></quml-mcq>
             </div>
             <div *ngIf="question?.primaryCategory.toLowerCase() === 'subjective question'">
-              <quml-sa [questions]='question' (showAnswerClicked)="showAnswerClicked($event)"></quml-sa>
+              <quml-sa [questions]='question' [replayed]="replayed" (showAnswerClicked)="showAnswerClicked($event)"></quml-sa>
             </div>
           </div>
           </slide>
