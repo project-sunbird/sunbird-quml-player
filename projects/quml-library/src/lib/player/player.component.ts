@@ -204,7 +204,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       skipped: _.get(classObj, 'skipped.length') || 0,
       unattempted: _.get(classObj, 'unattempted.length') || 0,
       correct: _.get(classObj, 'correct.length') || 0,
-      wrong: _.get(classObj, 'wrong.length') || 0
+      wrong: _.get(classObj, 'wrong.length') || 0,
+      partial: _.get(classObj, 'partial.length') || 0
     };
     return questionObj;
   }
@@ -245,7 +246,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     if (this.loadScoreBoard) {
       this.endPageReached = true;
       let questionObj = this.createQuestionObj();
-      this.viewerService.raiseEndEvent(this.car.getCurrentSlideIndex(), this.car.getCurrentSlideIndex() - 1, this.endPageReached, this.finalScore, questionObj);
+      this.viewerService.raiseEndEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore, questionObj);
     }
     if (this.currentSlideIndex !== this.questions.length) {
       this.currentSlideIndex = this.currentSlideIndex + 1;
@@ -263,7 +264,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       if (!this.requiresSubmit && this.showEndPage) {
         this.endPageReached = true;
         let questionObj = this.createQuestionObj();
-        this.viewerService.raiseEndEvent(this.car.getCurrentSlideIndex(), this.car.getCurrentSlideIndex() - 1, this.endPageReached, this.finalScore, questionObj);
+        this.viewerService.raiseEndEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore, questionObj);
       }
     }
     if (this.car.isLast(this.car.getCurrentSlideIndex()) || this.noOfQuestions === this.car.getCurrentSlideIndex()) {
@@ -354,7 +355,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     if (!this.showFeedBack) {
       this.validateSelectedOption(this.optionSelectedObj);
     }
-    // 
   }
 
   closeAlertBox(event) {
@@ -382,7 +382,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     if (event.type === 'EXIT') {
       this.viewerService.raiseHeartBeatEvent(eventName.endPageExitClicked, TelemetryType.interact, 'endPage');
       let questionObj = this.createQuestionObj();
-      this.viewerService.raiseEndEvent(this.car.getCurrentSlideIndex(), this.car.getCurrentSlideIndex() - 1, this.endPageReached, this.finalScore, questionObj);
+      this.viewerService.raiseEndEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore, questionObj);
     }
   }
 
@@ -399,7 +399,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.showAlert = false;
     this.endPageReached = true;
     let questionObj = this.createQuestionObj();
-    this.viewerService.raiseEndEvent(this.car.getCurrentSlideIndex(), this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore, questionObj);
+    this.viewerService.raiseEndEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore, questionObj);
   }
 
   async validateSelectedOption(option, type?: string) {
@@ -430,7 +430,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
           this.viewerService.raiseAssesEvent(edataItem, currentIndex, 'No', this.currentScore, [option.option], new Date().getTime());
           this.showAlert = true;
           this.alertType = 'wrong';
-          this.updateScoreBoard(currentIndex, 'wrong', selectedOptionValue, this.currentScore);
+          let classType = this.progressBarClass[currentIndex].class === 'partial' ? 'partial': 'wrong';
+          this.updateScoreBoard(currentIndex, classType, selectedOptionValue, this.currentScore);
         }
       }
       if (option.cardinality === 'multiple') {
@@ -683,6 +684,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
         mapping.forEach((val) => {
           if (selectedOptionValue === val.response) {
             score = val.outcomes.SCORE || 0;
+            if (val.outcomes.SCORE) {
+              this.progressBarClass[currentIndex].class = 'partial'; 
+            }
           }
         });
         return score;
@@ -757,7 +761,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   ngOnDestroy() {
     this.calculateScore();
     let questionObj = this.createQuestionObj();
-    this.viewerService.raiseEndEvent(this.currentSlideIndex, this.attemptedQuestions.length, this.endPageReached, this.finalScore, questionObj);
+    this.viewerService.raiseEndEvent(this.currentSlideIndex, this.endPageReached, this.finalScore, questionObj);
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
     this.errorService.getInternetConnectivityError.unsubscribe();
