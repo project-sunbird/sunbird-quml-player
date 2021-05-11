@@ -15,7 +15,7 @@
         right: 0;
         border-radius: 8px;
         box-shadow: 0 2px 14px 0 rgba(0, 0, 0, .1);
-        padding: 8px 24px;
+        padding: 8px 24px 8px 16px;
         -webkit-animation-name: example;
         animation-name: example;
         -webkit-animation-timing-function: ease-in;
@@ -23,7 +23,7 @@
         -webkit-animation-duration: .3s;
         animation-duration: .3s;
         margin: 0 auto 8px;
-        width: 344px;
+        width: 372px;
         background: linear-gradient(145deg, #FFD555, #FFD555 60%, #f6bc42 60%);
         @media only screen and (max-width: 480px) {
             position: absolute;
@@ -87,17 +87,21 @@
         z-index: 3;
         height: 35px;
     }
-    &__try-again {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        right: 18%;
+    &__solution-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: calc(100% - 122px);
+    }
+    &__try-again, &__view-solution {
+        cursor: pointer;
         background: white;
         padding: 8px 16px;
         border-radius: 16px;
         font-size: 12px;
         color: #FA6400;
         box-shadow: 0 2px 14px 0 rgba(250, 100, 0, 0.6);
+        margin-left: 8px;
     }
     &__view-hint {
         width: 32px;

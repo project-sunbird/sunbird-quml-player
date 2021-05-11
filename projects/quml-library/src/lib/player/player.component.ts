@@ -96,6 +96,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   imageZoomCount = 100;
   traceId: string;
   outcomeLabel: string;
+  stopAutoNavigation: boolean;
+  jumpSlideIndex: any;
 
   constructor(
     public viewerService: ViewerService,
@@ -298,8 +300,12 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   prevSlide() {
     this.disableNext = false;
+    this.currentSolutions = undefined;
     this.viewerService.raiseHeartBeatEvent(eventName.prevClicked, TelemetryType.interact, this.car.getCurrentSlideIndex() - 1);
     this.showAlert = false;
+    if (this.currentSlideIndex !== this.questions.length) {
+      this.currentSlideIndex = this.currentSlideIndex + 1;
+    }
     if (this.car.getCurrentSlideIndex() + 1 === this.noOfQuestions && this.endPageReached) {
       this.endPageReached = false;
     } else if (!this.loadScoreBoard) {
@@ -345,7 +351,10 @@ export class PlayerComponent implements OnInit, AfterViewInit {
         }
       })
     }
-    this.validateSelectedOption(this.optionSelectedObj);
+    if (!this.showFeedBack) {
+      this.validateSelectedOption(this.optionSelectedObj);
+    }
+    // 
   }
 
   closeAlertBox(event) {
@@ -393,7 +402,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.viewerService.raiseEndEvent(this.car.getCurrentSlideIndex(), this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore, questionObj);
   }
 
-  async validateSelectedOption(option) {
+  async validateSelectedOption(option, type?: string) {
     const selectedOptionValue = option ? option.option.value : undefined;
     const currentIndex = this.car.getCurrentSlideIndex() - 1;
     let updated = false;
@@ -414,7 +423,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
           this.viewerService.raiseAssesEvent(edataItem, currentIndex, 'Yes', this.currentScore, [option.option], new Date().getTime());
           this.showAlert = true;
           this.alertType = 'correct';
-          this.correctFeedBackTimeOut();
+          this.correctFeedBackTimeOut(type);
           this.updateScoreBoard(currentIndex, 'correct', undefined, this.currentScore);
         } else if (!Boolean(option.option.value.value == correctOptionValue)) {
           this.currentScore = this.getScore(currentIndex, key, false, option);
@@ -431,7 +440,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
         if (this.currentScore > 0) {
           if (this.showFeedBack) {
             this.updateScoreBoard(((currentIndex + 1)), 'correct', undefined, this.currentScore);
-            this.correctFeedBackTimeOut();
+            this.correctFeedBackTimeOut(type);
             this.showAlert = true;
             this.alertType = 'correct';
           } else if (!this.showFeedBack) {
@@ -517,21 +526,23 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     }
   }
 
-  correctFeedBackTimeOut() {
+  correctFeedBackTimeOut(type?: string) {
     this.intervalRef = setTimeout(() => {
       this.showAlert = false;
-      if (!this.car.isLast(this.car.getCurrentSlideIndex())) {
+      if (!this.car.isLast(this.car.getCurrentSlideIndex()) && type === 'next') {
         this.nextSlide();
-      }       
-      else if (this.car.isLast(this.car.getCurrentSlideIndex()) && this.requiresSubmit) {
+      } else if (type === 'previous' && !this.stopAutoNavigation) {
+        this.prevSlide();
+      } else if (type === 'jump' && !this.stopAutoNavigation) {
+        this.goToSlide(this.jumpSlideIndex);
+      } else if (this.car.isLast(this.car.getCurrentSlideIndex()) && this.requiresSubmit) {
         this.loadScoreBoard = true;
         this.disableNext = true;
-      }      
-      else if (this.car.isLast(this.car.getCurrentSlideIndex())) {
+      }else if (this.car.isLast(this.car.getCurrentSlideIndex())) {
         this.endPageReached = true;
         this.calculateScore();
       }
-    }, 3000)
+    }, 4000)
   }
 
   nextSlideClicked(event) {
@@ -539,17 +550,36 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       return this.nextSlide();
     }
     if (event.type === 'next') {
-      this.validateSelectedOption(this.optionSelectedObj);
+      this.validateSelectedOption(this.optionSelectedObj, 'next');
     }
   }
 
   previousSlideClicked(event) {
     if (event = 'previous clicked') {
-      this.prevSlide();
+      if (this.optionSelectedObj && this.showFeedBack) {
+        this.stopAutoNavigation = false;
+        this.validateSelectedOption(this.optionSelectedObj, 'previous');
+      } else {
+        this.stopAutoNavigation = true;
+        this.prevSlide();
+      }
     }
   }
 
+  goToSlideClicked(index) {
+    this.jumpSlideIndex = index;
+    if (this.optionSelectedObj && this.showFeedBack) {
+      this.stopAutoNavigation = false;
+      this.validateSelectedOption(this.optionSelectedObj, 'jump');
+    } else {
+      this.stopAutoNavigation = true;
+      this.goToSlide(this.jumpSlideIndex);
+    }
+
+  }
+
   replayContent() {
+    this.stopAutoNavigation = false;
     this.initializeTimer = true;
     this.replayed = true;
     this.initialTime = new Date().getTime();

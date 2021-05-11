@@ -56,33 +56,33 @@
       </div>
       <div class="lanscape-mode-right" [hidden]="endPageReached">
         <ul *ngIf="!showFeedBack && !disableNext">
-          <li [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlide(0)">i</li>
+          <li [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlideClicked(0)">i</li>
           <ng-container *ngIf="startPageInstruction ">
             <li *ngFor="let question of progressBarClass; let i = index"
             [ngClass]="(i+1) === car.getCurrentSlideIndex() ? 'progressBar-border': question.class === 'skipped' ? question.class: question.class === 'unattempted' ? '' : 'att-color'"
-            (click)="goToSlide(question.index)" >{{question.index}}</li>
+            (click)="goToSlideClicked(question.index)" >{{question.index}}</li>
           </ng-container>
           <ng-container *ngIf="!startPageInstruction">
             <li *ngFor="let question of progressBarClass; let i = index"
               [ngClass]="(i+1) === car.getCurrentSlideIndex() ? 'progressBar-border': question.class === 'skipped' ? question.class: question.class === 'unattempted' ? '' : 'att-color'"
-              (click)="goToSlide(question.index)">{{question.index}}</li>
+              (click)="goToSlideClicked(question.index)">{{question.index}}</li>
           </ng-container>
             <li *ngIf="!loadScoreBoard && requiresSubmit" (click)="loadScoreBoard = true; disableNext = true;"><img src="./assets/flag_inactive.svg"></li>
             <li *ngIf="loadScoreBoard && requiresSubmit"><img src="./assets/flag_active.svg"></li>
         </ul>
         <ul *ngIf="showFeedBack && !disableNext">
-          <li *ngIf="showStartPage" [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlide(0)">i
+          <li *ngIf="showStartPage" [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlideClicked(0)">i
           </li>
           <ng-container *ngIf="startPageInstruction">
             <li *ngFor="let q of progressBarClass; let i = index" class="showFeedBack-progressBar"
               [ngClass]="loadScoreBoard ? q.class : (i+1) === car.getCurrentSlideIndex() ? 'progressBar-border' : q.class"
-              (click)="goToSlide(q.index)">
+              (click)="goToSlideClicked(q.index)">
               {{q.index}}</li>
           </ng-container>
           <ng-container *ngIf="!startPageInstruction">
             <li *ngFor="let q of progressBarClass; let i = index" class="showFeedBack-progressBar"
               [ngClass]="loadScoreBoard ? q.class : (i + 1) === car.getCurrentSlideIndex() ? 'progressBar-border' : q.class"
-              (click)="goToSlide(q.index)">
+              (click)="goToSlideClicked(q.index)">
               {{q.index}}</li>
           </ng-container>
             <li *ngIf="!loadScoreBoard && requiresSubmit " (click)="loadScoreBoard = true; disableNext = true;"><img src="./assets/flag_inactive.svg"></li>

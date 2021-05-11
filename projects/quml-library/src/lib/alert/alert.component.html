@@ -17,11 +17,20 @@
       </div>
       <div class="quml-alert__icon-empty"></div>
       <img class="quml-alert__banner" src="../assets/banner-wrong.svg">
-      <div class="quml-alert__try-again">
-        <span *ngIf="alertType === 'wrong'" (click)="closeAlert.emit({type:'tryAgain'})">Try again</span>
-        <span *ngIf="alertType === 'correct' && showSolutionButton" (click)="viewSolution()">Show Solution</span>
-        <span *ngIf="alertType === 'correct' && !showSolutionButton">Correct</span>
+      
+
+      <div class="quml-alert__solution-container">
+        <div class="quml-alert__try-again" *ngIf="alertType === 'wrong' || alertType === 'correct' && !showSolutionButton">
+          <span *ngIf="alertType === 'wrong'" (click)="closeAlert.emit({type:'tryAgain'})">Try again</span>
+          <span *ngIf="alertType === 'correct' && !showSolutionButton">Correct</span>
+        </div>
+        <div class="quml-alert__view-solution">
+          <span *ngIf="showSolutionButton" (click)="viewSolution()">Show Solution</span>
+        </div>
+
+
       </div>
+
       <div *ngIf="isHintAvailable" class="quml-alert__view-hint quml-alert__view-hint--disabled">
         <!-- <img class="view-hint-icon" (click)="viewHint()" src="../assets/view-hint.svg"> -->
       </div>
