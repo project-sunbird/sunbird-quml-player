@@ -198,16 +198,16 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     });
   }
 
-  createQuestionObj() {
+  createSummaryObj() {
     let classObj = _.groupBy(this.progressBarClass, 'class');
-    let questionObj = {
+    let summaryEventObj = {
       skipped: _.get(classObj, 'skipped.length') || 0,
       unattempted: _.get(classObj, 'unattempted.length') || 0,
       correct: _.get(classObj, 'correct.length') || 0,
       wrong: _.get(classObj, 'wrong.length') || 0,
       partial: _.get(classObj, 'partial.length') || 0
     };
-    return questionObj;
+    return summaryEventObj;
   }
 
   ngAfterViewInit() {
@@ -245,8 +245,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
     if (this.loadScoreBoard) {
       this.endPageReached = true;
-      let questionObj = this.createQuestionObj();
-      this.viewerService.raiseEndEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore, questionObj);
+      let summaryEventObj = this.createSummaryObj();
+      this.viewerService.raiseEndEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore, summaryEventObj);
     }
     if (this.currentSlideIndex !== this.questions.length) {
       this.currentSlideIndex = this.currentSlideIndex + 1;
@@ -263,8 +263,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
       if (!this.requiresSubmit && this.showEndPage) {
         this.endPageReached = true;
-        let questionObj = this.createQuestionObj();
-        this.viewerService.raiseEndEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore, questionObj);
+        let summaryEventObj = this.createSummaryObj();
+        this.viewerService.raiseEndEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore, summaryEventObj);
       }
     }
     if (this.car.isLast(this.car.getCurrentSlideIndex()) || this.noOfQuestions === this.car.getCurrentSlideIndex()) {
@@ -381,8 +381,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.calculateScore();
     if (event.type === 'EXIT') {
       this.viewerService.raiseHeartBeatEvent(eventName.endPageExitClicked, TelemetryType.interact, 'endPage');
-      let questionObj = this.createQuestionObj();
-      this.viewerService.raiseEndEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore, questionObj);
+      let summaryEventObj = this.createSummaryObj();
+      this.viewerService.raiseEndEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore, summaryEventObj);
     }
   }
 
@@ -398,8 +398,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.showSolution = false;
     this.showAlert = false;
     this.endPageReached = true;
-    let questionObj = this.createQuestionObj();
-    this.viewerService.raiseEndEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore, questionObj);
+    let summaryEventObj = this.createSummaryObj();
+    this.viewerService.raiseEndEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore, summaryEventObj);
   }
 
   async validateSelectedOption(option, type?: string) {
@@ -760,8 +760,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   @HostListener('window:beforeunload')
   ngOnDestroy() {
     this.calculateScore();
-    let questionObj = this.createQuestionObj();
-    this.viewerService.raiseEndEvent(this.currentSlideIndex, this.endPageReached, this.finalScore, questionObj);
+    let summaryEventObj = this.createSummaryObj();
+    this.viewerService.raiseEndEvent(this.currentSlideIndex, this.endPageReached, this.finalScore, summaryEventObj);
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
     this.errorService.getInternetConnectivityError.unsubscribe();
