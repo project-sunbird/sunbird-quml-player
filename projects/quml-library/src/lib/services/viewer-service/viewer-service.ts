@@ -80,7 +80,7 @@ export class ViewerService {
     this.qumlLibraryService.start(duration);
   }
 
-  raiseEndEvent(currentQuestionIndex, noOfvisitedQuestions, endPageSeen , score) {
+  raiseEndEvent(currentQuestionIndex, noOfvisitedQuestions,  endPageSeen , score) {
     const duration = new Date().getTime() - this.qumlPlayerStartTime;
     const endEvent = {
       eid: 'END',
