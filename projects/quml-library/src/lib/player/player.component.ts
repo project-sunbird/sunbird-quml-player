@@ -215,9 +215,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.viewerService.raiseHeartBeatEvent(eventName.startPageLoaded, 'impression', 0);
   }
 
-  checkCompatibilityLevel(compatibiiityLevel){
-    if (compatibiiityLevel) {
-      const checkContentCompatible = this.errorService.checkContentCompatibility(compatibiiityLevel);
+  checkCompatibilityLevel(compatibilityLevel){
+    if (compatibilityLevel) {
+      const checkContentCompatible = this.errorService.checkContentCompatibility(compatibilityLevel);
       if (!checkContentCompatible['isCompitable']) {
         this.viewerService.raiseErrorEvent( checkContentCompatible['error'] , 'compatibility-error');
         this.viewerService.raiseExceptionLog( errorCode.contentCompatibility , errorMessage.contentCompatibility, checkContentCompatible['error'], this.traceId)
