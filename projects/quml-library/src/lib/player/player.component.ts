@@ -146,7 +146,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.traceId = this.QumlPlayerConfig.config['traceId'];
     this.compatibiiityLevel = this.QumlPlayerConfig.metadata.compatibilityLevel;
-    this.checkCompatibilityLevel(this.compatibiiityLevel);
     this.sideMenuConfig = { ...this.sideMenuConfig, ...this.QumlPlayerConfig.config.sideMenu };
     this.threshold = this.QumlPlayerConfig.context.threshold || 3;
     this.questionIds = this.QumlPlayerConfig.metadata.childNodes;
@@ -162,6 +161,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     }
     this.noOfQuestions = this.questionIds.length;
     this.viewerService.initialize(this.QumlPlayerConfig, this.threshold, this.questionIds);
+    this.checkCompatibilityLevel(this.compatibiiityLevel);
     this.initialTime = new Date().getTime();
     this.slideInterval = 0;
     this.showIndicator = false;
