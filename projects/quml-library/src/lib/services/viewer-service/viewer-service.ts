@@ -80,7 +80,7 @@ export class ViewerService {
     this.qumlLibraryService.start(duration);
   }
 
-  raiseEndEvent(currentQuestionIndex,  endPageSeen , score, questionObj) {
+  raiseEndEvent(currentQuestionIndex, noOfvisitedQuestions, endPageSeen , score) {
     const duration = new Date().getTime() - this.qumlPlayerStartTime;
     const endEvent = {
       eid: 'END',
@@ -96,7 +96,7 @@ export class ViewerService {
     this.qumlPlayerEvent.emit(endEvent);
     const visitedlength = (this.metaData.pagesHistory.filter((v, i, a) => a.indexOf(v) === i)).length;
     this.timeSpent = this.utilService.getTimeSpentText(this.qumlPlayerStartTime);
-    this.qumlLibraryService.end(duration, currentQuestionIndex, this.totalNumberOfQuestions, endPageSeen , score, questionObj);
+    this.qumlLibraryService.end(duration, currentQuestionIndex, this.totalNumberOfQuestions, noOfvisitedQuestions, endPageSeen , score);
   }
 
 

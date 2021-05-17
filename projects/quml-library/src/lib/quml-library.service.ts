@@ -102,7 +102,7 @@ export class QumlLibraryService {
       this.getEventOptions()
     )
   }
-  public end(duration, currentQuestionIndex, totalNoofQuestions, endpageseen , score, questionObj) {
+  public end(duration, currentQuestionIndex, totalNoofQuestions, visitedQuestions, endpageseen , score) {
     const durationSec = Number((duration / 1e3).toFixed(2));
     CsTelemetryModule.instance.telemetryService.raiseEndTelemetry({
       edata: {
@@ -114,37 +114,16 @@ export class QumlLibraryService {
             progress: Number(((currentQuestionIndex / totalNoofQuestions) * 100).toFixed(0))
           },
           {
-            totallength: totalNoofQuestions
+            totalNoofQuestions: totalNoofQuestions
           },
           {
-            visitedlength: questionObj.skipped + questionObj.correct + questionObj.wrong + questionObj.partial
-          },
-          {
-            visitedcontentend: ""
-          },
-          {
-            totalseekedlength: ""
+            visitedlength: visitedQuestions
           },
           {
             endpageseen
           },
           {
             score
-          },
-          {
-            skipped: questionObj.unattempted
-          },
-          {
-            attempted: questionObj.correct + questionObj.wrong + questionObj.partial
-          },
-          {
-            correct: questionObj.correct
-          },
-          {
-            incorrect: questionObj.wrong
-          },
-          {
-            partial: questionObj.partial
           }
         ],
         duration: durationSec
