@@ -117,14 +117,14 @@ export class QumlLibraryService {
             totalNoofQuestions: totalNoofQuestions
           },
           {
-            visitedlength: visitedQuestions
+            visitedQuestions: visitedQuestions,
           },
           {
             endpageseen
           },
           {
             score
-          }
+          },
         ],
         duration: durationSec
       },
