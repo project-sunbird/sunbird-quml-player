@@ -15,7 +15,7 @@
         right: 0;
         border-radius: 8px;
         box-shadow: 0 2px 14px 0 rgba(0, 0, 0, .1);
-        padding: 8px 24px 8px 16px;
+        padding: 8px 24px 8px 8px;
         -webkit-animation-name: example;
         animation-name: example;
         -webkit-animation-timing-function: ease-in;
@@ -94,6 +94,7 @@
         width: calc(100% - 122px);
     }
     &__try-again, &__view-solution {
+        line-height: normal;
         cursor: pointer;
         background: white;
         padding: 8px 16px;
