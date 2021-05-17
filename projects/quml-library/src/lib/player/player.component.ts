@@ -72,7 +72,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   currentOptionSelected: string;
   questionIds: Array<[]>;
   questionIdsCopy: Array<[]>;
-  compatibiiityLevel: number;
+  compatibilityLevel: number;
   CarouselConfig = {
     NEXT: 1,
     PREV: 2
@@ -145,7 +145,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.traceId = this.QumlPlayerConfig.config['traceId'];
-    this.compatibiiityLevel = this.QumlPlayerConfig.metadata.compatibilityLevel;
+    this.compatibilityLevel = this.QumlPlayerConfig.metadata.compatibilityLevel;
     this.sideMenuConfig = { ...this.sideMenuConfig, ...this.QumlPlayerConfig.config.sideMenu };
     this.threshold = this.QumlPlayerConfig.context.threshold || 3;
     this.questionIds = this.QumlPlayerConfig.metadata.childNodes;
@@ -161,7 +161,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     }
     this.noOfQuestions = this.questionIds.length;
     this.viewerService.initialize(this.QumlPlayerConfig, this.threshold, this.questionIds);
-    this.checkCompatibilityLevel(this.compatibiiityLevel);
+    this.checkCompatibilityLevel(this.compatibilityLevel);
     this.initialTime = new Date().getTime();
     this.slideInterval = 0;
     this.showIndicator = false;
