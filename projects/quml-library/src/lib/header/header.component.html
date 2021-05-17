@@ -31,9 +31,9 @@
         47
       </span>
     </div> -->
-    <div class="navigation-icons">
+    <div class="navigation-icons" *ngIf="!disableNext">
       <span (click)="prevSlide()">
-        <quml-previous></quml-previous>
+        <quml-previous [ngClass]="startPageInstruction && currentSlideIndex === 0 ? 'navigation-icon-disabled': '' "></quml-previous>
       </span>
       <span (click)="nextSlide()">
         <quml-next *ngIf="!active" [ngClass]="disableNext ? 'navigation-icon-disabled': '' "></quml-next>

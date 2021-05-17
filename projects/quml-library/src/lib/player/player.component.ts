@@ -59,7 +59,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   currentSlideIndex = 0;
   attemptedQuestions = [];
   loadScoreBoard = false;
-  totalScore = [];
+  totalScore: number;
   private intervalRef: any;
   public finalScore = 0;
   progressBarClass = [];
@@ -95,6 +95,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   currentQuestionsMedia;
   imageZoomCount = 100;
   traceId: string;
+  outcomeLabel: string;
+  stopAutoNavigation: boolean;
+  jumpSlideIndex: any;
 
   constructor(
     public viewerService: ViewerService,
@@ -182,7 +185,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.allowSkip = this.QumlPlayerConfig.metadata.allowSkip;
     this.showStartPage = this.QumlPlayerConfig.metadata.showStartPage && this.QumlPlayerConfig.metadata.showStartPage.toLowerCase() === 'no' ? false : true
     this.showEndPage = this.QumlPlayerConfig.metadata.showEndPage && this.QumlPlayerConfig.metadata.showEndPage.toLowerCase() === 'no' ? false : true
-
+    this.totalScore = this.QumlPlayerConfig.metadata.maxScore;
     this.setInitialScores();
     if (this.threshold === 1) {
       this.viewerService.getQuestion();
@@ -193,6 +196,18 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.errorService.getInternetConnectivityError.subscribe(event => {
       this.viewerService.raiseExceptionLog(errorCode.internetConnectivity, errorMessage.internetConnectivity, event['error'], this.traceId)
     });
+  }
+
+  createSummaryObj() {
+    let classObj = _.groupBy(this.progressBarClass, 'class');
+    let summaryEventObj = {
+      skipped: _.get(classObj, 'skipped.length') || 0,
+      unattempted: _.get(classObj, 'unattempted.length') || 0,
+      correct: _.get(classObj, 'correct.length') || 0,
+      wrong: _.get(classObj, 'wrong.length') || 0,
+      partial: _.get(classObj, 'partial.length') || 0
+    };
+    return summaryEventObj;
   }
 
   ngAfterViewInit() {
@@ -243,7 +258,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       this.disableNext = true;
     }
     if (this.car.getCurrentSlideIndex() === this.noOfQuestions) {
-      this.durationSpent = this.utilService.getTimeSpentText(this.initialTime);
+      this.durationSpent = _.get(this.QumlPlayerConfig, 'metadata.summaryType') === 'Score' ? '' : this.utilService.getTimeSpentText(this.initialTime);
 
       if (!this.requiresSubmit && this.showEndPage) {
         this.endPageReached = true;
@@ -260,6 +275,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       const qType = this.questions[this.car.getCurrentSlideIndex() - 1].qType;
       this.viewerService.raiseResponseEvent(identifier, qType, option);
     }
+    if (this.questions[this.car.getCurrentSlideIndex()]) {
+      this.setSkippedClass(this.car.getCurrentSlideIndex());
+    }
     this.car.move(this.CarouselConfig.NEXT);
     this.active = false;
     this.showAlert = false;
@@ -273,10 +291,20 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     }
   }
 
+  setSkippedClass(index){
+    if (_.get(this.progressBarClass[index], 'class') === 'unattempted') {
+      this.progressBarClass[index].class = 'skipped';      
+    }
+  }
+
   prevSlide() {
     this.disableNext = false;
+    this.currentSolutions = undefined;
     this.viewerService.raiseHeartBeatEvent(eventName.prevClicked, TelemetryType.interact, this.car.getCurrentSlideIndex() - 1);
     this.showAlert = false;
+    if (this.currentSlideIndex !== this.questions.length) {
+      this.currentSlideIndex = this.currentSlideIndex + 1;
+    }
     if (this.car.getCurrentSlideIndex() + 1 === this.noOfQuestions && this.endPageReached) {
       this.endPageReached = false;
     } else if (!this.loadScoreBoard) {
@@ -285,8 +313,10 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       this.car.selectSlide(this.noOfQuestions);
       this.loadScoreBoard = false;
     }
+    this.currentSlideIndex = this.car.getCurrentSlideIndex();
     this.currentQuestionsMedia = _.get(this.questions[this.car.getCurrentSlideIndex() - 1], 'media');
     this.setImageZoom(_.get(this.questions[this.car.getCurrentSlideIndex() - 1], 'identifier'));
+    this.setSkippedClass(this.car.getCurrentSlideIndex() - 1);
   }
 
   sideBarEvents(event) {
@@ -321,7 +351,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
         }
       })
     }
-    this.validateSelectedOption(this.optionSelectedObj);
+    if (!this.showFeedBack) {
+      this.validateSelectedOption(this.optionSelectedObj);
+    }
   }
 
   closeAlertBox(event) {
@@ -359,7 +391,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   durationEnds() {
-    this.durationSpent = this.utilService.getTimeSpentText(this.initialTime);
+    this.durationSpent = _.get(this.QumlPlayerConfig, 'metadata.summaryType') === 'Score' ? '' : this.utilService.getTimeSpentText(this.initialTime);
     this.calculateScore();
     this.showSolution = false;
     this.showAlert = false;
@@ -367,7 +399,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.viewerService.raiseEndEvent(this.car.getCurrentSlideIndex(), this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore);
   }
 
-  async validateSelectedOption(option) {
+  async validateSelectedOption(option, type?: string) {
     const selectedOptionValue = option ? option.option.value : undefined;
     const currentIndex = this.car.getCurrentSlideIndex() - 1;
     let updated = false;
@@ -388,13 +420,15 @@ export class PlayerComponent implements OnInit, AfterViewInit {
           this.viewerService.raiseAssesEvent(edataItem, currentIndex, 'Yes', this.currentScore, [option.option], new Date().getTime());
           this.showAlert = true;
           this.alertType = 'correct';
+          this.correctFeedBackTimeOut(type);
           this.updateScoreBoard(currentIndex, 'correct', undefined, this.currentScore);
         } else if (!Boolean(option.option.value.value == correctOptionValue)) {
           this.currentScore = this.getScore(currentIndex, key, false, option);
           this.viewerService.raiseAssesEvent(edataItem, currentIndex, 'No', this.currentScore, [option.option], new Date().getTime());
           this.showAlert = true;
           this.alertType = 'wrong';
-          this.updateScoreBoard(currentIndex, 'wrong', selectedOptionValue, this.currentScore);
+          let classType = this.progressBarClass[currentIndex].class === 'partial' ? 'partial': 'wrong';
+          this.updateScoreBoard(currentIndex, classType, selectedOptionValue, this.currentScore);
         }
       }
       if (option.cardinality === 'multiple') {
@@ -404,7 +438,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
         if (this.currentScore > 0) {
           if (this.showFeedBack) {
             this.updateScoreBoard(((currentIndex + 1)), 'correct', undefined, this.currentScore);
-            this.correctFeedBackTimeOut();
+            this.correctFeedBackTimeOut(type);
             this.showAlert = true;
             this.alertType = 'correct';
           } else if (!this.showFeedBack) {
@@ -435,7 +469,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       this.nextSlide();
     }
   }
-
 
   infopopupTimeOut() {
     this.infoPopup = true;
@@ -468,6 +501,21 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.progressBarClass.forEach((ele) => {
       this.finalScore = this.finalScore + ele.score;
     })
+    this.generateOutComeLabel();
+  }
+
+  generateOutComeLabel() {
+    this.outcomeLabel = this.finalScore.toString();
+    switch (_.get(this.QumlPlayerConfig, 'metadata.summaryType')) {
+      case 'Complete': {
+        this.outcomeLabel = this.totalScore ? `${this.finalScore} / ${this.totalScore}`: this.outcomeLabel;
+        break;
+      }
+      case 'Duration': {
+        this.outcomeLabel = '';
+        break;
+      }
+    }
   }
 
   scoreBoardLoaded(event) {
@@ -476,16 +524,23 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     }
   }
 
-  correctFeedBackTimeOut() {
+  correctFeedBackTimeOut(type?: string) {
     this.intervalRef = setTimeout(() => {
       this.showAlert = false;
-      if (!this.car.isLast(this.car.getCurrentSlideIndex())) {
+      if (!this.car.isLast(this.car.getCurrentSlideIndex()) && type === 'next') {
         this.nextSlide();
-      } else if (this.car.isLast(this.car.getCurrentSlideIndex())) {
+      } else if (type === 'previous' && !this.stopAutoNavigation) {
+        this.prevSlide();
+      } else if (type === 'jump' && !this.stopAutoNavigation) {
+        this.goToSlide(this.jumpSlideIndex);
+      } else if (this.car.isLast(this.car.getCurrentSlideIndex()) && this.requiresSubmit) {
+        this.loadScoreBoard = true;
+        this.disableNext = true;
+      }else if (this.car.isLast(this.car.getCurrentSlideIndex())) {
         this.endPageReached = true;
         this.calculateScore();
       }
-    }, 3000)
+    }, 4000)
   }
 
   nextSlideClicked(event) {
@@ -493,17 +548,37 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       return this.nextSlide();
     }
     if (event.type === 'next') {
-      this.validateSelectedOption(this.optionSelectedObj);
+      this.validateSelectedOption(this.optionSelectedObj, 'next');
     }
   }
 
   previousSlideClicked(event) {
     if (event = 'previous clicked') {
-      this.prevSlide();
+      if (this.optionSelectedObj && this.showFeedBack) {
+        this.stopAutoNavigation = false;
+        this.validateSelectedOption(this.optionSelectedObj, 'previous');
+      } else {
+        this.stopAutoNavigation = true;
+        this.prevSlide();
+      }
     }
   }
 
+  goToSlideClicked(index) {
+    this.jumpSlideIndex = index;
+    if (this.optionSelectedObj && this.showFeedBack) {
+      this.stopAutoNavigation = false;
+      this.validateSelectedOption(this.optionSelectedObj, 'jump');
+    } else {
+      this.stopAutoNavigation = true;
+      this.goToSlide(this.jumpSlideIndex);
+    }
+
+  }
+
   replayContent() {
+    this.stopAutoNavigation = false;
+    this.initializeTimer = true;
     this.replayed = true;
     this.initialTime = new Date().getTime();
     this.questionIds = this.questionIdsCopy;
@@ -525,6 +600,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   inScoreBoardSubmitClicked() {
+    this.durationSpent = _.get(this.QumlPlayerConfig, 'metadata.summaryType') === 'Score' ? '' : this.utilService.getTimeSpentText(this.initialTime);
     this.viewerService.raiseHeartBeatEvent(eventName.scoreBoardSubmitClicked, TelemetryType.interact, pageId.submitPage);
     this.endPageReached = true;
   }
@@ -539,6 +615,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     }
     this.currentQuestionsMedia = _.get(this.questions[this.currentSlideIndex - 1], 'media');
     this.setImageZoom(_.get(this.questions[this.currentSlideIndex - 1], 'identifier'));
+    this.setSkippedClass(this.currentSlideIndex - 1);
     if (!this.initializeTimer) {
       this.initializeTimer = true;
     }
@@ -555,26 +632,22 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   setInitialScores() {
-    if (this.showFeedBack) {
-      this.questionIds.forEach((ele, index) => {
-        this.progressBarClass.push({
-          index: (index + 1), class: 'skipped',
-          score: 0,
-        });
-      })
-    } else if (!this.showFeedBack) {
-      this.questionIds.forEach((ele, index) => {
-        this.progressBarClass.push({
-          index: (index + 1), class: 'unattempted', value: undefined,
-          score: 0,
-        });
-      })
-    }
+    this.questionIds.forEach((ele, index) => {
+      this.progressBarClass.push({
+        index: (index + 1), class: 'unattempted', value: undefined,
+        score: 0,
+      });
+    })
   }
 
   goToQuestion(event) {
-    const index = this.startPageInstruction ? event.questionNo : event.questionNo - 1;
-    this.car.selectSlide(index + 1);
+    this.disableNext = false;
+    this.initializeTimer = true;
+    this.durationSpent = _.get(this.QumlPlayerConfig, 'metadata.summaryType') === 'Score' ? '' : this.utilService.getTimeSpentText(this.initialTime);
+    const index = event.questionNo;
+    this.viewerService.getQuestions(0, index);
+    this.currentSlideIndex = index;
+    this.car.selectSlide(index);
     this.loadScoreBoard = false;
   }
 
@@ -608,6 +681,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
         mapping.forEach((val) => {
           if (selectedOptionValue === val.response) {
             score = val.outcomes.SCORE || 0;
+            if (val.outcomes.SCORE) {
+              this.progressBarClass[currentIndex].class = 'partial'; 
+            }
           }
         });
         return score;
@@ -623,8 +699,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   showAnswerClicked(event) {
     if (event.showAnswer) {
+      this.progressBarClass[this.car.getCurrentSlideIndex() - 1].class = 'correct';
       this.viewerService.raiseHeartBeatEvent(eventName.showAnswer, TelemetryType.interact, pageId.shortAnswer);
-      this.viewerService.raiseHeartBeatEvent(eventName.pageScrolled, TelemetryType.impression, this.car.getCurrentSlideIndex());
+      this.viewerService.raiseHeartBeatEvent(eventName.pageScrolled, TelemetryType.impression, this.car.getCurrentSlideIndex() - 1);
     }
   }
 

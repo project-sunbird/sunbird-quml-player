@@ -4,12 +4,12 @@
     </div>
     <div class="solution-header">Question</div>
     <div [innerHtml]="question | safeHtml"></div>
-    <div class="solution-header">option</div>
+    <div class="solution-header">Options</div>
     <div class="solution-options" *ngFor="let option of options; let i= index">
         <div [innerHtml]="option.label | safeHtml" [id]="i"></div>
     </div>
     <ng-container *ngIf="solutions && solutions.length">
-    <div class="solution-header">solutions</div>
+    <div class="solution-header">Solution</div>
     <div *ngIf="!showVideoSolution">
         <div *ngFor="let solution of solutions">
             <ng-container [ngSwitch]="solution.type">
