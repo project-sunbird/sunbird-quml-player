@@ -120,7 +120,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     .subscribe((res) => {
 
         if(res && res.error) {
-          console.log('trace id', this.traceId);
           if (!navigator.onLine && !this.viewerService.isAvailableLocally) {
             this.viewerService.raiseExceptionLog(errorCode.internetConnectivity, errorMessage.internetConnectivity, new Error(errorMessage.internetConnectivity), this.traceId);
           } else {
