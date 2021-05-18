@@ -104,6 +104,9 @@
    Please attempt the question
 </div>
 
+<sb-player-contenterror *ngIf="showContentError"></sb-player-contenterror>
+
+
 <!-- Zoom -->
 <div class="image-viewer__overlay" [hidden]="!showZoomModal">
   <div class="image-viewer__close" (click)="closeZoom()">
