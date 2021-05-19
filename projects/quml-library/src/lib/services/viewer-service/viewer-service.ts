@@ -30,6 +30,7 @@ export class ViewerService {
   endPageSeen: boolean;
   identifiers: any;
   threshold: number;
+  isAvailableLocally: boolean = false;
 
   constructor(
     public qumlLibraryService: QumlLibraryService,
@@ -47,6 +48,7 @@ export class ViewerService {
     this.qumlPlayerStartTime = this.qumlPlayerLastPageTime = new Date().getTime();
     this.currentQuestionIndex = 1;
     this.contentName = config.metadata.name;
+    this.isAvailableLocally = config.metadata.isAvailableLocally;
     this.src = config.metadata.artifactUrl || '';
     if (config.context.userData) {
       this.userName = config.context.userData.firstName + ' ' + config.context.userData.lastName;
@@ -116,22 +118,6 @@ export class ViewerService {
       this.qumlLibraryService.impression(pageId);
     }
 
-  }
-  
-  raiseErrorEvent(error: Error , type?: string) {
-    const errorEvent = {
-      eid: 'ERROR',
-      ver: this.version,
-      edata: {
-        type: 'ERROR',
-        stacktrace: error ? error.toString() : ''
-      },
-      metaData: this.metaData
-    };
-    this.qumlPlayerEvent.emit(errorEvent);
-    if(!type){
-    this.qumlLibraryService.error(error);
-    }
   }
 
   raiseAssesEvent(questionData , index , pass , score , resValues , duration){
@@ -236,6 +222,10 @@ export class ViewerService {
         _.forEach(questions, (value) => {
           this.qumlQuestionEvent.emit(value);
         });
+      },(error)=>{
+          this.qumlQuestionEvent.emit({
+            error: error
+          })
       });
     }
   }
@@ -244,7 +234,11 @@ export class ViewerService {
     let indentiferForQuestion = this.identifiers.splice(0, this.threshold);
       this.questionCursor.getQuestion(indentiferForQuestion).subscribe((question) => {
         this.qumlQuestionEvent.emit(question);
-      })
+      },(error)=>{
+        this.qumlQuestionEvent.emit({
+          error: error
+        })
+    })
   }
 
 }

@@ -98,6 +98,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   outcomeLabel: string;
   stopAutoNavigation: boolean;
   jumpSlideIndex: any;
+  showContentError: boolean = false;
 
   constructor(
     public viewerService: ViewerService,
@@ -117,6 +118,17 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.viewerService.qumlQuestionEvent
     .pipe(takeUntil(this.destroy$))
     .subscribe((res) => {
+
+        if(res && res.error) {
+          if (!navigator.onLine && !this.viewerService.isAvailableLocally) {
+            this.viewerService.raiseExceptionLog(errorCode.internetConnectivity, errorMessage.internetConnectivity, new Error(errorMessage.internetConnectivity), this.traceId);
+          } else {
+            this.viewerService.raiseExceptionLog(errorCode.contentLoadFails, errorMessage.contentLoadFails, new Error(errorMessage.contentLoadFails), this.traceId);
+          }
+          this.showContentError = true;
+          return;
+        }
+
 
       if (res && !res.questions) {
         return;
@@ -192,10 +204,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     } else if (this.threshold > 1) {
       this.viewerService.getQuestions();
     }
-
-    this.errorService.getInternetConnectivityError.subscribe(event => {
-      this.viewerService.raiseExceptionLog(errorCode.internetConnectivity, errorMessage.internetConnectivity, event['error'], this.traceId)
-    });
   }
 
   createSummaryObj() {
@@ -218,7 +226,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     if (compatibilityLevel) {
       const checkContentCompatible = this.errorService.checkContentCompatibility(compatibilityLevel);
       if (!checkContentCompatible['isCompitable']) {
-        this.viewerService.raiseErrorEvent( checkContentCompatible['error'] , 'compatibility-error');
         this.viewerService.raiseExceptionLog( errorCode.contentCompatibility , errorMessage.contentCompatibility, checkContentCompatible['error'], this.traceId)
       }
     }

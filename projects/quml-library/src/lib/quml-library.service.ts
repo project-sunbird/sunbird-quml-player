@@ -162,6 +162,7 @@ export class QumlLibraryService {
 
   public error(error: Error , edata?: { err: string, errtype: string }) {
     CsTelemetryModule.instance.telemetryService.raiseErrorTelemetry({
+      options: this.getEventOptions(),
       edata: {
         err: 'LOAD',
         errtype: 'content',
