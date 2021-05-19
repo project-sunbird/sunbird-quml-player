@@ -82,7 +82,7 @@ export class ViewerService {
     this.qumlLibraryService.start(duration);
   }
 
-  raiseEndEvent(currentQuestionIndex, noOfvisitedQuestions,  endPageSeen , score) {
+  raiseEndEvent(currentQuestionIndex,  endPageSeen , score) {
     const duration = new Date().getTime() - this.qumlPlayerStartTime;
     const endEvent = {
       eid: 'END',
@@ -98,9 +98,8 @@ export class ViewerService {
     this.qumlPlayerEvent.emit(endEvent);
     const visitedlength = (this.metaData.pagesHistory.filter((v, i, a) => a.indexOf(v) === i)).length;
     this.timeSpent = this.utilService.getTimeSpentText(this.qumlPlayerStartTime);
-    this.qumlLibraryService.end(duration, currentQuestionIndex, this.totalNumberOfQuestions, noOfvisitedQuestions, endPageSeen , score);
+    this.qumlLibraryService.end(duration, currentQuestionIndex, this.totalNumberOfQuestions, this.totalNumberOfQuestions, endPageSeen , score);
   }
-
 
   raiseHeartBeatEvent(type: string, telemetryType: string, pageId: any) {
     const hearBeatEvent = {
@@ -147,6 +146,48 @@ export class ViewerService {
     }
     this.qumlPlayerEvent.emit(responseEvent);
     this.qumlLibraryService.response(identifier, this.version , qType , optionSelected);
+  }
+
+  raiseSummaryEvent(currentQuestionIndex, endpageseen, score, summaryObj) {
+    const eData = {
+      type: "content",
+      mode: "play",
+      starttime: this.qumlPlayerStartTime,
+      endtime: new Date().getTime(),
+      timespent: this.utilService.getTimeSpentText(this.qumlPlayerStartTime),
+      pageviews: this.totalNumberOfQuestions,
+      interactions: summaryObj.correct + summaryObj.wrong + summaryObj.partial,
+      extra: [{
+        id: "progress",
+        value: Number(((currentQuestionIndex / this.totalNumberOfQuestions) * 100).toFixed(0))
+      }, {
+        id: "endpageseen",
+        value: endpageseen
+      }, {
+        id: "score",
+        value: score
+      }, {
+        id: "correct",
+        value: summaryObj.correct
+      }, {
+        id: "incorrect",
+        value: summaryObj.wrong
+      }, {
+        id: "partial",
+        value: summaryObj.partial
+      }, {
+        id: "skipped",
+        value: summaryObj.skipped
+      }]
+    };
+    const summaryEvent = {
+      eid: 'QUML_SUMMARY',
+      ver: this.version,
+      edata: eData,
+      metaData: this.metaData
+    };
+    this.qumlPlayerEvent.emit(summaryEvent);
+    this.qumlLibraryService.summary(eData);
   }
 
   raiseExceptionLog(errorCode: string , errorType: string , stacktrace , traceId ) {
