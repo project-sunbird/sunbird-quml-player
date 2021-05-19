@@ -193,7 +193,11 @@ export class ViewerService {
     let indentiferForQuestion = this.identifiers.splice(0, this.threshold);
       this.questionCursor.getQuestion(indentiferForQuestion).subscribe((question) => {
         this.qumlQuestionEvent.emit(question);
-      })
+      },(error)=>{
+        this.qumlQuestionEvent.emit({
+          error: error
+        })
+    })
   }
 
 }
