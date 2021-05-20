@@ -532,3 +532,203 @@
     width: 100%;
   }
 }
+
+
+/* editor css */
+::ng-deep {
+  .quml-mcq {
+    .image-style-align-right {
+      text-align: right !important;
+      width: auto;
+    }
+
+    .image-style-align-left {
+      text-align: left !important;
+      width: auto;
+    }
+
+    figure.image {
+      width: 100%;
+      display: table;
+      clear: both;
+      text-align: center;
+      margin: 1em auto;border: 0px;
+    }
+
+    figure.image.image_resized.resize-25 {
+      width: auto !important;
+      img {
+      width: 25%;
+      height: auto;
+      }
+    }
+
+    figure.image.image_resized.resize-50 {
+      width: auto !important;
+      img {
+      width: 50%;
+      height: auto;
+    }
+    }
+
+    figure.image.image_resized.resize-75 {
+      width: auto !important;
+      img {
+      width: 75%;
+      height: auto;
+    }
+    }
+
+    figure.table table,
+    figure.table table tr td,
+    figure.table table tr th {
+      border: 1px solid black;
+      border-collapse: collapse;
+    }
+
+    figure.table table {
+      width: 100%;
+      background: var(--white);
+      border: .0625rem solid var(--gray-100);
+      box-shadow: none;
+      border-radius: .25rem .25rem 0 0;
+      text-align: left;
+      color: var(--gray);
+      border-collapse: separate;
+      border-spacing: 0;
+      table-layout: fixed;
+
+      thead {
+        tr {
+          th {
+            &:first-child {
+              border-top-left-radius: 0.25rem;
+            }
+
+            &:last-child {
+              border-top-right-radius: 0.25rem;
+            }
+
+            font-size: .875rem;
+            padding: 1rem;
+            background-color: var(--gray-0);
+            color: var(--gray);
+            position: relative;
+            height: 2.5rem;
+            border:0px;
+            border-bottom: .0625rem solid var(--gray-100);
+          }
+        }
+      }
+
+      tbody {
+        tr {
+          &:nth-child(2n) {
+            background-color: var(--gray-0);
+          }
+
+          &:hover {
+            background:  var(--primary-0);
+            color: rgba(var(--rc-rgba-gray), 0.95);
+            cursor: pointer;
+          }
+
+          td {
+            font-size: .875rem;
+            padding: 1rem;
+            color: var(--gray);
+            height: 3.5rem;
+            border: 0px;
+            border-bottom: 1px solid var(--gray-100);
+            p {
+              margin-bottom:0px !important;
+            }
+          }
+
+          &:last-child {
+            td {
+              border-bottom: none;
+
+              &:first-child {
+                border-bottom-left-radius: 0.25rem;
+              }
+
+              &:last-child {
+                border-bottom-right-radius: 0.25rem;
+              }
+            }
+          }
+        }
+      }
+
+    }
+
+    ul,
+    ol {
+      margin-top: 0.5rem;
+
+      li {
+        margin: 0.5rem;
+        font-weight: normal;
+      }
+    }
+
+    ul {
+      list-style: list-style;
+    }
+
+    ol {}
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      color: var(--primary-color);
+    }
+
+    h1 {}
+
+    h2 {}
+
+    h3 {}
+
+    h4 {}
+
+    h5 {}
+
+    h6 {}
+
+    p strong,
+    p span strong {}
+
+    p code,
+    p span code {}
+
+    p span sup,
+    p sup {}
+
+    p span sub,
+    p sub {}
+
+    p span u,
+    p u {
+      text-decoration: underline;
+    }
+
+    p span i,
+    p i {
+      font-style: italic;
+    }
+
+    .quml-mcq--question {
+      p {}
+    }
+
+    .quml-mcq--option {
+      p {}
+    }
+
+  }
+}
