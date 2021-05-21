@@ -1,6 +1,6 @@
 {
   "name": "@project-sunbird/sunbird-quml-player-v8",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "peerDependencies": {
     "@angular/common": "^8.0.0",
     "@angular/core": "^8.0.0",
@@ -10,7 +10,7 @@
     "@project-sunbird/client-services": "3.9.1"
   },
   "dependencies": {
-    "@project-sunbird/sunbird-player-sdk-v8": "4.0.3"
+    "@project-sunbird/sunbird-player-sdk-v8": "4.0.5"
   },
   "whitelistedNonPeerDependencies": [
     "carousel",
