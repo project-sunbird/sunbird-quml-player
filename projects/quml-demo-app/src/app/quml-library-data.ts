@@ -44,6 +44,8 @@ export const data1 = {
         }
     },
     'metadata': {
+        "maxAttempt": 3,
+        "currentAttempt": 1,
         "summaryType": "Complete",
         "maxScore": "10",
         "instructions": {
