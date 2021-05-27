@@ -27,6 +27,7 @@
         margin: 0 auto calculateRem(8px);
         width: calculateRem(372px);
         background: linear-gradient(145deg, #FFD555, #FFD555 60%, #f6bc42 60%);
+        z-index: 1;
 
         @media only screen and (max-width: 480px) {
             position: absolute;
