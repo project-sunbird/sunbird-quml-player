@@ -1,4 +1,5 @@
 @import '../../../../../node_modules/@project-sunbird/sb-styles/assets/mixins/mixins';
+
 .quml-alert {
     &__overlay {
         position: absolute;
@@ -7,51 +8,58 @@
         top: 0;
         left: 0;
     }
+
     &__container {
         position: absolute;
-        bottom: 12px;
-        height: 90px;
+        bottom: calculateRem(12px);
+        height: calculateRem(90px);
         left: 0;
         right: 0;
-        border-radius: 8px;
+        border-radius: calculateRem(8px);
         box-shadow: 0 2px 14px 0 rgba(0, 0, 0, .1);
-        padding: 8px 24px 8px 8px;
+        padding: calculateRem(8px) calculateRem(24px) calculateRem(8px) calculateRem(8px);
         -webkit-animation-name: example;
         animation-name: example;
         -webkit-animation-timing-function: ease-in;
         animation-timing-function: ease-in;
         -webkit-animation-duration: .3s;
         animation-duration: .3s;
-        margin: 0 auto 8px;
-        width: 372px;
+        margin: 0 auto calculateRem(8px);
+        width: calculateRem(372px);
         background: linear-gradient(145deg, #FFD555, #FFD555 60%, #f6bc42 60%);
+
         @media only screen and (max-width: 480px) {
             position: absolute;
-            bottom: 60px;
-            border-radius: 8px;
+            bottom: calculateRem(60px);
+            border-radius: calculateRem(8px);
             background-color: var(--white);
             box-shadow: 0 2px 14px 0 rgba(0, 0, 0, .1);
+            width: calculateRem(348px);
+            padding: calculateRem(8px);
         }
     }
+
     &__body {
         display: flex;
         align-items: center;
         position: relative;
         height: 100%;
     }
+
     &__image {
         position: relative;
         height: 100%;
-        width: 122px;
+        width: calculateRem(122px);
         overflow: hidden;
     }
+
     &__icon-container {
-        background: white;
-        border-radius: 8px;
+        background: var(--white);
+        border-radius: calculateRem(8px);
         position: absolute;
-        width: 72px;
+        width: calculateRem(72px);
         z-index: 1;
-        height: 64px;
+        height: calculateRem(64px);
         left: 0;
         right: 0;
         margin: 0 auto;
@@ -61,116 +69,121 @@
         -webkit-animation-delay: 0.3s;
         animation-delay: 0.3s;
     }
+
     &__icon-empty {
         position: absolute;
         background: #f8d555;
-        width: 122px;
+        width: calculateRem(122px);
         z-index: 2;
-        height: 20px;
+        height: calculateRem(20px);
         margin: 0 auto;
         bottom: 0;
     }
+
     &__icon {
         position: absolute;
         top: 15%;
         left: 0;
-        width: 28px;
-        height: 28px;
+        width: calculateRem(28px);
+        height: calculateRem(28px);
         right: 0;
         margin: 0 auto;
         -webkit-animation: .1s ease-out .7s forwards correct-button-anim;
         animation: .1s ease-out .7s forwards correct-button-anim;
     }
+
     &__banner {
         position: absolute;
         bottom: 0;
         z-index: 3;
-        height: 35px;
+        height: calculateRem(35px);
     }
+
     &__solution-container {
         display: flex;
         align-items: center;
         justify-content: center;
         width: calc(100% - 122px);
     }
-    &__try-again, &__view-solution {
+
+    &__try-again,
+    &__view-solution {
         line-height: normal;
         cursor: pointer;
-        background: white;
-        padding: 8px 16px;
-        border-radius: 16px;
-        font-size: 12px;
+        background: var(--white);
+        padding: calculateRem(8px) calculateRem(16px);
+        border-radius: calculateRem(16px);
+        font-size: calculateRem(12px);
         color: #FA6400;
         box-shadow: 0 2px 14px 0 rgba(250, 100, 0, 0.6);
-        margin-left: 8px;
+        margin-left: calculateRem(8px);
     }
+
     &__view-hint {
-        width: 32px;
-        height: 32px;
+        width: calculateRem(32px);
+        height: calculateRem(32px);
         margin-left: auto;
-        background: white;
+        background: var(--white);
         border-radius: 50%;
         box-shadow: 0 6px 16px -7px rgba(0, 0, 0, .6);
         position: relative;
+
         &--disabled {
             opacity: .6;
         }
     }
-    &__view-hint, &__try-again {
+
+    &__view-hint,
+    &__try-again {
         cursor: pointer;
         text-transform: capitalize;
     }
 }
-.alert-text {
-    color: #4A4A4A;
-    font-size: 16px;
-    font-weight: bold;
-    letter-spacing: 0;
-    margin-bottom: 4px;
-}
-.padding-right {
-    padding-right: 8px;
-}
-.view-hint-icon {
-    height: 20px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-.close-icon {
-    float: right;
-}
+
+// For now HTML is commented, So keeping it commented for future use
+// .view-hint-icon {
+//     height: 20px;
+//     position: absolute;
+//     top: 50%;
+//     left: 50%;
+//     transform: translate(-50%, -50%);
+// }
+
 @-webkit-keyframes sign-board-animation {
     from {
         visibility: hidden;
         -webkit-transform: translateY(0);
         transform: translateY(0);
     }
+
     to {
         visibility: visible;
         -webkit-transform: translateY(-80%);
         transform: translateY(-80%);
     }
 }
+
 @keyframes sign-board-animation {
     from {
         visibility: hidden;
         -webkit-transform: translateY(0);
         transform: translateY(0);
     }
+
     to {
         visibility: visible;
         -webkit-transform: translateY(-100%);
         transform: translateY(-100%);
     }
 }
+
 @-webkit-keyframes correct-button-anim {
     from {
         visibility: hidden;
         -webkit-transform: scale(0.2);
         transform: scale(0.2);
     }
+
     to {
         visibility: visible;
         -webkit-transform: scale(1.1);
@@ -179,12 +192,14 @@
         transform: scale(1.1);
     }
 }
+
 @keyframes correct-button-anim {
     from {
         visibility: hidden;
         -webkit-transform: scale(0.2);
         transform: scale(0.2);
     }
+
     to {
         visibility: visible;
         -webkit-transform: scale(1.1);
@@ -193,10 +208,12 @@
         transform: scale(1.1);
     }
 }
+
 @keyframes example {
     from {
         margin-bottom: -50px;
     }
+
     to {
         margin-bottom: 8px
     }
