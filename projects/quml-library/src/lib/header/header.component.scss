@@ -49,23 +49,23 @@
   &__next,
   &__previous {
     position: relative;
-    width: 56px;
-    height: 30px;
-    background: white;
+    width: calculateRem(56px);
+    height: calculateRem(30px);
+    background: var(--white);
     border: 0.5px solid #ccc;
-    border-radius: 16px;
+    border-radius: calculateRem(16px);
     box-shadow: inset 0 -1.5px 1px 0 rgb(0 0 0 / 20%);
 
     &::after {
       content: '';
       display: inline-block;
-      padding: 3.5px;
+      padding: calculateRem(3.5px);
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       border: solid #333;
-      border-width: 0 2px 2px 0;
+      border-width: 0 calculateRem(2px) calculateRem(2px) 0;
     }
   }
 
