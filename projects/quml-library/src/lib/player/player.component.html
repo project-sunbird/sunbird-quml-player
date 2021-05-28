@@ -2,14 +2,17 @@
   <div class="endPage-container">
     <sb-player-end-page *ngIf="endPageReached && showEndPage" [contentName]="contentName" [outcome]="outcomeLabel"
       [outcomeLabel]="'Score: '" [userName]="userName" [timeSpentLabel]="durationSpent"
-      (replayContent)="replayContent()" (exitContent)="exitContent($event)" [showExit]="sideMenuConfig.showExit"></sb-player-end-page>
+      (replayContent)="replayContent()" (exitContent)="exitContent($event)" [showExit]="sideMenuConfig.showExit" [showReplay]="showReplay">   
+      <span class="attempts sb-color-primary mt-8 fnormal font-weight-bold d-block" *ngIf="attempts?.max && attempts?.current && (attempts?.max != attempts?.current)">Attempt no {{attempts.current}}/{{attempts.max}}</span>
+      <span class="attempts sb-color-primary mt-8 fnormal font-weight-bold d-block" *ngIf="attempts?.max && attempts?.current && (attempts?.max === attempts?.current)">{{attempts.current}}/{{attempts.max}} attempts completed</span>
+    </sb-player-end-page>
   </div>
   <div [hidden]="showSolution" class="quml-landscape">
     <quml-header class="main-header" (durationEnds)="durationEnds()"
       [disablePreviousNavigation]="linearNavigation" [duration]="timeLimit" [warningTime]="warningTime" [showTimer]="showTimer"
       (nextSlideClicked)="nextSlideClicked($event)" (prevSlideClicked)="previousSlideClicked($event)"
       [currentSlideIndex]="currentSlideIndex" [totalNoOfQuestions]="noOfQuestions" [active]="active"
-      [endPageReached]="endPageReached" [initializeTimer]="initializeTimer" [hidden]="endPageReached" [replayed]="replayed" [disableNext]="disableNext" [startPageInstruction]="startPageInstruction">
+      [endPageReached]="endPageReached" [initializeTimer]="initializeTimer" [hidden]="endPageReached" [replayed]="replayed" [disableNext]="disableNext" [startPageInstruction]="startPageInstruction" [attempts]="attempts">
     </quml-header>
     <sb-player-side-menu-icon class="notVisible"></sb-player-side-menu-icon>
     <sb-player-sidebar [title]="contentName" (sidebarEvent)="sideBarEvents($event)" [config]="sideMenuConfig">

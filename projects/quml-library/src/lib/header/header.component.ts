@@ -24,6 +24,7 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
   @Output() durationEnds = new EventEmitter<any>();
   @Input() disableNext?: boolean;
   @Input() startPageInstruction?: string;
+  @Input() attempts?: { max: number, current: number };
   minutes: number;
   seconds: string | number;
   private intervalRef?;

@@ -99,6 +99,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   stopAutoNavigation: boolean;
   jumpSlideIndex: any;
   showContentError: boolean = false;
+  attempts: { max: number, current: number };
+  showReplay = true;
 
   constructor(
     public viewerService: ViewerService,
@@ -198,6 +200,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.showStartPage = this.QumlPlayerConfig.metadata.showStartPage && this.QumlPlayerConfig.metadata.showStartPage.toLowerCase() === 'no' ? false : true
     this.showEndPage = this.QumlPlayerConfig.metadata.showEndPage && this.QumlPlayerConfig.metadata.showEndPage.toLowerCase() === 'no' ? false : true
     this.totalScore = this.QumlPlayerConfig.metadata.maxScore;
+    this.attempts = { max: _.get(this.QumlPlayerConfig, 'metadata.maxAttempt'), current: _.get(this.QumlPlayerConfig, 'metadata.currentAttempt') };
+    this.showReplay = this.attempts.max && this.attempts.max === this.attempts.current ? false : true;
     this.setInitialScores();
     if (this.threshold === 1) {
       this.viewerService.getQuestion();
@@ -584,6 +588,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   replayContent() {
+    this.attempts.current = this.attempts.current + 1;
+    this.showReplay = this.attempts.max && this.attempts.max === this.attempts.current ? false : true;
     this.stopAutoNavigation = false;
     this.initializeTimer = true;
     this.replayed = true;
