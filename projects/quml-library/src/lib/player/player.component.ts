@@ -316,7 +316,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.viewerService.raiseHeartBeatEvent(eventName.viewSolutionClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
     this.showSolution = true;
     this.showAlert = false;
-    this.currentQuestionsMedia = _.get(this.questions[this.car.getCurrentSlideIndex()], 'media');
+    this.currentQuestionsMedia = _.get(this.questions[this.car.getCurrentSlideIndex() - 1], 'media');
     _.forEach(this.currentOptions, (val, key) => {
       this.setImageZoom(String(key));
     });
