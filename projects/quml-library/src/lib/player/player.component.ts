@@ -622,6 +622,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   goToSlide(index) {
+    this.viewerService.raiseHeartBeatEvent(eventName.goToQuestion, TelemetryType.interact, this.car.getCurrentSlideIndex());
     this.disableNext = false;
     this.currentSlideIndex = index;
     if (index === 0) {
