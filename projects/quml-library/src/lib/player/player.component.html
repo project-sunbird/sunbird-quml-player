@@ -3,8 +3,8 @@
     <sb-player-end-page *ngIf="endPageReached && showEndPage" [contentName]="contentName" [outcome]="outcomeLabel"
       [outcomeLabel]="'Score: '" [userName]="userName" [timeSpentLabel]="durationSpent"
       (replayContent)="replayContent()" (exitContent)="exitContent($event)" [showExit]="sideMenuConfig.showExit" [showReplay]="showReplay">   
-      <span class="attempts sb-color-primary mt-8 fnormal font-weight-bold d-block" *ngIf="attempts?.max && attempts?.current && (attempts?.max != attempts?.current)">Attempt no {{attempts.current}}/{{attempts.max}}</span>
-      <span class="attempts sb-color-primary mt-8 fnormal font-weight-bold d-block" *ngIf="attempts?.max && attempts?.current && (attempts?.max === attempts?.current)">{{attempts.current}}/{{attempts.max}} attempts completed</span>
+      <span class="attempts sb-color-primary mt-8 fnormal font-weight-bold d-block" *ngIf="attempts?.max && (attempts?.max != attempts?.current)">Attempt no {{attempts.current}}/{{attempts.max}}</span>
+      <span class="attempts sb-color-primary mt-8 fnormal font-weight-bold d-block" *ngIf="attempts?.max && (attempts?.max === attempts?.current)">{{attempts.current}}/{{attempts.max}} attempts completed</span>
     </sb-player-end-page>
   </div>
   <div [hidden]="showSolution" class="quml-landscape">
