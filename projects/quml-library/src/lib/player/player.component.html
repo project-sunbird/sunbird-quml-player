@@ -47,7 +47,7 @@
           <slide *ngFor="let question of questions; let i= index">
             <div [id]="question.identifier">
             <div *ngIf="question?.primaryCategory.toLowerCase() === 'multiple choice question'">
-              <quml-mcq [question]='question' [replayed]="replayed" (optionSelected)="getOptionSelected($event)" [identifier]="question.id"
+              <quml-mcq [question]='question' [replayed]="replayed" (optionSelected)="getOptionSelected($event)" [identifier]="question.id" [tryAgain]="tryAgainClicked"
               ></quml-mcq>
             </div>
             <div *ngIf="question?.primaryCategory.toLowerCase() === 'subjective question'">
@@ -88,7 +88,7 @@
               (click)="goToSlideClicked(q.index)">
               {{q.index}}</li>
           </ng-container>
-            <li *ngIf="!loadScoreBoard && requiresSubmit " (click)="loadScoreBoard = true; disableNext = true;"><img src="./assets/flag_inactive.svg"></li>
+            <li *ngIf="!loadScoreBoard && requiresSubmit " (click)="loadScoreBoard = true; disableNext = true; currentSolutions = undefined;"><img src="./assets/flag_inactive.svg"></li>
             <li *ngIf="loadScoreBoard && requiresSubmit"><img src="./assets/flag_active.svg"></li>
         </ul>
       </div>

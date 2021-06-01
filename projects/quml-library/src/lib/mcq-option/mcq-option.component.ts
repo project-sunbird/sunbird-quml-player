@@ -16,7 +16,7 @@ export class McqOptionComponent implements OnChanges {
   @Output() optionSelected = new EventEmitter<any>();
   selectedOption = []; 
   @Input() replayed : boolean;
-
+  @Input() tryAgain? : boolean;
 
   constructor(
     public utilService : UtilService
@@ -28,6 +28,24 @@ export class McqOptionComponent implements OnChanges {
          ele.selected = false;
       })
     }
+    if (this.tryAgain) {
+      this.unselectOption();
+    }
+  }
+
+  unselectOption(){
+    this.mcqOptions.forEach((ele) => {
+      ele.selected = false;
+    });
+    this.selectedOption = [];
+    this.optionSelected.emit(
+      {
+        name: 'optionSelect',
+        option: this.selectedOption,
+        cardinality: this.cardinality,
+        solutions: this.solutions
+      }
+    );
   }
 
   onOptionSelect(event, mcqOption) {
