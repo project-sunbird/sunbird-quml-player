@@ -103,16 +103,16 @@
         text-align: center;
         position: fixed;
         left: 36%;
-        bottom: 24%;
+        bottom: 0;
     }
 
     .scoreboard-scores{
         display: -ms-grid;
         display: grid;
-        grid-template-columns: repeat(4,80px);
+        grid-template-columns: repeat(4,84px);
         align-items: center;
         grid-gap: 8px;
-        margin-left: 10%;
         margin-top: 2rem;
+        height: 18vh;
     }
 }
