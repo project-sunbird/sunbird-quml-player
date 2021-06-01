@@ -50,14 +50,14 @@
   <!-- <div>
     <quml-bookmark></quml-bookmark>
   </div> -->
-  <div>
+  <!-- <div>
     <quml-hint></quml-hint>
-  </div>
+  </div> -->
   <!-- <div>
     <quml-share></quml-share>
   </div> -->
-  <div>
-    <quml-ans></quml-ans>
+  <div *ngIf="currentSolutions && showFeedBack">
+    <quml-ans (click)="showSolution.emit()"></quml-ans>
   </div>
   <div>
     <span (click)="prevSlide()">
