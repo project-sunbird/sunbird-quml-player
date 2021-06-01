@@ -200,7 +200,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.showStartPage = this.QumlPlayerConfig.metadata.showStartPage && this.QumlPlayerConfig.metadata.showStartPage.toLowerCase() === 'no' ? false : true
     this.showEndPage = this.QumlPlayerConfig.metadata.showEndPage && this.QumlPlayerConfig.metadata.showEndPage.toLowerCase() === 'no' ? false : true
     this.totalScore = this.QumlPlayerConfig.metadata.maxScore;
-    this.attempts = { max: _.get(this.QumlPlayerConfig, 'metadata.maxAttempt'), current: _.get(this.QumlPlayerConfig, 'metadata.currentAttempt') };
+    this.attempts = { max: _.get(this.QumlPlayerConfig, 'metadata.maxAttempt'), current: _.get(this.QumlPlayerConfig, 'metadata.currentAttempt') + 1 };
     this.showReplay = this.attempts.max && this.attempts.max === this.attempts.current ? false : true;
     this.setInitialScores();
     if (this.threshold === 1) {
@@ -376,7 +376,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.viewerService.raiseHeartBeatEvent(eventName.viewSolutionClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
     this.showSolution = true;
     this.showAlert = false;
-    this.currentQuestionsMedia = _.get(this.questions[this.car.getCurrentSlideIndex()], 'media');
+    this.currentQuestionsMedia = _.get(this.questions[this.car.getCurrentSlideIndex() - 1], 'media');
     _.forEach(this.currentOptions, (val, key) => {
       this.setImageZoom(String(key));
     });
