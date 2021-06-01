@@ -10,12 +10,25 @@
    display: flex;
    align-items: center;
    justify-content: space-between;
-   margin-bottom: 16px;
+  //  margin-bottom: 16px;
+
+  .option-image {
+    position: relative;
+    img {
+      min-width: 100%;
+      vertical-align: bottom;
+      width: 100% !important;
+    }
+  }
+
+  .option {
+    color: #666666;
+    font-size: 12px;
+    font-weight: bold;
+  }
+
  }
 
- .quml-mcq-option-card .option-image {
-   position: relative;
- }
 
  .zoom-in-icon {
   position: absolute;
@@ -23,17 +36,6 @@
   bottom: 0px;
  }
 
- .quml-mcq-option-card .option-image img {
-   min-width: 100%;
-   vertical-align: bottom;
-   width: 100% !important;
- }
-
-.quml-mcq-option-card .option {
-   color: #666666;
-   font-size: 12px;
-   font-weight: bold;
- }
 
 ::ng-deep {
   .quml-mcq-option-card .option .image {
