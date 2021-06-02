@@ -71,7 +71,10 @@
 
   &__next {
     &--active {
-      background-color: #FFD555;
+      background-color: var(--primary-color);
+      &::after {
+        border-color: var(--white)
+      }
     }
 
     &::after {
