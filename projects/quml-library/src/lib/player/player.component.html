@@ -12,7 +12,7 @@
       [disablePreviousNavigation]="linearNavigation" [duration]="timeLimit" [warningTime]="warningTime" [showTimer]="showTimer"
       (nextSlideClicked)="nextSlideClicked($event)" (prevSlideClicked)="previousSlideClicked($event)"
       [currentSlideIndex]="currentSlideIndex" [totalNoOfQuestions]="noOfQuestions" [active]="active"
-      [endPageReached]="endPageReached" [initializeTimer]="initializeTimer" [hidden]="endPageReached" [replayed]="replayed" [disableNext]="disableNext" [startPageInstruction]="startPageInstruction" [attempts]="attempts">
+      [endPageReached]="endPageReached" [loadScoreBoard]="loadScoreBoard" [initializeTimer]="initializeTimer" [hidden]="endPageReached" [replayed]="replayed" [disableNext]="disableNext" [startPageInstruction]="startPageInstruction" [attempts]="attempts">
     </quml-header>
     <sb-player-side-menu-icon class="notVisible"></sb-player-side-menu-icon>
     <sb-player-sidebar [title]="contentName" (sidebarEvent)="sideBarEvents($event)" [config]="sideMenuConfig">

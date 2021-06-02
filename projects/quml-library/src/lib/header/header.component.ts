@@ -18,6 +18,7 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
   @Input() active: boolean;
   @Input() initializeTimer: boolean;
   @Input() endPageReached: boolean;
+  @Input() loadScoreBoard: boolean;
   @Input() replayed: boolean;
   @Output() nextSlideClicked = new EventEmitter<any>();
   @Output() prevSlideClicked = new EventEmitter<any>();
