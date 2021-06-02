@@ -1,4 +1,5 @@
 @import '../../../../../node_modules/@project-sunbird/sb-styles/assets/mixins/mixins';
+
 .quml-header {
   background: #c2c2c2;
   display: flow-root;
@@ -729,4 +730,7 @@
     }
 
   }
+}
+.endPage-container-height{
+  height: 100%;
 }
