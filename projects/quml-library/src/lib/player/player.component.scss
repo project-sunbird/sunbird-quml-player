@@ -542,13 +542,15 @@
 ::ng-deep {
   .quml-mcq {
     .image-style-align-right {
+      float: right;
       text-align: right !important;
-      width: auto;
+      margin-left: 1rem !important;
     }
 
     .image-style-align-left {
+      float: left;
       text-align: left !important;
-      width: auto;
+      margin-right: 1rem !important;
     }
 
     figure.image {
@@ -557,30 +559,22 @@
       clear: both;
       text-align: center;
       margin: 1em auto;border: 0px;
+      overflow: visible;
     }
 
     figure.image.image_resized.resize-25 {
-      width: auto !important;
-      img {
       width: 25%;
       height: auto;
-      }
     }
 
     figure.image.image_resized.resize-50 {
-      width: auto !important;
-      img {
       width: 50%;
       height: auto;
     }
-    }
 
     figure.image.image_resized.resize-75 {
-      width: auto !important;
-      img {
       width: 75%;
       height: auto;
-    }
     }
 
     figure.table table,
