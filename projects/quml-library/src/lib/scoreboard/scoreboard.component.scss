@@ -63,6 +63,7 @@
     background-color: var(--primary-color);
     box-shadow: inset 0 calculateRem(-1px) calculateRem(2px) 0 rgba(0, 0, 0, .5);
     outline: none;
+    cursor: pointer;
 }
 
 .scoreboard-button-container {

@@ -1,5 +1,5 @@
 <div class="quml-container" *ngIf="loadView" [hidden]="showZoomModal">
-  <div class="endPage-container">
+  <div class="endPage-container" [ngClass]="endPageReached ? 'endPage-container-height': ''">
     <sb-player-end-page *ngIf="endPageReached && showEndPage" [contentName]="contentName" [outcome]="outcomeLabel"
       [outcomeLabel]="'Score: '" [userName]="userName" [timeSpentLabel]="durationSpent"
       (replayContent)="replayContent()" (exitContent)="exitContent($event)" [showExit]="sideMenuConfig.showExit" [showReplay]="showReplay">   
