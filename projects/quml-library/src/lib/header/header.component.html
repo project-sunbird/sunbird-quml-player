@@ -53,8 +53,8 @@
   <!-- <div>
     <quml-share></quml-share>
   </div> -->
-  <div class="ml-16">
-    <quml-ans></quml-ans>
+  <div class="ml-16" *ngIf="currentSolutions && showFeedBack">
+    <quml-ans (click)="showSolution.emit()"></quml-ans>
   </div>
   <div class="quml-navigation ml-auto">
     <div class="quml-navigation__previous" (click)="prevSlide()"></div>

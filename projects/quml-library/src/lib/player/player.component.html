@@ -12,6 +12,7 @@
       [disablePreviousNavigation]="linearNavigation" [duration]="timeLimit" [warningTime]="warningTime" [showTimer]="showTimer"
       (nextSlideClicked)="nextSlideClicked($event)" (prevSlideClicked)="previousSlideClicked($event)"
       [currentSlideIndex]="currentSlideIndex" [totalNoOfQuestions]="noOfQuestions" [active]="active"
+      [showFeedBack]="showFeedBack" [currentSolutions]="currentSolutions" (showSolution)="viewSolution()"
       [endPageReached]="endPageReached" [loadScoreBoard]="loadScoreBoard" [initializeTimer]="initializeTimer" [hidden]="endPageReached" [replayed]="replayed" [disableNext]="disableNext" [startPageInstruction]="startPageInstruction" [attempts]="attempts">
     </quml-header>
     <sb-player-side-menu-icon class="notVisible"></sb-player-side-menu-icon>
@@ -33,7 +34,7 @@
           <quml-share></quml-share>
         </div> -->
         <!-- Not in scope -->
-        <div *ngIf="currentSolutions && showUserSolution"> 
+        <div *ngIf="currentSolutions && showUserSolution && showFeedBack">
           <quml-ans (click)="getSolutions()"></quml-ans>
         </div>
       </div>
