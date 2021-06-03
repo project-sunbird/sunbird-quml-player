@@ -1,5 +1,5 @@
 <div class="quml-container" *ngIf="loadView" [hidden]="showZoomModal">
-  <div class="endPage-container">
+  <div class="endPage-container" [ngClass]="endPageReached ? 'endPage-container-height': ''">
     <sb-player-end-page *ngIf="endPageReached && showEndPage" [contentName]="contentName" [outcome]="outcomeLabel"
       [outcomeLabel]="'Score: '" [userName]="userName" [timeSpentLabel]="durationSpent"
       (replayContent)="replayContent()" (exitContent)="exitContent($event)" [showExit]="sideMenuConfig.showExit" [showReplay]="showReplay">   
@@ -12,7 +12,7 @@
       [disablePreviousNavigation]="linearNavigation" [duration]="timeLimit" [warningTime]="warningTime" [showTimer]="showTimer"
       (nextSlideClicked)="nextSlideClicked($event)" (prevSlideClicked)="previousSlideClicked($event)"
       [currentSlideIndex]="currentSlideIndex" [totalNoOfQuestions]="noOfQuestions" [active]="active"
-      [endPageReached]="endPageReached" [initializeTimer]="initializeTimer" [hidden]="endPageReached" [replayed]="replayed" [disableNext]="disableNext" [startPageInstruction]="startPageInstruction" [attempts]="attempts">
+      [endPageReached]="endPageReached" [loadScoreBoard]="loadScoreBoard" [initializeTimer]="initializeTimer" [hidden]="endPageReached" [replayed]="replayed" [disableNext]="disableNext" [startPageInstruction]="startPageInstruction" [attempts]="attempts">
     </quml-header>
     <sb-player-side-menu-icon class="notVisible"></sb-player-side-menu-icon>
     <sb-player-sidebar [title]="contentName" (sidebarEvent)="sideBarEvents($event)" [config]="sideMenuConfig">
@@ -47,7 +47,7 @@
           <slide *ngFor="let question of questions; let i= index">
             <div [id]="question.identifier">
             <div *ngIf="question?.primaryCategory.toLowerCase() === 'multiple choice question'">
-              <quml-mcq [question]='question' [replayed]="replayed" (optionSelected)="getOptionSelected($event)" [identifier]="question.id"
+              <quml-mcq [question]='question' [replayed]="replayed" (optionSelected)="getOptionSelected($event)" [identifier]="question.id" [tryAgain]="tryAgainClicked"
               ></quml-mcq>
             </div>
             <div *ngIf="question?.primaryCategory.toLowerCase() === 'subjective question'">
@@ -88,7 +88,7 @@
               (click)="goToSlideClicked(q.index)">
               {{q.index}}</li>
           </ng-container>
-            <li *ngIf="!loadScoreBoard && requiresSubmit " (click)="loadScoreBoard = true; disableNext = true;"><img src="./assets/flag_inactive.svg"></li>
+            <li *ngIf="!loadScoreBoard && requiresSubmit " (click)="loadScoreBoard = true; disableNext = true; currentSolutions = undefined;"><img src="./assets/flag_inactive.svg"></li>
             <li *ngIf="loadScoreBoard && requiresSubmit"><img src="./assets/flag_active.svg"></li>
         </ul>
       </div>

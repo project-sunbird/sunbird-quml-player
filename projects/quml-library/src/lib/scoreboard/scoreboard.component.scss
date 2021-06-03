@@ -1,3 +1,4 @@
+@import '../../../../../node_modules/@project-sunbird/sb-styles/assets/mixins/mixins';
 .scoreboard {
     padding: 2rem 0px;
     display: flex;
@@ -6,6 +7,7 @@
     position: absolute;
     top: 50%;
     left: 50%;
+    width:100%;
     transform: translate(-50%, -50%);
 }
 
@@ -15,71 +17,72 @@
     margin: 2rem auto 0 auto;
     flex-wrap: wrap;
     height: 100%;
-    width: 368px;
+    width: 100%;
     overflow-y: auto;
-    height: 15vh;
-    margin-bottom: 50px;
+    height: 100%;
+    max-height: calc(100vh - 260px);
+    margin-bottom: calculateRem(50px);
 }
 
 .unattempted {
-    border: 1px solid var(--primary-color) !important;
+    border: calculateRem(1px) solid var(--primary-color) !important;
     color: var(--primary-color) !important;
   }
 
 .attempted{
     background-color: var(--primary-color) !important;
-    border: 1px solid var(--primary-color) !important;
-    color: white;
+    border: calculateRem(1px) solid var(--primary-color) !important;
+    color: var(--white);
   }
 
 
 .scoreboard-header {
     color: var(--primary-color);
-    font-size: 20px;
+    font-size: calculateRem(20px);
     font-weight: bold;
     letter-spacing: 0;
-    line-height: 28px;
+    line-height: calculateRem(28px);
     text-align: center;
 }
 
 .scoreboard-title {
     color: #6D7278;
-    font-size: 14px;
+    font-size: calculateRem(14px);
     text-align: center;
     display: block;
 }
 
 .scoreboard-quml-btn {
     color:var(--white);
-    font-size: 13px;
+    font-size: calculateRem(13px);
     font-weight: 500;
     text-align: center;
     border: none;
-    padding: 6px 24px;
+    padding: calculateRem(6px) calculateRem(24px);
     border-radius: 16px;
     background-color: var(--primary-color);
-    box-shadow: inset 0 -1px 2px 0 rgba(0, 0, 0, .5);
+    box-shadow: inset 0 calculateRem(-1px) calculateRem(2px) 0 rgba(0, 0, 0, .5);
     outline: none;
+    cursor: pointer;
 }
 
 .scoreboard-button-container {
     text-align: center;
     position: absolute;
-    left: 45%;
-    bottom: 8%;
+    bottom: 0;
 }
 
 .scoreboard-scores div {
-    font-size: 10px;
+    font-size: calculateRem(10px);
     font-weight: 500;
     border-radius: 50%;
     text-align: center;
-    width: 24px;
-    height: 24px;
+    width: calculateRem(24px);
+    height: calculateRem(24px);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 16px 32px;
+    margin: calculateRem(16px) calculateRem(32px);
 }
 
 .correct {
@@ -96,23 +99,30 @@
     color:var(--white);
     background: linear-gradient(90deg,#ababab5e 0,#ABABAB 100%);
 }
-  
 
 @media only screen and (max-width: 480px) {
     .scoreboard-button-container {
         text-align: center;
         position: fixed;
-        left: 36%;
-        bottom: 24%;
+        bottom: 0;
     }
 
     .scoreboard-scores{
         display: -ms-grid;
         display: grid;
-        grid-template-columns: repeat(4,80px);
+        grid-template-columns: repeat(4,84px);
         align-items: center;
-        grid-gap: 8px;
-        margin-left: 10%;
-        margin-top: 2rem;
+        grid-gap: calculateRem(8px);
+        margin: 2rem auto 32px;
+    }
+}
+@media only screen and (max-width: 320px) {
+    .scoreboard-scores{
+        grid-template-columns: repeat(3,100px);
+    }
+}
+@media only screen and (max-width: 300px) {
+    .scoreboard-scores{
+        grid-template-columns: repeat(3,84px);
     }
 }

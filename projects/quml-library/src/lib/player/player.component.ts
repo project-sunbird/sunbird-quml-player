@@ -101,6 +101,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   showContentError: boolean = false;
   attempts: { max: number, current: number };
   showReplay = true;
+  tryAgainClicked = false;
 
   constructor(
     public viewerService: ViewerService,
@@ -342,8 +343,18 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       selectedOption: optionSelected.option
     }
     this.viewerService.raiseHeartBeatEvent(eventName.optionClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
-    this.optionSelectedObj = optionSelected;
-    this.currentSolutions = optionSelected.solutions;
+
+    // This optionSelected comes empty whenever the try again is clicked on feedback popup
+    if (_.isEmpty(_.get(optionSelected, 'option'))) {
+      this.optionSelectedObj = undefined;
+      this.currentSolutions = undefined;
+      this.updateScoreBoard(currentIndex, 'skipped');
+    } else {
+      this.optionSelectedObj = optionSelected;
+      this.currentSolutions = optionSelected.solutions;
+    }
+
+
     this.media = this.questions[this.car.getCurrentSlideIndex() - 1].media;
     if (this.currentSolutions) {
       this.currentSolutions.forEach((ele, index) => {
@@ -367,6 +378,10 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     if (event.type === 'close') {
       this.viewerService.raiseHeartBeatEvent(eventName.closedFeedBack, TelemetryType.interact, this.car.getCurrentSlideIndex());
     } else if (event.type === 'tryAgain') {
+      this.tryAgainClicked = true;
+      setTimeout(() => {
+        this.tryAgainClicked = false;
+      }, 2000)
       this.viewerService.raiseHeartBeatEvent(eventName.tryAgain, TelemetryType.interact, this.car.getCurrentSlideIndex());
     }
     this.showAlert = false;
@@ -646,6 +661,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     } else if (this.questions[index - 1] !== undefined) {
       this.car.selectSlide(index);
     }
+    this.currentSolutions = undefined;
   }
 
   setInitialScores() {
