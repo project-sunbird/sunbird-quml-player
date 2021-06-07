@@ -11,7 +11,7 @@
     "create-player-link": "cd dist/quml-library && npm link && cd ../..",
     "link-player": "cd dist/quml-library && npm link && cd ../.. && npm link @project-sunbird/sunbird-quml-player-v8",
     "build-lib": "ng build quml-library && node scripts/copyAssets.js",
-    "build-link-lib": "npm run build-lib && npm run create-player-link && npm run link-player",
+    "build-lib-link": "npm run build-lib && npm run create-player-link && npm run link-player",
     "test-lib": "ng test quml-library",
     "mybuild": "npm run build",
     "serve": "node scripts/copyAssets.js && npm link ./dist/quml-library && ng serve"
@@ -26,7 +26,7 @@
     "@angular/platform-browser": "^8.0.0",
     "@angular/platform-browser-dynamic": "^8.0.0",
     "@angular/router": "^8.0.0",
-    "@project-sunbird/client-services": "3.9.1",
+    "@project-sunbird/client-services": "4.0.1",
     "@project-sunbird/sb-styles": "0.0.7",
     "@project-sunbird/sunbird-player-sdk-v8": "3.8.0",
     "@project-sunbird/sunbird-quml-player-v8": "file:dist/quml-library",

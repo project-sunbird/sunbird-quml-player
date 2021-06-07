@@ -9,7 +9,7 @@
         <div [innerHtml]="option.label | safeHtml"></div>
     </div>
     <ng-container *ngIf="solutions && solutions.length">
-    <div class="solution-header">solutions</div>
+    <div class="solution-header">Solution</div>
     <div *ngIf="!showVideoSolution">
         <div *ngFor="let solution of solutions">
             <ng-container [ngSwitch]="solution.type">

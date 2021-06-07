@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, SecurityContext, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, SecurityContext, Output, EventEmitter, OnChanges } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { katex } from 'katex';
 import { shortAnswerQuestionData } from './data';
@@ -10,9 +10,10 @@ declare var katex: any;
   templateUrl: './sa.component.html',
   styleUrls: ['./sa.component.scss', '../quml-library.component.scss']
 })
-export class SaComponent implements OnInit {
+export class SaComponent implements OnInit, OnChanges {
 
   @Input() questions?: any;
+  @Input() replayed?: boolean;
   @Output() componentLoaded = new EventEmitter<any>();
   @Output() showAnswerClicked = new EventEmitter<any>();
   showAnswer = false;
@@ -23,6 +24,12 @@ export class SaComponent implements OnInit {
     public domSanitizer: DomSanitizer
   ) {
 
+  }
+
+  ngOnChanges() {
+    if(this.replayed) {
+      this.showAnswer = false;
+    }
   }
 
   showAnswerToUser(){
