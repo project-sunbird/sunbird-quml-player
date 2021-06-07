@@ -12,7 +12,7 @@
 
     &__content {
         display: flex;
-        border-bottom: 1px solid #eee;
+        border-bottom: calculateRem(1px) solid #eee;
         align-items: center;
     }
 
@@ -66,8 +66,8 @@
 
         th,
         td {
-            border: 1px solid #ddd;
-            padding: 8px;
+            border: calculateRem(1px) solid #ddd;
+            padding: calculateRem(8px);
         }
 
         tr:nth-child(even) {
