@@ -324,6 +324,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.currentSlideIndex = this.car.getCurrentSlideIndex();
     this.currentQuestionsMedia = _.get(this.questions[this.car.getCurrentSlideIndex() - 1], 'media');
     this.setImageZoom();
+    this.setSkippedClass(this.car.getCurrentSlideIndex() - 1);
   }
 
   sideBarEvents(event) {
@@ -644,6 +645,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     }
     this.currentQuestionsMedia = _.get(this.questions[this.currentSlideIndex - 1], 'media');
     this.setImageZoom();
+    this.setSkippedClass(this.currentSlideIndex - 1);
     if (!this.initializeTimer) {
       this.initializeTimer = true;
     }

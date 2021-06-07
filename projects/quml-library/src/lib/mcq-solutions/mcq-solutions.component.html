@@ -4,7 +4,7 @@
     </div>
     <div class="solution-header">Question</div>
     <div [innerHtml]="question | safeHtml"></div>
-    <div class="solution-header">option</div>
+    <div class="solution-header">Options</div>
     <div class="solution-options" *ngFor="let option of options">
         <div [innerHtml]="option.label | safeHtml"></div>
     </div>
