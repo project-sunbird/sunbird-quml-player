@@ -5,7 +5,7 @@
     <div class="solution-header">Question</div>
     <div [innerHtml]="question | safeHtml"></div>
     <div class="solution-header">Options</div>
-    <div class="solution-options" *ngFor="let option of options;">
+    <div class="solution-options" *ngFor="let option of options">
         <div [innerHtml]="option.label | safeHtml"></div>
     </div>
     <ng-container *ngIf="solutions && solutions.length">
