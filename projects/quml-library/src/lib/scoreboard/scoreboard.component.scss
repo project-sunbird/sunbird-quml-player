@@ -6,7 +6,7 @@
     align-items: center;
     width: 100%;
     position: absolute;
-    top: 56px;
+    top: calculateRem(56px);
     height: calc(100% - 56px);
     left: 0;
     right: 0;
