@@ -1,34 +1,34 @@
-<div class="potrait-header">
-  {{contentName}}
-</div>
 <div class="startpage">
-  <div class="startpage-info">
-    <div class="landscape-header">
-      {{contentName}}
-    </div>
-    <div class="question-scores">
-      <div class="points">
-        <div class="score-heading">Questions</div>
-        <div class="icon-section">
-          <quml-content class="icon"></quml-content><span class="scores">{{totalNoOfQuestions}}</span>
-        </div>
-      </div>
-      <div class="points" *ngIf="showTimer && time > 0">
-        <div class="score-heading">Minutes</div>
-        <div class="icon-section">
-          <quml-timer class="icon"></quml-timer><span class="scores">{{minutes}}:{{seconds}}</span>
-        </div>
-      </div>
-      <div class="points" *ngIf="points">
-        <div class="score-heading">Points</div>
-        <div class="icon-section">
-          <quml-startpagestaricon class="icon">i</quml-startpagestaricon><span class="scores">{{points}}</span>
-        </div>
-      </div>
-    </div>
-    <ng-container *ngIf="instructions">
-      <div class="instruction-title">Instructions</div>
-      <div [innerHTML]="instructions | safeHtml" class="startpage-instructions"> </div>
-  </ng-container>
+  <div class="startpage__header">
+    {{contentName}}
   </div>
+  <div class="startpage__content">
+    <div class="startpage__metadata">
+      <div class="startpage__md-heading">Questions</div>
+      <div class="startpage__md-scores">
+        <quml-content class="startpage__md-icon"></quml-content><span
+          class="startpage__md-desc">{{totalNoOfQuestions}}</span>
+      </div>
+    </div>
+    <div class="startpage__metadata" *ngIf="showTimer && time > 0">
+      <div class="startpage__md-heading">Minutes</div>
+      <div class="startpage__md-scores">
+        <quml-timer class="startpage__md-icon"></quml-timer><span
+          class="startpage__md-desc">{{minutes}}:{{seconds}}</span>
+      </div>
+    </div>
+    <div class="startpage__metadata" *ngIf="points">
+      <div class="startpage__md-heading">Points</div>
+      <div class="startpage__md-scores">
+        <quml-startpagestaricon class="startpage__md-icon">i</quml-startpagestaricon><span
+          class="startpage__md-desc">{{points}}</span>
+      </div>
+    </div>
+  </div>
+  <ng-container *ngIf="instructions">
+    <div class="startpage__instruction">
+      <div class="startpage__instr-title">Instructions</div>
+      <div [innerHTML]="instructions | safeHtml" class="startpage__instr-desc"></div>
+    </div>
+  </ng-container>
 </div>
