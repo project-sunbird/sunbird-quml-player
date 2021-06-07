@@ -30,6 +30,7 @@ export class ViewerService {
   endPageSeen: boolean;
   identifiers: any;
   threshold: number;
+  isAvailableLocally: boolean = false;
 
   constructor(
     public qumlLibraryService: QumlLibraryService,
@@ -47,6 +48,7 @@ export class ViewerService {
     this.qumlPlayerStartTime = this.qumlPlayerLastPageTime = new Date().getTime();
     this.currentQuestionIndex = 1;
     this.contentName = config.metadata.name;
+    this.isAvailableLocally = config.metadata.isAvailableLocally;
     this.src = config.metadata.artifactUrl || '';
     if (config.context.userData) {
       this.userName = config.context.userData.firstName + ' ' + config.context.userData.lastName;
@@ -80,7 +82,7 @@ export class ViewerService {
     this.qumlLibraryService.start(duration);
   }
 
-  raiseEndEvent(currentQuestionIndex, noOfvisitedQuestions,  endPageSeen , score) {
+  raiseEndEvent(currentQuestionIndex,  endPageSeen , score) {
     const duration = new Date().getTime() - this.qumlPlayerStartTime;
     const endEvent = {
       eid: 'END',
@@ -96,9 +98,8 @@ export class ViewerService {
     this.qumlPlayerEvent.emit(endEvent);
     const visitedlength = (this.metaData.pagesHistory.filter((v, i, a) => a.indexOf(v) === i)).length;
     this.timeSpent = this.utilService.getTimeSpentText(this.qumlPlayerStartTime);
-    this.qumlLibraryService.end(duration, currentQuestionIndex, this.totalNumberOfQuestions, noOfvisitedQuestions, endPageSeen , score);
+    this.qumlLibraryService.end(duration, currentQuestionIndex, this.totalNumberOfQuestions, this.totalNumberOfQuestions, endPageSeen , score);
   }
-
 
   raiseHeartBeatEvent(type: string, telemetryType: string, pageId: any) {
     const hearBeatEvent = {
@@ -117,20 +118,6 @@ export class ViewerService {
       this.qumlLibraryService.impression(pageId);
     }
 
-  }
-  
-  raiseErrorEvent(error: Error) {
-    const errorEvent = {
-      eid: 'ERROR',
-      ver: this.version,
-      edata: {
-        type: 'ERROR',
-        stacktrace: error ? error.toString() : ''
-      },
-      metaData: this.metaData
-    };
-    this.qumlPlayerEvent.emit(errorEvent);
-    this.qumlLibraryService.error(error);
   }
 
   raiseAssesEvent(questionData , index , pass , score , resValues , duration){
@@ -161,6 +148,62 @@ export class ViewerService {
     this.qumlLibraryService.response(identifier, this.version , qType , optionSelected);
   }
 
+  raiseSummaryEvent(currentQuestionIndex, endpageseen, score, summaryObj) {
+    const eData = {
+      type: "content",
+      mode: "play",
+      starttime: this.qumlPlayerStartTime,
+      endtime: new Date().getTime(),
+      timespent: this.utilService.getTimeSpentText(this.qumlPlayerStartTime),
+      pageviews: this.totalNumberOfQuestions,
+      interactions: summaryObj.correct + summaryObj.wrong + summaryObj.partial,
+      extra: [{
+        id: "progress",
+        value: Number(((currentQuestionIndex / this.totalNumberOfQuestions) * 100).toFixed(0))
+      }, {
+        id: "endpageseen",
+        value: endpageseen
+      }, {
+        id: "score",
+        value: score
+      }, {
+        id: "correct",
+        value: summaryObj.correct
+      }, {
+        id: "incorrect",
+        value: summaryObj.wrong
+      }, {
+        id: "partial",
+        value: summaryObj.partial
+      }, {
+        id: "skipped",
+        value: summaryObj.skipped
+      }]
+    };
+    const summaryEvent = {
+      eid: 'QUML_SUMMARY',
+      ver: this.version,
+      edata: eData,
+      metaData: this.metaData
+    };
+    this.qumlPlayerEvent.emit(summaryEvent);
+    this.qumlLibraryService.summary(eData);
+  }
+
+  raiseExceptionLog(errorCode: string , errorType: string , stacktrace , traceId ) {
+    const exceptionLogEvent = {
+      eid: "ERROR",
+      edata: {
+          err: errorCode,
+          errtype: errorType,
+          requestid: traceId || '',
+          stacktrace: stacktrace || '',
+      }
+    }
+    this.qumlPlayerEvent.emit(exceptionLogEvent)
+    this.qumlLibraryService.error(stacktrace, { err: errorCode, errtype: errorType });
+  }
+
 
   getQuestions(currentIndex?: number  , index?: number) {
     let indentifersForQuestions;
@@ -179,6 +222,10 @@ export class ViewerService {
         _.forEach(questions, (value) => {
           this.qumlQuestionEvent.emit(value);
         });
+      },(error)=>{
+          this.qumlQuestionEvent.emit({
+            error: error
+          })
       });
     }
   }
@@ -187,7 +234,11 @@ export class ViewerService {
     let indentiferForQuestion = this.identifiers.splice(0, this.threshold);
       this.questionCursor.getQuestion(indentiferForQuestion).subscribe((question) => {
         this.qumlQuestionEvent.emit(question);
-      })
+      },(error)=>{
+        this.qumlQuestionEvent.emit({
+          error: error
+        })
+    })
   }
 
 }

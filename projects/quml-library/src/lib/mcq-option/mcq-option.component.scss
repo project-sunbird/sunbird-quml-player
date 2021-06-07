@@ -1,8 +1,7 @@
 @import '../../../../../node_modules/@project-sunbird/sb-styles/assets/mixins/mixins';
 .quml-mcq-options {
   align-items: center;
-  margin-bottom: 8
-  px;
+  margin-bottom: 8px;
 }
 
 .quml-option-card .option {
@@ -15,6 +14,7 @@
 }
 
 .quml-option label.container {
+  margin:0 auto;
   margin-bottom: 0;	
 }	
 
@@ -25,7 +25,7 @@
 .quml-option {
   border: 2px solid transparent;
   border-radius: 8px;
-  display: flex;
+  display: grid;
   grid-template-columns: 10fr 1fr;
   grid-gap: 1em;
   padding: 16px;
@@ -159,6 +159,8 @@ img {
 
 .qumlImageOption .wrapper {
   margin-top:  2rem;
+  display: grid;
+  gap:1rem;
 }
 
 .qumlOption-imageQaGrid .wrapper {
