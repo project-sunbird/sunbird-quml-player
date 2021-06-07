@@ -1,0 +1,107 @@
+@import './../../../../node_modules/@project-sunbird/sb-styles/assets/mixins/mixins';
+.answer {
+    border: 1px solid;
+    padding: 0.2em;
+    margin: 0.5em;
+}
+.icon {
+    width: 15%;
+    max-width: 70px;
+    min-width: 50px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.mcqText {
+    display: inline-block;
+    word-break: break-word;
+}
+
+.mcq-option {
+    background: var(--white);
+    border-radius: 5px;
+    margin: 8px 16px;
+    padding: 8px;
+}
+
+.options{
+    word-break: break-all;
+    padding: 15px 5px;
+    /* display: inline !important; */
+}
+
+.even,
+.odd {
+    width: 47%;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.column-block {
+    display: inline-block;
+    width: 48%;
+    vertical-align: middle;
+}
+
+.selected {
+    background: var(--primary-color);
+    color: var(--white);
+    box-shadow: 1px 2px 1px 3px var(--black);
+}
+
+.mathText {
+    display: inline !important;
+}
+
+.padding-top{
+    padding-top: 16px;
+}
+
+@media only screen and (min-width: 100px) and (max-width: 481px) {
+    .mcqText {
+        width: 75%;
+    }
+
+    .even,
+    .odd {
+        width: 38%;
+        display: inline-block;
+        vertical-align: middle;
+    }
+    .column-block {
+        display: inline-block;
+        width: 42%;
+        vertical-align: middle;
+    }
+}
+
+@media only screen and (min-width: 481px) and (max-width: 800px) {
+    .mcqText {
+        width: 85%;
+    }
+
+    .even,
+    .odd {
+        width: 43%;
+        display: inline-block;
+        vertical-align: middle;
+    }
+    .column-block {
+        display: inline-block;
+        width: 45%;
+        vertical-align: middle;
+    }
+}
+
+@media only screen and (min-width: 801px) and (max-width: 1200px) {
+    .even,
+    .odd {
+        width: 45%;
+    }
+
+    .column-block {
+        display: inline-block;
+        width: 45%;
+        vertical-align: middle;
+    }
+}
