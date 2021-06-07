@@ -238,7 +238,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   nextSlide() {
     this.currentQuestionsMedia = _.get(this.questions[this.currentSlideIndex], 'media');
-    this.setImageZoom(_.get(this.questions[this.currentSlideIndex], 'identifier'));
+    this.setImageZoom();
     if (this.car.getCurrentSlideIndex() > 0 && ((this.threshold * this.noOfTimesApiCalled) - 1) === this.car.getCurrentSlideIndex()
       && this.threshold * this.noOfTimesApiCalled >= this.questions.length && this.threshold > 1) {
       this.viewerService.getQuestions();
@@ -323,7 +323,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     }
     this.currentSlideIndex = this.car.getCurrentSlideIndex();
     this.currentQuestionsMedia = _.get(this.questions[this.car.getCurrentSlideIndex() - 1], 'media');
-    this.setImageZoom(_.get(this.questions[this.car.getCurrentSlideIndex() - 1], 'identifier'));
+    this.setImageZoom();
     this.setSkippedClass(this.car.getCurrentSlideIndex() - 1);
   }
 
@@ -392,9 +392,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.showSolution = true;
     this.showAlert = false;
     this.currentQuestionsMedia = _.get(this.questions[this.car.getCurrentSlideIndex() - 1], 'media');
-    _.forEach(this.currentOptions, (val, key) => {
-      this.setImageZoom(String(key));
-    });
+    this.setImageZoom();
     clearTimeout(this.intervalRef);
   }
 
@@ -621,7 +619,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.currentSlideIndex = 1;
     this.car.selectSlide(1);
     this.currentQuestionsMedia = _.get(this.questions[0], 'media');
-    this.setImageZoom(_.get(this.questions[0], 'identifier'));
+    this.setImageZoom();
     setTimeout(() => {
       this.replayed = false;
     }, 200)
@@ -646,7 +644,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       return;
     }
     this.currentQuestionsMedia = _.get(this.questions[this.currentSlideIndex - 1], 'media');
-    this.setImageZoom(_.get(this.questions[this.currentSlideIndex - 1], 'identifier'));
+    this.setImageZoom();
     this.setSkippedClass(this.currentSlideIndex - 1);
     if (!this.initializeTimer) {
       this.initializeTimer = true;
@@ -692,9 +690,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.currentQuestion = this.questions[currentIndex].body;
     this.currentOptions = this.questions[currentIndex].interactions.response1.options;
     this.currentQuestionsMedia = _.get(this.questions[currentIndex], 'media');
-    _.forEach(this.currentOptions, (val, key) => {
-      this.setImageZoom(String(key));
-    });
+    this.setImageZoom();
     if (this.currentSolutions) {
       this.showSolution = true;
     }
@@ -738,30 +734,25 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     }
   }
 
-  setImageZoom(id: string) {
-    if (id) {
-      let images = document.getElementById(id).getElementsByTagName("img");
-      if (!_.isEmpty(images)) {
-        _.forEach(images, (image) => {
-          image.setAttribute("class", "option-image");
-          let imageId = image.getAttribute("data-asset-variable");
-          _.forEach(this.currentQuestionsMedia, (val) => {
-            if (val.baseUrl && imageId === val.id) {
-                image.src = val.baseUrl + val.src;
-            }
-          });
-          let divElement = document.createElement('div');
-          divElement.setAttribute("class", "magnify-icon");
-          divElement.onclick = (event) => {
-            this.viewerService.raiseHeartBeatEvent(eventName.zoomClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
-            this.zoomImgSrc = image.src;
-            this.showZoomModal = true;
-            event.stopPropagation();
-          }
-          image.parentNode.insertBefore(divElement, image.nextSibling);
-        });
+  setImageZoom() {
+    document.querySelectorAll('[data-asset-variable]').forEach(image => {
+      let imageId = image.getAttribute("data-asset-variable");
+      image.setAttribute("class", "option-image");
+      _.forEach(this.currentQuestionsMedia, (val) => {
+        if (val.baseUrl && imageId === val.id) {
+          image['src'] = val.baseUrl + val.src;
+        }
+      });
+      let divElement = document.createElement('div');
+      divElement.setAttribute("class", "magnify-icon");
+      divElement.onclick = (event) => {
+        this.viewerService.raiseHeartBeatEvent(eventName.zoomClicked, TelemetryType.interact, this.car.getCurrentSlideIndex());
+        this.zoomImgSrc = image['src'];
+        this.showZoomModal = true;
+        event.stopPropagation();
       }
-    }
+      image.parentNode.insertBefore(divElement, image.nextSibling);
+    });
   }
 
   zoomin() {

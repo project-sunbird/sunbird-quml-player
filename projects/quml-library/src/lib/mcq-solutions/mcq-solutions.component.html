@@ -5,8 +5,8 @@
     <div class="solution-header">Question</div>
     <div [innerHtml]="question | safeHtml"></div>
     <div class="solution-header">Options</div>
-    <div class="solution-options" *ngFor="let option of options; let i= index">
-        <div [innerHtml]="option.label | safeHtml" [id]="i"></div>
+    <div class="solution-options" *ngFor="let option of options">
+        <div [innerHtml]="option.label | safeHtml"></div>
     </div>
     <ng-container *ngIf="solutions && solutions.length">
     <div class="solution-header">Solution</div>
