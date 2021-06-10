@@ -179,5 +179,8 @@
       }
     }
   },
-  "defaultProject": "quml-demo-app"
+  "defaultProject": "quml-demo-app",
+  "cli": {
+    "analytics": false
+  }
 }
