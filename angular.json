@@ -58,7 +58,7 @@
               "projects/quml-demo-app/src/assets",
               {
                 "glob": "**/*",
-                "input": "node_modules/@project-sunbird/sunbird-quml-player-v8/lib/assets/",
+                "input": "node_modules/@project-sunbird/sunbird-quml-player-v9/lib/assets/",
                 "output": "/assets/"
               }
             ],
@@ -179,8 +179,5 @@
       }
     }
   },
-  "defaultProject": "quml-demo-app",
-  "cli": {
-    "analytics": false
-  }
+  "defaultProject": "quml-demo-app"
 }
