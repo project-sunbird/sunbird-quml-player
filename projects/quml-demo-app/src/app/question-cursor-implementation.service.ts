@@ -1,9 +1,11 @@
-import { QuestionCursor } from '@project-sunbird/sunbird-quml-player-v8';
+import { QuestionCursor } from '@project-sunbird/sunbird-quml-player-v9';
 import { HttpClient } from '@angular/common/http';
 import { mergeMap, map } from 'rxjs/operators';
 import { of, throwError as observableThrowError, Observable } from 'rxjs';
 import * as _ from 'lodash-es';
+import { Injectable } from "@angular/core";
 
+@Injectable()
 export class QuestionCursorImplementationService implements QuestionCursor {
     listUrl: string; // Define this url to call list api in server
     questionsArray = {

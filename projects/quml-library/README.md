@@ -16,12 +16,12 @@ nvm use 14
 ## Usage
 
 
-`npm i @project-sunbird/sunbird-quml-player-v8`
+`npm i @project-sunbird/sunbird-quml-player-v9`
 
 
 Add the module to the your player root module 
 
-`import  { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml-player-v8';`
+`import  { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml-player-v9';`
 
 ```javascript
 @NgModule({
@@ -46,7 +46,7 @@ add the assets, scripts and styles in angular.json file
             ....
               {
                 "glob": "**/*",
-                "input": "node_modules/@project-sunbird/sunbird-quml-player-v8/lib/assets/",
+                "input": "node_modules/@project-sunbird/sunbird-quml-player-v9/lib/assets/",
                 "output": "/assets/"
               }
             ],
