@@ -5,7 +5,7 @@ import { ViewerService } from '../services/viewer-service/viewer-service';
 import { eventName, TelemetryType, pageId } from '../telemetry-constants';
 import { UtilService } from '../util-service';
 import { QuestionCursor } from '../quml-question-cursor.service';
-import { ErrorService , errorCode , errorMessage } from '@project-sunbird/sunbird-player-sdk-v8';
+import { ErrorService , errorCode , errorMessage } from '@project-sunbird/sunbird-player-sdk-v9';
 import * as _ from 'lodash-es';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
