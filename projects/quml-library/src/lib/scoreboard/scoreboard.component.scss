@@ -35,10 +35,8 @@
         width: 100%;
         height: 100%;
         max-height: calc(100vh - 192px);
+        max-width: calculateRem(368px);
         overflow-y: auto;
-        @include respond-below(md) {
-            max-width: calculateRem(356px);
-        }
     }
 
     &__index {
