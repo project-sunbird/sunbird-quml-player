@@ -102,6 +102,14 @@ export class QumlLibraryService {
       this.getEventOptions()
     )
   }
+
+  public summary(eData){
+    CsTelemetryModule.instance.telemetryService.raiseSummaryTelemetry(
+      eData, 
+      this.getEventOptions()
+    )
+  }
+
   public end(duration, currentQuestionIndex, totalNoofQuestions, visitedQuestions, endpageseen , score) {
     const durationSec = Number((duration / 1e3).toFixed(2));
     CsTelemetryModule.instance.telemetryService.raiseEndTelemetry({
@@ -152,8 +160,9 @@ export class QumlLibraryService {
     });
   }
 
-  public error(error: Error) {
+  public error(error: Error , edata?: { err: string, errtype: string }) {
     CsTelemetryModule.instance.telemetryService.raiseErrorTelemetry({
+      options: this.getEventOptions(),
       edata: {
         err: 'LOAD',
         errtype: 'content',

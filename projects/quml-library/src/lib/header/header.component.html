@@ -1,28 +1,27 @@
-<div class="quml-header-container">
+<div class="quml-header__container">
   <div>
     <!-- <quml-menu class="quml-menu"></quml-menu> -->
+    <div *ngIf="attempts?.max" class="attempts sb-color-primary fnormal font-weight-bold pl-72">Attempt no {{attempts.current}}/{{attempts.max}}</div>
   </div>
 
-  <div class="header-right-section">
+  <div class="quml-header__metadata">
     <ng-container *ngIf="duration">
       <div class="duration mr-16" *ngIf="duration && showTimer && !initializeTimer">
-        <span>
-          <quml-durationtimer></quml-durationtimer>
-        </span><span>{{minutes}}:{{seconds}}</span>
+        <quml-durationtimer></quml-durationtimer>
+        <span>{{minutes}}:{{seconds}}</span>
       </div>
-      <div class="duration mr-8" *ngIf="duration && showTimer && initializeTimer && time">
-        <span>
-          <quml-durationtimer></quml-durationtimer>
-        </span><span [ngClass]="{'blink': showWarning}">{{time}}</span>
+      <div class="duration mr-16" *ngIf="duration && showTimer && initializeTimer && time">
+        <quml-durationtimer></quml-durationtimer>
+        <span [ngClass]="{'blink': showWarning}">{{time}}</span>
       </div>
     </ng-container>
     <ng-container *ngIf="!duration && showTimer && initializeTimer">
       <div class="duration mr-16">
-      <span><quml-durationtimer></quml-durationtimer></span><span>{{time}}</span>
-    </div>
+        <quml-durationtimer></quml-durationtimer>
+        <span>{{time}}</span>
+      </div>
     </ng-container>
 
-    
     <!-- <div class="star-container">
       <span div class="star">
         <quml-star></quml-star>
@@ -31,22 +30,20 @@
         47
       </span>
     </div> -->
-    <div class="navigation-icons">
-      <span (click)="prevSlide()">
-        <quml-previous></quml-previous>
-      </span>
-      <span (click)="nextSlide()">
-        <quml-next *ngIf="!active" [ngClass]="disableNext ? 'navigation-icon-disabled': '' "></quml-next>
-        <quml-next-active *ngIf="active" [ngClass]="disableNext ? 'navigation-icon-disabled': '' "></quml-next-active>
-      </span>
+    <div class="quml-navigation" *ngIf="!disableNext">
+      <div class="quml-navigation__previous" (click)="prevSlide()"
+        [ngClass]="startPageInstruction && currentSlideIndex === 0 ? 'navigation-icon-disabled': '' "></div>
+      <div class="quml-navigation__next ml-8" (click)="nextSlide()" *ngIf="!active"
+        [ngClass]="disableNext ? 'navigation-icon-disabled': '' "></div>
+      <div class="quml-navigation__next quml-navigation__next--active ml-8" (click)="nextSlide()" *ngIf="active"
+        [ngClass]="disableNext ? 'navigation-icon-disabled': '' "></div>
     </div>
+
   </div>
 </div>
 
-<div class="navigation-portrait-section" *ngIf="!endPageReached">
-  <div class="current-slide">
-    {{currentSlideIndex}}/{{totalNoOfQuestions}}
-  </div>
+<div class="quml-header__metadata quml-header__metadata--portrait" *ngIf="!loadScoreBoard && !endPageReached">
+  <div class="current-slide mb-8 fnormal">{{currentSlideIndex}}/{{totalNoOfQuestions}}</div>
   <!-- <div>
     <quml-bookmark></quml-bookmark>
   </div> -->
@@ -56,16 +53,13 @@
   <!-- <div>
     <quml-share></quml-share>
   </div> -->
-  <div *ngIf="currentSolutions && showFeedBack">
+  <div class="ml-16" *ngIf="currentSolutions && showFeedBack">
     <quml-ans (click)="showSolution.emit()"></quml-ans>
   </div>
-  <div>
-    <span (click)="prevSlide()">
-      <quml-previous></quml-previous>
-    </span>
-    <span (click)="nextSlide()">
-      <quml-next *ngIf="!active"></quml-next>
-      <quml-next-active *ngIf="active"></quml-next-active>
-    </span>
+  <div class="quml-navigation ml-auto">
+    <div class="quml-navigation__previous" (click)="prevSlide()"></div>
+    <div class="quml-navigation__next ml-8" (click)="nextSlide()" *ngIf="!active"></div>
+    <div class="quml-navigation__next quml-navigation__next--active ml-8" (click)="nextSlide()" *ngIf="active"></div>
   </div>
+
 </div>

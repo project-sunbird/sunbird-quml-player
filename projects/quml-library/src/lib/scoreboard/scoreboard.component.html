@@ -13,7 +13,7 @@
   </div>
 
   <div class="scoreboard-scores" *ngIf="!showFeedBack">
-    <div *ngFor="let score of scores; let i = index" (click)="goToQuestion(i+1)" [ngClass]="score.qType === 'MCQ' ? score.class : 'attempted'">
+    <div *ngFor="let score of scores; let i = index" (click)="goToQuestion(i+1)" [ngClass]="score.class === 'skipped' ? score.class : score.class === 'unattempted' ? score.class : 'attempted'">
       {{score.index}}
     </div>
   </div>

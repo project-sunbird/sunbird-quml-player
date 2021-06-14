@@ -1,15 +1,19 @@
 <div class="quml-container" *ngIf="loadView" [hidden]="showZoomModal">
-  <div class="endPage-container">
-    <sb-player-end-page *ngIf="endPageReached && showEndPage" [contentName]="contentName" [outcome]="finalScore"
+  <div class="endPage-container" [ngClass]="endPageReached ? 'endPage-container-height': ''">
+    <sb-player-end-page *ngIf="endPageReached && showEndPage" [contentName]="contentName" [outcome]="outcomeLabel"
       [outcomeLabel]="'Score: '" [userName]="userName" [timeSpentLabel]="durationSpent"
-      (replayContent)="replayContent()" (exitContent)="exitContent($event)" [showExit]="sideMenuConfig.showExit"></sb-player-end-page>
+      (replayContent)="replayContent()" (exitContent)="exitContent($event)" [showExit]="sideMenuConfig.showExit" [showReplay]="showReplay">   
+      <span class="attempts sb-color-primary mt-8 fnormal font-weight-bold d-block" *ngIf="attempts?.max && (attempts?.max != attempts?.current)">Attempt no {{attempts.current}}/{{attempts.max}}</span>
+      <span class="attempts sb-color-primary mt-8 fnormal font-weight-bold d-block" *ngIf="attempts?.max && (attempts?.max === attempts?.current)">{{attempts.current}}/{{attempts.max}} attempts completed</span>
+    </sb-player-end-page>
   </div>
   <div [hidden]="showSolution" class="quml-landscape">
     <quml-header class="main-header" (durationEnds)="durationEnds()"
       [disablePreviousNavigation]="linearNavigation" [duration]="timeLimit" [warningTime]="warningTime" [showTimer]="showTimer"
       (nextSlideClicked)="nextSlideClicked($event)" (prevSlideClicked)="previousSlideClicked($event)"
       [currentSlideIndex]="currentSlideIndex" [totalNoOfQuestions]="noOfQuestions" [active]="active"
-      [endPageReached]="endPageReached" [showFeedBack]="showFeedBack" [currentSolutions]="currentSolutions" [initializeTimer]="initializeTimer" [hidden]="endPageReached" [replayed]="replayed" [disableNext]="disableNext" (showSolution)="viewSolution()">
+      [showFeedBack]="showFeedBack" [currentSolutions]="currentSolutions" (showSolution)="viewSolution()"
+      [endPageReached]="endPageReached" [loadScoreBoard]="loadScoreBoard" [initializeTimer]="initializeTimer" [hidden]="endPageReached" [replayed]="replayed" [disableNext]="disableNext" [startPageInstruction]="startPageInstruction" [attempts]="attempts">
     </quml-header>
     <sb-player-side-menu-icon class="notVisible"></sb-player-side-menu-icon>
     <sb-player-sidebar [title]="contentName" (sidebarEvent)="sideBarEvents($event)" [config]="sideMenuConfig">
@@ -30,7 +34,7 @@
           <quml-share></quml-share>
         </div> -->
         <!-- Not in scope -->
-        <div *ngIf="currentSolutions"> 
+        <div *ngIf="currentSolutions && showUserSolution && showFeedBack">
           <quml-ans (click)="getSolutions()"></quml-ans>
         </div>
       </div>
@@ -44,48 +48,48 @@
           <slide *ngFor="let question of questions; let i= index">
             <div [id]="question.identifier">
             <div *ngIf="question?.primaryCategory.toLowerCase() === 'multiple choice question'">
-              <quml-mcq [question]='question' [replayed]="replayed" (optionSelected)="getOptionSelected($event)" [identifier]="question.id"
+              <quml-mcq [question]='question' [replayed]="replayed" (optionSelected)="getOptionSelected($event)" [identifier]="question.id" [tryAgain]="tryAgainClicked"
               ></quml-mcq>
             </div>
             <div *ngIf="question?.primaryCategory.toLowerCase() === 'subjective question'">
-              <quml-sa [questions]='question' (showAnswerClicked)="showAnswerClicked($event)"></quml-sa>
+              <quml-sa [questions]='question' [replayed]="replayed" (showAnswerClicked)="showAnswerClicked($event)"></quml-sa>
             </div>
           </div>
           </slide>
         </carousel>
       </div>
       <div class="lanscape-mode-right" [hidden]="endPageReached">
-        <ul *ngIf="!showFeedBack">
-          <li [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlide(0)">i</li>
+        <ul *ngIf="!showFeedBack && !disableNext">
+          <li [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlideClicked(0)">i</li>
           <ng-container *ngIf="startPageInstruction ">
             <li *ngFor="let question of progressBarClass; let i = index"
-              [ngClass]="loadScoreBoard ? 'att-color' : (i + 1) === car.getCurrentSlideIndex() ? 'progressBar-border': (i + 1) < car.getCurrentSlideIndex()  ? 'att-color' : '' "
-              (click)="goToSlide(question.index)" >{{question.index}}</li>
+            [ngClass]="(i+1) === car.getCurrentSlideIndex() ? 'progressBar-border': question.class === 'skipped' ? question.class: question.class === 'unattempted' ? '' : 'att-color'"
+            (click)="goToSlideClicked(question.index)" >{{question.index}}</li>
           </ng-container>
           <ng-container *ngIf="!startPageInstruction">
             <li *ngFor="let question of progressBarClass; let i = index"
-              [ngClass]="loadScoreBoard ? 'att-color' : (i + 1) === car.getCurrentSlideIndex() ? 'progressBar-border': (i + 1) < car.getCurrentSlideIndex()  ? 'att-color' : '' "
-              (click)="goToSlide(question.index)">{{question.index}}</li>
+              [ngClass]="(i+1) === car.getCurrentSlideIndex() ? 'progressBar-border': question.class === 'skipped' ? question.class: question.class === 'unattempted' ? '' : 'att-color'"
+              (click)="goToSlideClicked(question.index)">{{question.index}}</li>
           </ng-container>
-            <li *ngIf="!loadScoreBoard && requiresSubmit" (click)="loadScoreBoard = true;"><img src="./assets/flag_inactive.svg"></li>
+            <li *ngIf="!loadScoreBoard && requiresSubmit" (click)="loadScoreBoard = true; disableNext = true;"><img src="./assets/flag_inactive.svg"></li>
             <li *ngIf="loadScoreBoard && requiresSubmit"><img src="./assets/flag_active.svg"></li>
         </ul>
-        <ul *ngIf="showFeedBack">
-          <li *ngIf="showStartPage" [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlide(0)">i
+        <ul *ngIf="showFeedBack && !disableNext">
+          <li *ngIf="showStartPage" [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlideClicked(0)">i
           </li>
           <ng-container *ngIf="startPageInstruction">
             <li *ngFor="let q of progressBarClass; let i = index" class="showFeedBack-progressBar"
               [ngClass]="loadScoreBoard ? q.class : (i+1) === car.getCurrentSlideIndex() ? 'progressBar-border' : q.class"
-              (click)="goToSlide(q.index)">
+              (click)="goToSlideClicked(q.index)">
               {{q.index}}</li>
           </ng-container>
           <ng-container *ngIf="!startPageInstruction">
             <li *ngFor="let q of progressBarClass; let i = index" class="showFeedBack-progressBar"
               [ngClass]="loadScoreBoard ? q.class : (i + 1) === car.getCurrentSlideIndex() ? 'progressBar-border' : q.class"
-              (click)="goToSlide(q.index)">
+              (click)="goToSlideClicked(q.index)">
               {{q.index}}</li>
           </ng-container>
-            <li *ngIf="!loadScoreBoard && requiresSubmit " (click)="loadScoreBoard = true; disableNext = true;"><img src="./assets/flag_inactive.svg"></li>
+            <li *ngIf="!loadScoreBoard && requiresSubmit " (click)="loadScoreBoard = true; disableNext = true; currentSolutions = undefined;"><img src="./assets/flag_inactive.svg"></li>
             <li *ngIf="loadScoreBoard && requiresSubmit"><img src="./assets/flag_active.svg"></li>
         </ul>
       </div>
@@ -103,6 +107,9 @@
 <div class="info-popup" *ngIf="infoPopup">
    Please attempt the question
 </div>
+
+<sb-player-contenterror *ngIf="showContentError"></sb-player-contenterror>
+
 
 <!-- Zoom -->
 <div class="image-viewer__overlay" [hidden]="!showZoomModal">

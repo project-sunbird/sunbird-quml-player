@@ -18,14 +18,17 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
   @Input() active: boolean;
   @Input() initializeTimer: boolean;
   @Input() endPageReached: boolean;
+  @Input() loadScoreBoard: boolean;
   @Input() replayed: boolean;
-  @Input() disableNext?: boolean;
   @Input() currentSolutions: any;
   @Input() showFeedBack: boolean;
   @Output() nextSlideClicked = new EventEmitter<any>();
   @Output() prevSlideClicked = new EventEmitter<any>();
   @Output() durationEnds = new EventEmitter<any>();
   @Output() showSolution = new EventEmitter<any>();
+  @Input() disableNext?: boolean;
+  @Input() startPageInstruction?: string;
+  @Input() attempts?: { max: number, current: number };
   minutes: number;
   seconds: string | number;
   private intervalRef?;
