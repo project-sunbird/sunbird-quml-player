@@ -1,24 +1,25 @@
 <div class="scoreboard">
-  <div class="scoreboard-header">
+  <div class="scoreboard__header">
+   <div class="scoreboard__title">
     Are you ready to submit?
-    <br>
-    <span class="scoreboard-title">
+   </div>
+    <div class="scoreboard__subtitle">
        {{contentName}}
-    </span>
+    </div>
   </div>
-  <div class="scoreboard-scores" *ngIf="showFeedBack">
-    <div *ngFor="let score of scores; let i = index" (click)="goToQuestion(i+1)" [ngClass]="score.class">
+  <div class="scoreboard__points" *ngIf="showFeedBack">
+    <div *ngFor="let score of scores; let i = index" class="scoreboard__index" (click)="goToQuestion(i+1)" [ngClass]="score.class">
       {{score.index}}
     </div>
   </div>
 
-  <div class="scoreboard-scores" *ngIf="!showFeedBack">
-    <div *ngFor="let score of scores; let i = index" (click)="goToQuestion(i+1)" [ngClass]="score.class === 'skipped' ? score.class : score.class === 'unattempted' ? score.class : 'attempted'">
+  <div class="scoreboard__points" *ngIf="!showFeedBack">
+    <div *ngFor="let score of scores; let i = index" class="scoreboard__index" (click)="goToQuestion(i+1)" [ngClass]="score.class === 'skipped' ? score.class : score.class === 'unattempted' ? score.class : 'attempted'">
       {{score.index}}
     </div>
   </div>
 
-  <div class="scoreboard-button-container">
-    <button type="submit" class="scoreboard-quml-btn" (click)="submitClicked.emit({type:'submit-clicked'})">submit</button>
+  <div class="scoreboard__btn-container">
+    <button type="submit" class="scoreboard__btn" (click)="submitClicked.emit({type:'submit-clicked'})">Submit</button>
   </div>
 </div>

@@ -1,129 +1,77 @@
 @import '../../../../../node_modules/@project-sunbird/sb-styles/assets/mixins/mixins';
+
 .startpage {
-    margin-top: calculateRem(20px);
-}
-.startpage .header {
-    color: var(--primary-color);
-    font-size: calculateRem(18px);
-    font-weight: bold;
-    letter-spacing: 0;
-    line-height: calculateRem(24px);
-    margin-bottom: calculateRem(16px);
-}
-.potrait-header {
-    display: none;
-}
-.landscape-header {
-    display: block;
-    color: var(--primary-color);
-    font-size: 18px;
-    margin-bottom: 1rem;
-}
-.startpage .border {
-    box-sizing: border-box;
-    height: 60vh;
-    width: calculateRem(1px);
-    border: calculateRem(1px) solid #6D7278;
-    opacity: 0.2;
-}
-.startpage .sub-header {
-    color: #6D7278;
-    font-size: calculateRem(13px);
-    font-weight: bold;
-    letter-spacing: 0;
-    line-height: calculateRem(18px);
-    margin-bottom: calculateRem(16px);
-}
-.startpage .startpage-guidelines {
-    color: #6D7278;
-    font-size: calculateRem(13px);
-    letter-spacing: 0;
-    line-height: calculateRem(18px);
-}
-.questions,
-.points,
-.score {
-    margin-bottom: calculateRem(16px);
-}
-.points {
-    margin: 0 calculateRem(64px) calculateRem(16px) 0;
-}
-.minutes {
-    margin-bottom: calculateRem(16px);
-}
-.startpage-guidelines p {
-    margin-bottom: calculateRem(14px);
-    font-size: calculateRem(13px);
-}
-.score-heading {
-    color: #6D7278;
-    font-size: calculateRem(13px);
-}
-.scores {
-    color: var(--primary-color);
-    font-size: calculateRem(18px);
-    font-weight: bold;
-    letter-spacing: 0;
-    line-height: calculateRem(24px);
-    text-align: center;
-}
-.icon {
-    padding-right: calculateRem(8px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.icon-section {
-    display: flex;
-    justify-items: center;
-}
-.question-scores {
-    display: flex;
-    border-bottom: 1px solid #eee;
-    align-items: center;
-}
-.startpage-instructions {
-    padding: 16px 0;
-    max-height: calc(100vh - 164px);
-    overflow-y: auto;
-}
-::ng-deep {
-    .startpage-instructions ul {
-        list-style-type: disc;
+    margin-top: calculateRem(24px);
+
+    &__header {
+        color: var(--primary-color);
+        font-size: calculateRem(18px);
+        font-weight: bold;
+        margin: calculateRem(16px) 0;
     }
 
-    .startpage-instructions li {
-        margin-bottom: calculateRem(8px);
+    &__content {
+        display: flex;
+        border-bottom: calculateRem(1px) solid #eee;
+        align-items: center;
+    }
+
+    &__metadata {
+        margin: calculateRem(8px) calculateRem(64px) calculateRem(8px) 0;
+    }
+
+    &__md-heading {
+        color: #6d7278;
+        font-size: calculateRem(12px);
+    }
+
+    &__md-scores,
+    &__md-icon {
+        display: flex;
+        align-items: center;
+    }
+
+    &__md-desc {
+        color: var(--primary-color);
+        font-size: calculateRem(18px);
+        font-weight: bold;
         margin-left: calculateRem(8px);
     }
 
-    .startpage-instructions table {
-        width: 100%;
+    &__instr-title {
+        padding: calculateRem(16px) 0 calculateRem(8px) 0;
     }
 
-    .startpage-instructions td,
-    th {
-        border: 1px solid #ddd;
-        padding: 8px;
-    }
-
-    .startpage-instructions tr:nth-child(even) {
-        background-color: #f2f2f2;
-    }
-}
-@media only screen and (max-width: 480px) {
-    .landscape-header {
-        display: none;
-    }
-    .potrait-header {
-        display: block;
-        color: var(--primary-color);
-        font-size: 18px;
-        font-weight: 700;
-        margin-top: calculateRem(16px);
+    &__instr-desc {
+        padding: calculateRem(16px) 0;
+        max-height: calc(100vh - 234px);
+        overflow-y: auto;
     }
 }
 
-.instruction-title {
-    padding-top: calculateRem(16px);
+::ng-deep {
+    .startpage__instr-desc {
+        ul {
+            list-style-type: disc;
+        }
+
+        li {
+            margin-bottom: calculateRem(8px);
+            margin-left: calculateRem(8px);
+        }
+
+        table {
+            width: 100%;
+        }
+
+        th,
+        td {
+            border: calculateRem(1px) solid #ddd;
+            padding: calculateRem(8px);
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    }
 }
