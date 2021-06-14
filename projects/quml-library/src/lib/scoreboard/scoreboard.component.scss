@@ -4,6 +4,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: space-evenly;
     width: 100%;
     position: absolute;
     top: calculateRem(56px);
@@ -34,7 +35,7 @@
         margin: calculateRem(16px) auto 0 auto;
         width: 100%;
         height: 100%;
-        max-height: calc(100vh - 192px);
+        max-height: calc(100% - 192px);
         max-width: calculateRem(368px);
         overflow-y: auto;
     }
@@ -49,13 +50,6 @@
         align-items: center;
         justify-content: center;
         margin: calculateRem(16px) calculateRem(32px);
-    }
-
-    &__btn-container {
-        position: absolute;
-        left: 50%;
-        bottom: calculateRem(16px);
-        transform: translateX(-50%);
     }
 
     &__btn {
