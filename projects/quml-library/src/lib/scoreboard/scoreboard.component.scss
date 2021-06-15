@@ -31,12 +31,10 @@
     &__points {
         display: flex;
         flex-wrap: wrap;
-        justify-content: center;
         margin: calculateRem(16px) auto 0 auto;
         width: 100%;
-        height: 100%;
         max-height: calc(100% - 192px);
-        max-width: calculateRem(368px);
+        align-items: center;
         overflow-y: auto;
     }
 
