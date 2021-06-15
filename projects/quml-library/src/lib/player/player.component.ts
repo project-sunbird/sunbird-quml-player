@@ -268,6 +268,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
       if (!this.requiresSubmit && this.showEndPage) {
         this.endPageReached = true;
+        this.calculateScore();
         let summaryObj = this.createSummaryObj();
         this.viewerService.raiseSummaryEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore, summaryObj);
         this.viewerService.raiseEndEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore);
@@ -563,6 +564,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       }else if (this.car.isLast(this.car.getCurrentSlideIndex())) {
         this.endPageReached = true;
         this.calculateScore();
+        let summaryObj = this.createSummaryObj();
+        this.viewerService.raiseSummaryEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore, summaryObj);
+        this.viewerService.raiseEndEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore);
       }
     }, 4000)
   }
