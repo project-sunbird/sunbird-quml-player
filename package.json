@@ -14,7 +14,7 @@
     "build-lib-link": "npm run build-lib && npm run create-player-link && npm run link-player",
     "test-lib": "ng test quml-library",
     "mybuild": "npm run build",
-    "serve": "node scripts/copyAssets.js && npm link ./dist/quml-library && ng serves"
+    "serve": "node scripts/copyAssets.js && npm link ./dist/quml-library && ng serve"
   },
   "private": true,
   "dependencies": {
@@ -29,6 +29,7 @@
     "@project-sunbird/client-services": "4.0.1",
     "@project-sunbird/sb-styles": "0.0.7",
     "@project-sunbird/telemetry-sdk": "0.0.26",
+    "@project-sunbird/sunbird-quml-player-v9": "4.1.0",
     "bootstrap": "4.1.1",
     "core-js": "^2.5.4",
     "fs-extra": "^8.1.0",
