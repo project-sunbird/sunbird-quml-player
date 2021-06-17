@@ -42,7 +42,7 @@ export class QumlLibraryService {
         {
           config: {
             pdata: this.context.pdata,
-            env: 'ContentPlayer',
+            env: 'contentplayer',
             channel: this.context.channel,
             did: this.context.did,
             authtoken: this.context.authToken || '',
@@ -54,7 +54,8 @@ export class QumlLibraryService {
             endpoint: this.context.endpoint || '/data/v3/telemetry',
             tags: this.context.tags,
             cdata: [{ id: this.contentSessionId, type: 'ContentSession' },
-            { id: this.playSessionId, type: 'PlaySession' }]
+            { id: this.playSessionId, type: 'PlaySession' },
+            {id: "2.0" , type: "PlayerVersion"}]
           },
           userOrgDetails: {}
         }
@@ -177,11 +178,12 @@ export class QumlLibraryService {
       context: {
         channel: this.channel || '',
         pdata: this.pdata,
-        env: 'ContentPlayer',
+        env: 'contentplayer',
         sid: this.sid,
         uid: this.uid,
         cdata: [{ id: this.contentSessionId, type: 'ContentSession' },
-        { id: this.playSessionId, type: 'PlaySession' }],
+        { id: this.playSessionId, type: 'PlaySession' },
+        {id: "2.0" , type: "PlayerVersion"}],
         rollup: this.rollup || {}
       }
     });
