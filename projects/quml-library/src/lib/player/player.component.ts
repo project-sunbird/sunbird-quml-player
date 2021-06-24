@@ -619,8 +619,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   replayContent() {
     this.attempts.current = this.attempts.current + 1;
-    // this.showReplay = this.attempts.max && this.attempts.max === this.attempts.current ? false : true;
-
     this.showReplay = _.get(this.attempts, 'current') >= _.get(this.attempts, 'max') ? false : true;
     if (_.get(this.attempts, 'max') === _.get(this.attempts, 'current')) {
       this.limitedAttemptEvent.emit({ data: 'questionset:lastattempt' });
