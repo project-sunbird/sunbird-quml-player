@@ -17,8 +17,4 @@ export class AppComponent {
   getTelemetryEvents(event) {
     console.log('event is for telemetry', JSON.stringify(event));
   }
-
-  generatelimitedAttemptEvent(event) {
-    console.log('event is for limited attempt', JSON.stringify(event));
-  }
 }

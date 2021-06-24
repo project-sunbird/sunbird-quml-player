@@ -19,7 +19,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   @Input() QumlPlayerConfig: QumlPlayerConfig;
   @Output() playerEvent = new EventEmitter<any>();
   @Output() telemetryEvent = new EventEmitter<any>();
-  @Output() limitedAttemptEvent = new EventEmitter<any>();
   @ViewChild('car', { static: false }) car: CarouselComponent;
   @ViewChild('modalImage', { static: true }) modalImage;
   destroy$: Subject<boolean> = new Subject<boolean>();
@@ -204,9 +203,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.totalScore = this.QumlPlayerConfig.metadata.maxScore;
     this.attempts = { max: _.get(this.QumlPlayerConfig, 'metadata.maxAttempt'), current: _.get(this.QumlPlayerConfig, 'metadata.currentAttempt') + 1 };
     if ((_.get(this.QumlPlayerConfig, 'metadata.maxAttempt') - 1) === _.get(this.QumlPlayerConfig, 'metadata.currentAttempt')) {
-      this.limitedAttemptEvent.emit({ data: 'questionset:lastattempt' });
+      this.playerEvent.emit({ data: 'questionset:lastattempt' });
     } else if (_.get(this.QumlPlayerConfig, 'metadata.currentAttempt') >= _.get(this.QumlPlayerConfig, 'metadata.maxAttempt')) {
-      this.limitedAttemptEvent.emit({ data: 'questionset:maxLimitExceeded' });
+      this.playerEvent.emit({ data: 'questionset:maxLimitExceeded' });
     }
     this.showReplay = this.attempts.max && this.attempts.max === this.attempts.current ? false : true;
     this.setInitialScores();
@@ -611,9 +610,9 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   raiseEndEvent(currentQuestionIndex,  endPageSeen , score) {
     this.viewerService.raiseEndEvent(currentQuestionIndex, endPageSeen, score);
-    this.limitedAttemptEvent.emit({ data: 'questionset:submitscore' });
+    this.playerEvent.emit({ data: 'questionset:submitscore' });
     if (_.get(this.attempts, 'max') <= _.get(this.attempts, 'current')) {
-      this.limitedAttemptEvent.emit({ data: 'questionset:maxLimitExceeded' });
+      this.playerEvent.emit({ data: 'questionset:maxLimitExceeded' });
     }
   }
 
@@ -621,7 +620,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.attempts.current = this.attempts.current + 1;
     this.showReplay = _.get(this.attempts, 'current') >= _.get(this.attempts, 'max') ? false : true;
     if (_.get(this.attempts, 'max') === _.get(this.attempts, 'current')) {
-      this.limitedAttemptEvent.emit({ data: 'questionset:lastattempt' });
+      this.playerEvent.emit({ data: 'questionset:lastattempt' });
     }
 
     this.stopAutoNavigation = false;
