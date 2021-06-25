@@ -202,6 +202,11 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.showEndPage = this.QumlPlayerConfig.metadata.showEndPage && this.QumlPlayerConfig.metadata.showEndPage.toLowerCase() === 'no' ? false : true
     this.totalScore = this.QumlPlayerConfig.metadata.maxScore;
     this.attempts = { max: _.get(this.QumlPlayerConfig, 'metadata.maxAttempt'), current: _.get(this.QumlPlayerConfig, 'metadata.currentAttempt') + 1 };
+    if ((_.get(this.QumlPlayerConfig, 'metadata.maxAttempt') - 1) === _.get(this.QumlPlayerConfig, 'metadata.currentAttempt')) {
+      this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(_.get(this.attempts, 'current'), false, true));
+    } else if (_.get(this.QumlPlayerConfig, 'metadata.currentAttempt') >= _.get(this.QumlPlayerConfig, 'metadata.maxAttempt')) {
+      this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(_.get(this.attempts, 'current'), true, false));
+    }
     this.showReplay = this.attempts.max && this.attempts.max === this.attempts.current ? false : true;
     this.setInitialScores();
     if (this.threshold === 1) {
@@ -271,7 +276,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
         this.calculateScore();
         let summaryObj = this.createSummaryObj();
         this.viewerService.raiseSummaryEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore, summaryObj);
-        this.viewerService.raiseEndEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore);
+        this.raiseEndEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore);
       }
     }
     if (this.car.isLast(this.car.getCurrentSlideIndex()) || this.noOfQuestions === this.car.getCurrentSlideIndex()) {
@@ -406,7 +411,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       this.viewerService.raiseHeartBeatEvent(eventName.endPageExitClicked, TelemetryType.interact, 'endPage');
       let summaryObj = this.createSummaryObj();
       this.viewerService.raiseSummaryEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore, summaryObj);
-      this.viewerService.raiseEndEvent(this.car.getCurrentSlideIndex(), 'endPage', this.finalScore);
+      this.raiseEndEvent(this.car.getCurrentSlideIndex(), 'endPage', this.finalScore);
     }
   }
 
@@ -425,7 +430,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.endPageReached = true;
     let summaryObj = this.createSummaryObj();
     this.viewerService.raiseSummaryEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore, summaryObj);
-    this.viewerService.raiseEndEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore);
+    this.raiseEndEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore);
   }
 
   async validateSelectedOption(option, type?: string) {
@@ -570,7 +575,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
         this.calculateScore();
         let summaryObj = this.createSummaryObj();
         this.viewerService.raiseSummaryEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore, summaryObj);
-        this.viewerService.raiseEndEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore);
+        this.raiseEndEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore);
       }
     }, 4000)
   }
@@ -605,12 +610,22 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       this.stopAutoNavigation = true;
       this.goToSlide(this.jumpSlideIndex);
     }
+  }
 
+  raiseEndEvent(currentQuestionIndex,  endPageSeen , score) {
+    this.viewerService.raiseEndEvent(currentQuestionIndex, endPageSeen, score);
+    if (_.get(this.attempts, 'max') <= _.get(this.attempts, 'current')) {
+      this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(_.get(this.attempts, 'current'), true, false));
+    }
   }
 
   replayContent() {
     this.attempts.current = this.attempts.current + 1;
-    this.showReplay = this.attempts.max && this.attempts.max === this.attempts.current ? false : true;
+    this.showReplay = _.get(this.attempts, 'current') >= _.get(this.attempts, 'max') ? false : true;
+    if (_.get(this.attempts, 'max') === _.get(this.attempts, 'current')) {
+      this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(_.get(this.attempts, 'current'), false, true));
+    }
+
     this.stopAutoNavigation = false;
     this.initializeTimer = true;
     this.replayed = true;
@@ -639,7 +654,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.endPageReached = true;
     let summaryObj = this.createSummaryObj();
     this.viewerService.raiseSummaryEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore, summaryObj);
-    this.viewerService.raiseEndEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore);
+    this.raiseEndEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore);
   }
 
   goToSlide(index) {
@@ -818,7 +833,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.calculateScore();
     let summaryObj = this.createSummaryObj();
     this.viewerService.raiseSummaryEvent(this.currentSlideIndex, this.endPageReached, this.finalScore, summaryObj);
-    this.viewerService.raiseEndEvent(this.currentSlideIndex, this.endPageReached, this.finalScore);
+    this.raiseEndEvent(this.currentSlideIndex, this.endPageReached, this.finalScore);
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
     this.errorService.getInternetConnectivityError.unsubscribe();
