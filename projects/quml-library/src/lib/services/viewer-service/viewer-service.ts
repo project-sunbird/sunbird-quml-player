@@ -241,4 +241,17 @@ export class ViewerService {
     })
   }
 
+  generateMaxAttemptEvents(currentattempt: string, maxLimitExceeded: boolean, isLastAttempt: boolean) {
+    return {
+      eid: 'exdata',
+      ver: this.version,
+      edata: {
+        type: 'exdata',
+        currentattempt,
+        maxLimitExceeded,
+        isLastAttempt
+      },
+      metaData: this.metaData
+    };
+  }
 }
