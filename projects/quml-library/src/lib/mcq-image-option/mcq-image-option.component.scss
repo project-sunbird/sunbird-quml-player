@@ -1,15 +1,17 @@
 @import '../../../../../node_modules/@project-sunbird/sb-styles/assets/mixins/mixins';
  .quml-mcq-option-card {
    position: relative;
-   background-color: white;
-   padding: 5px;
-   border-radius: 5px;
-   border: 1px solid #CCCCCC;
-   padding: 16px;
-   box-shadow: 0 2px 14px 0 rgba(0,0,0,.1);
+   background-color:var(--white);
+   padding: 0.25rem;
+   border-radius: 0.25rem;
+   border: 0.0625rem solid #CCCCCC;
+   padding: 1rem;
+   box-shadow: 0 0.125rem 0.75rem 0 rgba(0,0,0,.1);
    display: flex;
    align-items: center;
    justify-content: space-between;
+   height: 100%;
+   gap: 0.5rem;
   //  margin-bottom: 16px;
 
   .option-image {
@@ -23,7 +25,7 @@
 
   .option {
     color: #666666;
-    font-size: 12px;
+    font-size: 0.75rem;
     font-weight: bold;
   }
 
@@ -32,14 +34,14 @@
 
  .zoom-in-icon {
   position: absolute;
-  right: 6px;
+  right: 0.5rem;
   bottom: 0px;
  }
 
 
 ::ng-deep {
   .quml-mcq-option-card .option .image {
-    margin: 0 1rem 1rem;
+    // margin: 0 1rem 1rem;
   }
   .quml-mcq-option-card .option img {
     max-width: 100%;
@@ -50,7 +52,7 @@
 }
 
  .selected-option-text {
-  color: #3769eb !important;
+  color:var(--primary-color) !important;
 }
 
  .icon-zommin {
@@ -61,16 +63,16 @@
  }
 
  .image-option-selected {
-   border: 2px solid #08539f;
+   border: 0.125rem solid var(--primary-color);
  }
 
   /* Create a custom radio button */
   .checkmark {
     display: block;
-    height: 20px;
-    width: 20px;
+    height: 1.25rem;
+    width: 1.25rem;
     border-radius: 50%;
-    border: 2px solid #cdcdcd;
+    border: 0.125rem solid #cdcdcd;
   }
   
   /* Hide the browser's default radio button */
@@ -83,8 +85,8 @@
   /* When the radio button is checked, add a blue background */
   .container input:checked~.checkmark, .quml-option--selected .checkmark {
     position: relative;
-    background-color: white;
-    border: 2px solid #024f9d;
+    background-color: var(--white);
+    border: 0.125rem solid var(--primary-color);
   }
   
   /* Create the indicator (the dot/circle - hidden when not checked) */
@@ -95,11 +97,11 @@
   
   /* Style the indicator (dot/circle) */
   .container .checkmark:after, .quml-option--selected .container .checkmark:after {
-    margin: 2px;
-    width: 10px;
-    height: 10px;
+    margin: 0.125rem;
+    width: 0.75rem;
+    height: 0.75rem;
     border-radius: 50%;
-    background: #024f9d;
+    background: var(--primary-color);
     position: absolute;
     top: 50%;
     left: 50%;
@@ -113,5 +115,5 @@
   }
 
   .quml-option--selected {
-    border: 2px solid #08539f;
+    border: 0.125rem solid var(--primary-800);
   }
