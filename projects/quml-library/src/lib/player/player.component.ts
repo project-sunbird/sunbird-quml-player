@@ -352,7 +352,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       this.updateScoreBoard(currentIndex, 'skipped');
     } else {
       this.optionSelectedObj = optionSelected;
-      this.currentSolutions = optionSelected.solutions;
+      this.currentSolutions = !_.isEmpty(optionSelected.solutions) ? optionSelected.solutions : undefined;
     }
 
 
