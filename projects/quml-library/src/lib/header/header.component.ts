@@ -91,25 +91,27 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   timer() {
-    let durationInSec = this.duration;
-    this.intervalRef = setInterval(() => {
-      let min = ~~(durationInSec / 60);
-      let sec = (durationInSec % 60);
-      if (sec < 10) {
-        this.time = min + ':' + '0' + sec;
-      } else {
-        this.time = min + ':' + sec;
-      }
-      if (durationInSec === 0) {
-        clearInterval(this.intervalRef);
-        this.durationEnds.emit(true);
-        return false;
-      }   
-      if (parseInt(durationInSec) <= parseInt(this.warningTime)) {
-        this.showWarning = true;
-      }
-      durationInSec--;
-    }, 1000);
+    if (this.duration > 0) {
+      let durationInSec = this.duration;
+      this.intervalRef = setInterval(() => {
+        let min = ~~(durationInSec / 60);
+        let sec = (durationInSec % 60);
+        if (sec < 10) {
+          this.time = min + ':' + '0' + sec;
+        } else {
+          this.time = min + ':' + sec;
+        }
+        if (durationInSec === 0) {
+          clearInterval(this.intervalRef);
+          this.durationEnds.emit(true);
+          return false;
+        }
+        if (parseInt(durationInSec) <= parseInt(this.warningTime)) {
+          this.showWarning = true;
+        }
+        durationInSec--;
+      }, 1000);
+    }
   }
 
   showCountUp() {
