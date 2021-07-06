@@ -24,8 +24,8 @@
           <span *ngIf="alertType === 'wrong'" (click)="closeAlert.emit({type:'tryAgain'})">Try again</span>
           <span *ngIf="alertType === 'correct' && !showSolutionButton">Correct</span>
         </div>
-        <div class="quml-alert__view-solution">
-          <span *ngIf="showSolutionButton" (click)="viewSolution()">Show Solution</span>
+        <div class="quml-alert__view-solution" *ngIf="showSolutionButton">
+          <span (click)="viewSolution()">Show Solution</span>
         </div>
 
 
