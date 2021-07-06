@@ -27,6 +27,7 @@
     color: #666666;
     font-size: 0.75rem;
     font-weight: bold;
+    flex: 1;
   }
 
  }
@@ -115,5 +116,5 @@
   }
 
   .quml-option--selected {
-    border: 0.125rem solid var(--primary-800);
+    border: 0.125rem solid var(--primary-color);
   }
