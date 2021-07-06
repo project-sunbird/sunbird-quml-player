@@ -724,13 +724,13 @@
     .image-style-align-right {
       float: right;
       text-align: right !important;
-      margin-left: 1rem !important;
+      margin-left: 0.5rem !important;
     }
 
     .image-style-align-left {
       float: left;
       text-align: left !important;
-      margin-right: 1rem !important;
+      margin-right: 0.5rem !important;
     }
 
     figure.image {
@@ -920,7 +920,9 @@
     }
 
     .quml-mcq--option {
-      p {}
+      .quml-mcq-option-card p:first-child, .quml-mcq-option-card p:last-child{
+         margin-bottom: 0;
+      }
     }
 
   }
