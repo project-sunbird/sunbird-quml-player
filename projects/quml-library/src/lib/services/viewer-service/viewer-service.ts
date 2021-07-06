@@ -149,35 +149,37 @@ export class ViewerService {
   }
 
   raiseSummaryEvent(currentQuestionIndex, endpageseen, score, summaryObj) {
+    let timespent = new Date().getTime() - this.qumlPlayerStartTime;
+    timespent = Number(((timespent % 60000) / 1000).toFixed(2))
     const eData = {
       type: "content",
       mode: "play",
       starttime: this.qumlPlayerStartTime,
       endtime: new Date().getTime(),
-      timespent: this.utilService.getTimeSpentText(this.qumlPlayerStartTime),
+      timespent,
       pageviews: this.totalNumberOfQuestions,
       interactions: summaryObj.correct + summaryObj.wrong + summaryObj.partial,
       extra: [{
         id: "progress",
-        value: Number(((currentQuestionIndex / this.totalNumberOfQuestions) * 100).toFixed(0))
+        value: ((currentQuestionIndex / this.totalNumberOfQuestions) * 100).toFixed(0).toString()
       }, {
         id: "endpageseen",
-        value: endpageseen
+        value: endpageseen.toString()
       }, {
         id: "score",
-        value: score
+        value: score.toString()
       }, {
         id: "correct",
-        value: summaryObj.correct
+        value: summaryObj.correct.toString()
       }, {
         id: "incorrect",
-        value: summaryObj.wrong
+        value: summaryObj.wrong.toString()
       }, {
         id: "partial",
-        value: summaryObj.partial
+        value: summaryObj.partial.toString()
       }, {
         id: "skipped",
-        value: summaryObj.skipped
+        value: summaryObj.skipped.toString()
       }]
     };
     const summaryEvent = {
