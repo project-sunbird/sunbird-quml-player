@@ -1,6 +1,6 @@
 {
-  "name": "@project-sunbird/sunbird-quml-player-v8",
-  "version": "4.0.16",
+  "name": "@project-sunbird/sunbird-quml-player-v9",
+  "version": "4.1.6",
   "peerDependencies": {
     "@angular/common": "^8.0.0",
     "@angular/core": "^8.0.0",
@@ -10,11 +10,11 @@
     "@project-sunbird/client-services": "4.0.1"
   },
   "dependencies": {
-    "@project-sunbird/sunbird-player-sdk-v8": "4.0.6"
+    "@project-sunbird/sunbird-player-sdk-v9": "4.1.0"
   },
   "whitelistedNonPeerDependencies": [
     "carousel",
-    "@project-sunbird/sunbird-player-sdk-v8"
+    "@project-sunbird/sunbird-player-sdk-v9"
   ],
   "homepage": "https://github.com/project-sunbird/sunbird-quml-player/tree/release-4.0.0/projects/sunbird-quml-player#readme",
   "keywords": [
