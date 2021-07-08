@@ -735,15 +735,12 @@
 
     figure.image {
       width: 100%;
-      // display: table;
+      display: table;
       clear: both;
       text-align: center;
       margin: 0.5rem auto;
       border: 0px;
       overflow: visible;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
     figure.image.resize-25 {
