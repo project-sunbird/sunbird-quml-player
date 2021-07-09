@@ -614,7 +614,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
 
   raiseEndEvent(currentQuestionIndex,  endPageSeen , score) {
     this.viewerService.raiseEndEvent(currentQuestionIndex, endPageSeen, score);
-    if (_.get(this.attempts, 'max') === _.get(this.attempts, 'current')) {
+    if (_.get(this.attempts, 'current') >= _.get(this.attempts, 'max')) {
       this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(_.get(this.attempts, 'current'), true, false));
     }
   }
