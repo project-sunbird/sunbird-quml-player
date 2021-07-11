@@ -271,7 +271,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     if (this.car.getCurrentSlideIndex() === this.noOfQuestions) {
       this.durationSpent = _.get(this.QumlPlayerConfig, 'metadata.summaryType') === 'Score' ? '' : this.utilService.getTimeSpentText(this.initialTime);
 
-      if (!this.requiresSubmit && this.showEndPage) {
+      if (!this.requiresSubmit) {
         this.endPageReached = true;
         this.calculateScore();
         let summaryObj = this.createSummaryObj();
