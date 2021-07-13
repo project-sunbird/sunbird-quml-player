@@ -470,6 +470,10 @@ export class QuestionCursorImplementationService implements QuestionCursor {
         }
     }
 
+    getQuestionSet(identifier: string): Observable<any> {
+        return of({})
+    }
+
     private post(requestParam): Observable<any> {
         const httpOptions = {
             headers: { 'Content-Type': 'application/json' }

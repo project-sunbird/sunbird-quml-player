@@ -103,6 +103,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   attempts: { max: number, current: number };
   showReplay = true;
   tryAgainClicked = false;
+  isEndEventRaised = false;
 
   constructor(
     public viewerService: ViewerService,
@@ -614,6 +615,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   raiseEndEvent(currentQuestionIndex,  endPageSeen , score) {
+    if(this.isEndEventRaised) return;
+    this.isEndEventRaised = true;
     this.viewerService.raiseEndEvent(currentQuestionIndex, endPageSeen, score);
     if (_.get(this.attempts, 'current') >= _.get(this.attempts, 'max')) {
       this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(_.get(this.attempts, 'current'), true, false));
@@ -621,6 +624,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   replayContent() {
+    this.isEndEventRaised = false;
     this.attempts.current = this.attempts.current + 1;
     this.showReplay = _.get(this.attempts, 'current') >= _.get(this.attempts, 'max') ? false : true;
     if (_.get(this.attempts, 'max') === _.get(this.attempts, 'current')) {
