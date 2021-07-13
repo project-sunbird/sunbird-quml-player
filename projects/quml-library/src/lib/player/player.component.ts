@@ -78,6 +78,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     PREV: 2
   };
   sideMenuConfig = {
+    enable: true,
     showShare: true,
     showDownload: true,
     showReplay: false,
