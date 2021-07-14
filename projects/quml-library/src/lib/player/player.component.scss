@@ -19,12 +19,6 @@
   height: 100%;
 }
 
-.att-color {
-  background-color: var(--primary-color) !important;
-  border: 0.0625rem solid var(--primary-color) !important;
-  color: var(--white);
-}
-
 ::ng-deep .carousel {
   outline: none;
 }
@@ -79,10 +73,11 @@
 
 .lanscape-mode-left {
   position: absolute;
-  left: 1.5rem;
+  left:0;
   top: 3.5rem;
   text-align: center;
   z-index: 1;
+  width: 4rem;
 }
 
 .lanscape-mode-left div {
@@ -124,7 +119,7 @@
 }
 
 .lanscape-mode-right li {
-  // background-color:var(--white);
+  background-color: var(--white);
   border-radius: 50%;
   width: 1.25rem;
   padding: 0.25rem;
@@ -132,9 +127,28 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 0.0625rem solid rgba(204, 204, 204, 0.5);
+  border: 0.0625rem solid rgba(204, 204, 204, 1);
   margin-bottom: 2.25rem;
-  background-color: white;
+  &:hover,
+  .active {
+    border: .0625rem solid var(--primary-color);
+    cursor: pointer;
+    color: var(--primary-color);
+    background: var(--white);
+  }
+
+  &.progressBar-border,
+  .active,&.att-color {
+    color: var(--white);
+    background: var(--primary-color);
+    border: .0625rem solid var(--primary-color);
+  }
+
+  &.skipped {
+    color: var(--white);
+    background: #969696;
+    border: 0.0625rem solid #969696;
+  }
 }
 
 .current-slide {
@@ -142,14 +156,6 @@
   font-size: 0.875rem;
   font-weight: 900;
   letter-spacing: 0;
-}
-
-.lanscape-mode-right li:hover,
-.lanscape-mode-right li.active {
-  border: 0.0625rem solid !important;
-  border-style: double !important;
-  border-width: 0.1875rem !important;
-  cursor: pointer;
 }
 
 @media only screen and (max-width: 480px) {
@@ -184,8 +190,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    // background-color: #fff;
-    // border: 1px solid rgba(204, 204, 204, .5);
     margin-right: 3rem;
     z-index: 1;
 
@@ -196,12 +200,6 @@
 
   .landscape-center {
     margin-top: 2rem;
-  }
-
-  .lanscape-mode-right li:hover {
-    border: 0.0625rem solid !important;
-    border-style: double !important;
-    border-width: 0.1875rem !important;
   }
 
   .lanscape-mode-right ul::before {
@@ -305,7 +303,7 @@
 }
 
 .quml-card-button-section .button-container button {
-  color: white;
+  color: var(--white);
   background-color: var(--primary-color);
   border-color: var(--primary-color);
   outline: none;
@@ -332,18 +330,6 @@
     perspective: unset;
   }
 }
-
-/* @media only screen and (min-width: 100px) and (max-width: 481px) and (min-width: 481px) and (max-width: 800px) {
-
-  .quml-timer {
-    padding: 8px 4px;
-  }
-
-  .quml-button {
-    padding: 4px;
-    font-size: 15px;
-  }
-} */
 
 .potrait-header-top {
   visibility: hidden;
@@ -380,31 +366,13 @@
   visibility: hidden;
 }
 
-/* @media only screen and (max-width: 480px) {
-  .main-header {
-    visibility: hidden;
-  }
-
-  .portrait-header {
-    visibility: visible;
-  }
-
-  .potrait-header-top {
-    visibility: visible;
-  }
-} */
-
-.progressBar-border,
-.showFeedBack-progressBar:hover {
-  border: 0.0625rem solid !important;
-  color: var(--primary-color) !important;
-  border-style: double !important;
-  border-width: 0.1875rem !important;
+//,.showFeedBack-progressBar:hover
+.progressBar-border {
 
   &.wrong:hover,
   &.correct:hover {
     border-color: 0.0625rem solid var(--primary-color) !important;
-    color: white !important;
+    color: var(--white) !important;
   }
 }
 
@@ -412,22 +380,19 @@
 .correct {
   color: var(--white);
   background: linear-gradient(90deg, #70d4ad 0, #47a480 100%);
+  border: 0px solid transparent !important;
 }
 
 .partial,
 .wrong {
   color: var(--white);
   background: linear-gradient(134.51deg, #F1635D 0%, #F97A74 100%);
+  border: 0px solid transparent !important;
 }
 
 .unattempted {
   color: #ABABAB;
   border: 0.03125rem solid #ABABAB;
-}
-
-.skipped {
-  color: var(--white);
-  background: linear-gradient(134.51deg, #ababab5e 0%, #ABABAB 100%);
 }
 
 .image-viewer {
@@ -612,7 +577,36 @@
 ::ng-deep {
 
   .quml-mcq,
-  .quml-sa, quml-sa {
+  .quml-sa,
+  quml-sa {
+
+    .fs-8,
+    .fs-9,
+    .fs-10,
+    .fs-11,
+    .fs-12,
+    .fs-13,
+    .fs-14,
+    .fs-15,
+    .fs-16,
+    .fs-17,
+    .fs-18,
+    .fs-19,
+    .fs-20,
+    .fs-21,
+    .fs-22,
+    .fs-23,
+    .fs-24,
+    .fs-25,
+    .fs-26,
+    .fs-27,
+    .fs-28,
+    .fs-29,
+    .fs-30,
+    .fs-36 {
+      line-height: normal;
+    }
+
     .fs-8 {
       font-size: 0.5rem;
     }
@@ -761,6 +755,7 @@
     figure.table table {
       border-right: 0.0625rem solid var(--gray-100);
     }
+
     figure.table table,
     figure.table table tr td,
     figure.table table tr th {
@@ -791,6 +786,7 @@
               border-top-right-radius: 0.25rem;
               border-right: 0rem solid var(--gray-100);
             }
+
             border-right: 0.0625rem solid var(--gray-100);
             font-size: .875rem;
             padding: 1rem;
@@ -802,8 +798,8 @@
             border-bottom: .0625rem solid var(--gray-100);
             border-right: .0625rem solid var(--gray-100);
             font-weight: bold;
-    color: var(--primary-color);
-    text-transform: uppercase;
+            color: var(--primary-color);
+            text-transform: uppercase;
           }
         }
       }
@@ -828,9 +824,11 @@
             border: 0px;
             border-bottom: 0.0625rem solid var(--gray-100);
             border-right: 0.0625rem solid var(--gray-100);
+
             &:last-child {
               border-right: 0rem solid var(--gray-100);
             }
+
             p {
               margin-bottom: 0px !important;
             }
@@ -861,6 +859,7 @@
       li {
         margin: 0.5rem;
         font-weight: normal;
+        line-height: normal;
       }
     }
 
@@ -868,9 +867,7 @@
       list-style-type: disc;
     }
 
-    ol {
-      
-    }
+    ol {}
 
     h1,
     h2,
@@ -879,6 +876,8 @@
     h5,
     h6 {
       color: var(--primary-color);
+      line-height: normal;
+      margin-bottom: 1rem;
     }
 
     h1 {}
@@ -915,13 +914,19 @@
       font-style: italic;
     }
 
+    p {
+      line-height: normal;
+    }
+
     .quml-mcq--question {
-      p {}
+      p {line-height: normal;}
     }
 
     .quml-mcq--option {
-      .quml-mcq-option-card p:first-child, .quml-mcq-option-card p:last-child{
-         margin-bottom: 0;
+
+      .quml-mcq-option-card p:first-child,
+      .quml-mcq-option-card p:last-child {
+        margin-bottom: 0;
       }
     }
 
