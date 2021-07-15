@@ -28,6 +28,7 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
   @Output() showSolution = new EventEmitter<any>();
   @Input() disableNext?: boolean;
   @Input() startPageInstruction?: string;
+  @Input() showStartPage?: boolean;
   @Input() attempts?: { max: number, current: number };
   minutes: number;
   seconds: string | number;
@@ -75,6 +76,9 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   prevSlide() {
+    if(!this.showStartPage && this.currentSlideIndex === 1) {
+      return
+    }
     if (!this.disablePreviousNavigation) {
       this.prevSlideClicked.emit({ event: 'previous clicked' });
     }
