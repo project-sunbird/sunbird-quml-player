@@ -15,6 +15,7 @@
     &__header {
         font-weight: bold;
         text-align: center;
+        line-height: normal;
     }
 
     &__title {
@@ -79,17 +80,20 @@
 .correct {
     color: var(--white);
     background: linear-gradient(90deg, #70d4ad 0, #47a480 100%);
+    border: 0px solid transparent !important;
 }
 
 .partial,
 .wrong {
     color: var(--white);
     background: linear-gradient(134.51deg, #F1635D 0%, #F97A74 100%);
+    border: 0px solid transparent !important;
 }
 
 .skipped {
     color: var(--white);
-    background: linear-gradient(90deg, #ababab5e 0, #ABABAB 100%);
+    background: #969696;
+    border: 0.0625rem solid #969696;
 }
 
 
