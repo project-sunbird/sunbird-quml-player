@@ -449,7 +449,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
           'id': this.questions[currentIndex].identifier,
           'title': this.questions[currentIndex].name,
           'desc': this.questions[currentIndex].description,
-          'maxscore': this.questions[currentIndex].maxscore || 0,
+          'maxscore': this.questions[currentIndex].responseDeclaration[key].maxScore || 0,
         }
         if (Boolean(option.option.value == correctOptionValue)) {
           this.currentScore = this.getScore(currentIndex, key, true);
@@ -460,7 +460,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
           this.updateScoreBoard(currentIndex, 'correct', undefined, this.currentScore);
         } else if (!Boolean(option.option.value.value == correctOptionValue)) {
           this.currentScore = this.getScore(currentIndex, key, false, option);
-          this.viewerService.raiseAssesEvent(edataItem, currentIndex, 'No', this.currentScore, [option.option], new Date().getTime());
           this.showAlert = true;
           this.alertType = 'wrong';
           let classType = this.progressBarClass[currentIndex].class === 'partial' ? 'partial' : 'wrong';
