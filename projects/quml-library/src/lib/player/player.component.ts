@@ -104,6 +104,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   showReplay = true;
   tryAgainClicked = false;
   isEndEventRaised = false;
+  isSummaryEventRaised = false;
 
   constructor(
     public viewerService: ViewerService,
@@ -278,6 +279,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
         this.calculateScore();
         let summaryObj = this.createSummaryObj();
         this.viewerService.raiseSummaryEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore, summaryObj);
+        this.isSummaryEventRaised = true
         this.raiseEndEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore);
       }
     }
@@ -413,6 +415,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       this.viewerService.raiseHeartBeatEvent(eventName.endPageExitClicked, TelemetryType.interact, 'endPage');
       let summaryObj = this.createSummaryObj();
       this.viewerService.raiseSummaryEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore, summaryObj);
+      this.isSummaryEventRaised = true
       this.raiseEndEvent(this.car.getCurrentSlideIndex(), 'endPage', this.finalScore);
     }
   }
@@ -432,6 +435,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.endPageReached = true;
     let summaryObj = this.createSummaryObj();
     this.viewerService.raiseSummaryEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore, summaryObj);
+    this.isSummaryEventRaised = true
     this.raiseEndEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore);
   }
 
@@ -577,6 +581,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
         this.calculateScore();
         let summaryObj = this.createSummaryObj();
         this.viewerService.raiseSummaryEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore, summaryObj);
+        this.isSummaryEventRaised = true
         this.raiseEndEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore);
       }
     }, 4000)
@@ -659,6 +664,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.endPageReached = true;
     let summaryObj = this.createSummaryObj();
     this.viewerService.raiseSummaryEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore, summaryObj);
+    this.isSummaryEventRaised = true
     this.raiseEndEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore);
   }
 
@@ -836,8 +842,11 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   @HostListener('window:beforeunload')
   ngOnDestroy() {
     this.calculateScore();
-    let summaryObj = this.createSummaryObj();
-    this.viewerService.raiseSummaryEvent(this.currentSlideIndex, this.endPageReached, this.finalScore, summaryObj);
+    
+    if(this.isSummaryEventRaised === false) {
+      let summaryObj = this.createSummaryObj();
+      this.viewerService.raiseSummaryEvent(this.currentSlideIndex, this.endPageReached, this.finalScore, summaryObj);
+    }
     this.raiseEndEvent(this.currentSlideIndex, this.endPageReached, this.finalScore);
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
