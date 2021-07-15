@@ -46,6 +46,7 @@ export interface ObjectRollup {
 
 export interface Config {
     sideMenu?: {
+        enable?: boolean;
         showShare?: boolean;
         showDownload?: boolean;
         showReplay?: boolean;

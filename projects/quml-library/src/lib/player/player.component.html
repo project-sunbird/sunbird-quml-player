@@ -13,9 +13,13 @@
       (nextSlideClicked)="nextSlideClicked($event)" (prevSlideClicked)="previousSlideClicked($event)"
       [currentSlideIndex]="currentSlideIndex" [totalNoOfQuestions]="noOfQuestions" [active]="active"
       [showFeedBack]="showFeedBack" [currentSolutions]="currentSolutions" (showSolution)="viewSolution()"
-      [endPageReached]="endPageReached" [loadScoreBoard]="loadScoreBoard" [initializeTimer]="initializeTimer" [hidden]="endPageReached" [replayed]="replayed" [disableNext]="disableNext" [startPageInstruction]="startPageInstruction" [attempts]="attempts">
+      [endPageReached]="endPageReached" [loadScoreBoard]="loadScoreBoard" [initializeTimer]="initializeTimer" 
+      [hidden]="endPageReached" [replayed]="replayed" [disableNext]="disableNext"
+      [startPageInstruction]="startPageInstruction" [attempts]="attempts"
+      [showStartPage]="showStartPage"
+       >
     </quml-header>
-    <sb-player-side-menu-icon class="notVisible"></sb-player-side-menu-icon>
+    <sb-player-side-menu-icon class="notVisible" *ngIf="sideMenuConfig.enable"></sb-player-side-menu-icon>
     <sb-player-sidebar [title]="contentName" (sidebarEvent)="sideBarEvents($event)" [config]="sideMenuConfig">
     </sb-player-sidebar>
     <div class="landscape-mode" [hidden]="endPageReached">

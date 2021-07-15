@@ -78,6 +78,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     PREV: 2
   };
   sideMenuConfig = {
+    enable: true,
     showShare: true,
     showDownload: true,
     showReplay: false,
@@ -102,6 +103,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   attempts: { max: number, current: number };
   showReplay = true;
   tryAgainClicked = false;
+  isEndEventRaised = false;
+  isSummaryEventRaised = false;
 
   constructor(
     public viewerService: ViewerService,
@@ -271,11 +274,12 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     if (this.car.getCurrentSlideIndex() === this.noOfQuestions) {
       this.durationSpent = _.get(this.QumlPlayerConfig, 'metadata.summaryType') === 'Score' ? '' : this.utilService.getTimeSpentText(this.initialTime);
 
-      if (!this.requiresSubmit && this.showEndPage) {
+      if (!this.requiresSubmit) {
         this.endPageReached = true;
         this.calculateScore();
         let summaryObj = this.createSummaryObj();
         this.viewerService.raiseSummaryEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore, summaryObj);
+        this.isSummaryEventRaised = true
         this.raiseEndEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore);
       }
     }
@@ -411,6 +415,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
       this.viewerService.raiseHeartBeatEvent(eventName.endPageExitClicked, TelemetryType.interact, 'endPage');
       let summaryObj = this.createSummaryObj();
       this.viewerService.raiseSummaryEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore, summaryObj);
+      this.isSummaryEventRaised = true
       this.raiseEndEvent(this.car.getCurrentSlideIndex(), 'endPage', this.finalScore);
     }
   }
@@ -430,6 +435,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.endPageReached = true;
     let summaryObj = this.createSummaryObj();
     this.viewerService.raiseSummaryEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore, summaryObj);
+    this.isSummaryEventRaised = true
     this.raiseEndEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore);
   }
 
@@ -447,7 +453,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
           'id': this.questions[currentIndex].identifier,
           'title': this.questions[currentIndex].name,
           'desc': this.questions[currentIndex].description,
-          'maxscore': this.questions[currentIndex].maxscore || 0,
+          'maxscore': this.questions[currentIndex].responseDeclaration[key].maxScore || 0,
         }
         if (Boolean(option.option.value == correctOptionValue)) {
           this.currentScore = this.getScore(currentIndex, key, true);
@@ -458,7 +464,6 @@ export class PlayerComponent implements OnInit, AfterViewInit {
           this.updateScoreBoard(currentIndex, 'correct', undefined, this.currentScore);
         } else if (!Boolean(option.option.value.value == correctOptionValue)) {
           this.currentScore = this.getScore(currentIndex, key, false, option);
-          this.viewerService.raiseAssesEvent(edataItem, currentIndex, 'No', this.currentScore, [option.option], new Date().getTime());
           this.showAlert = true;
           this.alertType = 'wrong';
           let classType = this.progressBarClass[currentIndex].class === 'partial' ? 'partial' : 'wrong';
@@ -575,6 +580,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
         this.calculateScore();
         let summaryObj = this.createSummaryObj();
         this.viewerService.raiseSummaryEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore, summaryObj);
+        this.isSummaryEventRaised = true
         this.raiseEndEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore);
       }
     }, 4000)
@@ -613,6 +619,8 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   raiseEndEvent(currentQuestionIndex,  endPageSeen , score) {
+    if(this.isEndEventRaised) return;
+    this.isEndEventRaised = true;
     this.viewerService.raiseEndEvent(currentQuestionIndex, endPageSeen, score);
     if (_.get(this.attempts, 'current') >= _.get(this.attempts, 'max')) {
       this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(_.get(this.attempts, 'current'), true, false));
@@ -620,6 +628,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   replayContent() {
+    this.isEndEventRaised = false;
     this.attempts.current = this.attempts.current + 1;
     this.showReplay = _.get(this.attempts, 'current') >= _.get(this.attempts, 'max') ? false : true;
     if (_.get(this.attempts, 'max') === _.get(this.attempts, 'current')) {
@@ -654,6 +663,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.endPageReached = true;
     let summaryObj = this.createSummaryObj();
     this.viewerService.raiseSummaryEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore, summaryObj);
+    this.isSummaryEventRaised = true
     this.raiseEndEvent(this.car.getCurrentSlideIndex(), this.endPageReached, this.finalScore);
   }
 
@@ -831,8 +841,11 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   @HostListener('window:beforeunload')
   ngOnDestroy() {
     this.calculateScore();
-    let summaryObj = this.createSummaryObj();
-    this.viewerService.raiseSummaryEvent(this.currentSlideIndex, this.endPageReached, this.finalScore, summaryObj);
+    
+    if(this.isSummaryEventRaised === false) {
+      let summaryObj = this.createSummaryObj();
+      this.viewerService.raiseSummaryEvent(this.currentSlideIndex, this.endPageReached, this.finalScore, summaryObj);
+    }
     this.raiseEndEvent(this.currentSlideIndex, this.endPageReached, this.finalScore);
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
