@@ -53,9 +53,9 @@ export class QumlLibraryService {
             host: this.context.host || '',
             endpoint: this.context.endpoint || '/data/v3/telemetry',
             tags: this.context.tags,
-            cdata: [{ id: this.contentSessionId, type: 'ContentSession' },
+            cdata: (this.context.cdata || []).concat([{ id: this.contentSessionId, type: 'ContentSession' },
             { id: this.playSessionId, type: 'PlaySession' },
-            {id: "2.0" , type: "PlayerVersion"}]
+            { id: "2.0", type: "PlayerVersion" }])
           },
           userOrgDetails: {}
         }
@@ -181,9 +181,9 @@ export class QumlLibraryService {
         env: 'contentplayer',
         sid: this.sid,
         uid: this.uid,
-        cdata: [{ id: this.contentSessionId, type: 'ContentSession' },
+        cdata: (this.context.cdata || []).concat([{ id: this.contentSessionId, type: 'ContentSession' },
         { id: this.playSessionId, type: 'PlaySession' },
-        {id: "2.0" , type: "PlayerVersion"}],
+        {id: "2.0" , type: "PlayerVersion"}]),
         rollup: this.rollup || {}
       }
     });
