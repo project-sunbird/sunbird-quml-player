@@ -6,7 +6,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    padding: 1.5rem;
+    padding: 1rem;
     overflow: auto;
 }
 
@@ -19,13 +19,12 @@
 .close-icon {
     float: right;
     cursor: pointer;
-    width: 2rem;
-    height: 2rem;
-
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    padding: 0.25rem;
     &:hover {
-        // background-color: var(--red);
-        border-radius: 50%;
-
+        background: rgba(0,0,0,0.15);
         quml-close svg polygon#Shape {
             fill: var(--white);
         }
