@@ -454,6 +454,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
           'title': this.questions[currentIndex].name,
           'desc': this.questions[currentIndex].description,
           'maxscore': this.questions[currentIndex].responseDeclaration[key].maxScore || 0,
+          'params': []
         }
         if (Boolean(option.option.value == correctOptionValue)) {
           this.currentScore = this.getScore(currentIndex, key, true);
