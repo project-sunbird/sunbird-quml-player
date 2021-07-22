@@ -134,10 +134,9 @@ scrollbar-width: none; /* Firefox */
       border: 0.0625rem solid rgba(204, 204, 204, 1);
       margin-bottom: 2.25rem;
       cursor: pointer;
-      &:last-child {
+      &.requiresSubmit {
         &:hover {
           border: .0625rem solid var(--primary-color);
-          color: var(--primary-color);
         }
       }
       &.progressBar-border,
