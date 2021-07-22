@@ -64,21 +64,18 @@
             --correct-bg:linear-gradient(90deg, #70d4ad 0, #47a480 100%);
             background: var(--correct-bg);
             &:hover {
-            background: var(--correct-bg);
             }
           }
           &.wrong {
             --wrong-bg:linear-gradient(134.51deg, #F1635D 0%, #F97A74 100%);
             background: var(--wrong-bg);
             &:hover {
-              background: var(--wrong-bg);
             }
           }
           &.partial {
             --partial-bg: linear-gradient(180deg, rgba(71,164,128,1) 0%, rgba(71,164,128,1) 50%, rgba(249,122,116,1) 50%, rgba(249,122,116,1) 100%);
             background: var(--partial-bg);
             &:hover {
-              background: var(--partial-bg);
             }
           }
           &.unattempted {
