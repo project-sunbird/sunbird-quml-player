@@ -4,7 +4,7 @@
   <div class="question" [innerHTML]="question | safeHtml"></div>
 </div>
 <div class="sa-button-container">
-  <button *ngIf="!showAnswer" type="submit" class="sa-round-btn" (click)="showAnswerToUser()">Show Answer</button>
+  <button *ngIf="!showAnswer" type="submit" class="sb-btn sb-btn-primary sb-btn-normal sb-btn-radius" (click)="showAnswerToUser()">Show Answer</button>
 </div>
 <div class="option-container-blurred"
   [ngClass]="showAnswer ? 'option-container-blurred-out': 'option-container-blurred'">
