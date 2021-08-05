@@ -570,7 +570,9 @@ scrollbar-width: none; /* Firefox */
   .quml-mcq,
   .quml-sa,
   quml-sa,quml-mcq-solutions {
-
+    .mcq-title {
+      color:#131415;
+    }
     .fs-8,
     .fs-9,
     .fs-10,
@@ -718,20 +720,12 @@ scrollbar-width: none; /* Firefox */
       margin-right: 0.5rem !important;
     }
 
-    .image {
+    .image,figure.image {
       display: table;
       clear: both;
       text-align: center;
       margin: 0.5rem auto;
-    }
-
-    figure.image {
-      display: table;
-      clear: both;
-      text-align: center;
-      margin: 0.5rem auto;
-      border: 0px;
-      overflow: visible;
+      position: relative;
     }
 
     figure.image.resize-original,
@@ -744,7 +738,10 @@ scrollbar-width: none; /* Firefox */
     figure.image img {
       width: 100%;
     }
-
+    figure.image.resize-original img {
+      width:auto;
+      height:auto;
+    }
     .image img {
       display: block;
       margin: 0 auto;
@@ -773,8 +770,8 @@ scrollbar-width: none; /* Firefox */
     }
 
     .solution-options figure.image {
-      width: 7.5rem;
-      height: 7.5rem;
+      width: 7.5rem !important;
+      height: 7.5rem !important;
     }
 
     figure.table table {
@@ -917,11 +914,18 @@ scrollbar-width: none; /* Firefox */
 
     h6 {}
 
+    p, span{
+      color: #131415;
+    }
     p strong,
-    p span strong {}
+    p span strong {
+      font-weight: bold;
+    }
 
     p code,
-    p span code {}
+    p span code {
+
+    }
 
     p span sup,
     p sup {}
@@ -956,7 +960,29 @@ scrollbar-width: none; /* Firefox */
         margin-bottom: 0;
       }
     }
+  }
+quml-mcq-solutions {
 
+    .text-center,.text-left, .text-right, .mcq-title p, p {
+      text-align: center !important;
+    }
+    .solutions .solution-options-container {
+      align-items: center;
+    }
+    
+    .image-style-align-right,.image-style-align-left {
+      float: none;
+      text-align: center !important;
+      margin: 0 auto !important;
+    }
+
+    figure.image,figure.image.resize-25,figure.image.resize-50,figure.image.resize-75,figure.image.resize-100,figure.image.resize-original {
+      width: 25%;
+      height: auto;
+    }
+    .solution-options p {
+      margin-bottom: 1rem;
+    }
   }
 }
 
