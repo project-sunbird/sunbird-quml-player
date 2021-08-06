@@ -63,7 +63,18 @@
         </carousel>
       </div>
       <div class="lanscape-mode-right" [hidden]="endPageReached">
-        <ul *ngIf="!showFeedBack && !disableNext">
+        <ul *ngIf="isSection">
+          <ng-container>
+            <li class="section relative attempted" *ngFor="let q of QumlPlayerConfig?.metadata?.children; let i = index">
+              <input type="checkbox" id="list-item-{{i}}">
+              <label for="list-item-{{i}}" class="progressBar-border">{{alphabets[i]}}</label>
+              <ul>
+                <li class="showFeedBack-progressBar unattempted" *ngFor="let q of q?.children; let childIndex = index">{{childIndex + 1}}</li>
+              </ul>
+            </li>
+          </ng-container>
+        </ul>
+        <ul *ngIf="!showFeedBack && !disableNext  && !isSection">
           <li [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlideClicked(0)">i</li>
           <ng-container *ngIf="startPageInstruction ">
             <li *ngFor="let question of progressBarClass; let i = index"
@@ -78,7 +89,7 @@
             <li class="requiresSubmit" *ngIf="!loadScoreBoard && requiresSubmit" (click)="loadScoreBoard = true; disableNext = true;"><img src="./assets/flag_inactive.svg"></li>
             <li class="requiresSubmit" *ngIf="loadScoreBoard && requiresSubmit"><img src="./assets/flag_active.svg"></li>
         </ul>
-        <ul *ngIf="showFeedBack && !disableNext">
+        <ul *ngIf="showFeedBack && !disableNext && !isSection">
           <li *ngIf="showStartPage" [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlideClicked(0)">i
           </li>
           <ng-container *ngIf="startPageInstruction">

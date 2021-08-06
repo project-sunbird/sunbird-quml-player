@@ -98,7 +98,8 @@
 scrollbar-width: none; /* Firefox */
 
   position: absolute;
-  right: 1rem;
+  padding-right: 1rem;
+  right: 0;
   color: #ababab;
   font-size: 0.75rem;
   height: calc(100% - 4rem);
@@ -122,7 +123,119 @@ scrollbar-width: none; /* Firefox */
       z-index: -1;
       margin: 0 auto;
     }
-    li {
+    .section{
+      &.attempted{
+        &::after {
+          content: "";
+          display: inline-block;
+          transform: rotate(45deg);
+          height: 0.6rem;
+          width: .3rem;
+          border-bottom: .12rem solid var(--primary-color);
+          border-right: .12rem solid var(--primary-color);
+          position: absolute;
+          top: .25rem;
+          right: -.7rem;
+        }
+      }
+      &.correct {
+        &::after {
+          content: "";
+          position: absolute;
+          top: .525rem;
+          right: -.7rem;
+          --correct-bg:linear-gradient(90deg, #70d4ad 0, #47a480 100%);
+          background: var(--correct-bg);
+          height: 0.375rem;
+          width: 0.375rem;
+          border-radius: 0.375rem;
+        }
+      }
+      &.wrong {
+        &::after {
+          content: "";
+          position: absolute;
+          top: .525rem;
+          right: -.7rem;
+          --wrong-bg:linear-gradient(134.51deg, #F1635D 0%, #F97A74 100%);
+          background: var(--wrong-bg);
+          height: 0.375rem;
+          width: 0.375rem;
+          border-radius: 0.375rem;
+        }
+      }
+      &.partial {
+        &::after {
+          content: "";
+          position: absolute;
+          top: .525rem;
+          right: -.7rem;
+          height: 0.375rem;
+          width: 0.375rem;
+          border-radius: 0.375rem;
+          --partial-bg: linear-gradient(180deg, rgba(71,164,128,1) 0%, rgba(71,164,128,1) 50%, rgba(249,122,116,1) 50%, rgba(249,122,116,1) 100%);
+          background: var(--partial-bg);
+        }
+      }
+    }
+    .section label{
+      background-color: var(--white);
+      border-radius: 0.25rem;
+      width: 1.25rem;
+      padding: 0.25rem;
+      height: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 0.0625rem solid rgba(204, 204, 204, 1);
+      margin-bottom: 2.25rem;
+      cursor: pointer;
+      &.requiresSubmit {
+        &:hover {
+          border: .0625rem solid var(--primary-color);
+        }
+      }
+      &.progressBar-border,
+      .active,
+      &.att-color {
+        color: var(--white);
+        background: var(--primary-color);
+        border: .0625rem solid var(--primary-color);
+      }
+      &.skipped {
+        color: var(--white);
+        background: #969696;
+        border: 0.0625rem solid #969696;
+      }
+      &.unattempted {
+        color: #ABABAB;
+        border: 0.03125rem solid #ABABAB;
+        &:hover {
+          border: .0625rem solid var(--primary-color);
+          color: var(--primary-color);
+        }
+      }
+    }
+    input[type="checkbox"]{
+      display: none;
+    }
+    input[type="checkbox"] ~ ul{
+      height: 0;
+      transform: scaleY(0);
+    }
+    input[type="checkbox"]:checked ~ ul{
+      height: 100%;
+      transform-origin: top;
+      transition: transform .2s ease-out;
+      transform: scaleY(1); 
+    }
+    .section {
+      input[type="checkbox"]:checked ~ label{
+        border: .0625rem solid var(--primary-color);
+        color: var(--primary-color);
+      }
+    }
+    .showFeedBack-progressBar {
       background-color: var(--white);
       border-radius: 50%;
       width: 1.25rem;
@@ -183,6 +296,8 @@ scrollbar-width: none; /* Firefox */
         }
       }
     }
+
+
   }
 }
 
@@ -194,7 +309,7 @@ scrollbar-width: none; /* Firefox */
 }
 
 @media only screen and (max-width: 480px) {
-  .lanscape-mode-right {
+   .lanscape-mode-right {
     background: var(--white);
     height: 2.5rem;
     display: flex;
@@ -204,6 +319,7 @@ scrollbar-width: none; /* Firefox */
     width: 90vw;
     height: 2.5rem;
     padding: 0 0px;
+    padding-top: 1rem;
     ul {
       list-style: none;
       padding: 0;
@@ -211,7 +327,7 @@ scrollbar-width: none; /* Firefox */
       position: relative;
       display: flex;
       height: 1.5rem;
-      li {
+      .showFeedBack-progressBar {
         border-radius: 50%;
         width: 1.25rem;
         padding: 0.25rem;
@@ -226,6 +342,44 @@ scrollbar-width: none; /* Firefox */
         &:last-child {
           margin-right: 0px;
         }
+      }
+      .section{
+        &.attempted{
+          &::after {
+            content: "";
+            top: -0.8125rem;
+            right: auto;
+            left: 0.625rem;
+          }
+        }
+        &.correct {
+          &::after {
+            content: "";
+            top: -.525rem;
+            left: .5rem;
+            right: auto;
+          }
+        }
+        &.wrong {
+          &::after {
+            content: "";
+            top: -.525rem;
+            left: .5rem;
+            right: auto;
+          }
+        }
+        &.partial {
+          &::after {
+            content: "";
+            top: -.525rem;
+            left: .5rem;
+            right: auto;
+          }
+        }
+      }
+      .section label{
+        margin-right: 3rem;
+        margin-bottom: 0;
       }
       &::before {
         content: '';
@@ -242,7 +396,18 @@ scrollbar-width: none; /* Firefox */
       }
     }
   }
-
+  .lanscape-mode-right ul input[type=checkbox] ~ ul{
+    width: 0;
+    transform: scaleX(0);
+    margin: 0;
+  }
+  .lanscape-mode-right ul input[type=checkbox]:checked ~ ul{
+    width: calc(100% - 4rem);
+    transform-origin: left;
+    transition: transform .2s ease-out;
+    transform: scaleX(1);
+    margin: -1.25rem 3rem 0 4rem;
+  }
   .landscape-center {
     margin-top: 2rem;
   }
@@ -962,4 +1127,8 @@ scrollbar-width: none; /* Firefox */
 
 .endPage-container-height {
   height: 100%;
+}
+
+
+input[type="checkbox"]:checked + label{
 }

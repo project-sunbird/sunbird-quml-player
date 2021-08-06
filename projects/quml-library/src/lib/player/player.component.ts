@@ -17,6 +17,7 @@ import { takeUntil } from 'rxjs/operators';
 })
 export class PlayerComponent implements OnInit, AfterViewInit {
   @Input() QumlPlayerConfig: QumlPlayerConfig;
+  @Input() isSection: boolean;
   @Output() playerEvent = new EventEmitter<any>();
   @Output() telemetryEvent = new EventEmitter<any>();
   @ViewChild('car', { static: false }) car: CarouselComponent;
@@ -105,6 +106,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   tryAgainClicked = false;
   isEndEventRaised = false;
   isSummaryEventRaised = false;
+  alphabets = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
   constructor(
     public viewerService: ViewerService,
@@ -162,11 +164,20 @@ export class PlayerComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    let sectionChildNodes = [];
+    if (this.isSection) {      
+      _.forEach(this.QumlPlayerConfig.metadata.children, (questionSet) => {
+        _.forEach(questionSet.children, (questions) => {
+          sectionChildNodes.push(questions.identifier)
+        });    
+      });
+    }
+
+    this.questionIds = this.isSection ? sectionChildNodes : this.QumlPlayerConfig.metadata.childNodes;
     this.traceId = this.QumlPlayerConfig.config['traceId'];
     this.compatibilityLevel = this.QumlPlayerConfig.metadata.compatibilityLevel;
     this.sideMenuConfig = { ...this.sideMenuConfig, ...this.QumlPlayerConfig.config.sideMenu };
     this.threshold = this.QumlPlayerConfig.context.threshold || 3;
-    this.questionIds = this.QumlPlayerConfig.metadata.childNodes;
     this.shuffleQuestions = this.QumlPlayerConfig.metadata.shuffle ? this.QumlPlayerConfig.metadata.shuffle : false;
     if (this.shuffleQuestions) {
       this.questionIds = _.shuffle(this.questionIds);
