@@ -5,9 +5,11 @@
     <div class="solution-header">Question</div>
     <div [innerHtml]="question | safeHtml"></div>
     <div class="solution-header">Options</div>
+    <div class="solution-options-container">
     <div class="solution-options" *ngFor="let option of options">
         <div [innerHtml]="option.label | safeHtml"></div>
     </div>
+</div>
     <ng-container *ngIf="solutions && solutions.length">
     <div class="solution-header">Solution</div>
     <div *ngIf="!showVideoSolution">
@@ -28,6 +30,6 @@
     </div>
 </ng-container>
     <div class="scoreboard-button-container">
-        <button type="submit" class="scoreboard-quml-btn" (click)="closeSolution()">Done</button>
+        <button type="submit" class="sb-btn sb-btn-primary sb-btn-normal sb-btn-radius" (click)="closeSolution()">Done</button>
     </div>
 </div>

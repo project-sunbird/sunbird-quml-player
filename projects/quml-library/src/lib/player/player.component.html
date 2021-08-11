@@ -75,8 +75,8 @@
               [ngClass]="(i+1) === car.getCurrentSlideIndex() ? 'progressBar-border': question.class === 'skipped' ? question.class: question.class === 'unattempted' ? '' : 'att-color'"
               (click)="goToSlideClicked(question.index)">{{question.index}}</li>
           </ng-container>
-            <li *ngIf="!loadScoreBoard && requiresSubmit" (click)="loadScoreBoard = true; disableNext = true;"><img src="./assets/flag_inactive.svg"></li>
-            <li *ngIf="loadScoreBoard && requiresSubmit"><img src="./assets/flag_active.svg"></li>
+            <li class="requiresSubmit" *ngIf="!loadScoreBoard && requiresSubmit" (click)="loadScoreBoard = true; disableNext = true;"><img src="./assets/flag_inactive.svg"></li>
+            <li class="requiresSubmit" *ngIf="loadScoreBoard && requiresSubmit"><img src="./assets/flag_active.svg"></li>
         </ul>
         <ul *ngIf="showFeedBack && !disableNext">
           <li *ngIf="showStartPage" [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' " (click)="goToSlideClicked(0)">i
@@ -93,8 +93,8 @@
               (click)="goToSlideClicked(q.index)">
               {{q.index}}</li>
           </ng-container>
-            <li *ngIf="!loadScoreBoard && requiresSubmit " (click)="loadScoreBoard = true; disableNext = true; currentSolutions = undefined;"><img src="./assets/flag_inactive.svg"></li>
-            <li *ngIf="loadScoreBoard && requiresSubmit"><img src="./assets/flag_active.svg"></li>
+            <li class="requiresSubmit" *ngIf="!loadScoreBoard && requiresSubmit " (click)="loadScoreBoard = true; disableNext = true; currentSolutions = undefined;"><img src="./assets/flag_inactive.svg"></li>
+            <li class="requiresSubmit" *ngIf="loadScoreBoard && requiresSubmit"><img src="./assets/flag_active.svg"></li>
         </ul>
       </div>
     </div>

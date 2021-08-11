@@ -43,13 +43,11 @@
 .quml-option--selected {
   border: 0.125rem solid var(--primary-color);
 }
-.quml-option {
-  &.quml-option--correct {
-    border: 0.0625rem solid #31A679;
-  }
-  &.quml-option--wrong {
-    border: 0.0625rem solid #F1635D;
-  }
+.quml-option--correct {
+  border: 0.125rem solid #31A679;
+}
+.quml-option--wrong {
+  border: 0.125rem solid #F1635D;
 }
 
 .quml-option-card .option {
