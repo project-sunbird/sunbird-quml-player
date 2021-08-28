@@ -1,0 +1,45 @@
+<!-- Need to show loading here -->
+
+<!-- Play content in the old player -->
+<quml-player *ngIf="!isSectionsAvailable" [QumlPlayerConfig]="QumlPlayerConfig" (playerEvent)="emitPlayerEvent($event)"
+  (telemetryEvent)="emitTelemetryEvent($event)"></quml-player>
+
+<!-- For sections use new section player -->
+<div class="main-container" *ngIf="isSectionsAvailable && activeSection && !loadScoreBoard && !endPageReached">
+  <h3>{{activeSection?.metadata?.name}}</h3>
+  <quml-section-player *ngIf="!endPageReached" [sectionConfig]="activeSection" (sectionEnd)="onSectionEnd($event)"
+    [attempts]="attempts" [isFirstSection]="isFirstSection" [mainProgressBar]="mainProgressBar"
+    [parentConfig]="parentConfig">
+  </quml-section-player>
+
+</div>
+
+<!-- Show scoreboard -->
+<quml-scoreboard *ngIf="loadScoreBoard && parentConfig?.requiresSubmit && !endPageReached"
+  (scoreBoardLoaded)="onScoreBoardLoaded($event)" (submitClicked)="onScoreBoardSubmitted()"
+  [contentName]="parentConfig.contentName" [scores]="mainProgressBar" [totalNoOfQuestions]="totalNoOfQuestions"
+  [showFeedBack]="showFeedBack" (emitQuestionNo)="goToQuestion($event)">
+</quml-scoreboard>
+
+<!-- Show player end page -->
+<div class="endPage-container" *ngIf="endPageReached" [ngClass]="endPageReached ? 'endPage-container-height': ''">
+  <sb-player-end-page *ngIf="endPageReached && showEndPage" [contentName]="parentConfig.contentName"
+    [outcome]="outcomeLabel" [outcomeLabel]="'Score: '" [userName]="userName" [timeSpentLabel]="durationSpent"
+    (replayContent)="replayContent()" (exitContent)="exitContent($event)" [showExit]="sideMenuConfig.showExit"
+    [showReplay]="showReplay">
+
+    <span class="sb-color-primary mt-8 fnormal font-weight-bold d-block"
+      *ngIf="attempts?.max != attempts?.current">Attempt no {{attempts.current}}/{{attempts.max}}
+    </span>
+
+    <span class="attempts sb-color-primary mt-8 fnormal font-weight-bold d-block"
+      *ngIf="attempts?.max === attempts?.current">{{attempts.current}}/{{attempts.max}} attempts completed
+    </span>
+  </sb-player-end-page>
+</div>
+
+
+<!-- Show content error -->
+<div *ngIf="isMultiLevelSection">
+  <sb-player-contenterror [errorMsg]="contentError"></sb-player-contenterror>
+</div>

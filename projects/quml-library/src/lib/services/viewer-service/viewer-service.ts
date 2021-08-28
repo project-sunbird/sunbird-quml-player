@@ -243,7 +243,7 @@ export class ViewerService {
     })
   }
 
-  generateMaxAttemptEvents(currentattempt: string, maxLimitExceeded: boolean, isLastAttempt: boolean) {
+  generateMaxAttemptEvents(currentattempt: number, maxLimitExceeded: boolean, isLastAttempt: boolean) {
     return {
       eid: 'exdata',
       ver: this.version,

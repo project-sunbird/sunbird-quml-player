@@ -45,6 +45,7 @@ export interface ObjectRollup {
 }
 
 export interface Config {
+    traceId?: string;
     sideMenu?: {
         enable?: boolean;
         showShare?: boolean;

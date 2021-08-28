@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output , EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'quml-scoreboard',
@@ -6,7 +6,7 @@ import { Component, Input, OnInit, Output , EventEmitter } from '@angular/core';
   styleUrls: ['./scoreboard.component.scss']
 })
 export class ScoreboardComponent implements OnInit {
-  @Input() scores: Array<[]>;
+  @Input() scores: any;
   @Input() totalNoOfQuestions: number;
   @Input() contentName: string;
   @Input() showFeedBack: boolean;
@@ -15,15 +15,14 @@ export class ScoreboardComponent implements OnInit {
   @Output() scoreBoardLoaded = new EventEmitter<any>();
   constructor() { }
 
-  ngOnInit(){
-   this.scoreBoardLoaded.emit({
-     scoreBoardLoaded: true
-   })
+  ngOnInit() {
+    console.log(this.scores);
+    this.scoreBoardLoaded.emit({
+      scoreBoardLoaded: true
+    });
   }
 
-
-  goToQuestion(index){
-    this.emitQuestionNo.emit({questionNo: index})
+  goToQuestion(index) {
+    this.emitQuestionNo.emit({ questionNo: index });
   }
-
 }
