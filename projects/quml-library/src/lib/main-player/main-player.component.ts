@@ -17,35 +17,38 @@ export class MainPlayerComponent implements OnInit {
   @Output() playerEvent = new EventEmitter<any>();
   @Output() telemetryEvent = new EventEmitter<any>();
 
-  sections: any[] = [];
-  activeSection: any;
+  isLoading = false;
   isSectionsAvailable = false;
   isMultiLevelSection = false;
+  sections: any[] = [];
   isFirstSection = false;
+  activeSection: any;
   contentError: contentErrorMessage;
   parentConfig = {
     loadScoreBoard: false,
     requiresSubmit: false,
     isFirstSection: false,
-    contentName: ''
+    isReplayed: false,
+    contentName: '',
   };
 
-  endPageReached = false;
-  loadScoreBoard = false;
   showEndPage = true;
   showFeedBack: boolean;
-  attempts: { max: number, current: number };
-  mainProgressBar = [];
+  endPageReached = false;
   isEndEventRaised = false;
   isSummaryEventRaised = false;
+  showReplay = true;
+
+  attempts: { max: number, current: number };
+  mainProgressBar = [];
+  loadScoreBoard = false;
   summary: {
-    correct: 0
-    partial: 0
-    skipped: 0
+    correct: 0,
+    partial: 0,
+    skipped: 0,
     wrong: 0
   };
   finalScore = 0;
-  showReplay = true;
   currentSlideIndex = 0;
   totalNoOfQuestions = 0;
   durationSpent: string;
@@ -60,7 +63,8 @@ export class MainPlayerComponent implements OnInit {
     showExit: true,
   };
   userName: string;
-
+  replayed = false;
+  jumpToQuestion: any;
 
   constructor(public viewerService: ViewerService, private utilService: UtilService) { }
 
@@ -70,6 +74,7 @@ export class MainPlayerComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.QumlPlayerConfig.metadata.currentAttempt = 1;
     this.setConfig();
     this.initializeSections();
@@ -108,12 +113,13 @@ export class MainPlayerComponent implements OnInit {
         });
 
         this.setInitialScores();
-        this.activeSection = this.sections[0];
+        this.activeSection = _.cloneDeep(this.sections[0]);
         this.isFirstSection = true;
         console.log(this.sections);
+        this.isLoading = false;
       }
     } else {
-      this.activeSection = this.QumlPlayerConfig;
+      this.activeSection = _.cloneDeep(this.QumlPlayerConfig);
     }
   }
 
@@ -126,7 +132,7 @@ export class MainPlayerComponent implements OnInit {
     this.userName = this.QumlPlayerConfig.context.userData.firstName + ' ' + this.QumlPlayerConfig.context.userData.lastName;
     this.attempts = { max: this.QumlPlayerConfig.metadata?.maxAttempts, current: this.QumlPlayerConfig.metadata?.currentAttempt + 1 };
     this.totalScore = this.QumlPlayerConfig.metadata.maxScore;
-    this.showReplay = this.attempts?.max !== this.attempts?.current;
+    this.showReplay = _.get(this.attempts, 'current') >= _.get(this.attempts, 'max') ? false : true;
     if (typeof this.QumlPlayerConfig.metadata?.timeLimits === 'string') {
       this.QumlPlayerConfig.metadata.timeLimits = JSON.parse(this.QumlPlayerConfig.metadata.timeLimits);
     }
@@ -157,21 +163,48 @@ export class MainPlayerComponent implements OnInit {
     }
   }
 
+  getActiveSectionIndex() {
+    return this.sections.findIndex(sec => sec.metadata?.identifier === this.activeSection.metadata?.identifier);
+  }
+
+  onShowScoreBoard(event) {
+    const activeSectionIndex = this.getActiveSectionIndex();
+    this.updateSectionScore(activeSectionIndex);
+    this.loadScoreBoard = true;
+  }
+
   onSectionEnd(event) {
-    const activeSectionIndex = this.sections.indexOf(this.activeSection);
+    const activeSectionIndex = this.getActiveSectionIndex();
+    this.updateSectionScore(activeSectionIndex);
     this.setNextSection(event, activeSectionIndex);
     console.log('Event', event, activeSectionIndex);
   }
 
+  updateSectionScore(activeSectionIndex: number) {
+    this.mainProgressBar[activeSectionIndex].score = this.mainProgressBar[activeSectionIndex].children
+      .reduce((accumulator, currentValue) => accumulator + currentValue.score, 0);
+  }
+
   setNextSection(event, activeSectionIndex: number) {
     this.summary = this.utilService.sumObjectsByKey(this.summary, event.summary);
-    const isSectionFullyAttempted = event.summary.skipped === 0;
+    const isSectionFullyAttempted = event.summary.skipped === 0 &&
+      (event.summary?.correct + event.summary?.wrong) === this.mainProgressBar[activeSectionIndex]?.children?.length;
     const isSectionPartiallyAttempted = event.summary.skipped > 0;
     console.log('Summary', this.summary);
 
-    const nextSectionIndex = activeSectionIndex + 1;
+    if (event.isDurationEnded) {
+      this.prepareEnd(event);
+      return;
+    }
+
+    let nextSectionIndex = activeSectionIndex + 1;
+    if (event.jumpToSection) {
+      const sectionIndex = this.sections.findIndex(sec => sec.metadata?.identifier === event.jumpToSection);
+      nextSectionIndex = sectionIndex > -1 ? sectionIndex : nextSectionIndex;
+    }
+
     if (nextSectionIndex < this.sections.length) {
-      this.activeSection = this.sections[nextSectionIndex];
+      this.activeSection = _.cloneDeep(this.sections[nextSectionIndex]);
       this.mainProgressBar.forEach((item, index) => {
         item.isActive = index === nextSectionIndex;
 
@@ -200,11 +233,36 @@ export class MainPlayerComponent implements OnInit {
   }
 
   replayContent() {
-    if (this.isSectionsAvailable) {
-      this.activeSection = this.sections[0];
-    } else {
-      this.activeSection = this.QumlPlayerConfig;
+    this.replayed = true;
+    this.endPageReached = false;
+    this.loadScoreBoard = false;
+    this.isEndEventRaised = false;
+    this.parentConfig.isReplayed = true;
+    this.attempts.current = this.attempts.current + 1;
+    this.showReplay = _.get(this.attempts, 'current') >= _.get(this.attempts, 'max') ? false : true;
+    this.replayed = true;
+    this.mainProgressBar = [];
+    this.summary = {
+      correct: 0,
+      partial: 0,
+      skipped: 0,
+      wrong: 0
+    };
+    this.sections = [];
+    this.initialTime = new Date().getTime();
+    this.initializeSections();
+    this.endPageReached = false;
+    this.loadScoreBoard = false;
+    this.currentSlideIndex = 1;
+    this.activeSection = this.isSectionsAvailable ? _.cloneDeep(this.sections[0]) : this.QumlPlayerConfig;
+    if (this.attempts?.max === this.attempts?.current) {
+      this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(_.get(this.attempts, 'current'), false, true));
     }
+    this.viewerService.raiseHeartBeatEvent(eventName.replayClicked, TelemetryType.interact, 1);
+
+    setTimeout(() => {
+      this.replayed = false;
+    }, 200);
   }
 
   setInitialScores(activeSectionIndex = 0) {
@@ -233,8 +291,12 @@ export class MainPlayerComponent implements OnInit {
   }
 
   calculateScore() {
+    this.finalScore = 0;
     if (this.isSectionsAvailable) {
-      // loop though
+      const reducer = (accumulator, currentValue) => accumulator + currentValue.score;
+      this.finalScore = this.mainProgressBar.reduce(reducer, 0);
+      this.generateOutComeLabel();
+      return this.finalScore;
     } else {
       // calculate score for single
     }
@@ -272,6 +334,9 @@ export class MainPlayerComponent implements OnInit {
   }
 
   onScoreBoardLoaded(event) {
+    if (event?.scoreBoardLoaded) {
+      this.calculateScore();
+    }
   }
 
   onScoreBoardSubmitted() {
@@ -300,7 +365,16 @@ export class MainPlayerComponent implements OnInit {
     }
   }
 
-  goToQuestion(event) { }
+  goToQuestion(event) {
+    console.log("event, jumpToQuestion", event);
+    const sectionIndex = this.sections.findIndex(sec => sec.metadata?.identifier === event.identifier);
+    // this.jumpToQuestion = event;
+    this.activeSection = _.cloneDeep(this.sections[sectionIndex]);
+    this.mainProgressBar.forEach((item, index) => {
+      item.isActive = index === sectionIndex;
+    });
+    this.loadScoreBoard = false;
+   }
 
   emitPlayerEvent(event) {
     this.playerEvent.emit(event);

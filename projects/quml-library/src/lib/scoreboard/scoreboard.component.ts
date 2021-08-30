@@ -22,7 +22,7 @@ export class ScoreboardComponent implements OnInit {
     });
   }
 
-  goToQuestion(index) {
-    this.emitQuestionNo.emit({ questionNo: index });
+  goToQuestion(index: number, identifier?: string) {
+    this.emitQuestionNo.emit({ questionNo: index, identifier });
   }
 }

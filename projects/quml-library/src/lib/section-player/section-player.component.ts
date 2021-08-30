@@ -20,6 +20,7 @@ export class SectionPlayerComponent implements OnChanges {
   @Input() sectionConfig: QumlPlayerConfig;
   @Input() attempts: { max: number, current: number };
   @Input() isFirstSection = false;
+  @Input() jumpToQuestion;
   @Input() mainProgressBar;
   // @Input() requiresSubmit = false;
   @Input() parentConfig: {
@@ -27,6 +28,7 @@ export class SectionPlayerComponent implements OnChanges {
     endPageReached: boolean;
     requiresSubmit: boolean;
     isFirstSection: boolean;
+    isReplayed: boolean;
     contentName: string;
   };
   @Output() playerEvent = new EventEmitter<any>();
@@ -34,6 +36,7 @@ export class SectionPlayerComponent implements OnChanges {
   @Output() sectionEnd = new EventEmitter<any>();
   @Output() score = new EventEmitter<any>();
   @Output() summary = new EventEmitter<any>();
+  @Output() showScoreBoard = new EventEmitter<any>();
 
   @ViewChild('myCarousel', { static: false }) myCarousel: CarouselComponent;
   @ViewChild('imageModal', { static: true }) imageModal;
@@ -172,7 +175,7 @@ export class SectionPlayerComponent implements OnChanges {
         this.cdRef.detectChanges();
         this.noOfTimesApiCalled++;
         this.loadView = true;
-        if (this.currentSlideIndex > 0) {
+        if (this.currentSlideIndex > 0 && this.myCarousel) {
           this.myCarousel.selectSlide(this.currentSlideIndex);
         }
 
@@ -191,7 +194,18 @@ export class SectionPlayerComponent implements OnChanges {
     this.finalScore = 0;
     this.sideMenuConfig = { ...this.sideMenuConfig, ...this.sectionConfig.config?.sideMenu };
     this.threshold = this.sectionConfig.context?.threshold || 3;
-    this.questionIds = this.sectionConfig.metadata.childNodes;
+    this.questionIds = _.cloneDeep(this.sectionConfig.metadata.childNodes);
+
+    if (this.parentConfig.isReplayed) {
+      this.initializeTimer = false;
+      this.viewerService.raiseStartEvent(0);
+      this.viewerService.raiseHeartBeatEvent(eventName.startPageLoaded, 'impression', 0);
+      this.disableNext = false;
+      this.currentSlideIndex = 1;
+      // this.myCarousel.selectSlide(1);
+      this.currentQuestionsMedia = _.get(this.questions[0], 'media');
+      this.setImageZoom();
+    }
 
     // if (this.sectionConfig.metadata?.shuffle) {
     //   this.questionIds = _.shuffle(this.questionIds);
@@ -248,7 +262,9 @@ export class SectionPlayerComponent implements OnChanges {
     console.log('mainProgressBar', this.mainProgressBar);
     this.questions = [];
     this.resetQuestionState();
-    if (this.threshold === 1) {
+    if (this.jumpToQuestion) {
+      this.goToQuestion(this.jumpToQuestion);
+    } else if (this.threshold === 1) {
       this.viewerService.getQuestion();
     } else if (this.threshold > 1) {
       this.viewerService.getQuestions();
@@ -287,7 +303,7 @@ export class SectionPlayerComponent implements OnChanges {
       this.currentSlideIndex = this.currentSlideIndex + 1;
     }
 
-    if (this.myCarousel.getCurrentSlideIndex() === 0 && this.isFirstSection) {
+    if (this.myCarousel.getCurrentSlideIndex() === 0 && this.isFirstSection && !this.initializeTimer) {
       this.initializeTimer = true;
     }
 
@@ -414,7 +430,8 @@ export class SectionPlayerComponent implements OnChanges {
     }
   }
 
-  goToSlideClicked(index) {
+  goToSlideClicked(event, index) {
+    event.stopPropagation();
     this.jumpSlideIndex = index;
     if (this.optionSelectedObj && this.showFeedBack) {
       this.stopAutoNavigation = false;
@@ -426,7 +443,11 @@ export class SectionPlayerComponent implements OnChanges {
   }
 
   jumpToSection(identifier: string) {
-    this.emitSectionEnd(identifier);
+    this.emitSectionEnd(false, identifier);
+  }
+
+  onScoreBoardClicked() {
+    this.showScoreBoard.emit();
   }
 
 
@@ -483,9 +504,9 @@ export class SectionPlayerComponent implements OnChanges {
     this.showAlert = false;
     this.endPageReached = true;
     const summaryObj = this.createSummaryObj();
-    this.viewerService.raiseSummaryEvent(this.myCarousel.getCurrentSlideIndex(), this.endPageReached, this.finalScore, summaryObj);
+    // this.viewerService.raiseSummaryEvent(this.myCarousel.getCurrentSlideIndex(), this.endPageReached, this.finalScore, summaryObj);
     // this.isSummaryEventRaised = true;
-    this.raiseEndEvent(this.myCarousel.getCurrentSlideIndex(), this.endPageReached, this.finalScore);
+    // this.raiseEndEvent(this.myCarousel.getCurrentSlideIndex(), this.endPageReached, this.finalScore);
   }
 
   replayContent() {
@@ -545,14 +566,15 @@ export class SectionPlayerComponent implements OnChanges {
     // }
   }
 
-  emitSectionEnd(jumpToSection?: string) {
+  emitSectionEnd(isDurationEnded: boolean = false, jumpToSection?: string) {
     this.durationSpent = this.sectionConfig.metadata?.summaryType === 'Score' ? '' : this.utilService.getTimeSpentText(this.initialTime);
 
     const eventObj: any = {
       summary: this.createSummaryObj(),
       score: this.calculateScore(),
       durationSpent: this.durationSpent,
-      slideIndex: this.myCarousel.getCurrentSlideIndex()
+      slideIndex: this.myCarousel.getCurrentSlideIndex(),
+      isDurationEnded,
     };
     if (jumpToSection) {
       eventObj.jumpToSection = jumpToSection;
@@ -674,9 +696,9 @@ export class SectionPlayerComponent implements OnChanges {
         this.prevSlide();
       } else if (type === 'jump' && !this.stopAutoNavigation) {
         this.goToSlide(this.jumpSlideIndex);
-      // } else if (this.myCarousel.isLast(this.myCarousel.getCurrentSlideIndex()) && this.parentConfig.requiresSubmit) {
-      //   this.loadScoreBoard = true;
-      //   this.disableNext = true;
+        // } else if (this.myCarousel.isLast(this.myCarousel.getCurrentSlideIndex()) && this.parentConfig.requiresSubmit) {
+        //   this.loadScoreBoard = true;
+        //   this.disableNext = true;
       } else if (this.myCarousel.isLast(this.myCarousel.getCurrentSlideIndex())) {
         this.endPageReached = true;
         // this.calculateScore();
