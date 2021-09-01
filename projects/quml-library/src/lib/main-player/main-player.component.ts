@@ -66,7 +66,6 @@ export class MainPlayerComponent implements OnInit {
     showExit: true,
   };
   userName: string;
-  replayed = false;
   jumpToQuestion: any;
 
   constructor(public viewerService: ViewerService, private utilService: UtilService, public errorService: ErrorService) { }
@@ -131,7 +130,6 @@ export class MainPlayerComponent implements OnInit {
       this.isLoading = false;
       this.isFirstSection = true;
     }
-    this.checkCompatibilityLevel(this.QumlPlayerConfig.metadata.compatibilityLevel);
   }
 
   setConfig() {
@@ -166,17 +164,6 @@ export class MainPlayerComponent implements OnInit {
     return arr.some(item => item.children);
   }
 
-  private checkCompatibilityLevel(compatibilityLevel) {
-    if (compatibilityLevel) {
-      const checkContentCompatible = this.errorService.checkContentCompatibility(compatibilityLevel);
-
-      if (!checkContentCompatible.isCompitable) {
-        this.viewerService.raiseExceptionLog(errorCode.contentCompatibility, errorMessage.contentCompatibility,
-          checkContentCompatible.error, this.QumlPlayerConfig?.config?.traceId);
-      }
-    }
-  }
-
   emitMaxAttemptEvents() {
     if ((this.QumlPlayerConfig.metadata?.maxAttempt - 1) === this.QumlPlayerConfig.metadata?.currentAttempt) {
       this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(this.attempts?.current, false, true));
@@ -203,15 +190,19 @@ export class MainPlayerComponent implements OnInit {
       this.updateSectionScore(activeSectionIndex);
       this.setNextSection(event, activeSectionIndex);
     } else {
-      const classObj = _.groupBy(this.mainProgressBar, 'class');
-      this.summary = {
-        skipped: _.get(classObj, 'skipped.length') || 0,
-        correct: _.get(classObj, 'correct.length') || 0,
-        wrong: _.get(classObj, 'wrong.length') || 0,
-        partial: _.get(classObj, 'partial.length') || 0
-      };
+      this.getSummaryObject();
       this.prepareEnd(event);
     }
+  }
+
+  getSummaryObject() {
+    const classObj = _.groupBy(this.mainProgressBar, 'class');
+    this.summary = {
+      skipped: _.get(classObj, 'skipped.length') || 0,
+      correct: _.get(classObj, 'correct.length') || 0,
+      wrong: _.get(classObj, 'wrong.length') || 0,
+      partial: _.get(classObj, 'partial.length') || 0
+    };
   }
 
   updateSectionScore(activeSectionIndex: number) {
@@ -264,15 +255,13 @@ export class MainPlayerComponent implements OnInit {
   }
 
   replayContent() {
-    this.replayed = true;
+    this.parentConfig.isReplayed = true;
+    this.loadScoreBoard = false;
     this.endPageReached = false;
     this.isDurationExpired = false;
-    this.loadScoreBoard = false;
     this.isEndEventRaised = false;
-    this.parentConfig.isReplayed = true;
     this.attempts.current = this.attempts.current + 1;
     this.showReplay = _.get(this.attempts, 'current') >= _.get(this.attempts, 'max') ? false : true;
-    this.replayed = true;
     this.mainProgressBar = [];
     this.summary = {
       correct: 0,
@@ -293,7 +282,7 @@ export class MainPlayerComponent implements OnInit {
     this.viewerService.raiseHeartBeatEvent(eventName.replayClicked, TelemetryType.interact, 1);
 
     setTimeout(() => {
-      this.replayed = false;
+      this.parentConfig.isReplayed = false;
     }, 200);
   }
 
@@ -373,6 +362,7 @@ export class MainPlayerComponent implements OnInit {
   }
 
   onScoreBoardSubmitted() {
+    this.getSummaryObject();
     if (this.QumlPlayerConfig.metadata?.summaryType !== 'Score') {
       this.durationSpent = this.utilService.getTimeSpentText(this.initialTime);
     }

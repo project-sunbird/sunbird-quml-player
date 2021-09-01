@@ -78,7 +78,6 @@ export class SectionPlayerComponent implements OnChanges {
   linearNavigation: boolean;
   showHints: any;
   allowSkip: boolean;
-  showReplay = true;
   progressBarClass = [];
   currentQuestionsMedia: any;
   disableNext: boolean;
@@ -190,7 +189,8 @@ export class SectionPlayerComponent implements OnChanges {
     this.questionIds = _.cloneDeep(this.sectionConfig.metadata.childNodes);
 
     if (this.parentConfig.isReplayed) {
-      this.initializeTimer = false;
+      this.replayed = true;
+      this.initializeTimer = true;
       this.viewerService.raiseStartEvent(0);
       this.viewerService.raiseHeartBeatEvent(eventName.startPageLoaded, 'impression', 0);
       this.disableNext = false;
@@ -198,6 +198,8 @@ export class SectionPlayerComponent implements OnChanges {
       this.myCarousel.selectSlide(1);
       this.currentQuestionsMedia = _.get(this.questions[0], 'media');
       this.setImageZoom();
+      this.loadView = true;
+      this.loadScoreBoard = false;
     }
 
     this.questionIdsCopy = _.cloneDeep(this.sectionConfig.metadata.childNodes);
@@ -209,6 +211,7 @@ export class SectionPlayerComponent implements OnChanges {
 
     this.noOfQuestions = this.questionIds.length;
     this.viewerService.initialize(this.sectionConfig, this.threshold, this.questionIds);
+    this.checkCompatibilityLevel(this.sectionConfig.metadata.compatibilityLevel);
     this.initialTime = new Date().getTime();
     this.slideInterval = 0;
     this.showIndicator = false;
@@ -432,6 +435,17 @@ export class SectionPlayerComponent implements OnChanges {
       case 'Duration': {
         this.outcomeLabel = '';
         break;
+      }
+    }
+  }
+
+  private checkCompatibilityLevel(compatibilityLevel) {
+    if (compatibilityLevel) {
+      const checkContentCompatible = this.errorService.checkContentCompatibility(compatibilityLevel);
+
+      if (!checkContentCompatible.isCompitable) {
+        this.viewerService.raiseExceptionLog(errorCode.contentCompatibility, errorMessage.contentCompatibility,
+          checkContentCompatible.error, this.sectionConfig?.config?.traceId);
       }
     }
   }
