@@ -78,7 +78,6 @@ export class MainPlayerComponent implements OnInit {
 
   ngOnInit(): void {
     this.isLoading = true;
-    this.QumlPlayerConfig.metadata.currentAttempt = 1;
     this.setConfig();
     this.initializeSections();
   }
