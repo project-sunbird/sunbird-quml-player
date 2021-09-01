@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, EventEmitter, HostListener, Input, OnInit, Output, ViewChild, OnChanges } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, HostListener, Input, Output, ViewChild, OnChanges } from '@angular/core';
 import { errorCode, errorMessage, ErrorService } from '@project-sunbird/sunbird-player-sdk-v9';
 import * as _ from 'lodash-es';
 import { CarouselComponent } from 'ngx-bootstrap/carousel';
@@ -22,12 +22,12 @@ export class SectionPlayerComponent implements OnChanges {
   @Input() isFirstSection = false;
   @Input() jumpToQuestion;
   @Input() mainProgressBar;
-  // @Input() requiresSubmit = false;
   @Input() parentConfig: {
     loadScoreBoard: boolean;
     endPageReached: boolean;
     requiresSubmit: boolean;
     isFirstSection: boolean;
+    isSectionsAvailable: boolean;
     isReplayed: boolean;
     contentName: string;
   };
@@ -67,29 +67,23 @@ export class SectionPlayerComponent implements OnChanges {
   showUserSolution: boolean;
   startPageInstruction: string;
   shuffleQuestions: boolean;
-  // requiresSubmit: boolean;
   maxScore: number;
   points: number;
   initializeTimer: boolean;
   durationSpent: string;
   userName: string;
-  // contentName: string;
   attemptedQuestions = [];
   loadScoreBoard = false;
   totalScore: number;
   linearNavigation: boolean;
   showHints: any;
   allowSkip: boolean;
-  // showEndPage = true;
-  // attempts: { max: number, current: number };
   showReplay = true;
   progressBarClass = [];
   currentQuestionsMedia: any;
   disableNext: boolean;
   endPageReached: boolean;
   tryAgainClicked = false;
-  // isEndEventRaised = false;
-  // isSummaryEventRaised = false;
   finalScore = 0;
   currentOptionSelected: string;
   carouselConfig = {
@@ -120,22 +114,21 @@ export class SectionPlayerComponent implements OnChanges {
   showIndicator: boolean;
   noWrapSlides: boolean;
 
-
   constructor(
     public viewerService: ViewerService,
     public utilService: UtilService,
     public questionCursor: QuestionCursor,
     private cdRef: ChangeDetectorRef,
-    public errorService: ErrorService) { }
+    public errorService: ErrorService
+  ) { }
 
-  // @HostListener('document:TelemetryEvent', ['$event'])
-  // onTelemetryEvent(event) {
-  //   this.telemetryEvent.emit(event.detail);
-  // }
-
-  ngOnChanges(): void {
-    this.subscribeToEvents();
-    this.setConfig();
+  ngOnChanges(changes): void {
+    if (changes?.jumpToQuestion?.currentValue !== changes?.jumpToQuestion?.previousValue) {
+      this.goToQuestion(changes.jumpToQuestion.currentValue);
+    } else {
+      this.subscribeToEvents();
+      this.setConfig();
+    }
   }
 
   ngAfterViewInit() {
@@ -202,16 +195,12 @@ export class SectionPlayerComponent implements OnChanges {
       this.viewerService.raiseHeartBeatEvent(eventName.startPageLoaded, 'impression', 0);
       this.disableNext = false;
       this.currentSlideIndex = 1;
-      // this.myCarousel.selectSlide(1);
+      this.myCarousel.selectSlide(1);
       this.currentQuestionsMedia = _.get(this.questions[0], 'media');
       this.setImageZoom();
     }
 
-    // if (this.sectionConfig.metadata?.shuffle) {
-    //   this.questionIds = _.shuffle(this.questionIds);
-    // }
     this.questionIdsCopy = _.cloneDeep(this.sectionConfig.metadata.childNodes);
-
     const maxQuestions = this.sectionConfig.metadata.maxQuestions;
     if (maxQuestions) {
       this.questionIds = this.questionIds.slice(0, maxQuestions);
@@ -220,16 +209,10 @@ export class SectionPlayerComponent implements OnChanges {
 
     this.noOfQuestions = this.questionIds.length;
     this.viewerService.initialize(this.sectionConfig, this.threshold, this.questionIds);
-    this.checkCompatibilityLevel(this.sectionConfig.metadata.compatibilityLevel);
     this.initialTime = new Date().getTime();
     this.slideInterval = 0;
     this.showIndicator = false;
     this.noWrapSlides = true;
-
-    // if (typeof this.sectionConfig.metadata?.timeLimits === 'string') {
-    //   this.sectionConfig.metadata.timeLimits = JSON.parse(this.sectionConfig.metadata.timeLimits);
-    // }
-
     this.timeLimit = this.sectionConfig.metadata?.timeLimits?.maxTime || 0;
     this.warningTime = this.sectionConfig.metadata?.timeLimits?.warningTime || 0;
     this.showTimer = this.sectionConfig.metadata?.showTimer?.toLowerCase() !== 'no';
@@ -237,29 +220,16 @@ export class SectionPlayerComponent implements OnChanges {
     this.showUserSolution = this.sectionConfig.metadata?.showSolutions?.toLowerCase() !== 'no';
     this.startPageInstruction = this.sectionConfig.metadata?.instructions?.default;
     this.linearNavigation = this.sectionConfig.metadata.navigationMode === 'non-linear' ? false : true;
-    console.log('asas', { section: this.sectionConfig, linearNav: this.linearNavigation });
 
-    // this.requiresSubmit = this.sectionConfig.metadata?.requiresSubmit?.toLowerCase() !== 'no';
     this.showHints = this.sectionConfig.metadata?.showHints?.toLowerCase() !== 'no';
     this.points = this.sectionConfig.metadata?.points;
     this.userName = this.sectionConfig.context.userData.firstName + ' ' + this.sectionConfig.context.userData.lastName;
-    // this.contentName = this.sectionConfig.metadata.name;
     this.allowSkip = this.sectionConfig.metadata?.allowSkip?.toLowerCase() !== 'no';
     this.showStartPage = this.sectionConfig.metadata?.showStartPage?.toLowerCase() !== 'no';
-    // this.showEndPage = this.sectionConfig.metadata?.showEndPage?.toLowerCase() !== 'no';
     this.totalScore = this.sectionConfig.metadata?.maxScore;
-    // this.attempts = { max: this.sectionConfig.metadata?.maxAttempt, current: this.sectionConfig.metadata?.currentAttempt + 1 };
+    this.progressBarClass = this.parentConfig.isSectionsAvailable ? this.mainProgressBar.find(item => item.isActive)?.children :
+      this.mainProgressBar;
 
-    // if ((this.sectionConfig.metadata?.maxAttempt - 1) === this.sectionConfig.metadata?.currentAttempt) {
-    //   this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(this.attempts?.current, false, true));
-    // } else if (this.sectionConfig.metadata?.currentAttempt >= this.sectionConfig.metadata?.maxAttempt) {
-    //   this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(this.attempts?.current, true, false));
-    // }
-    // this.showReplay = this.attempts?.max !== this.attempts?.current;
-    // this.setInitialScores();
-    this.progressBarClass = this.mainProgressBar.find(item => item.isActive).children;
-    console.log('progressBarClass', this.progressBarClass);
-    console.log('mainProgressBar', this.mainProgressBar);
     this.questions = [];
     this.resetQuestionState();
     if (this.jumpToQuestion) {
@@ -268,17 +238,6 @@ export class SectionPlayerComponent implements OnChanges {
       this.viewerService.getQuestion();
     } else if (this.threshold > 1) {
       this.viewerService.getQuestions();
-    }
-  }
-
-  checkCompatibilityLevel(compatibilityLevel) {
-    if (compatibilityLevel) {
-      const checkContentCompatible = this.errorService.checkContentCompatibility(compatibilityLevel);
-
-      if (!checkContentCompatible.isCompitable) {
-        this.viewerService.raiseExceptionLog(errorCode.contentCompatibility, errorMessage.contentCompatibility,
-          checkContentCompatible.error, this.sectionConfig?.config?.traceId);
-      }
     }
   }
 
@@ -307,32 +266,9 @@ export class SectionPlayerComponent implements OnChanges {
       this.initializeTimer = true;
     }
 
-    if (this.myCarousel.getCurrentSlideIndex() === this.noOfQuestions && this.parentConfig.requiresSubmit) {
-      // this.loadScoreBoard = true;
-      // this.disableNext = true;
-      // this.sectionEnd.emit();
-      // this.emitSectionEnd();
-    }
 
     if (this.myCarousel.getCurrentSlideIndex() === this.noOfQuestions) {
-      // this.durationSpent = this.sectionConfig.metadata?.summaryType === 'Score' ? '' : this.utilService.getTimeSpentText(this.initialTime);
-
-      // const eventObj = {
-      //   summary: this.createSummaryObj(),
-      //   score: this.calculateScore(),
-      //   durationSpent: this.durationSpent,
-      //   slideIndex: this.myCarousel.getCurrentSlideIndex()
-      // };
       this.emitSectionEnd();
-
-      // if (!this.requiresSubmit) {
-      // this.calculateScore();
-      // this.endPageReached = true;
-      // const summaryObj = this.createSummaryObj();
-      // this.viewerService.raiseSummaryEvent(this.myCarousel.getCurrentSlideIndex(), this.endPageReached, this.finalScore, summaryObj);
-      // this.isSummaryEventRaised = true;
-      // this.raiseEndEvent(this.myCarousel.getCurrentSlideIndex(), this.endPageReached, this.finalScore);
-      // }
     }
 
     if (this.myCarousel.isLast(this.myCarousel.getCurrentSlideIndex()) || this.noOfQuestions === this.myCarousel.getCurrentSlideIndex()) {
@@ -370,12 +306,6 @@ export class SectionPlayerComponent implements OnChanges {
     } else {
       this.myCarousel.move(this.carouselConfig.PREV);
     }
-    // else if (!this.loadScoreBoard) {
-    //   this.myCarousel.move(this.carouselConfig.PREV);
-    // } else if (!this.linearNavigation && this.loadScoreBoard) {
-    //   this.myCarousel.selectSlide(this.noOfQuestions);
-    //   this.loadScoreBoard = false;
-    // }
     this.currentSlideIndex = this.myCarousel.getCurrentSlideIndex();
     this.currentQuestionsMedia = _.get(this.questions[this.myCarousel.getCurrentSlideIndex() - 1], 'media');
     this.setImageZoom();
@@ -486,57 +416,10 @@ export class SectionPlayerComponent implements OnChanges {
     }
   }
 
-  exitContent(event) {
-    // this.calculateScore();
-    // if (event?.type === 'EXIT') {
-    //   this.viewerService.raiseHeartBeatEvent(eventName.endPageExitClicked, TelemetryType.interact, 'endPage');
-    //   const summaryObj = this.createSummaryObj();
-    //   this.viewerService.raiseSummaryEvent(this.myCarousel.getCurrentSlideIndex(), this.endPageReached, this.finalScore, summaryObj);
-    //   this.isSummaryEventRaised = true;
-    //   this.raiseEndEvent(this.myCarousel.getCurrentSlideIndex(), 'endPage', this.finalScore);
-    // }
-  }
-
   durationEnds() {
-    this.durationSpent = this.sectionConfig.metadata?.summaryType === 'Score' ? '' : this.utilService.getTimeSpentText(this.initialTime);
-    this.calculateScore();
     this.showSolution = false;
     this.showAlert = false;
-    this.endPageReached = true;
-    const summaryObj = this.createSummaryObj();
-    // this.viewerService.raiseSummaryEvent(this.myCarousel.getCurrentSlideIndex(), this.endPageReached, this.finalScore, summaryObj);
-    // this.isSummaryEventRaised = true;
-    // this.raiseEndEvent(this.myCarousel.getCurrentSlideIndex(), this.endPageReached, this.finalScore);
-  }
-
-  replayContent() {
-    // this.isEndEventRaised = false;
-    // this.attempts.current = this.attempts.current + 1;
-    // this.showReplay = _.get(this.attempts, 'current') >= _.get(this.attempts, 'max') ? false : true;
-    // if (_.get(this.attempts, 'max') === _.get(this.attempts, 'current')) {
-    //   this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(_.get(this.attempts, 'current'), false, true));
-    // }
-
-    // this.stopAutoNavigation = false;
-    // this.initializeTimer = true;
-    // this.replayed = true;
-    // this.initialTime = new Date().getTime();
-    // this.questionIds = this.questionIdsCopy;
-    // this.progressBarClass = [];
-    // this.setInitialScores();
-    // this.viewerService.raiseHeartBeatEvent(eventName.replayClicked, TelemetryType.interact, 1);
-    // this.viewerService.raiseStartEvent(this.myCarousel.getCurrentSlideIndex());
-    // this.viewerService.raiseHeartBeatEvent(eventName.startPageLoaded, 'impression', 0);
-    // this.endPageReached = false;
-    // this.loadScoreBoard = false;
-    // this.disableNext = false;
-    // this.currentSlideIndex = 1;
-    // this.myCarousel.selectSlide(1);
-    // this.currentQuestionsMedia = _.get(this.questions[0], 'media');
-    // this.setImageZoom();
-    // setTimeout(() => {
-    //   this.replayed = false;
-    // }, 200);
+    this.emitSectionEnd(true);
   }
 
   generateOutComeLabel() {
@@ -551,19 +434,6 @@ export class SectionPlayerComponent implements OnChanges {
         break;
       }
     }
-  }
-
-  // Need to raise in main player
-  raiseEndEvent(currentQuestionIndex, endPageSeen, score) {
-    // if (this.isEndEventRaised) {
-    //   return;
-    // }
-    // this.isEndEventRaised = true;
-    // this.viewerService.raiseEndEvent(currentQuestionIndex, endPageSeen, score);
-
-    // if (_.get(this.attempts, 'current') >= _.get(this.attempts, 'max')) {
-    //   this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(_.get(this.attempts, 'current'), true, false));
-    // }
   }
 
   emitSectionEnd(isDurationEnded: boolean = false, jumpToSection?: string) {
@@ -696,17 +566,9 @@ export class SectionPlayerComponent implements OnChanges {
         this.prevSlide();
       } else if (type === 'jump' && !this.stopAutoNavigation) {
         this.goToSlide(this.jumpSlideIndex);
-        // } else if (this.myCarousel.isLast(this.myCarousel.getCurrentSlideIndex()) && this.parentConfig.requiresSubmit) {
-        //   this.loadScoreBoard = true;
-        //   this.disableNext = true;
       } else if (this.myCarousel.isLast(this.myCarousel.getCurrentSlideIndex())) {
         this.endPageReached = true;
-        // this.calculateScore();
-        // const summaryObj = this.createSummaryObj();
         this.emitSectionEnd();
-        // this.viewerService.raiseSummaryEvent(this.myCarousel.getCurrentSlideIndex(), this.endPageReached, this.finalScore, summaryObj);
-        // this.isSummaryEventRaised = true;
-        // this.raiseEndEvent(this.myCarousel.getCurrentSlideIndex(), this.endPageReached, this.finalScore);
       }
     }, 4000);
   }
@@ -801,17 +663,6 @@ export class SectionPlayerComponent implements OnChanges {
     }
   }
 
-  /* Start of score methods  */
-
-  // setInitialScores() {
-  //   this.questionIds.forEach((ele, index) => {
-  //     this.progressBarClass.push({
-  //       index: (index + 1), class: 'unattempted', value: undefined,
-  //       score: 0,
-  //     });
-  //   });
-  // }
-
   getScore(currentIndex, key, isCorrectAnswer, selectedOption?) {
     if (isCorrectAnswer) {
       return this.questions[currentIndex].responseDeclaration[key].correctResponse.outcomes.SCORE ?
@@ -831,7 +682,6 @@ export class SectionPlayerComponent implements OnChanges {
             }
           }
         });
-        return score;
       }
       return score;
     }
@@ -858,17 +708,6 @@ export class SectionPlayerComponent implements OnChanges {
       }
     });
   }
-
-  inScoreBoardSubmitClicked() {
-    // this.durationSpent = this.sectionConfig.metadata.summaryType === 'Score' ? '' : this.utilService.getTimeSpentText(this.initialTime);
-    // this.viewerService.raiseHeartBeatEvent(eventName.scoreBoardSubmitClicked, TelemetryType.interact, pageId.submitPage);
-    // this.endPageReached = true;
-    // const summaryObj = this.createSummaryObj();
-    // this.viewerService.raiseSummaryEvent(this.myCarousel.getCurrentSlideIndex(), this.endPageReached, this.finalScore, summaryObj);
-    // this.isSummaryEventRaised = true;
-    // this.raiseEndEvent(this.myCarousel.getCurrentSlideIndex(), this.endPageReached, this.finalScore);
-  }
-
 
   scoreBoardLoaded(event) {
     if (event?.scoreBoardLoaded) {
@@ -959,15 +798,6 @@ export class SectionPlayerComponent implements OnChanges {
   @HostListener('window:beforeunload')
   ngOnDestroy() {
     this.calculateScore();
-
-    // if (this.isSummaryEventRaised === false) {
-    //   const summaryObj = this.createSummaryObj();
-    //   this.viewerService.raiseSummaryEvent(this.currentSlideIndex, this.endPageReached, this.finalScore, summaryObj);
-    // }
-    // this.raiseEndEvent(this.currentSlideIndex, this.endPageReached, this.finalScore);
-
-
-
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
     this.errorService.getInternetConnectivityError.unsubscribe();

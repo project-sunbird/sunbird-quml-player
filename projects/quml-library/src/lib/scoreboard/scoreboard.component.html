@@ -7,30 +7,35 @@
       {{contentName}}
     </div>
   </div>
-  <!-- <div class="scoreboard__points" *ngIf="showFeedBack">
-    <div *ngFor="let score of scores; let i = index" class="scoreboard__index" (click)="goToQuestion(i+1)" [ngClass]="score.class">
+
+  <div class="scoreboard__points" *ngIf="!isSections && showFeedBack">
+    <div *ngFor="let score of scores; let i = index" class="scoreboard__index" (click)="goToQuestion(i+1)"
+      [ngClass]="score.class">
       {{score.index}}
     </div>
   </div>
 
-  <div class="scoreboard__points" *ngIf="!showFeedBack">
-    <div *ngFor="let score of scores; let i = index" class="scoreboard__index" (click)="goToQuestion(i+1)" [ngClass]="score.class === 'skipped' ? score.class : score.class === 'unattempted' ? score.class : 'attempted'">
+  <div class="scoreboard__points" *ngIf="!isSections && !showFeedBack">
+    <div *ngFor="let score of scores; let i = index" class="scoreboard__index" (click)="goToQuestion(i+1)"
+      [ngClass]="score.class === 'skipped' ? score.class : score.class === 'unattempted' ? score.class : 'attempted'">
       {{score.index}}
     </div>
-  </div> -->
+  </div>
 
-  <div *ngFor="let section of scores">
-    <div>{{section?.index}}</div>
-    <div class="" *ngIf="showFeedBack">
-      <div *ngFor="let score of section?.children; let i = index" class="scoreboard__index" (click)="goToQuestion(i+1, section.identifier)"
-        [ngClass]="score.class">
-        {{score.index}}
+  <div *ngIf="isSections">
+    <div *ngFor="let section of scores">
+      <div>{{section?.index}}</div>
+      <div class="" *ngIf="showFeedBack">
+        <div *ngFor="let score of section?.children; let i = index" class="scoreboard__index"
+          (click)="goToQuestion(i+1, section.identifier)" [ngClass]="score.class">
+          {{score.index}}
+        </div>
       </div>
-    </div>
-    <div class="" *ngIf="!showFeedBack">
-      <div *ngFor="let score of section?.children; let i = index" class="scoreboard__index" (click)="goToQuestion(i+1, section.identifier)"
-        [ngClass]="score.class">
-        {{score.index}}
+      <div class="" *ngIf="!showFeedBack">
+        <div *ngFor="let score of section?.children; let i = index" class="scoreboard__index"
+          (click)="goToQuestion(i+1, section.identifier)" [ngClass]="score.class">
+          {{score.index}}
+        </div>
       </div>
     </div>
   </div>

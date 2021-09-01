@@ -5,6 +5,7 @@ import { QumlPlayerConfig } from '../quml-library-interface';
 import { ViewerService } from '../services/viewer-service/viewer-service';
 import { eventName, pageId, TelemetryType } from '../telemetry-constants';
 import { UtilService } from '../util-service';
+import { ErrorService, errorCode, errorMessage } from '@project-sunbird/sunbird-player-sdk-v9';
 
 @Component({
   selector: 'quml-main-player',
@@ -28,6 +29,7 @@ export class MainPlayerComponent implements OnInit {
     loadScoreBoard: false,
     requiresSubmit: false,
     isFirstSection: false,
+    isSectionsAvailable: false,
     isReplayed: false,
     contentName: '',
   };
@@ -48,6 +50,7 @@ export class MainPlayerComponent implements OnInit {
     skipped: 0,
     wrong: 0
   };
+  isDurationExpired = false;
   finalScore = 0;
   currentSlideIndex = 0;
   totalNoOfQuestions = 0;
@@ -66,7 +69,7 @@ export class MainPlayerComponent implements OnInit {
   replayed = false;
   jumpToQuestion: any;
 
-  constructor(public viewerService: ViewerService, private utilService: UtilService) { }
+  constructor(public viewerService: ViewerService, private utilService: UtilService, public errorService: ErrorService) { }
 
   @HostListener('document:TelemetryEvent', ['$event'])
   onTelemetryEvent(event) {
@@ -82,7 +85,7 @@ export class MainPlayerComponent implements OnInit {
 
   initializeSections() {
     const childMimeType = _.map(this.QumlPlayerConfig.metadata.children, 'mimeType');
-    this.isSectionsAvailable = childMimeType[0] === 'application/vnd.sunbird.questionset';
+    this.parentConfig.isSectionsAvailable = this.isSectionsAvailable = childMimeType[0] === 'application/vnd.sunbird.questionset';
 
     if (this.isSectionsAvailable) {
       this.isMultiLevelSection = this.getMultilevelSection(this.QumlPlayerConfig.metadata);
@@ -115,12 +118,21 @@ export class MainPlayerComponent implements OnInit {
         this.setInitialScores();
         this.activeSection = _.cloneDeep(this.sections[0]);
         this.isFirstSection = true;
-        console.log(this.sections);
         this.isLoading = false;
       }
     } else {
+      const { childNodes } = this.QumlPlayerConfig.metadata;
+      childNodes.forEach((element, index) => {
+        this.mainProgressBar.push({
+          index: (index + 1), class: 'unattempted', value: undefined,
+          score: 0,
+        });
+      });
       this.activeSection = _.cloneDeep(this.QumlPlayerConfig);
+      this.isLoading = false;
+      this.isFirstSection = true;
     }
+    this.checkCompatibilityLevel(this.QumlPlayerConfig.metadata.compatibilityLevel);
   }
 
   setConfig() {
@@ -155,6 +167,17 @@ export class MainPlayerComponent implements OnInit {
     return arr.some(item => item.children);
   }
 
+  private checkCompatibilityLevel(compatibilityLevel) {
+    if (compatibilityLevel) {
+      const checkContentCompatible = this.errorService.checkContentCompatibility(compatibilityLevel);
+
+      if (!checkContentCompatible.isCompitable) {
+        this.viewerService.raiseExceptionLog(errorCode.contentCompatibility, errorMessage.contentCompatibility,
+          checkContentCompatible.error, this.QumlPlayerConfig?.config?.traceId);
+      }
+    }
+  }
+
   emitMaxAttemptEvents() {
     if ((this.QumlPlayerConfig.metadata?.maxAttempt - 1) === this.QumlPlayerConfig.metadata?.currentAttempt) {
       this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(this.attempts?.current, false, true));
@@ -168,16 +191,28 @@ export class MainPlayerComponent implements OnInit {
   }
 
   onShowScoreBoard(event) {
-    const activeSectionIndex = this.getActiveSectionIndex();
-    this.updateSectionScore(activeSectionIndex);
+    if (this.parentConfig.isSectionsAvailable) {
+      const activeSectionIndex = this.getActiveSectionIndex();
+      this.updateSectionScore(activeSectionIndex);
+    }
     this.loadScoreBoard = true;
   }
 
   onSectionEnd(event) {
-    const activeSectionIndex = this.getActiveSectionIndex();
-    this.updateSectionScore(activeSectionIndex);
-    this.setNextSection(event, activeSectionIndex);
-    console.log('Event', event, activeSectionIndex);
+    if (this.parentConfig.isSectionsAvailable) {
+      const activeSectionIndex = this.getActiveSectionIndex();
+      this.updateSectionScore(activeSectionIndex);
+      this.setNextSection(event, activeSectionIndex);
+    } else {
+      const classObj = _.groupBy(this.mainProgressBar, 'class');
+      this.summary = {
+        skipped: _.get(classObj, 'skipped.length') || 0,
+        correct: _.get(classObj, 'correct.length') || 0,
+        wrong: _.get(classObj, 'wrong.length') || 0,
+        partial: _.get(classObj, 'partial.length') || 0
+      };
+      this.prepareEnd(event);
+    }
   }
 
   updateSectionScore(activeSectionIndex: number) {
@@ -190,9 +225,9 @@ export class MainPlayerComponent implements OnInit {
     const isSectionFullyAttempted = event.summary.skipped === 0 &&
       (event.summary?.correct + event.summary?.wrong) === this.mainProgressBar[activeSectionIndex]?.children?.length;
     const isSectionPartiallyAttempted = event.summary.skipped > 0;
-    console.log('Summary', this.summary);
 
     if (event.isDurationEnded) {
+      this.isDurationExpired = true;
       this.prepareEnd(event);
       return;
     }
@@ -216,10 +251,7 @@ export class MainPlayerComponent implements OnInit {
           }
         }
       });
-      console.log('mainProgressBar', this.mainProgressBar);
     } else {
-      // this.parentConfig.endPageReached = true;
-      // this.endPageReached = true;
       this.prepareEnd(event);
     }
   }
@@ -235,6 +267,7 @@ export class MainPlayerComponent implements OnInit {
   replayContent() {
     this.replayed = true;
     this.endPageReached = false;
+    this.isDurationExpired = false;
     this.loadScoreBoard = false;
     this.isEndEventRaised = false;
     this.parentConfig.isReplayed = true;
@@ -286,8 +319,6 @@ export class MainPlayerComponent implements OnInit {
         ..._.last(this.mainProgressBar), children
       };
     });
-
-    console.log('mainProgressBar', this.mainProgressBar, this.totalNoOfQuestions);
   }
 
   calculateScore() {
@@ -299,6 +330,9 @@ export class MainPlayerComponent implements OnInit {
       return this.finalScore;
     } else {
       // calculate score for single
+      this.mainProgressBar.forEach((ele) => {
+        this.finalScore = this.finalScore + ele.score;
+      });
     }
     this.generateOutComeLabel();
   }
@@ -344,11 +378,11 @@ export class MainPlayerComponent implements OnInit {
       this.durationSpent = this.utilService.getTimeSpentText(this.initialTime);
     }
     this.viewerService.raiseHeartBeatEvent(eventName.scoreBoardSubmitClicked, TelemetryType.interact, pageId.submitPage);
-    this.loadScoreBoard = false;
     this.viewerService.raiseSummaryEvent(this.currentSlideIndex, this.endPageReached, this.finalScore, this.summary);
+    this.raiseEndEvent(this.currentSlideIndex, this.endPageReached, this.finalScore);
+    this.loadScoreBoard = false;
     this.isSummaryEventRaised = true;
     this.endPageReached = true;
-    this.raiseEndEvent(this.currentSlideIndex, this.endPageReached, this.finalScore);
   }
 
   generateOutComeLabel() {
@@ -366,28 +400,19 @@ export class MainPlayerComponent implements OnInit {
   }
 
   goToQuestion(event) {
-    console.log("event, jumpToQuestion", event);
-    const sectionIndex = this.sections.findIndex(sec => sec.metadata?.identifier === event.identifier);
-    // this.jumpToQuestion = event;
-    this.activeSection = _.cloneDeep(this.sections[sectionIndex]);
-    this.mainProgressBar.forEach((item, index) => {
-      item.isActive = index === sectionIndex;
-    });
+    if (this.parentConfig.isSectionsAvailable && event.identifier) {
+      const sectionIndex = this.sections.findIndex(sec => sec.metadata?.identifier === event.identifier);
+      // this.jumpToQuestion = event;
+      this.activeSection = _.cloneDeep(this.sections[sectionIndex]);
+      this.mainProgressBar.forEach((item, index) => {
+        item.isActive = index === sectionIndex;
+      });
+    } else {
+      this.jumpToQuestion = event;
+    }
     this.loadScoreBoard = false;
-   }
-
-  emitPlayerEvent(event) {
-    this.playerEvent.emit(event);
   }
-
-  emitTelemetryEvent(event) {
-    this.telemetryEvent.emit(event);
-  }
-
-
-
 }
-
 
 /*
  * Should Take care of the following

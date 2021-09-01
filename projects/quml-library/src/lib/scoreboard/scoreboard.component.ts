@@ -10,6 +10,7 @@ export class ScoreboardComponent implements OnInit {
   @Input() totalNoOfQuestions: number;
   @Input() contentName: string;
   @Input() showFeedBack: boolean;
+  @Input() isSections: boolean;
   @Output() submitClicked = new EventEmitter<any>();
   @Output() emitQuestionNo = new EventEmitter<any>();
   @Output() scoreBoardLoaded = new EventEmitter<any>();

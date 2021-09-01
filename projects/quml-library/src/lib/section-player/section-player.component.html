@@ -11,7 +11,8 @@
     </quml-header>
 
     <sb-player-side-menu-icon class="notVisible" *ngIf="sideMenuConfig.enable"></sb-player-side-menu-icon>
-    <sb-player-sidebar [title]="parentConfig?.contentName" (sidebarEvent)="sideBarEvents($event)" [config]="sideMenuConfig">
+    <sb-player-sidebar [title]="parentConfig?.contentName" (sidebarEvent)="sideBarEvents($event)"
+      [config]="sideMenuConfig">
     </sb-player-sidebar>
     <div class="landscape-mode">
       <div class="lanscape-mode-left">
@@ -50,18 +51,27 @@
               [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' "
               (click)="goToSlideClicked($event, 0)">i
             </li>
-            <li class="section relative" *ngFor="let section of mainProgressBar; let i=index;"
-              (click)="jumpToSection(section?.identifier)"
-              [ngClass]="{'attempted' : section.class === 'attempted', 'partial': section.class === 'partial'}">
-              <label for="list-item-{{i}}" class="progressBar-border">{{section?.index}}</label>
-              <ul *ngIf="section?.isActive">
-                <li *ngFor="let question of progressBarClass; let j=index" (click)="goToSlideClicked($event, question?.index)"
-                  class="showFeedBack-progressBar"
-                  [ngClass]="(j+1) === myCarousel.getCurrentSlideIndex() ? 'progressBar-border': question.class === 'skipped' ? question.class: question.class === 'unattempted' ? '' : 'att-color'">
-                  {{question?.index}}
-                </li>
-              </ul>
-            </li>
+            <div *ngIf="parentConfig?.isSectionsAvailable">
+              <li class="section relative" *ngFor="let section of mainProgressBar; let i=index;"
+                (click)="jumpToSection(section?.identifier)"
+                [ngClass]="{'attempted' : section.class === 'attempted', 'partial': section.class === 'partial'}">
+                <label for="list-item-{{i}}" class="progressBar-border">{{section?.index}}</label>
+                <ul *ngIf="section?.isActive">
+                  <li *ngFor="let question of progressBarClass; let j=index"
+                    (click)="goToSlideClicked($event, question?.index)" class="showFeedBack-progressBar"
+                    [ngClass]="(j+1) === myCarousel.getCurrentSlideIndex() ? 'progressBar-border': question.class === 'skipped' ? question.class: question.class === 'unattempted' ? '' : 'att-color'">
+                    {{question?.index}}
+                  </li>
+                </ul>
+              </li>
+            </div>
+            <div *ngIf="!parentConfig?.isSectionsAvailable">
+              <li *ngFor="let question of progressBarClass; let j=index"
+                (click)="goToSlideClicked($event, question?.index)" class="showFeedBack-progressBar"
+                [ngClass]="(j+1) === myCarousel.getCurrentSlideIndex() ? 'progressBar-border': question.class === 'skipped' ? question.class: question.class === 'unattempted' ? '' : 'att-color'">
+                {{question?.index}}
+              </li>
+            </div>
             <li class="requiresSubmit" *ngIf="!loadScoreBoard && parentConfig.requiresSubmit"
               (click)="loadScoreBoard = true; disableNext = true; onScoreBoardClicked()">
               <img src="./assets/flag_inactive.svg" alt="">
@@ -116,11 +126,6 @@
       </div>
     </div>
   </div>
-
-  <!-- <quml-scoreboard *ngIf="loadScoreBoard && requiresSubmit && !endPageReached"
-    (submitClicked)="inScoreBoardSubmitClicked()" [contentName]="contentName" [scores]="progressBarClass"
-    [totalNoOfQuestions]="questions.length" [showFeedBack]="showFeedBack" (emitQuestionNo)="goToQuestion($event)"
-    (scoreBoardLoaded)="scoreBoardLoaded($event)"></quml-scoreboard> -->
 
   <quml-alert *ngIf="showAlert && showFeedBack" [alertType]="alertType" [isHintAvailable]="showHints"
     [showSolutionButton]="showUserSolution" (showSolution)="viewSolution()" (showHint)="viewHint()"
