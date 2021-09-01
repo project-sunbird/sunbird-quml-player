@@ -31,6 +31,8 @@ export class ViewerService {
   identifiers: any;
   threshold: number;
   isAvailableLocally: boolean = false;
+  isSectionsAvailable = false;
+  questionSetId: string;
 
   constructor(
     public qumlLibraryService: QumlLibraryService,
@@ -39,7 +41,7 @@ export class ViewerService {
   ) {
   }
 
-  initialize(config: QumlPlayerConfig , threshold, questionIds) {
+  initialize(config: QumlPlayerConfig , threshold, questionIds, isSectionsAvailable = false) {
     this.qumlLibraryService.initializeTelemetry(config);
     this.identifiers = questionIds;
     this.threshold = threshold;
@@ -49,7 +51,10 @@ export class ViewerService {
     this.currentQuestionIndex = 1;
     this.contentName = config.metadata.name;
     this.isAvailableLocally = config.metadata.isAvailableLocally;
+    this.isSectionsAvailable = isSectionsAvailable;
     this.src = config.metadata.artifactUrl || '';
+    this.questionSetId = config.metadata.identifier;
+
     if (config.context.userData) {
       this.userName = config.context.userData.firstName + ' ' + config.context.userData.lastName;
     }
@@ -67,7 +72,7 @@ export class ViewerService {
   raiseStartEvent(currentQuestionIndex) {
     this.currentQuestionIndex = currentQuestionIndex;
     const duration = new Date().getTime() - this.qumlPlayerStartTime;
-    const startEvent = {
+    const startEvent: any = {
       eid: 'START',
       ver: this.version,
       edata: {
@@ -77,6 +82,10 @@ export class ViewerService {
       },
       metaData: this.metaData
     };
+    if (this.isSectionsAvailable) {
+      startEvent.edata.sectionId = this.questionSetId;
+    }
+
     this.qumlPlayerEvent.emit(startEvent);
     this.qumlPlayerLastPageTime = this.qumlPlayerStartTime = new Date().getTime();
     this.qumlLibraryService.start(duration);
@@ -84,7 +93,7 @@ export class ViewerService {
 
   raiseEndEvent(currentQuestionIndex,  endPageSeen , score) {
     const duration = new Date().getTime() - this.qumlPlayerStartTime;
-    const endEvent = {
+    const endEvent: any = {
       eid: 'END',
       ver: this.version,
       edata: {
@@ -95,6 +104,10 @@ export class ViewerService {
       },
       metaData: this.metaData
     };
+
+    if (this.isSectionsAvailable) {
+      endEvent.edata.sectionId = this.questionSetId;
+    }
     this.qumlPlayerEvent.emit(endEvent);
     const visitedlength = (this.metaData.pagesHistory.filter((v, i, a) => a.indexOf(v) === i)).length;
     this.timeSpent = this.utilService.getTimeSpentText(this.qumlPlayerStartTime);
@@ -102,7 +115,7 @@ export class ViewerService {
   }
 
   raiseHeartBeatEvent(type: string, telemetryType: string, pageId: any) {
-    const hearBeatEvent = {
+    const hearBeatEvent: any = {
       eid: 'HEARTBEAT',
       ver: this.version,
       edata: {
@@ -111,6 +124,11 @@ export class ViewerService {
       },
       metaData: this.metaData
     };
+
+    if (this.isSectionsAvailable) {
+      hearBeatEvent.edata.sectionId = this.questionSetId;
+    }
+
     this.qumlPlayerEvent.emit(hearBeatEvent);
     if (TelemetryType.interact === telemetryType) {
       this.qumlLibraryService.interact(type.toLowerCase(), pageId);

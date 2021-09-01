@@ -112,6 +112,7 @@ export class SectionPlayerComponent implements OnChanges {
   slideInterval: number;
   showIndicator: boolean;
   noWrapSlides: boolean;
+  sectionId: string;
 
   constructor(
     public viewerService: ViewerService,
@@ -156,7 +157,6 @@ export class SectionPlayerComponent implements OnChanges {
               new Error(errorMessage.internetConnectivity), traceId);
           }
           this.showContentError = true;
-
           return;
         }
 
@@ -210,7 +210,7 @@ export class SectionPlayerComponent implements OnChanges {
     }
 
     this.noOfQuestions = this.questionIds.length;
-    this.viewerService.initialize(this.sectionConfig, this.threshold, this.questionIds);
+    this.viewerService.initialize(this.sectionConfig, this.threshold, this.questionIds, this.parentConfig.isSectionsAvailable);
     this.checkCompatibilityLevel(this.sectionConfig.metadata.compatibilityLevel);
     this.initialTime = new Date().getTime();
     this.slideInterval = 0;
@@ -506,13 +506,17 @@ export class SectionPlayerComponent implements OnChanges {
 
       if (option.cardinality === 'single') {
         const correctOptionValue = Number(this.questions[currentIndex].responseDeclaration[key].correctResponse.value);
-        const edataItem = {
+        const edataItem: any = {
           'id': this.questions[currentIndex].identifier,
           'title': this.questions[currentIndex].name,
           'desc': this.questions[currentIndex].description,
           'maxscore': this.questions[currentIndex].responseDeclaration[key].maxScore || 0,
           'params': []
         };
+
+        if (edataItem && this.parentConfig.isSectionsAvailable) {
+          edataItem.sectionId = this.sectionConfig.metadata.identifier;
+        }
 
         if (option.option?.value === correctOptionValue) {
           this.currentScore = this.getScore(currentIndex, key, true);

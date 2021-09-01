@@ -198,6 +198,10 @@ export class MainPlayerComponent implements OnInit {
     }
   }
 
+  onPlayerEvent(event)  {
+    this.playerEvent.emit(event);
+  }
+
   getSummaryObject() {
     const classObj = _.groupBy(this.mainProgressBar, 'class');
     this.summary = {

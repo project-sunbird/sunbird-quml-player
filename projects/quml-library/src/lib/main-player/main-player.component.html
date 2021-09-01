@@ -6,7 +6,7 @@
   <div class="main-container" [hidden]="!activeSection || loadScoreBoard || endPageReached">
     <quml-section-player [sectionConfig]="activeSection" (sectionEnd)="onSectionEnd($event)" [attempts]="attempts"
       [isFirstSection]="isFirstSection" [mainProgressBar]="mainProgressBar" [parentConfig]="parentConfig"
-      [jumpToQuestion]="jumpToQuestion" (showScoreBoard)="onShowScoreBoard($event)">
+      [jumpToQuestion]="jumpToQuestion" (showScoreBoard)="onShowScoreBoard($event)" (playerEvent)="onPlayerEvent($event)">
     </quml-section-player>
   </div>
 
