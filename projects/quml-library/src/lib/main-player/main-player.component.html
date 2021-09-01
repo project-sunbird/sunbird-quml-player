@@ -4,7 +4,6 @@
 
 <div *ngIf="!isLoading" class="main-container">
   <div class="main-container" [hidden]="!activeSection || loadScoreBoard || endPageReached">
-    <h3>{{activeSection?.metadata?.name}}</h3>
     <quml-section-player [sectionConfig]="activeSection" (sectionEnd)="onSectionEnd($event)" [attempts]="attempts"
       [isFirstSection]="isFirstSection" [mainProgressBar]="mainProgressBar" [parentConfig]="parentConfig"
       [jumpToQuestion]="jumpToQuestion" (showScoreBoard)="onShowScoreBoard($event)">
