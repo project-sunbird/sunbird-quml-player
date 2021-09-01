@@ -85,7 +85,7 @@ export class QuestionCursorImplementationService implements QuestionCursor {
             "contentDisposition": "inline",
             "lastUpdatedOn": "2021-04-14T11:24:21.349+0000",
             "contentEncoding": "gzip",
-            "showSolutions": "Yes",
+            "showSolutions": "No",
             "allowAnonymousAccess": "Yes",
             "identifier": "do_2132579057673175041129",
             "lastStatusChangedOn": "2021-04-14T11:24:21.349+0000",
@@ -485,5 +485,8 @@ export class QuestionCursorImplementationService implements QuestionCursor {
                 }
                 return of(data);
             }));
+    }
+    getAllQuestionSet(identifiers: string[]) {
+        return of({});
     }
 }

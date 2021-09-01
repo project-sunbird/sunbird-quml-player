@@ -17,7 +17,6 @@ export class ScoreboardComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    console.log(this.scores);
     this.scoreBoardLoaded.emit({
       scoreBoardLoaded: true
     });

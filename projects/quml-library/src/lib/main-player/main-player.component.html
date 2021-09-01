@@ -3,11 +3,6 @@
 
 
 <div *ngIf="!isLoading" class="main-container">
-  <!-- Play content in the old player -->
-  <!-- <quml-player *ngIf="!isSectionsAvailable" [QumlPlayerConfig]="QumlPlayerConfig"
-    (playerEvent)="emitPlayerEvent($event)" (telemetryEvent)="emitTelemetryEvent($event)"></quml-player> -->
-
-  <!-- For sections use new section player -->
   <div class="main-container" [hidden]="!activeSection || loadScoreBoard || endPageReached">
     <h3>{{activeSection?.metadata?.name}}</h3>
     <quml-section-player [sectionConfig]="activeSection" (sectionEnd)="onSectionEnd($event)" [attempts]="attempts"
