@@ -272,6 +272,7 @@ export class SectionPlayerComponent implements OnChanges {
 
     if (this.myCarousel.getCurrentSlideIndex() === this.noOfQuestions) {
       this.emitSectionEnd();
+      return;
     }
 
     if (this.myCarousel.isLast(this.myCarousel.getCurrentSlideIndex()) || this.noOfQuestions === this.myCarousel.getCurrentSlideIndex()) {

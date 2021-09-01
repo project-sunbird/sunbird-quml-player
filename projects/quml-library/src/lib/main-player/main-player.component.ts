@@ -119,13 +119,17 @@ export class MainPlayerComponent implements OnInit {
         this.isLoading = false;
       }
     } else {
-      const { childNodes } = this.QumlPlayerConfig.metadata;
+      let { childNodes } = this.QumlPlayerConfig.metadata;
+      if (this.QumlPlayerConfig.metadata?.shuffle) {
+        childNodes = _.shuffle(childNodes);
+      }
       childNodes.forEach((element, index) => {
         this.mainProgressBar.push({
           index: (index + 1), class: 'unattempted', value: undefined,
           score: 0,
         });
       });
+      this.QumlPlayerConfig.metadata.childNodes = childNodes;
       this.activeSection = _.cloneDeep(this.QumlPlayerConfig);
       this.isLoading = false;
       this.isFirstSection = true;
@@ -190,7 +194,6 @@ export class MainPlayerComponent implements OnInit {
       this.updateSectionScore(activeSectionIndex);
       this.setNextSection(event, activeSectionIndex);
     } else {
-      this.getSummaryObject();
       this.prepareEnd(event);
     }
   }
@@ -228,30 +231,40 @@ export class MainPlayerComponent implements OnInit {
       nextSectionIndex = sectionIndex > -1 ? sectionIndex : nextSectionIndex;
     }
 
+    this.mainProgressBar.forEach((item, index) => {
+      item.isActive = index === nextSectionIndex;
+
+      if (index === activeSectionIndex) {
+        if (isSectionFullyAttempted) {
+          item.class = 'attempted';
+        } else if (isSectionPartiallyAttempted) {
+          item.class = 'partial';
+        }
+      }
+    });
     if (nextSectionIndex < this.sections.length) {
       this.activeSection = _.cloneDeep(this.sections[nextSectionIndex]);
-      this.mainProgressBar.forEach((item, index) => {
-        item.isActive = index === nextSectionIndex;
-
-        if (index === activeSectionIndex) {
-          if (isSectionFullyAttempted) {
-            item.class = 'attempted';
-          } else if (isSectionPartiallyAttempted) {
-            item.class = 'partial';
-          }
-        }
-      });
     } else {
       this.prepareEnd(event);
     }
   }
 
   prepareEnd(event) {
-    this.loadScoreBoard = true;
+    this.calculateScore();
     if (this.QumlPlayerConfig.metadata?.summaryType !== 'Score') {
       this.durationSpent = this.utilService.getTimeSpentText(this.initialTime);
     }
-    // this.playerEvent.emit(this.viewerService.generateEndEvent(event));
+    if (this.parentConfig.requiresSubmit) {
+      this.loadScoreBoard = true;
+    } else {
+      this.endPageReached = true;
+      this.getSummaryObject();
+      this.viewerService.raiseSummaryEvent(this.currentSlideIndex, this.endPageReached, this.finalScore, this.summary);
+      this.raiseEndEvent(this.currentSlideIndex, 'endPage', this.finalScore);
+      this.isSummaryEventRaised = true;
+      this.isEndEventRaised = true;
+
+    }
   }
 
   replayContent() {
@@ -329,7 +342,7 @@ export class MainPlayerComponent implements OnInit {
     this.calculateScore();
     if (event?.type === 'EXIT') {
       this.viewerService.raiseHeartBeatEvent(eventName.endPageExitClicked, TelemetryType.interact, 'endPage');
-      // const summaryObj = this.createSummaryObj();
+      this.getSummaryObject();
       this.viewerService.raiseSummaryEvent(this.currentSlideIndex, this.endPageReached, this.finalScore, this.summary);
       this.isSummaryEventRaised = true;
       this.raiseEndEvent(this.currentSlideIndex, 'endPage', this.finalScore);
