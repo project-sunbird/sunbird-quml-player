@@ -70,10 +70,8 @@ export class SectionPlayerComponent implements OnChanges {
   maxScore: number;
   points: number;
   initializeTimer: boolean;
-  durationSpent: string;
+
   userName: string;
-  attemptedQuestions = [];
-  loadScoreBoard = false;
   totalScore: number;
   linearNavigation: boolean;
   showHints: any;
@@ -83,7 +81,6 @@ export class SectionPlayerComponent implements OnChanges {
   disableNext: boolean;
   endPageReached: boolean;
   tryAgainClicked = false;
-  finalScore = 0;
   currentOptionSelected: string;
   carouselConfig = {
     NEXT: 1,
@@ -183,7 +180,6 @@ export class SectionPlayerComponent implements OnChanges {
     if (this.myCarousel) {
       this.myCarousel.selectSlide(this.currentSlideIndex);
     }
-    this.finalScore = 0;
     this.sideMenuConfig = { ...this.sideMenuConfig, ...this.sectionConfig.config?.sideMenu };
     this.threshold = this.sectionConfig.context?.threshold || 3;
     this.questionIds = _.cloneDeep(this.sectionConfig.metadata.childNodes);
@@ -199,7 +195,6 @@ export class SectionPlayerComponent implements OnChanges {
       this.currentQuestionsMedia = _.get(this.questions[0], 'media');
       this.setImageZoom();
       this.loadView = true;
-      this.loadScoreBoard = false;
     }
 
     this.questionIdsCopy = _.cloneDeep(this.sectionConfig.metadata.childNodes);
@@ -223,7 +218,6 @@ export class SectionPlayerComponent implements OnChanges {
     this.showUserSolution = this.sectionConfig.metadata?.showSolutions?.toLowerCase() !== 'no';
     this.startPageInstruction = this.sectionConfig.metadata?.instructions?.default;
     this.linearNavigation = this.sectionConfig.metadata.navigationMode === 'non-linear' ? false : true;
-
     this.showHints = this.sectionConfig.metadata?.showHints?.toLowerCase() !== 'no';
     this.points = this.sectionConfig.metadata?.points;
     this.userName = this.sectionConfig.context.userData.firstName + ' ' + this.sectionConfig.context.userData.lastName;
@@ -268,7 +262,6 @@ export class SectionPlayerComponent implements OnChanges {
     if (this.myCarousel.getCurrentSlideIndex() === 0 && this.isFirstSection && !this.initializeTimer) {
       this.initializeTimer = true;
     }
-
 
     if (this.myCarousel.getCurrentSlideIndex() === this.noOfQuestions) {
       this.emitSectionEnd();
@@ -426,20 +419,6 @@ export class SectionPlayerComponent implements OnChanges {
     this.emitSectionEnd(true);
   }
 
-  generateOutComeLabel() {
-    this.outcomeLabel = this.finalScore.toString();
-    switch (this.sectionConfig.metadata?.summaryType) {
-      case 'Complete': {
-        this.outcomeLabel = this.totalScore ? `${this.finalScore} / ${this.totalScore}` : this.outcomeLabel;
-        break;
-      }
-      case 'Duration': {
-        this.outcomeLabel = '';
-        break;
-      }
-    }
-  }
-
   private checkCompatibilityLevel(compatibilityLevel) {
     if (compatibilityLevel) {
       const checkContentCompatible = this.errorService.checkContentCompatibility(compatibilityLevel);
@@ -452,12 +431,10 @@ export class SectionPlayerComponent implements OnChanges {
   }
 
   emitSectionEnd(isDurationEnded: boolean = false, jumpToSection?: string) {
-    this.durationSpent = this.sectionConfig.metadata?.summaryType === 'Score' ? '' : this.utilService.getTimeSpentText(this.initialTime);
-
     const eventObj: any = {
       summary: this.createSummaryObj(),
       score: this.calculateScore(),
-      durationSpent: this.durationSpent,
+      durationSpent: this.utilService.getTimeSpentText(this.initialTime),
       slideIndex: this.myCarousel.getCurrentSlideIndex(),
       isDurationEnded,
     };
@@ -536,35 +513,31 @@ export class SectionPlayerComponent implements OnChanges {
       if (option.cardinality === 'multiple') {
         const responseDeclaration = this.questions[currentIndex].responseDeclaration;
         this.currentScore = this.utilService.getMultiselectScore(option.option, responseDeclaration);
-        if (this.currentScore > 0) {
-          if (this.showFeedBack) {
-            this.updateScoreBoard(((currentIndex + 1)), 'correct', undefined, this.currentScore);
-            this.correctFeedBackTimeOut(type);
-            this.showAlert = true;
-            this.alertType = 'correct';
-          } else {
-            this.nextSlide();
-          }
-        } else if (this.currentScore === 0) {
-          if (this.showFeedBack) {
+        if (this.showFeedBack) {
+          if (this.currentScore === 0) {
             this.showAlert = true;
             this.alertType = 'wrong';
             this.updateScoreBoard((currentIndex + 1), 'wrong');
           } else {
-            this.nextSlide();
+            this.updateScoreBoard(((currentIndex + 1)), 'correct', undefined, this.currentScore);
+            this.correctFeedBackTimeOut(type);
+            this.showAlert = true;
+            this.alertType = 'correct';
           }
+        } else {
+          this.nextSlide();
         }
       }
       this.optionSelectedObj = undefined;
     } else if ((isQuestionSkipAllowed) || isSubjectiveQuestion || onStartPage || isActive) {
       this.nextSlide();
-    } else if (this.startPageInstruction && this.optionSelectedObj === undefined && !this.active && !this.allowSkip &&
+    } else if (this.startPageInstruction && !this.optionSelectedObj && !this.active && !this.allowSkip &&
       this.myCarousel.getCurrentSlideIndex() > 0 && this.utilService.getQuestionType(this.questions, currentIndex) === 'MCQ'
-      && !this.loadScoreBoard && this.utilService.canGo(this.progressBarClass[this.myCarousel.getCurrentSlideIndex()])) {
+      && this.utilService.canGo(this.progressBarClass[this.myCarousel.getCurrentSlideIndex()])) {
       this.infoPopupTimeOut();
-    } else if (this.optionSelectedObj === undefined && !this.active && !this.allowSkip && this.myCarousel.getCurrentSlideIndex() >= 0
+    } else if (!this.optionSelectedObj && !this.active && !this.allowSkip && this.myCarousel.getCurrentSlideIndex() >= 0
       && this.utilService.getQuestionType(this.questions, currentIndex) === 'MCQ'
-      && !this.loadScoreBoard && this.utilService.canGo(this.progressBarClass[this.myCarousel.getCurrentSlideIndex()])) {
+      && this.utilService.canGo(this.progressBarClass[this.myCarousel.getCurrentSlideIndex()])) {
       this.infoPopupTimeOut();
     }
   }
@@ -607,9 +580,6 @@ export class SectionPlayerComponent implements OnChanges {
     if (!this.initializeTimer) {
       this.initializeTimer = true;
     }
-    if (this.loadScoreBoard) {
-      this.loadScoreBoard = false;
-    }
     if (this.questions[index - 1] === undefined) {
       this.showQuestions = false;
       this.viewerService.getQuestions(0, index);
@@ -623,12 +593,10 @@ export class SectionPlayerComponent implements OnChanges {
   goToQuestion(event) {
     this.disableNext = false;
     this.initializeTimer = true;
-    this.durationSpent = this.sectionConfig.metadata?.summaryType === 'Score' ? '' : this.utilService.getTimeSpentText(this.initialTime);
     const index = event.questionNo;
     this.viewerService.getQuestions(0, index);
     this.currentSlideIndex = index;
     this.myCarousel.selectSlide(index);
-    this.loadScoreBoard = false;
   }
 
   getSolutions() {
@@ -707,12 +675,11 @@ export class SectionPlayerComponent implements OnChanges {
   }
 
   calculateScore() {
-    this.finalScore = 0;
+    let finalScore = 0;
     this.progressBarClass.forEach((ele) => {
-      this.finalScore = this.finalScore + ele.score;
+      finalScore = finalScore + ele.score;
     });
-    this.generateOutComeLabel();
-    return this.finalScore;
+    return finalScore;
   }
 
   updateScoreBoard(index, classToBeUpdated, optionValue?, score?) {
@@ -726,12 +693,6 @@ export class SectionPlayerComponent implements OnChanges {
         }
       }
     });
-  }
-
-  scoreBoardLoaded(event) {
-    if (event?.scoreBoardLoaded) {
-      this.calculateScore();
-    }
   }
 
   /* End of score methods  */

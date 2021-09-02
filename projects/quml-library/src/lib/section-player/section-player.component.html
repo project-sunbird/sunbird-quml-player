@@ -5,9 +5,8 @@
       (nextSlideClicked)="nextSlideClicked($event)" (prevSlideClicked)="previousSlideClicked($event)"
       [currentSlideIndex]="currentSlideIndex" [totalNoOfQuestions]="noOfQuestions" [active]="active"
       [showFeedBack]="showFeedBack" [currentSolutions]="currentSolutions" (showSolution)="viewSolution()"
-      [loadScoreBoard]="loadScoreBoard" [initializeTimer]="initializeTimer" [replayed]="parentConfig?.isReplayed"
-      [disableNext]="disableNext" [startPageInstruction]="startPageInstruction" [attempts]="attempts"
-      [showStartPage]="showStartPage">
+      [initializeTimer]="initializeTimer" [replayed]="parentConfig?.isReplayed" [disableNext]="disableNext"
+      [startPageInstruction]="startPageInstruction" [attempts]="attempts" [showStartPage]="showStartPage">
     </quml-header>
 
     <sb-player-side-menu-icon class="notVisible" *ngIf="sideMenuConfig.enable"></sb-player-side-menu-icon>
@@ -16,7 +15,7 @@
     </sb-player-sidebar>
     <div class="landscape-mode">
       <div class="lanscape-mode-left">
-        <div class="current-slide" [hidden]="loadScoreBoard">
+        <div class="current-slide">
           {{myCarousel.getCurrentSlideIndex()}}/{{noOfQuestions}}
         </div>
         <div *ngIf="currentSolutions && showUserSolution">
@@ -25,7 +24,7 @@
       </div>
       <div class="landscape-content">
         <carousel class="landscape-center" [interval]="slideInterval" [showIndicators]="showIndicator"
-          [noWrap]="noWrapSlides" #myCarousel [hidden]="loadScoreBoard">
+          [noWrap]="noWrapSlides" #myCarousel>
           <slide>
             <quml-startpage [instructions]="startPageInstruction" [totalNoOfQuestions]="noOfQuestions" [points]="points"
               [time]="timeLimit" [contentName]="parentConfig?.contentName" [showTimer]="showTimer"></quml-startpage>
@@ -33,11 +32,13 @@
           <slide *ngFor="let question of questions; let i= index">
             <div [id]="question.identifier">
               <div *ngIf="question?.primaryCategory.toLowerCase() === 'multiple choice question'">
-                <quml-mcq [question]='question' [replayed]="parentConfig?.isReplayed" (optionSelected)="getOptionSelected($event)"
-                  [identifier]="question.id" [tryAgain]="tryAgainClicked"></quml-mcq>
+                <quml-mcq [question]='question' [replayed]="parentConfig?.isReplayed"
+                  (optionSelected)="getOptionSelected($event)" [identifier]="question.id" [tryAgain]="tryAgainClicked">
+                </quml-mcq>
               </div>
               <div *ngIf="question?.primaryCategory.toLowerCase() === 'subjective question'">
-                <quml-sa [questions]='question' [replayed]="parentConfig?.isReplayed" (showAnswerClicked)="showAnswerClicked($event)">
+                <quml-sa [questions]='question' [replayed]="parentConfig?.isReplayed"
+                  (showAnswerClicked)="showAnswerClicked($event)">
                 </quml-sa>
               </div>
             </div>
@@ -72,13 +73,13 @@
                 {{question?.index}}
               </li>
             </div>
-            <li class="requiresSubmit" *ngIf="!loadScoreBoard && parentConfig.requiresSubmit"
-              (click)="loadScoreBoard = true; disableNext = true; onScoreBoardClicked()">
+            <li class="requiresSubmit" *ngIf="parentConfig.requiresSubmit"
+              (click)="disableNext = true; onScoreBoardClicked()">
               <img src="./assets/flag_inactive.svg" alt="">
             </li>
-            <li class="requiresSubmit" *ngIf="loadScoreBoard && parentConfig.requiresSubmit">
+            <!-- <li class="requiresSubmit" *ngIf="loadScoreBoard && parentConfig.requiresSubmit">
               <img src="./assets/flag_active.svg" alt="">
-            </li>
+            </li> -->
           </ng-container>
         </ul>
       </div>
