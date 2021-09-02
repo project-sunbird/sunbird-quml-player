@@ -5,7 +5,6 @@ import { QumlPlayerConfig } from '../quml-library-interface';
 import { ViewerService } from '../services/viewer-service/viewer-service';
 import { eventName, pageId, TelemetryType } from '../telemetry-constants';
 import { UtilService } from '../util-service';
-import { ErrorService, errorCode, errorMessage } from '@project-sunbird/sunbird-player-sdk-v9';
 
 @Component({
   selector: 'quml-main-player',
@@ -68,7 +67,7 @@ export class MainPlayerComponent implements OnInit {
   userName: string;
   jumpToQuestion: any;
 
-  constructor(public viewerService: ViewerService, private utilService: UtilService, public errorService: ErrorService) { }
+  constructor(public viewerService: ViewerService, private utilService: UtilService) { }
 
   @HostListener('document:TelemetryEvent', ['$event'])
   onTelemetryEvent(event) {
@@ -198,7 +197,7 @@ export class MainPlayerComponent implements OnInit {
     }
   }
 
-  onPlayerEvent(event)  {
+  onPlayerEvent(event) {
     this.playerEvent.emit(event);
   }
 
@@ -327,19 +326,9 @@ export class MainPlayerComponent implements OnInit {
   }
 
   calculateScore() {
-    this.finalScore = 0;
-    if (this.isSectionsAvailable) {
-      const reducer = (accumulator, currentValue) => accumulator + currentValue.score;
-      this.finalScore = this.mainProgressBar.reduce(reducer, 0);
-      this.generateOutComeLabel();
-      return this.finalScore;
-    } else {
-      // calculate score for single
-      this.mainProgressBar.forEach((ele) => {
-        this.finalScore = this.finalScore + ele.score;
-      });
-    }
+    this.finalScore = this.mainProgressBar.reduce((accumulator, currentValue) => accumulator + currentValue.score, 0);
     this.generateOutComeLabel();
+    return this.finalScore;
   }
 
   exitContent(event) {
@@ -408,7 +397,6 @@ export class MainPlayerComponent implements OnInit {
   goToQuestion(event) {
     if (this.parentConfig.isSectionsAvailable && event.identifier) {
       const sectionIndex = this.sections.findIndex(sec => sec.metadata?.identifier === event.identifier);
-      // this.jumpToQuestion = event;
       this.activeSection = _.cloneDeep(this.sections[sectionIndex]);
       this.mainProgressBar.forEach((item, index) => {
         item.isActive = index === sectionIndex;
@@ -417,6 +405,17 @@ export class MainPlayerComponent implements OnInit {
       this.jumpToQuestion = event;
     }
     this.loadScoreBoard = false;
+  }
+
+  @HostListener('window:beforeunload')
+  ngOnDestroy() {
+    this.calculateScore();
+
+    if (this.isSummaryEventRaised === false) {
+      this.getSummaryObject();
+      this.viewerService.raiseSummaryEvent(this.currentSlideIndex, this.endPageReached, this.finalScore, this.summary);
+    }
+    this.raiseEndEvent(this.currentSlideIndex, this.endPageReached, this.finalScore);
   }
 }
 

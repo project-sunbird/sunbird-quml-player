@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, EventEmitter, HostListener, Input, Output, ViewChild, OnChanges } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, HostListener, Input, OnChanges, Output, ViewChild } from '@angular/core';
 import { errorCode, errorMessage, ErrorService } from '@project-sunbird/sunbird-player-sdk-v9';
 import * as _ from 'lodash-es';
 import { CarouselComponent } from 'ngx-bootstrap/carousel';
@@ -95,7 +95,6 @@ export class SectionPlayerComponent implements OnChanges {
   showSolution: any;
   optionSelectedObj: any;
   intervalRef: any;
-  currentScore: any;
   alertType: string;
   infoPopup: boolean;
   outcomeLabel: string;
@@ -496,30 +495,30 @@ export class SectionPlayerComponent implements OnChanges {
         }
 
         if (option.option?.value === correctOptionValue) {
-          this.currentScore = this.getScore(currentIndex, key, true);
-          this.viewerService.raiseAssesEvent(edataItem, currentIndex, 'Yes', this.currentScore, [option.option], new Date().getTime());
+          const currentScore = this.getScore(currentIndex, key, true);
+          this.viewerService.raiseAssesEvent(edataItem, currentIndex, 'Yes', currentScore, [option.option], new Date().getTime());
           this.showAlert = true;
           this.alertType = 'correct';
           this.correctFeedBackTimeOut(type);
-          this.updateScoreBoard(currentIndex, 'correct', undefined, this.currentScore);
+          this.updateScoreBoard(currentIndex, 'correct', undefined, currentScore);
         } else {
-          this.currentScore = this.getScore(currentIndex, key, false, option);
+          const currentScore = this.getScore(currentIndex, key, false, option);
           this.showAlert = true;
           this.alertType = 'wrong';
           const classType = this.progressBarClass[currentIndex].class === 'partial' ? 'partial' : 'wrong';
-          this.updateScoreBoard(currentIndex, classType, selectedOptionValue, this.currentScore);
+          this.updateScoreBoard(currentIndex, classType, selectedOptionValue, currentScore);
         }
       }
       if (option.cardinality === 'multiple') {
         const responseDeclaration = this.questions[currentIndex].responseDeclaration;
-        this.currentScore = this.utilService.getMultiselectScore(option.option, responseDeclaration);
+        const currentScore = this.utilService.getMultiselectScore(option.option, responseDeclaration);
         if (this.showFeedBack) {
-          if (this.currentScore === 0) {
+          if (currentScore === 0) {
             this.showAlert = true;
             this.alertType = 'wrong';
             this.updateScoreBoard((currentIndex + 1), 'wrong');
           } else {
-            this.updateScoreBoard(((currentIndex + 1)), 'correct', undefined, this.currentScore);
+            this.updateScoreBoard(((currentIndex + 1)), 'correct', undefined, currentScore);
             this.correctFeedBackTimeOut(type);
             this.showAlert = true;
             this.alertType = 'correct';
@@ -675,11 +674,7 @@ export class SectionPlayerComponent implements OnChanges {
   }
 
   calculateScore() {
-    let finalScore = 0;
-    this.progressBarClass.forEach((ele) => {
-      finalScore = finalScore + ele.score;
-    });
-    return finalScore;
+    return this.progressBarClass.reduce((accumulator, element) => accumulator + element.score, 0);
   }
 
   updateScoreBoard(index, classToBeUpdated, optionValue?, score?) {
