@@ -71,7 +71,6 @@ export class SectionPlayerComponent implements OnChanges {
   points: number;
   initializeTimer: boolean;
 
-  userName: string;
   totalScore: number;
   linearNavigation: boolean;
   showHints: any;
@@ -219,7 +218,7 @@ export class SectionPlayerComponent implements OnChanges {
     this.linearNavigation = this.sectionConfig.metadata.navigationMode === 'non-linear' ? false : true;
     this.showHints = this.sectionConfig.metadata?.showHints?.toLowerCase() !== 'no';
     this.points = this.sectionConfig.metadata?.points;
-    this.userName = this.sectionConfig.context.userData.firstName + ' ' + this.sectionConfig.context.userData.lastName;
+
     this.allowSkip = this.sectionConfig.metadata?.allowSkip?.toLowerCase() !== 'no';
     this.showStartPage = this.sectionConfig.metadata?.showStartPage?.toLowerCase() !== 'no';
     this.totalScore = this.sectionConfig.metadata?.maxScore;
@@ -494,16 +493,15 @@ export class SectionPlayerComponent implements OnChanges {
           edataItem.sectionId = this.sectionConfig.metadata.identifier;
         }
 
+        this.showAlert = true;
         if (option.option?.value === correctOptionValue) {
           const currentScore = this.getScore(currentIndex, key, true);
           this.viewerService.raiseAssesEvent(edataItem, currentIndex, 'Yes', currentScore, [option.option], new Date().getTime());
-          this.showAlert = true;
           this.alertType = 'correct';
           this.correctFeedBackTimeOut(type);
           this.updateScoreBoard(currentIndex, 'correct', undefined, currentScore);
         } else {
           const currentScore = this.getScore(currentIndex, key, false, option);
-          this.showAlert = true;
           this.alertType = 'wrong';
           const classType = this.progressBarClass[currentIndex].class === 'partial' ? 'partial' : 'wrong';
           this.updateScoreBoard(currentIndex, classType, selectedOptionValue, currentScore);
@@ -513,14 +511,13 @@ export class SectionPlayerComponent implements OnChanges {
         const responseDeclaration = this.questions[currentIndex].responseDeclaration;
         const currentScore = this.utilService.getMultiselectScore(option.option, responseDeclaration);
         if (this.showFeedBack) {
+          this.showAlert = true;
           if (currentScore === 0) {
-            this.showAlert = true;
             this.alertType = 'wrong';
             this.updateScoreBoard((currentIndex + 1), 'wrong');
           } else {
             this.updateScoreBoard(((currentIndex + 1)), 'correct', undefined, currentScore);
             this.correctFeedBackTimeOut(type);
-            this.showAlert = true;
             this.alertType = 'correct';
           }
         } else {
@@ -722,7 +719,7 @@ export class SectionPlayerComponent implements OnChanges {
         this.viewerService.raiseHeartBeatEvent(eventName.zoomClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
         this.zoomImgSrc = image['src'];
         this.showZoomModal = true;
-        const zoomImage = document.getElementById('modalImage');
+        const zoomImage = document.getElementById('imageModal');
         if (zoomImage.clientHeight > image.clientWidth) {
           zoomImage.setAttribute('class', 'portrait');
         } else if (image.clientHeight < image.clientWidth) {
@@ -772,7 +769,6 @@ export class SectionPlayerComponent implements OnChanges {
 
   @HostListener('window:beforeunload')
   ngOnDestroy() {
-    this.calculateScore();
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
     this.errorService.getInternetConnectivityError.unsubscribe();
