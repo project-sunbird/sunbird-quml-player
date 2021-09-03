@@ -7,7 +7,7 @@ import { Injectable } from "@angular/core";
 
 @Injectable()
 export class QuestionCursorImplementationService implements QuestionCursor {
-    listUrl = 'https://staging.sunbirded.org/api/question/v1/list'; // Define this url to call list api in server
+    listUrl: string; // Define this url to call list api in server
     questionsArray = {
         "questions": [{
             "copyright": "tn",
