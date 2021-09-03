@@ -35,7 +35,9 @@ import { WrongComponent } from './icon/wrong/wrong.component';
 import { MenuComponent } from './icon/menu/menu.component';
 import {SunbirdPlayerSdkModule} from '@project-sunbird/sunbird-player-sdk-v9';
 import { QumlLibraryService } from './quml-library.service';
-import { SafeHtmlPipe } from './pipes/safe-html/safe-html.pipe'
+import { SafeHtmlPipe } from './pipes/safe-html/safe-html.pipe';
+import { MainPlayerComponent } from './main-player/main-player.component';
+import { SectionPlayerComponent } from './section-player/section-player.component'
 
 
 @NgModule({
@@ -73,6 +75,8 @@ import { SafeHtmlPipe } from './pipes/safe-html/safe-html.pipe'
     WrongComponent,
     MenuComponent,
     SafeHtmlPipe,
+    MainPlayerComponent,
+    SectionPlayerComponent,
   ],
   imports: [
     CommonModule,
@@ -82,6 +86,6 @@ import { SafeHtmlPipe } from './pipes/safe-html/safe-html.pipe'
   providers: [
     QumlLibraryService
   ],
-  exports: [PlayerComponent]
+  exports: [PlayerComponent, MainPlayerComponent]
 })
 export class QumlLibraryModule { }

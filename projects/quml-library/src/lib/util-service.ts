@@ -62,4 +62,14 @@ export class UtilService {
      return attemptedParams.includes(progressBarClass);
     }
 
+    sumObjectsByKey(...objects) {
+        return objects.reduce((accumulator, currentValue) => {
+            for (const key in currentValue) {
+                if (currentValue.hasOwnProperty(key)) {
+                    accumulator[key] = (accumulator[key] || 0) + currentValue[key];
+                }
+            }
+            return accumulator;
+        }, {});
+    }
 }

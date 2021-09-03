@@ -1,0 +1,115 @@
+<div class="quml-container" *ngIf="loadView" [hidden]="showZoomModal">
+  <div [hidden]="showSolution" class="quml-landscape">
+    <quml-header class="main-header" (durationEnds)="durationEnds()" [disablePreviousNavigation]="linearNavigation"
+      [duration]="timeLimit" [warningTime]="warningTime" [showTimer]="showTimer"
+      (nextSlideClicked)="nextSlideClicked($event)" (prevSlideClicked)="previousSlideClicked($event)"
+      [currentSlideIndex]="currentSlideIndex" [totalNoOfQuestions]="noOfQuestions" [active]="active"
+      [showFeedBack]="showFeedBack" [currentSolutions]="currentSolutions" (showSolution)="viewSolution()"
+      [initializeTimer]="initializeTimer" [replayed]="parentConfig?.isReplayed" [disableNext]="disableNext"
+      [startPageInstruction]="startPageInstruction" [attempts]="attempts" [showStartPage]="showStartPage">
+    </quml-header>
+
+    <sb-player-side-menu-icon class="notVisible" *ngIf="sideMenuConfig.enable"></sb-player-side-menu-icon>
+    <sb-player-sidebar [title]="parentConfig?.contentName" (sidebarEvent)="sideBarEvents($event)"
+      [config]="sideMenuConfig">
+    </sb-player-sidebar>
+    <div class="landscape-mode">
+      <div class="lanscape-mode-left">
+        <div class="current-slide">
+          {{myCarousel.getCurrentSlideIndex()}}/{{noOfQuestions}}
+        </div>
+        <div *ngIf="currentSolutions && showUserSolution">
+          <quml-ans (click)="getSolutions()"></quml-ans>
+        </div>
+      </div>
+      <div class="landscape-content">
+        <carousel class="landscape-center" [interval]="slideInterval" [showIndicators]="showIndicator"
+          [noWrap]="noWrapSlides" #myCarousel>
+          <slide>
+            <quml-startpage [instructions]="startPageInstruction" [totalNoOfQuestions]="noOfQuestions" [points]="points"
+              [time]="timeLimit" [contentName]="parentConfig?.contentName" [showTimer]="showTimer"></quml-startpage>
+          </slide>
+          <slide *ngFor="let question of questions; let i= index">
+            <div [id]="question.identifier">
+              <div *ngIf="question?.primaryCategory.toLowerCase() === 'multiple choice question'">
+                <quml-mcq [question]='question' [replayed]="parentConfig?.isReplayed"
+                  (optionSelected)="getOptionSelected($event)" [identifier]="question.id" [tryAgain]="tryAgainClicked">
+                </quml-mcq>
+              </div>
+              <div *ngIf="question?.primaryCategory.toLowerCase() === 'subjective question'">
+                <quml-sa [questions]='question' [replayed]="parentConfig?.isReplayed"
+                  (showAnswerClicked)="showAnswerClicked($event)">
+                </quml-sa>
+              </div>
+            </div>
+          </slide>
+        </carousel>
+      </div>
+      <div class="lanscape-mode-right">
+        <ul>
+          <ng-container>
+            <li class="showFeedBack-progressBar"
+              [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' "
+              (click)="goToSlideClicked($event, 0)">i
+            </li>
+            <div *ngIf="parentConfig?.isSectionsAvailable">
+              <li class="section relative" *ngFor="let section of mainProgressBar; let i=index;"
+                (click)="jumpToSection(section?.identifier)"
+                [ngClass]="{'attempted' : section.class === 'attempted', 'partial': section.class === 'partial'}">
+                <label for="list-item-{{i}}" class="progressBar-border">{{section?.index}}</label>
+                <ul *ngIf="section?.isActive">
+                  <li *ngFor="let question of progressBarClass; let j=index"
+                    (click)="goToSlideClicked($event, question?.index)" class="showFeedBack-progressBar"
+                    [ngClass]="(j+1) === myCarousel.getCurrentSlideIndex() ? 'progressBar-border': question.class === 'skipped' ? question.class: question.class === 'unattempted' ? '' : 'att-color'">
+                    {{question?.index}}
+                  </li>
+                </ul>
+              </li>
+            </div>
+            <div *ngIf="!parentConfig?.isSectionsAvailable">
+              <li *ngFor="let question of progressBarClass; let j=index"
+                (click)="goToSlideClicked($event, question?.index)" class="showFeedBack-progressBar"
+                [ngClass]="(j+1) === myCarousel.getCurrentSlideIndex() ? 'progressBar-border': question.class === 'skipped' ? question.class: question.class === 'unattempted' ? '' : 'att-color'">
+                {{question?.index}}
+              </li>
+            </div>
+            <li class="requiresSubmit" *ngIf="parentConfig.requiresSubmit"
+              (click)="disableNext = true; onScoreBoardClicked()">
+              <img src="./assets/flag_inactive.svg" alt="">
+            </li>
+            <!-- <li class="requiresSubmit" *ngIf="loadScoreBoard && parentConfig.requiresSubmit">
+              <img src="./assets/flag_active.svg" alt="">
+            </li> -->
+          </ng-container>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <quml-alert *ngIf="showAlert && showFeedBack" [alertType]="alertType" [isHintAvailable]="showHints"
+    [showSolutionButton]="showUserSolution" (showSolution)="viewSolution()" (showHint)="viewHint()"
+    (closeAlert)="closeAlertBox($event)"></quml-alert>
+
+  <quml-mcq-solutions [hidden]="!showSolution" [question]="currentQuestion" [options]="currentOptions"
+    [solutions]="currentSolutions" (close)="closeSolution()"></quml-mcq-solutions>
+</div>
+
+<div class="info-popup" *ngIf="infoPopup">
+  Please attempt the question
+</div>
+
+<sb-player-contenterror *ngIf="showContentError"></sb-player-contenterror>
+
+
+<!-- Zoom -->
+<div class="image-viewer__overlay" [hidden]="!showZoomModal">
+  <div class="image-viewer__close" (click)="closeZoom()">
+  </div>
+  <div class="image-viewer__container">
+    <img #imageModal id="imageModal" class="image-viewer__img" [src]="zoomImgSrc" alt="image">
+  </div>
+  <div class="image-viewer__zoom">
+    <div class="image-viewer__zoomin" (click)="zoomIn()"></div>
+    <div class="image-viewer__zoomout" (click)="zoomOut()"></div>
+  </div>
+</div>
