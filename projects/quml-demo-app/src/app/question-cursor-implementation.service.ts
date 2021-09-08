@@ -486,4 +486,7 @@ export class QuestionCursorImplementationService implements QuestionCursor {
                 return of(data);
             }));
     }
+    getAllQuestionSet(identifiers: string[]) {
+        return of({});
+    }
 }
