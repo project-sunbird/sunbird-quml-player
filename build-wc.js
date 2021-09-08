@@ -2,7 +2,7 @@ const fs = require("fs-extra");
 const concat = require("concat");
 const path = require("path");
 
-build = async () => {
+const build = async () => {
   const files = [
     "./dist/quml-player-wc/runtime.js",
     "./dist/quml-player-wc/polyfills-es5.js",
