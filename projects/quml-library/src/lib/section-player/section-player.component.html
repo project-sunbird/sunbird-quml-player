@@ -52,7 +52,7 @@
               [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' "
               (click)="goToSlideClicked($event, 0)">i
             </li>
-            <div *ngIf="parentConfig?.isSectionsAvailable">
+            <div *ngIf="parentConfig?.isSectionsAvailable" class="scoreboard-sections">
               <li class="section relative" *ngFor="let section of mainProgressBar; let i=index;"
                 (click)="jumpToSection(section?.identifier)"
                 [ngClass]="{'attempted' : section.class === 'attempted', 'partial': section.class === 'partial'}">
@@ -73,7 +73,7 @@
                 {{question?.index}}
               </li>
             </div>
-            <li class="requiresSubmit" *ngIf="parentConfig.requiresSubmit"
+            <li class="requiresSubmit cursor-pointer" *ngIf="parentConfig.requiresSubmit"
               (click)="disableNext = true; onScoreBoardClicked()">
               <img src="./assets/flag_inactive.svg" alt="">
             </li>
