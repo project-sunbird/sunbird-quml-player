@@ -13,7 +13,7 @@ import { UtilService } from '../util-service';
 })
 export class MainPlayerComponent implements OnInit {
 
-  @Input() QumlPlayerConfig: QumlPlayerConfig;
+  @Input() playerConfig: QumlPlayerConfig;
   @Output() playerEvent = new EventEmitter<any>();
   @Output() telemetryEvent = new EventEmitter<any>();
 
@@ -75,17 +75,24 @@ export class MainPlayerComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if (typeof this.playerConfig === 'string') {
+      try {
+        this.playerConfig = JSON.parse(this.playerConfig);
+      } catch (error) {
+        console.error('Invalid playerConfig: ', error);
+      }
+    }
     this.isLoading = true;
     this.setConfig();
     this.initializeSections();
   }
 
   initializeSections() {
-    const childMimeType = _.map(this.QumlPlayerConfig.metadata.children, 'mimeType');
+    const childMimeType = _.map(this.playerConfig.metadata.children, 'mimeType');
     this.parentConfig.isSectionsAvailable = this.isSectionsAvailable = childMimeType[0] === 'application/vnd.sunbird.questionset';
 
     if (this.isSectionsAvailable) {
-      this.isMultiLevelSection = this.getMultilevelSection(this.QumlPlayerConfig.metadata);
+      this.isMultiLevelSection = this.getMultilevelSection(this.playerConfig.metadata);
 
       if (this.isMultiLevelSection) {
         this.contentError = {
@@ -93,22 +100,22 @@ export class MainPlayerComponent implements OnInit {
           messageTitle: 'Multi level sections are not supported as of now'
         };
       } else {
-        const children = this.QumlPlayerConfig.metadata.children;
+        const children = this.playerConfig.metadata.children;
 
         this.sections = _.map(children, (child) => {
           let childNodes = child.children.map(item => item.identifier);
           if (child?.shuffle) {
             childNodes = _.shuffle(childNodes);
           }
-          if (this.QumlPlayerConfig.metadata.timeLimits) {
+          if (this.playerConfig.metadata.timeLimits) {
             child = {
               ...child,
-              timeLimits: this.QumlPlayerConfig.metadata.timeLimits,
-              showTimer: this.QumlPlayerConfig.metadata.showTimer
+              timeLimits: this.playerConfig.metadata.timeLimits,
+              showTimer: this.playerConfig.metadata.showTimer
             };
           }
           return {
-            ...this.QumlPlayerConfig, metadata: { ...child, childNodes },
+            ...this.playerConfig, metadata: { ...child, childNodes },
           };
         });
 
@@ -118,8 +125,8 @@ export class MainPlayerComponent implements OnInit {
         this.isLoading = false;
       }
     } else {
-      let { childNodes } = this.QumlPlayerConfig.metadata;
-      if (this.QumlPlayerConfig.metadata?.shuffle) {
+      let { childNodes } = this.playerConfig.metadata;
+      if (this.playerConfig.metadata?.shuffle) {
         childNodes = _.shuffle(childNodes);
       }
       childNodes.forEach((element, index) => {
@@ -128,25 +135,25 @@ export class MainPlayerComponent implements OnInit {
           score: 0,
         });
       });
-      this.QumlPlayerConfig.metadata.childNodes = childNodes;
-      this.activeSection = _.cloneDeep(this.QumlPlayerConfig);
+      this.playerConfig.metadata.childNodes = childNodes;
+      this.activeSection = _.cloneDeep(this.playerConfig);
       this.isLoading = false;
       this.isFirstSection = true;
     }
   }
 
   setConfig() {
-    this.parentConfig.contentName = this.QumlPlayerConfig.metadata?.name;
-    this.parentConfig.requiresSubmit = this.QumlPlayerConfig.metadata?.requiresSubmit?.toLowerCase() !== 'no';
-    this.showEndPage = this.QumlPlayerConfig.metadata?.showEndPage?.toLowerCase() !== 'no';
-    this.showFeedBack = this.QumlPlayerConfig.metadata?.showFeedback?.toLowerCase() !== 'no';
-    this.sideMenuConfig = { ...this.sideMenuConfig, ...this.QumlPlayerConfig.config.sideMenu };
-    this.userName = this.QumlPlayerConfig.context.userData.firstName + ' ' + this.QumlPlayerConfig.context.userData.lastName;
-    this.attempts = { max: this.QumlPlayerConfig.metadata?.maxAttempts, current: this.QumlPlayerConfig.metadata?.currentAttempt + 1 };
-    this.totalScore = this.QumlPlayerConfig.metadata.maxScore;
+    this.parentConfig.contentName = this.playerConfig.metadata?.name;
+    this.parentConfig.requiresSubmit = this.playerConfig.metadata?.requiresSubmit?.toLowerCase() !== 'no';
+    this.showEndPage = this.playerConfig.metadata?.showEndPage?.toLowerCase() !== 'no';
+    this.showFeedBack = this.playerConfig.metadata?.showFeedback?.toLowerCase() !== 'no';
+    this.sideMenuConfig = { ...this.sideMenuConfig, ...this.playerConfig.config.sideMenu };
+    this.userName = this.playerConfig.context.userData.firstName + ' ' + this.playerConfig.context.userData.lastName;
+    this.attempts = { max: this.playerConfig.metadata?.maxAttempts, current: this.playerConfig.metadata?.currentAttempt + 1 };
+    this.totalScore = this.playerConfig.metadata.maxScore;
     this.showReplay = _.get(this.attempts, 'current') >= _.get(this.attempts, 'max') ? false : true;
-    if (typeof this.QumlPlayerConfig.metadata?.timeLimits === 'string') {
-      this.QumlPlayerConfig.metadata.timeLimits = JSON.parse(this.QumlPlayerConfig.metadata.timeLimits);
+    if (typeof this.playerConfig.metadata?.timeLimits === 'string') {
+      this.playerConfig.metadata.timeLimits = JSON.parse(this.playerConfig.metadata.timeLimits);
     }
     this.initialTime = new Date().getTime();
     this.emitMaxAttemptEvents();
@@ -168,9 +175,9 @@ export class MainPlayerComponent implements OnInit {
   }
 
   emitMaxAttemptEvents() {
-    if ((this.QumlPlayerConfig.metadata?.maxAttempt - 1) === this.QumlPlayerConfig.metadata?.currentAttempt) {
+    if ((this.playerConfig.metadata?.maxAttempt - 1) === this.playerConfig.metadata?.currentAttempt) {
       this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(this.attempts?.current, false, true));
-    } else if (this.QumlPlayerConfig.metadata?.currentAttempt >= this.QumlPlayerConfig.metadata?.maxAttempt) {
+    } else if (this.playerConfig.metadata?.currentAttempt >= this.playerConfig.metadata?.maxAttempt) {
       this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(this.attempts?.current, true, false));
     }
   }
@@ -254,7 +261,7 @@ export class MainPlayerComponent implements OnInit {
 
   prepareEnd(event) {
     this.calculateScore();
-    if (this.QumlPlayerConfig.metadata?.summaryType !== 'Score') {
+    if (this.playerConfig.metadata?.summaryType !== 'Score') {
       this.durationSpent = this.utilService.getTimeSpentText(this.initialTime);
     }
     if (this.parentConfig.requiresSubmit) {
@@ -291,7 +298,7 @@ export class MainPlayerComponent implements OnInit {
     this.endPageReached = false;
     this.loadScoreBoard = false;
     this.currentSlideIndex = 1;
-    this.activeSection = this.isSectionsAvailable ? _.cloneDeep(this.sections[0]) : this.QumlPlayerConfig;
+    this.activeSection = this.isSectionsAvailable ? _.cloneDeep(this.sections[0]) : this.playerConfig;
     if (this.attempts?.max === this.attempts?.current) {
       this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(_.get(this.attempts, 'current'), false, true));
     }
@@ -356,7 +363,7 @@ export class MainPlayerComponent implements OnInit {
   }
 
   setDurationSpent() {
-    if (this.QumlPlayerConfig.metadata?.summaryType !== 'Score') {
+    if (this.playerConfig.metadata?.summaryType !== 'Score') {
       this.durationSpent = this.utilService.getTimeSpentText(this.initialTime);
     }
   }
@@ -369,7 +376,7 @@ export class MainPlayerComponent implements OnInit {
 
   onScoreBoardSubmitted() {
     this.getSummaryObject();
-    if (this.QumlPlayerConfig.metadata?.summaryType !== 'Score') {
+    if (this.playerConfig.metadata?.summaryType !== 'Score') {
       this.durationSpent = this.utilService.getTimeSpentText(this.initialTime);
     }
     this.viewerService.raiseHeartBeatEvent(eventName.scoreBoardSubmitClicked, TelemetryType.interact, pageId.submitPage);
@@ -382,7 +389,7 @@ export class MainPlayerComponent implements OnInit {
 
   generateOutComeLabel() {
     this.outcomeLabel = this.finalScore.toString();
-    switch (_.get(this.QumlPlayerConfig, 'metadata.summaryType')) {
+    switch (_.get(this.playerConfig, 'metadata.summaryType')) {
       case 'Complete': {
         this.outcomeLabel = this.totalScore ? `${this.finalScore} / ${this.totalScore}` : this.outcomeLabel;
         break;
