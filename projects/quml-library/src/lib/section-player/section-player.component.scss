@@ -351,10 +351,10 @@ scrollbar-width: none; /* Firefox */
       }
       .section{
         ul{
-          top: -28px;
+          top: -1.75rem;
           position: inherit;
           margin: 0.5rem 2.25rem;
-          padding-left: 20px;
+          padding-left: 1.25rem;
           &::before{
             background: transparent;
           }
@@ -927,7 +927,7 @@ scrollbar-width: none; /* Firefox */
       display: block;
       margin: 0 auto;
       max-width: 100%;
-      min-width: 50px;
+      min-width: 3.125rem;
     }
 
     figure.image.resize-25 {
@@ -1113,6 +1113,8 @@ scrollbar-width: none; /* Firefox */
 .endPage-container-height {
   height: 100%;
 }
-
+.scoreboard-sections{
+  display: contents;
+}
 input[type="checkbox"]:checked + label{
 }
