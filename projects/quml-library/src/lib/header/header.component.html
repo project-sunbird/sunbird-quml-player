@@ -1,7 +1,7 @@
 <div class="quml-header__container">
   <div>
     <!-- <quml-menu class="quml-menu"></quml-menu> -->
-    <div *ngIf="attempts?.max" class="attempts sb-color-primary fnormal font-weight-bold pl-64">Attempt no {{attempts.current}}/{{attempts.max}}</div>
+    <div *ngIf="attempts?.max && attempts?.current" class="attempts sb-color-primary fnormal font-weight-bold pl-64">Attempt no {{attempts.current}}/{{attempts.max}}</div>
   </div>
 
   <div class="quml-header__metadata">

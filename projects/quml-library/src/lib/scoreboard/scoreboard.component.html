@@ -22,16 +22,16 @@
     </div>
   </div>
 
-  <div *ngIf="isSections">
+  <div class="sections-score-card" *ngIf="isSections">
     <div *ngFor="let section of scores">
-      <div>{{section?.index}}</div>
-      <div class="" *ngIf="showFeedBack">
+      <div class="sections-score-card__title">{{section?.index}}</div>
+      <div class="sections-score-card__points" *ngIf="showFeedBack">
         <div *ngFor="let score of section?.children; let i = index" class="scoreboard__index"
           (click)="goToQuestion(i+1, section.identifier)" [ngClass]="score.class">
           {{score.index}}
         </div>
       </div>
-      <div class="" *ngIf="!showFeedBack">
+      <div class="sections-score-card__points" *ngIf="!showFeedBack">
         <div *ngFor="let score of section?.children; let i = index" class="scoreboard__index"
           (click)="goToQuestion(i+1, section.identifier)" [ngClass]="score.class">
           {{score.index}}
