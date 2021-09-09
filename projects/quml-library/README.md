@@ -1,110 +1,116 @@
-# Sunbird Quml Player
-Player for consuming QuML questions & question sets
+# Quml player library for Sunbird platform!
+Contains Quml player library components powered by angular. These components are designed to be used in sunbird consumption platforms *(mobile app, web portal, offline desktop app)* to drive reusability, maintainability hence reducing the redundant development effort significantly.
 
-## Prerequisites:
+# Getting Started
+For help getting started with a new Angular app, check out the Angular CLI.
+For existing apps, follow these steps to begin using .
 
-Node js - v14
+## Step 1: Install the packages
 
-* Use nvm. [Installation instructions](https://github.com/nvm-sh/nvm#installing-and-updating)
-* Install and use Node 14: 
-```
-cd $PATH_TO_REPO
-nvm install 14
-nvm use 14
-```
+    npm install @project-sunbird/sunbird-quml-player-v9 --save
+    npm install @project-sunbird/sb-styles --save
+    npm install @project-sunbird/client-services --save
+    npm install bootstrap --save
+    npm install jquery --save
+    npm install katex --save
+    npm install lodash-es --save
+    npm install ngx-bootstrap --save
 
-## Usage
-
-
-`npm i @project-sunbird/sunbird-quml-player-v9`
-
-
-Add the module to the your player root module 
-
-`import  { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml-player-v9';`
-
-```javascript
-@NgModule({
-  ...
-  imports: [
-    ...,
-    QumlLibraryModule
-  ],
-  providers: [{
-    provide: QuestionCursor,
-    useClass: QuestionCursorImplementationService // This service class should be implemented by the consumer of the player to provide questions as async manner to make the player experience smooth when there are lot of questions in a set check the sample implementation in demo project in this repo
-  }]
-  ....
-})
-```
-
-add the assets, scripts and styles in angular.json file
-
-```javascript
-....
- "assets": [
-            ....
-              {
-                "glob": "**/*",
-                "input": "node_modules/@project-sunbird/sunbird-quml-player-v9/lib/assets/",
-                "output": "/assets/"
-              }
-            ],
-"styles": [
+## Step 2: Include the styles, scripts and assets in angular.json
+    "styles": [
     ...
+    ...
+    "src/styles.css",
     "./node_modules/@project-sunbird/sb-styles/assets/_styles.scss",
     "./quml-carousel.css",
     "./node_modules/katex/dist/katex.min.css"
+    ],
+    "scripts": [
     ...
-],
-"scripts": [
-    "node_modules/@project-sunbird/telemetry-sdk/index.js",
-    "node_modules/katex/dist/katex.min.js",
-    ....
-]
-},
-...
+    ...
+    "./node_modules/katex/dist/katex.min.js",
+    "./node_modules/jquery/dist/jquery.min.js"
+    ]
 
-```
+  Add following under architect.build.assets
 
-add peer dependecies of the player as dependecies in your project
- 
+     {
+	    ...
+	    "build": {
+	    
+	    "builder": "@angular-devkit/build-angular:browser",
+	    
+	    "options": {
+		    ...
+		    ...
+    
+		    "assets": [
+		    
+			   ...
+			   ...
+			    
+			    {
+				    "glob": "**/*.*",
+				    "input": "./node_modules/@project-sunbird/sunbird-quml-player-v9/lib/assets/",
+				    "output": "/assets/"
+			    }
+		    
+		    ],
+    
+	    "styles": [
+	        ...
+            "src/styles.css",
+            "./node_modules/@project-sunbird/sb-styles/assets/_styles.scss",
+            "./quml-carousel.css",
+            "./node_modules/katex/dist/katex.min.css"
+	    ],
+	    "scripts": [
+            ...
+            "./node_modules/katex/dist/katex.min.js",
+            "./node_modules/jquery/dist/jquery.min.js"
+         ]
+	    ...
+	    ...
+    
+    },
 
-add the component selector in your component like below
+  
 
-```html
+## Step 3: Import the modules and components
+Import the NgModule where you want to use. Add [question-cursor-implementation.service.ts](../quml-demo-app/src/app/question-cursor-implementation.service.ts)
+       
+    import { CarouselModule } from 'ngx-bootstrap/carousel';
+    import { QuestionCursorImplementationService } from './question-cursor-implementation.service';
+    import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml-player-v9';
 
-    <quml-player    [QumlPlayerConfig]="QumlPlayerConfig" 
-                    (playerEvent)="getPlayerEvents($event)" 
-                    (telemetryEvent)="getTelemetryEvents($event)">
-    </quml-player>
+    
+    @NgModule({
+	    ...
+	    
+	    imports: [ QumlLibraryModule, CarouselModule.forRoot() ],
+        providers: [{
+            provide: QuestionCursor,
+            useClass: QuestionCursorImplementationService
+        }]
+	    
+	    ...
+    })
 
-```
+  
+    export class TestAppModule { }
+    
+## Step 4: Add css
 
-Still facing issues please refer the demo project in this repo as example
-
-## Development
-
-  check out this repo with latest release version branch
-
-  cd to {repo_path} in terminal
-
-  run  `sh setup.sh`
-
-  above script installs the dependecies and link the epub player library project to demo app
-
-  if you do any changes in library project run to get latest changes in demo app
-
-  `npm run build-lib-link`
-
-  once above command completed run `npm run start` which will run the player in demo app at http://localhost:4200
+    [styles.css](../quml-demo-app/src/styles.css)
+    [quml-carousel.css](../../quml-carousel.css)
 
 
+## Step 5: Send input to render Quml player
+Use the mock config in your component to send input to Quml player
+Click to see the mock - [QumlPlayerConfig](../quml-demo-app/src/app/quml-library-data.ts)
+Use 'singleContentRes' for single questionset and 'sectionContent' for section questionset in the mock
 
-## References
-
-https://project-sunbird.atlassian.net/wiki/spaces/CO/pages/1572536374/Object+Types
-https://project-sunbird.atlassian.net/wiki/spaces/CO/pages/1572274218/Question+Set+Definition
-https://project-sunbird.atlassian.net/wiki/spaces/CO/pages/1629356033/Question+Definition
-https://project-sunbird.atlassian.net/wiki/spaces/CO/pages/1688404028/QuML+Question+Spec
-
+## Available components
+|Feature| Notes| Selector|Code|Input|Output
+|--|--|--|------------------------------------------------------------------------------------------|---|--|
+| Quml Player | Can be used to render Quml | quml-main-player| *`<quml-main-player [QumlPlayerConfig]="QumlPlayerConfig"><quml-main-player>`*|QumlPlayerConfig|playerEvent, telemetryEvent|
