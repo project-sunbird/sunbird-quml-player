@@ -1,6 +1,6 @@
 {
   "name": "@project-sunbird/sunbird-quml-player-v9",
-  "version": "4.2.7",
+  "version": "4.3.3",
   "peerDependencies": {
     "@angular/common": "^8.0.0",
     "@angular/core": "^8.0.0",
@@ -16,7 +16,7 @@
     "carousel",
     "@project-sunbird/sunbird-player-sdk-v9"
   ],
-  "homepage": "https://github.com/project-sunbird/sunbird-quml-player/tree/release-4.0.0/projects/sunbird-quml-player#readme",
+  "homepage": "hhttps://github.com/project-sunbird/sunbird-quml-player/blob/release-4.3.0/README.md",
   "keywords": [
     "sunbird",
     "sunbird QuML player",
