@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { Observable, of, throwError as observableThrowError } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { QuestionCursor } from '../../../quml-library/src/lib/quml-question-cursor.service';
+import { DOCUMENT } from '@angular/common';
 
 @Injectable()
 export class QuestionCursorImplementationService implements QuestionCursor {
@@ -431,7 +432,11 @@ export class QuestionCursorImplementationService implements QuestionCursor {
         }],
         'count': 4
     };
-    constructor(private http: HttpClient) { }
+    constructor(@Inject(DOCUMENT) private document: Document, private http: HttpClient) {
+        const url = (document.defaultView as any).questionListUrl;
+        console.log('url', url);
+        this.listUrl = url ? url : this.listUrl;
+    }
 
     getQuestions(identifiers: string[]): Observable<any> {
         if (this.listUrl) {
