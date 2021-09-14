@@ -651,6 +651,7 @@ export class PlayerComponent implements OnInit, AfterViewInit {
     this.disableNext = false;
     this.currentSlideIndex = 1;
     this.car.selectSlide(1);
+    this.setSkippedClass(this.currentSlideIndex - 1);
     this.currentQuestionsMedia = _.get(this.questions[0], 'media');
     this.setImageZoom();
     setTimeout(() => {
