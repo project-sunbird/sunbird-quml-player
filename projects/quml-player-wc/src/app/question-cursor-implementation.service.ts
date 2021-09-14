@@ -434,7 +434,6 @@ export class QuestionCursorImplementationService implements QuestionCursor {
     };
     constructor(@Inject(DOCUMENT) private document: Document, private http: HttpClient) {
         const url = (document.defaultView as any).questionListUrl;
-        console.log('url', url);
         this.listUrl = url ? url : this.listUrl;
     }
 

@@ -739,8 +739,6 @@
       // Need to pass the API URL to fetch the question set
       window.questionListUrl = 'https://staging.sunbirded.org/api/question/v1/list'; 
       const qumlPlayerElement = document.createElement('sunbird-quml-player');
-      console.log('qumlPlayerElement', qumlPlayerElement);
-      qumlPlayerElement.setAttribute('My-config', 'vivek');
       qumlPlayerElement.setAttribute('player-config', JSON.stringify(playerConfig));
       qumlPlayerElement.addEventListener('playerEvent', (event) => {
         console.log("On playerEvent", event);
