@@ -142,7 +142,10 @@ export class MainPlayerComponent implements OnInit {
     this.showFeedBack = this.QumlPlayerConfig.metadata?.showFeedback?.toLowerCase() !== 'no';
     this.sideMenuConfig = { ...this.sideMenuConfig, ...this.QumlPlayerConfig.config.sideMenu };
     this.userName = this.QumlPlayerConfig.context.userData.firstName + ' ' + this.QumlPlayerConfig.context.userData.lastName;
-    this.attempts = { max: this.QumlPlayerConfig.metadata?.maxAttempts, current: this.QumlPlayerConfig.metadata?.currentAttempt + 1 };
+    this.attempts = {
+      max: this.QumlPlayerConfig.metadata?.maxAttempts,
+      current: this.QumlPlayerConfig.metadata?.currentAttempt ? this.QumlPlayerConfig.metadata.currentAttempt + 1 : 1
+    };
     this.totalScore = this.QumlPlayerConfig.metadata.maxScore;
     this.showReplay = _.get(this.attempts, 'current') >= _.get(this.attempts, 'max') ? false : true;
     if (typeof this.QumlPlayerConfig.metadata?.timeLimits === 'string') {
