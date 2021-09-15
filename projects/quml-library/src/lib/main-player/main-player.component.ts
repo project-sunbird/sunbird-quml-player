@@ -96,7 +96,7 @@ export class MainPlayerComponent implements OnInit {
         const children = this.QumlPlayerConfig.metadata.children;
 
         this.sections = _.map(children, (child) => {
-          let childNodes = child.children.map(item => item.identifier);
+          let childNodes = child?.children.map(item => item.identifier) || [];
           if (child?.shuffle) {
             childNodes = _.shuffle(childNodes);
           }
