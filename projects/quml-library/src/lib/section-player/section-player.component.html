@@ -37,7 +37,7 @@
                 </quml-mcq>
               </div>
               <div *ngIf="question?.primaryCategory.toLowerCase() === 'subjective question'">
-                <quml-sa [questions]='question' [replayed]="parentConfig?.isReplayed"
+                <quml-sa [questions]='question' [replayed]="parentConfig?.isReplayed" [baseUrl]="parentConfig?.baseUrl"
                   (showAnswerClicked)="showAnswerClicked($event)">
                 </quml-sa>
               </div>
