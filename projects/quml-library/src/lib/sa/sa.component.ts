@@ -54,8 +54,6 @@ export class SaComponent implements OnInit, OnChanges {
               ele.src = e.baseUrl ? e.baseUrl + e.src : e.src;
             }
 
-            console.log('media src', ele.src);
-
             if (e.thumbnail) {
               ele.thumbnail = e.thumbnail;
             }
