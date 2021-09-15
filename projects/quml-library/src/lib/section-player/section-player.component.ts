@@ -30,6 +30,7 @@ export class SectionPlayerComponent implements OnChanges {
     isSectionsAvailable: boolean;
     isReplayed: boolean;
     contentName: string;
+    baseUrl: string;
   };
   @Output() playerEvent = new EventEmitter<any>();
   @Output() telemetryEvent = new EventEmitter<any>();
@@ -303,7 +304,7 @@ export class SectionPlayerComponent implements OnChanges {
     }
     this.currentSlideIndex = this.myCarousel.getCurrentSlideIndex();
     this.currentQuestionsMedia = _.get(this.questions[this.myCarousel.getCurrentSlideIndex() - 1], 'media');
-    this.setImageZoom();
+    this.setImageZoom(true);
     this.setSkippedClass(this.myCarousel.getCurrentSlideIndex() - 1);
   }
 
@@ -703,14 +704,23 @@ export class SectionPlayerComponent implements OnChanges {
     });
   }
 
-  setImageZoom() {
+  setImageZoom(isPrevQue: boolean = false) {
     document.querySelectorAll('[data-asset-variable]').forEach(image => {
       const imageId = image.getAttribute('data-asset-variable');
       image.setAttribute('class', 'option-image');
       image.setAttribute('id', imageId);
       _.forEach(this.currentQuestionsMedia, (val) => {
-        if (val.baseUrl && imageId === val.id) {
-          image['src'] = val.baseUrl + val.src;
+        if (imageId === val.id) {
+          if (this.sectionConfig.metadata.isAvailableLocally && this.parentConfig.baseUrl) {
+            const index = isPrevQue ? this.myCarousel.getCurrentSlideIndex() - 1 : this.myCarousel.getCurrentSlideIndex();
+            const currentQuestionId = this.questions[index]?.identifier;
+
+            if (currentQuestionId) {
+              image['src'] = `${this.parentConfig.baseUrl}/${currentQuestionId}/${val.src}`;
+            }
+          } else if (val.baseUrl) {
+            image['src'] = val.baseUrl + val.src;
+          }
         }
       });
       const divElement = document.createElement('div');

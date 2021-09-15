@@ -31,6 +31,7 @@ export class MainPlayerComponent implements OnInit {
     isSectionsAvailable: false,
     isReplayed: false,
     contentName: '',
+    baseUrl: '',
   };
 
   showEndPage = true;
@@ -149,6 +150,11 @@ export class MainPlayerComponent implements OnInit {
     this.showFeedBack = this.playerConfig.metadata?.showFeedback?.toLowerCase() !== 'no';
     this.sideMenuConfig = { ...this.sideMenuConfig, ...this.playerConfig.config.sideMenu };
     this.userName = this.playerConfig.context.userData.firstName + ' ' + this.playerConfig.context.userData.lastName;
+
+    if (this.playerConfig.metadata.isAvailableLocally && this.playerConfig.metadata.basePath) {
+      this.parentConfig.baseUrl = this.playerConfig.metadata.basePath;
+    }
+
     this.attempts = {
       max: this.playerConfig.metadata?.maxAttempts,
       current: this.playerConfig.metadata?.currentAttempt ? this.playerConfig.metadata.currentAttempt + 1 : 1

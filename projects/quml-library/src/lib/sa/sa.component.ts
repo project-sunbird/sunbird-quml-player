@@ -14,6 +14,7 @@ export class SaComponent implements OnInit, OnChanges {
 
   @Input() questions?: any;
   @Input() replayed?: boolean;
+  @Input() baseUrl: string;
   @Output() componentLoaded = new EventEmitter<any>();
   @Output() showAnswerClicked = new EventEmitter<any>();
   showAnswer = false;
@@ -47,13 +48,20 @@ export class SaComponent implements OnInit, OnChanges {
       if (ele.type === 'video' || ele.type === 'image') {
         this.questions.media.forEach(e => {
           if (ele.value === e.id) {
-            ele.src = e.baseUrl ? e.baseUrl + e.src : e.src;
+            if (this.baseUrl) {
+              ele.src = `${this.baseUrl}/${this.questions.identifier}/${e.src}`;
+            } else {
+              ele.src = e.baseUrl ? e.baseUrl + e.src : e.src;
+            }
+
+            console.log('media src', ele.src);
+
             if (e.thumbnail) {
               ele.thumbnail = e.thumbnail;
             }
           }
         });
-      }
+      } 
     });
   }
 }
