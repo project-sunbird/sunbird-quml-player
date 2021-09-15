@@ -9,6 +9,21 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
       integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
       crossorigin="anonymous"></script>
+
+    <style>
+      .player-grid {
+        width: 100%;
+        height: 100vh;
+        margin: 0 auto;
+        display: grid;
+        padding-top: 1rem;
+
+        @media screen and (max-width:768px) {
+          grid-template-columns: 100%;
+          gap: 0px;
+        }
+      }
+    </style>
   </head>
 
   <body>
@@ -735,9 +750,9 @@
           }
         }
       }
-      
+
       // Need to pass the API URL to fetch the question set
-      window.questionListUrl = 'https://staging.sunbirded.org/api/question/v1/list'; 
+      window.questionListUrl = 'https://staging.sunbirded.org/api/question/v1/list';
       const qumlPlayerElement = document.createElement('sunbird-quml-player');
       qumlPlayerElement.setAttribute('player-config', JSON.stringify(playerConfig));
       qumlPlayerElement.addEventListener('playerEvent', (event) => {
