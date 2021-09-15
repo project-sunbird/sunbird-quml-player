@@ -103,7 +103,7 @@ export class MainPlayerComponent implements OnInit {
         const children = this.playerConfig.metadata.children;
 
         this.sections = _.map(children, (child) => {
-          let childNodes = child.children.map(item => item.identifier);
+          let childNodes = child?.children.map(item => item.identifier) || [];
           if (child?.shuffle) {
             childNodes = _.shuffle(childNodes);
           }
@@ -149,7 +149,10 @@ export class MainPlayerComponent implements OnInit {
     this.showFeedBack = this.playerConfig.metadata?.showFeedback?.toLowerCase() !== 'no';
     this.sideMenuConfig = { ...this.sideMenuConfig, ...this.playerConfig.config.sideMenu };
     this.userName = this.playerConfig.context.userData.firstName + ' ' + this.playerConfig.context.userData.lastName;
-    this.attempts = { max: this.playerConfig.metadata?.maxAttempts, current: this.playerConfig.metadata?.currentAttempt + 1 };
+    this.attempts = {
+      max: this.playerConfig.metadata?.maxAttempts,
+      current: this.playerConfig.metadata?.currentAttempt ? this.playerConfig.metadata.currentAttempt + 1 : 1
+    };
     this.totalScore = this.playerConfig.metadata.maxScore;
     this.showReplay = _.get(this.attempts, 'current') >= _.get(this.attempts, 'max') ? false : true;
     if (typeof this.playerConfig.metadata?.timeLimits === 'string') {
