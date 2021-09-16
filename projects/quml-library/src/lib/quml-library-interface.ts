@@ -72,10 +72,21 @@ export interface Question {
     interactionTypes: Array<string>;
     interactions: any;
     editorState: any;
-    status: string,
-    media: Array<any>,
+    status: string;
+    media: Array<any>;
     qType: string;
     mimeType: string;
     primaryCategory: string;
-    solutions:any;
+    solutions: any;
+}
+
+export interface IParentConfig {
+    loadScoreBoard: boolean;
+    requiresSubmit: boolean;
+    isFirstSection: boolean;
+    isSectionsAvailable: boolean;
+    isReplayed: boolean;
+    contentName: string;
+    baseUrl: string;
+    instructions: any;
 }

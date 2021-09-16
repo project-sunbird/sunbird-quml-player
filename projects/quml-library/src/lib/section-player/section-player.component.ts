@@ -4,7 +4,7 @@ import * as _ from 'lodash-es';
 import { CarouselComponent } from 'ngx-bootstrap/carousel';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { QumlPlayerConfig } from '../quml-library-interface';
+import { QumlPlayerConfig, IParentConfig } from '../quml-library-interface';
 import { QuestionCursor } from '../quml-question-cursor.service';
 import { ViewerService } from '../services/viewer-service/viewer-service';
 import { eventName, pageId, TelemetryType } from '../telemetry-constants';
@@ -22,16 +22,7 @@ export class SectionPlayerComponent implements OnChanges {
   @Input() isFirstSection = false;
   @Input() jumpToQuestion;
   @Input() mainProgressBar;
-  @Input() parentConfig: {
-    loadScoreBoard: boolean;
-    endPageReached: boolean;
-    requiresSubmit: boolean;
-    isFirstSection: boolean;
-    isSectionsAvailable: boolean;
-    isReplayed: boolean;
-    contentName: string;
-    baseUrl: string;
-  };
+  @Input() parentConfig: IParentConfig;
   @Output() playerEvent = new EventEmitter<any>();
   @Output() telemetryEvent = new EventEmitter<any>();
   @Output() sectionEnd = new EventEmitter<any>();
@@ -215,7 +206,7 @@ export class SectionPlayerComponent implements OnChanges {
     this.showTimer = this.sectionConfig.metadata?.showTimer?.toLowerCase() !== 'no';
     this.showFeedBack = this.sectionConfig.metadata?.showFeedback?.toLowerCase() !== 'no';
     this.showUserSolution = this.sectionConfig.metadata?.showSolutions?.toLowerCase() !== 'no';
-    this.startPageInstruction = this.sectionConfig.metadata?.instructions?.default;
+    this.startPageInstruction = this.sectionConfig.metadata?.instructions?.default || this.parentConfig.instructions;
     this.linearNavigation = this.sectionConfig.metadata.navigationMode === 'non-linear' ? false : true;
     this.showHints = this.sectionConfig.metadata?.showHints?.toLowerCase() !== 'no';
     this.points = this.sectionConfig.metadata?.points;
