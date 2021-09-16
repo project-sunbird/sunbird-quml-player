@@ -1,7 +1,7 @@
 import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { contentErrorMessage } from '@project-sunbird/sunbird-player-sdk-v9/lib/player-utils/interfaces/errorMessage';
 import * as _ from 'lodash-es';
-import { QumlPlayerConfig } from '../quml-library-interface';
+import { QumlPlayerConfig, IParentConfig } from '../quml-library-interface';
 import { ViewerService } from '../services/viewer-service/viewer-service';
 import { eventName, pageId, TelemetryType } from '../telemetry-constants';
 import { UtilService } from '../util-service';
@@ -24,7 +24,7 @@ export class MainPlayerComponent implements OnInit {
   isFirstSection = false;
   activeSection: any;
   contentError: contentErrorMessage;
-  parentConfig = {
+  parentConfig: IParentConfig = {
     loadScoreBoard: false,
     requiresSubmit: false,
     isFirstSection: false,
@@ -32,6 +32,7 @@ export class MainPlayerComponent implements OnInit {
     isReplayed: false,
     contentName: '',
     baseUrl: '',
+    instructions: {}
   };
 
   showEndPage = true;
@@ -146,6 +147,7 @@ export class MainPlayerComponent implements OnInit {
   setConfig() {
     this.parentConfig.contentName = this.playerConfig.metadata?.name;
     this.parentConfig.requiresSubmit = this.playerConfig.metadata?.requiresSubmit?.toLowerCase() !== 'no';
+    this.parentConfig.instructions = this.playerConfig.metadata?.instructions?.default;
     this.showEndPage = this.playerConfig.metadata?.showEndPage?.toLowerCase() !== 'no';
     this.showFeedBack = this.playerConfig.metadata?.showFeedback?.toLowerCase() !== 'no';
     this.sideMenuConfig = { ...this.sideMenuConfig, ...this.playerConfig.config.sideMenu };
