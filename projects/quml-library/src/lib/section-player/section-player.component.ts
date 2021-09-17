@@ -4,7 +4,7 @@ import * as _ from 'lodash-es';
 import { CarouselComponent } from 'ngx-bootstrap/carousel';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { QumlPlayerConfig } from '../quml-library-interface';
+import { QumlPlayerConfig, IParentConfig } from '../quml-library-interface';
 import { QuestionCursor } from '../quml-question-cursor.service';
 import { ViewerService } from '../services/viewer-service/viewer-service';
 import { eventName, pageId, TelemetryType } from '../telemetry-constants';
@@ -22,15 +22,7 @@ export class SectionPlayerComponent implements OnChanges {
   @Input() isFirstSection = false;
   @Input() jumpToQuestion;
   @Input() mainProgressBar;
-  @Input() parentConfig: {
-    loadScoreBoard: boolean;
-    endPageReached: boolean;
-    requiresSubmit: boolean;
-    isFirstSection: boolean;
-    isSectionsAvailable: boolean;
-    isReplayed: boolean;
-    contentName: string;
-  };
+  @Input() parentConfig: IParentConfig;
   @Output() playerEvent = new EventEmitter<any>();
   @Output() telemetryEvent = new EventEmitter<any>();
   @Output() sectionEnd = new EventEmitter<any>();
@@ -214,7 +206,7 @@ export class SectionPlayerComponent implements OnChanges {
     this.showTimer = this.sectionConfig.metadata?.showTimer?.toLowerCase() !== 'no';
     this.showFeedBack = this.sectionConfig.metadata?.showFeedback?.toLowerCase() !== 'no';
     this.showUserSolution = this.sectionConfig.metadata?.showSolutions?.toLowerCase() !== 'no';
-    this.startPageInstruction = this.sectionConfig.metadata?.instructions?.default;
+    this.startPageInstruction = this.sectionConfig.metadata?.instructions?.default || this.parentConfig.instructions;
     this.linearNavigation = this.sectionConfig.metadata.navigationMode === 'non-linear' ? false : true;
     this.showHints = this.sectionConfig.metadata?.showHints?.toLowerCase() !== 'no';
     this.points = this.sectionConfig.metadata?.points;
@@ -303,7 +295,7 @@ export class SectionPlayerComponent implements OnChanges {
     }
     this.currentSlideIndex = this.myCarousel.getCurrentSlideIndex();
     this.currentQuestionsMedia = _.get(this.questions[this.myCarousel.getCurrentSlideIndex() - 1], 'media');
-    this.setImageZoom();
+    this.setImageZoom(true);
     this.setSkippedClass(this.myCarousel.getCurrentSlideIndex() - 1);
   }
 
@@ -703,14 +695,23 @@ export class SectionPlayerComponent implements OnChanges {
     });
   }
 
-  setImageZoom() {
+  setImageZoom(isPrevQue: boolean = false) {
     document.querySelectorAll('[data-asset-variable]').forEach(image => {
       const imageId = image.getAttribute('data-asset-variable');
       image.setAttribute('class', 'option-image');
       image.setAttribute('id', imageId);
       _.forEach(this.currentQuestionsMedia, (val) => {
-        if (val.baseUrl && imageId === val.id) {
-          image['src'] = val.baseUrl + val.src;
+        if (imageId === val.id) {
+          if (this.sectionConfig.metadata.isAvailableLocally && this.parentConfig.baseUrl) {
+            const index = isPrevQue ? this.myCarousel.getCurrentSlideIndex() - 1 : this.myCarousel.getCurrentSlideIndex();
+            const currentQuestionId = this.questions[index]?.identifier;
+
+            if (currentQuestionId) {
+              image['src'] = `${this.parentConfig.baseUrl}/${currentQuestionId}/${val.src}`;
+            }
+          } else if (val.baseUrl) {
+            image['src'] = val.baseUrl + val.src;
+          }
         }
       });
       const divElement = document.createElement('div');

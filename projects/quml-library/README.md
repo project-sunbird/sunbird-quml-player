@@ -107,10 +107,10 @@ Import the NgModule where you want to use. Add [question-cursor-implementation.s
 
 ## Step 5: Send input to render Quml player
 Use the mock config in your component to send input to Quml player
-Click to see the mock - [QumlPlayerConfig](../quml-demo-app/src/app/quml-library-data.ts)
+Click to see the mock - [playerConfig](../quml-demo-app/src/app/quml-library-data.ts)
 Use 'singleContentRes' for single questionset and 'sectionContent' for section questionset in the mock
 
 ## Available components
 |Feature| Notes| Selector|Code|Input|Output
 |--|--|--|------------------------------------------------------------------------------------------|---|--|
-| Quml Player | Can be used to render Quml | quml-main-player| *`<quml-main-player [QumlPlayerConfig]="QumlPlayerConfig"><quml-main-player>`*|QumlPlayerConfig|playerEvent, telemetryEvent|
+| Quml Player | Can be used to render Quml | quml-main-player| *`<quml-main-player [playerConfig]="playerConfig"><quml-main-player>`*|playerConfig|playerEvent, telemetryEvent|

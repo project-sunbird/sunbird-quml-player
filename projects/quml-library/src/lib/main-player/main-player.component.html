@@ -25,7 +25,7 @@
       [showReplay]="showReplay">
 
       <span class="sb-color-primary mt-8 fnormal font-weight-bold d-block"
-        *ngIf="attempts?.max != attempts?.current">Attempt no {{attempts.current}}/{{attempts.max}}
+        *ngIf="attempts?.max && attempts?.current && attempts.max !== attempts.current">Attempt no {{attempts.current}}/{{attempts.max}}
       </span>
 
       <span class="attempts sb-color-primary mt-8 fnormal font-weight-bold d-block"

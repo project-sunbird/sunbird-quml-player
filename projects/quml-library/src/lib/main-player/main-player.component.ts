@@ -1,7 +1,7 @@
 import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { contentErrorMessage } from '@project-sunbird/sunbird-player-sdk-v9/lib/player-utils/interfaces/errorMessage';
 import * as _ from 'lodash-es';
-import { QumlPlayerConfig } from '../quml-library-interface';
+import { QumlPlayerConfig, IParentConfig } from '../quml-library-interface';
 import { ViewerService } from '../services/viewer-service/viewer-service';
 import { eventName, pageId, TelemetryType } from '../telemetry-constants';
 import { UtilService } from '../util-service';
@@ -24,13 +24,15 @@ export class MainPlayerComponent implements OnInit {
   isFirstSection = false;
   activeSection: any;
   contentError: contentErrorMessage;
-  parentConfig = {
+  parentConfig: IParentConfig = {
     loadScoreBoard: false,
     requiresSubmit: false,
     isFirstSection: false,
     isSectionsAvailable: false,
     isReplayed: false,
     contentName: '',
+    baseUrl: '',
+    instructions: {}
   };
 
   showEndPage = true;
@@ -103,7 +105,7 @@ export class MainPlayerComponent implements OnInit {
         const children = this.playerConfig.metadata.children;
 
         this.sections = _.map(children, (child) => {
-          let childNodes = child.children.map(item => item.identifier);
+          let childNodes = child?.children.map(item => item.identifier) || [];
           if (child?.shuffle) {
             childNodes = _.shuffle(childNodes);
           }
@@ -145,11 +147,20 @@ export class MainPlayerComponent implements OnInit {
   setConfig() {
     this.parentConfig.contentName = this.playerConfig.metadata?.name;
     this.parentConfig.requiresSubmit = this.playerConfig.metadata?.requiresSubmit?.toLowerCase() !== 'no';
+    this.parentConfig.instructions = this.playerConfig.metadata?.instructions?.default;
     this.showEndPage = this.playerConfig.metadata?.showEndPage?.toLowerCase() !== 'no';
     this.showFeedBack = this.playerConfig.metadata?.showFeedback?.toLowerCase() !== 'no';
     this.sideMenuConfig = { ...this.sideMenuConfig, ...this.playerConfig.config.sideMenu };
     this.userName = this.playerConfig.context.userData.firstName + ' ' + this.playerConfig.context.userData.lastName;
-    this.attempts = { max: this.playerConfig.metadata?.maxAttempts, current: this.playerConfig.metadata?.currentAttempt + 1 };
+
+    if (this.playerConfig.metadata.isAvailableLocally && this.playerConfig.metadata.basePath) {
+      this.parentConfig.baseUrl = this.playerConfig.metadata.basePath;
+    }
+
+    this.attempts = {
+      max: this.playerConfig.metadata?.maxAttempts,
+      current: this.playerConfig.metadata?.currentAttempt ? this.playerConfig.metadata.currentAttempt + 1 : 1
+    };
     this.totalScore = this.playerConfig.metadata.maxScore;
     this.showReplay = _.get(this.attempts, 'current') >= _.get(this.attempts, 'max') ? false : true;
     if (typeof this.playerConfig.metadata?.timeLimits === 'string') {

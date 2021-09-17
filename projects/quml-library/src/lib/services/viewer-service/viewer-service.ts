@@ -7,7 +7,6 @@ import { QuestionCursor } from '../../quml-question-cursor.service';
 import * as _ from 'lodash-es';
 import { forkJoin } from 'rxjs';
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -30,9 +29,10 @@ export class ViewerService {
   endPageSeen: boolean;
   identifiers: any;
   threshold: number;
-  isAvailableLocally: boolean = false;
+  isAvailableLocally = false;
   isSectionsAvailable = false;
   questionSetId: string;
+  parentIdentifier: string;
 
   constructor(
     public qumlLibraryService: QumlLibraryService,
@@ -42,8 +42,9 @@ export class ViewerService {
   }
 
   initialize(config: QumlPlayerConfig , threshold, questionIds, isSectionsAvailable = false) {
-    this.qumlLibraryService.initializeTelemetry(config);
+    this.qumlLibraryService.initializeTelemetry(config, isSectionsAvailable);
     this.identifiers = questionIds;
+    this.parentIdentifier = config.metadata.identifier;
     this.threshold = threshold;
     this.rotation = 0;
     this.totalNumberOfQuestions = config.metadata.childNodes.length || 0;
@@ -82,9 +83,6 @@ export class ViewerService {
       },
       metaData: this.metaData
     };
-    if (this.isSectionsAvailable) {
-      startEvent.edata.sectionId = this.questionSetId;
-    }
 
     this.qumlPlayerEvent.emit(startEvent);
     this.qumlPlayerLastPageTime = this.qumlPlayerStartTime = new Date().getTime();
@@ -105,9 +103,6 @@ export class ViewerService {
       metaData: this.metaData
     };
 
-    if (this.isSectionsAvailable) {
-      endEvent.edata.sectionId = this.questionSetId;
-    }
     this.qumlPlayerEvent.emit(endEvent);
     const visitedlength = (this.metaData.pagesHistory.filter((v, i, a) => a.indexOf(v) === i)).length;
     this.timeSpent = this.utilService.getTimeSpentText(this.qumlPlayerStartTime);
@@ -236,7 +231,7 @@ export class ViewerService {
       const requests = [];
       const chunkArray = _.chunk(indentifersForQuestions, 10);
       _.forEach(chunkArray, (value) => {
-        requests.push(this.questionCursor.getQuestions(value));
+        requests.push(this.questionCursor.getQuestions(value, this.parentIdentifier));
       });
       forkJoin(requests).subscribe(questions => {
         _.forEach(questions, (value) => {

@@ -1,6 +1,6 @@
 **mcq Component**
 
-This component can be used to show Mutliple Choice Questions in Quml Player. It receives questions and layout 
+This component can be used to show Multiple Choice Questions in Quml Player. It receives questions and layout 
 And emits component Loaded and options click event.
 
   
