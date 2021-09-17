@@ -4,19 +4,19 @@
     <div class="quml-alert__body">
       <div class="quml-alert__image quml-alert__image--correct" *ngIf="alertType === 'correct'">
         <div class="quml-alert__icon-container">
-          <img class="quml-alert__icon" src="../assets/quml-correct.svg">
+          <img class="quml-alert__icon" src="assets/quml-correct.svg">
 
         </div>
         <div class="quml-alert__icon-empty"></div>
-        <img class="quml-alert__banner" src="../assets/banner-correct.svg">
+        <img class="quml-alert__banner" src="assets/banner-correct.svg">
       </div>
       <div class="quml-alert__image quml-alert__image--wrong" *ngIf="alertType === 'wrong'">
         <div class="quml-alert__icon-container">
-          <img class="quml-alert__icon" src="../assets/quml-wrong.svg">
+          <img class="quml-alert__icon" src="assets/quml-wrong.svg">
         </div>
       </div>
       <div class="quml-alert__icon-empty"></div>
-      <img class="quml-alert__banner" src="../assets/banner-wrong.svg">
+      <img class="quml-alert__banner" src="assets/banner-wrong.svg">
       
 
       <div class="quml-alert__solution-container">
@@ -32,7 +32,7 @@
       </div>
 
       <div *ngIf="isHintAvailable" class="quml-alert__view-hint quml-alert__view-hint--disabled">
-        <!-- <img class="view-hint-icon" (click)="viewHint()" src="../assets/view-hint.svg"> -->
+        <!-- <img class="view-hint-icon" (click)="viewHint()" src="assets/view-hint.svg"> -->
       </div>
     </div>
   </div>
