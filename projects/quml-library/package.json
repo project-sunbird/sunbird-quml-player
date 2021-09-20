@@ -1,6 +1,6 @@
 {
   "name": "@project-sunbird/sunbird-quml-player-v9",
-  "version": "4.3.7",
+  "version": "4.3.8",
   "peerDependencies": {
     "@angular/common": "^8.0.0",
     "@angular/core": "^8.0.0",
