@@ -57,7 +57,14 @@
                 (click)="jumpToSection(section?.identifier)"
                 [ngClass]="{'attempted' : section.class === 'attempted', 'partial': section.class === 'partial'}">
                 <label for="list-item-{{i}}" class="progressBar-border">{{section?.index}}</label>
-                <ul *ngIf="section?.isActive">
+                <ul *ngIf="section?.isActive && showFeedBack">
+                  <li *ngFor="let question of progressBarClass; let j=index"
+                    (click)="goToSlideClicked($event, question?.index)" class="showFeedBack-progressBar"
+                    [ngClass]="(j + 1) === myCarousel.getCurrentSlideIndex() ? 'progressBar-border' : question.class">
+                    {{question?.index}}
+                  </li>
+                </ul>
+                <ul *ngIf="section?.isActive && !showFeedBack">
                   <li *ngFor="let question of progressBarClass; let j=index"
                     (click)="goToSlideClicked($event, question?.index)" class="showFeedBack-progressBar"
                     [ngClass]="(j+1) === myCarousel.getCurrentSlideIndex() ? 'progressBar-border': question.class === 'skipped' ? question.class: question.class === 'unattempted' ? '' : 'att-color'">
@@ -66,7 +73,14 @@
                 </ul>
               </li>
             </div>
-            <div *ngIf="!parentConfig?.isSectionsAvailable">
+            <div *ngIf="!parentConfig?.isSectionsAvailable && showFeedBack">
+              <li *ngFor="let question of progressBarClass; let j=index"
+                (click)="goToSlideClicked($event, question?.index)" class="showFeedBack-progressBar"
+                [ngClass]="(j + 1) === myCarousel.getCurrentSlideIndex() ? 'progressBar-border' : question.class">
+                {{question?.index}}
+              </li>
+            </div>
+            <div *ngIf="!parentConfig?.isSectionsAvailable && !showFeedBack">
               <li *ngFor="let question of progressBarClass; let j=index"
                 (click)="goToSlideClicked($event, question?.index)" class="showFeedBack-progressBar"
                 [ngClass]="(j+1) === myCarousel.getCurrentSlideIndex() ? 'progressBar-border': question.class === 'skipped' ? question.class: question.class === 'unattempted' ? '' : 'att-color'">

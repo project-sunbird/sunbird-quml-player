@@ -106,9 +106,15 @@ export class MainPlayerComponent implements OnInit {
 
         this.sections = _.map(children, (child) => {
           let childNodes = child?.children.map(item => item.identifier) || [];
+          const maxQuestions = child?.maxQuestions;
           if (child?.shuffle) {
             childNodes = _.shuffle(childNodes);
           }
+
+          if (maxQuestions) {
+            childNodes = childNodes.slice(0, maxQuestions);
+          }
+
           if (this.playerConfig.metadata.timeLimits) {
             child = {
               ...child,
@@ -419,9 +425,8 @@ export class MainPlayerComponent implements OnInit {
       this.mainProgressBar.forEach((item, index) => {
         item.isActive = index === sectionIndex;
       });
-    } else {
-      this.jumpToQuestion = event;
     }
+    this.jumpToQuestion = event;
     this.loadScoreBoard = false;
   }
 
