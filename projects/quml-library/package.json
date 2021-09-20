@@ -16,11 +16,15 @@
     "carousel",
     "@project-sunbird/sunbird-player-sdk-v9"
   ],
-  "homepage": "hhttps://github.com/project-sunbird/sunbird-quml-player/blob/release-4.3.0/README.md",
+  "homepage": "https://github.com/project-sunbird/sunbird-quml-player/blob/release-4.3.0/README.md",
   "keywords": [
     "sunbird",
     "sunbird QuML player",
     "project-sunbird"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/project-sunbird/sunbird-quml-player.git"
+},
   "license": "MIT"
 }

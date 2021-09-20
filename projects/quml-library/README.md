@@ -114,3 +114,45 @@ Use 'singleContentRes' for single questionset and 'sectionContent' for section q
 |Feature| Notes| Selector|Code|Input|Output
 |--|--|--|------------------------------------------------------------------------------------------|---|--|
 | Quml Player | Can be used to render Quml | quml-main-player| *`<quml-main-player [playerConfig]="playerConfig"><quml-main-player>`*|playerConfig|playerEvent, telemetryEvent|
+
+## Use as web components
+Import this library in any web application and use the custom component.
+Follow below-mentioned steps to use it in plain javascript project:
+
+- Insert [library](https://github.com/project-sunbird/sunbird-quml-player/blob/release-4.3.0/web-component/sunbird-quml-player.js) as below:
+	```javascript
+	<script  type="text/javascript"  src="sunbird-quml-player.js"></script>
+	```
+- Create a asset folder and copy all the files from [here](https://github.com/project-sunbird/sunbird-quml-player/tree/release-4.3.0/web-component/assets), library requires these assets internally to work well.
+
+- Get sample playerConfig from here: [playerConfig](https://github.com/project-sunbird/sunbird-quml-player/blob/release-4.3.0/projects/quml-demo-app/src/app/quml-library-data.ts)
+
+- Pass the QuestionListAPI baseUrl for eg. [https://staging.sunbirded.org/api/question/v1/list](https://staging.sunbirded.org/api/question/v1/list)
+
+- Create a custom html element: `sunbird-quml-player`
+	```javascript
+	const  qumlPlayerElement = document.createElement('sunbird-quml-player');
+	```
+
+- Pass data using `player-config`
+	```javascript
+	qumlPlayerElement.setAttribute('player-config', JSON.stringify(playerConfig));
+	```
+	**Note:** Attribute should be in **string** type
+- Listen for the output events: **playerEvent** and **telemetryEvent**
+
+	```javascript
+	qumlPlayerElement.addEventListener('playerEvent', (event) => {
+		console.log("On playerEvent", event);
+	});
+	qumlPlayerElement.addEventListener('telemetryEvent', (event) => {
+		console.log("On telemetryEvent", event);
+	});
+	```
+
+- Append this element to existing element
+	```javascript
+	const  myPlayer = document.getElementById("my-player");
+	myPlayer.appendChild(qumlPlayerElement);
+	```
+- Refer demo [example](https://github.com/project-sunbird/sunbird-quml-player/blob/release-4.3.0/web-component/index.html)
