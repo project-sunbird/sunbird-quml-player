@@ -110,12 +110,8 @@ export class SectionPlayerComponent implements OnChanges {
   ) { }
 
   ngOnChanges(changes): void {
-    if (changes?.jumpToQuestion?.currentValue !== changes?.jumpToQuestion?.previousValue) {
-      this.goToQuestion(changes.jumpToQuestion.currentValue);
-    } else {
       this.subscribeToEvents();
       this.setConfig();
-    }
   }
 
   ngAfterViewInit() {
@@ -217,7 +213,7 @@ export class SectionPlayerComponent implements OnChanges {
     this.progressBarClass = this.parentConfig.isSectionsAvailable ? this.mainProgressBar.find(item => item.isActive)?.children :
       this.mainProgressBar;
 
-    this.questions = [];
+    this.questions = this.viewerService.getSectionQuestions(this.sectionConfig.metadata.identifier);
     this.resetQuestionState();
     if (this.jumpToQuestion) {
       this.goToQuestion(this.jumpToQuestion);
@@ -431,6 +427,7 @@ export class SectionPlayerComponent implements OnChanges {
     if (jumpToSection) {
       eventObj.jumpToSection = jumpToSection;
     }
+    this.viewerService.updateSectionQuestions(this.sectionConfig.metadata.identifier, this.questions);
     this.sectionEnd.emit(eventObj);
   }
 
