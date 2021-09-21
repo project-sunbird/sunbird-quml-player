@@ -33,6 +33,7 @@ export class ViewerService {
   isSectionsAvailable = false;
   questionSetId: string;
   parentIdentifier: string;
+  sectionQuestions = [];
 
   constructor(
     public qumlLibraryService: QumlLibraryService,
@@ -268,5 +269,18 @@ export class ViewerService {
       },
       metaData: this.metaData
     };
+  }
+
+  updateSectionQuestions(id: string, questions) {
+    const index = this.sectionQuestions.findIndex(section => section.id === id);
+    if (index > 0) {
+      this.sectionQuestions[index].questions = questions;
+    } else {
+      this.sectionQuestions.push({ id, questions });
+    }
+  }
+
+  getSectionQuestions(id: string) {
+    return this.sectionQuestions.find(section => section.id === id)?.questions || [];
   }
 }

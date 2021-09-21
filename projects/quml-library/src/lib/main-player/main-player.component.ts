@@ -168,7 +168,7 @@ export class MainPlayerComponent implements OnInit {
       current: this.playerConfig.metadata?.currentAttempt ? this.playerConfig.metadata.currentAttempt + 1 : 1
     };
     this.totalScore = this.playerConfig.metadata.maxScore;
-    this.showReplay = _.get(this.attempts, 'current') >= _.get(this.attempts, 'max') ? false : true;
+    this.showReplay = this.attempts?.max && this.attempts?.current >= this.attempts.max ? false : true;
     if (typeof this.playerConfig.metadata?.timeLimits === 'string') {
       this.playerConfig.metadata.timeLimits = JSON.parse(this.playerConfig.metadata.timeLimits);
     }
@@ -301,7 +301,7 @@ export class MainPlayerComponent implements OnInit {
     this.isDurationExpired = false;
     this.isEndEventRaised = false;
     this.attempts.current = this.attempts.current + 1;
-    this.showReplay = _.get(this.attempts, 'current') >= _.get(this.attempts, 'max') ? false : true;
+    this.showReplay = this.attempts?.max && this.attempts?.current >= this.attempts.max ? false : true;
     this.mainProgressBar = [];
     this.summary = {
       correct: 0,
