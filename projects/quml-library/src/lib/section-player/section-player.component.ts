@@ -338,9 +338,19 @@ export class SectionPlayerComponent implements OnChanges {
         this.validateSelectedOption(this.optionSelectedObj, 'previous');
       } else {
         this.stopAutoNavigation = true;
+        if (this.currentSlideIndex === 0 && this.parentConfig.isSectionsAvailable && this.getCurrentSectionIndex() > 0) {
+          const previousSectionId = this.mainProgressBar[this.getCurrentSectionIndex() - 1].identifier;
+          this.jumpToSection(previousSectionId);
+          return;
+        }
         this.prevSlide();
       }
     }
+  }
+
+  getCurrentSectionIndex(): number {
+    const currentSectionId = this.sectionConfig.metadata.identifier;
+    return this.mainProgressBar.findIndex(section => section.identifier === currentSectionId);
   }
 
   goToSlideClicked(event, index) {
