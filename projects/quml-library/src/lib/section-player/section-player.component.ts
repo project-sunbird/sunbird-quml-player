@@ -110,8 +110,8 @@ export class SectionPlayerComponent implements OnChanges {
   ) { }
 
   ngOnChanges(changes): void {
-      this.subscribeToEvents();
-      this.setConfig();
+    this.subscribeToEvents();
+    this.setConfig();
   }
 
   ngAfterViewInit() {
@@ -236,7 +236,7 @@ export class SectionPlayerComponent implements OnChanges {
 
   nextSlide() {
     this.currentQuestionsMedia = _.get(this.questions[this.currentSlideIndex], 'media');
-    this.setImageZoom();
+
     this.getQuestion();
     this.viewerService.raiseHeartBeatEvent(eventName.nextClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex() + 1);
     this.viewerService.raiseHeartBeatEvent(eventName.nextClicked, TelemetryType.impression, this.myCarousel.getCurrentSlideIndex() + 1);
@@ -270,6 +270,7 @@ export class SectionPlayerComponent implements OnChanges {
       this.setSkippedClass(this.myCarousel.getCurrentSlideIndex());
     }
     this.myCarousel.move(this.carouselConfig.NEXT);
+    this.setImageZoom();
     this.resetQuestionState();
     this.clearTimeInterval();
   }
@@ -291,7 +292,7 @@ export class SectionPlayerComponent implements OnChanges {
     }
     this.currentSlideIndex = this.myCarousel.getCurrentSlideIndex();
     this.currentQuestionsMedia = _.get(this.questions[this.myCarousel.getCurrentSlideIndex() - 1], 'media');
-    this.setImageZoom(true);
+    this.setImageZoom();
     this.setSkippedClass(this.myCarousel.getCurrentSlideIndex() - 1);
   }
 
@@ -702,7 +703,9 @@ export class SectionPlayerComponent implements OnChanges {
     });
   }
 
-  setImageZoom(isPrevQue: boolean = false) {
+  setImageZoom() {
+    const index = this.myCarousel.getCurrentSlideIndex() - 1;
+    const currentQuestionId = this.questions[index]?.identifier;
     document.querySelectorAll('[data-asset-variable]').forEach(image => {
       const imageId = image.getAttribute('data-asset-variable');
       image.setAttribute('class', 'option-image');
@@ -710,9 +713,6 @@ export class SectionPlayerComponent implements OnChanges {
       _.forEach(this.currentQuestionsMedia, (val) => {
         if (imageId === val.id) {
           if (this.sectionConfig.metadata.isAvailableLocally && this.parentConfig.baseUrl) {
-            const index = isPrevQue ? this.myCarousel.getCurrentSlideIndex() - 1 : this.myCarousel.getCurrentSlideIndex();
-            const currentQuestionId = this.questions[index]?.identifier;
-
             if (currentQuestionId) {
               image['src'] = `${this.parentConfig.baseUrl}/${currentQuestionId}/${val.src}`;
             }
