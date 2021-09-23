@@ -134,6 +134,10 @@ export class MainPlayerComponent implements OnInit {
       }
     } else {
       let { childNodes } = this.playerConfig.metadata;
+      const maxQuestions = this.playerConfig.metadata.maxQuestions;
+      if (maxQuestions) {
+        childNodes = childNodes.slice(0, maxQuestions);
+      }
       if (this.playerConfig.metadata?.shuffle) {
         childNodes = _.shuffle(childNodes);
       }
