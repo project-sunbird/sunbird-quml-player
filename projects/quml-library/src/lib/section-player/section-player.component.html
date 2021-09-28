@@ -27,7 +27,8 @@
           [noWrap]="noWrapSlides" #myCarousel>
           <slide>
             <quml-startpage [instructions]="startPageInstruction" [totalNoOfQuestions]="noOfQuestions" [points]="points"
-              [time]="timeLimit" [contentName]="parentConfig?.contentName" [showTimer]="showTimer"></quml-startpage>
+              [time]="isFirstSection ? timeLimit : null" 
+              [contentName]="parentConfig?.isSectionsAvailable ? sectionConfig?.metadata?.name : parentConfig?.contentName" [showTimer]="showTimer"></quml-startpage>
           </slide>
           <slide *ngFor="let question of questions; let i= index">
             <div [id]="question.identifier">

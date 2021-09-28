@@ -217,6 +217,7 @@ export class MainPlayerComponent implements OnInit {
 
   onSectionEnd(event) {
     if (this.parentConfig.isSectionsAvailable) {
+      this.isFirstSection = false;
       const activeSectionIndex = this.getActiveSectionIndex();
       this.updateSectionScore(activeSectionIndex);
       this.setNextSection(event, activeSectionIndex);
