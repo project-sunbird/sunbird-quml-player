@@ -14,7 +14,8 @@
     "build-lib-link": "npm run build-lib && npm run create-player-link && npm run link-player",
     "test-lib": "ng test quml-library",
     "mybuild": "npm run build",
-    "serve": "node scripts/copyAssets.js && npm link ./dist/quml-library && ng serve --vendor-source-map"
+    "serve": "node scripts/copyAssets.js && npm link ./dist/quml-library && ng serve --vendor-source-map",
+    "build-web-component": "npm run build-lib-link && ng build quml-player-wc --output-hashing none && node ./build-wc.js"
   },
   "private": true,
   "dependencies": {
@@ -22,6 +23,7 @@
     "@angular/common": "^9.1.12",
     "@angular/compiler": "^9.1.12",
     "@angular/core": "^9.1.12",
+    "@angular/elements": "^12.2.4",
     "@angular/forms": "^9.1.12",
     "@angular/platform-browser": "^9.1.12",
     "@angular/platform-browser-dynamic": "^9.1.12",
@@ -32,7 +34,7 @@
     "@project-sunbird/telemetry-sdk": "0.0.26",
     "bootstrap": "4.1.1",
     "core-js": "^2.5.4",
-    "fs-extra": "^8.1.0",
+    "document-register-element": "^1.7.2",
     "jquery": "^3.5.1",
     "katex": "^0.11.1",
     "lodash-es": "^4.17.21",
@@ -52,6 +54,8 @@
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "~8.9.4",
     "codelyzer": "^5.0.1",
+    "concat": "^1.0.3",
+    "fs-extra": "^8.1.0",
     "jasmine-core": "~2.99.1",
     "jasmine-spec-reporter": "~4.2.1",
     "karma": "~3.1.1",

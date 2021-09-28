@@ -4,7 +4,7 @@ import * as _ from 'lodash-es';
 import { CarouselComponent } from 'ngx-bootstrap/carousel';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { QumlPlayerConfig } from '../quml-library-interface';
+import { QumlPlayerConfig, IParentConfig } from '../quml-library-interface';
 import { QuestionCursor } from '../quml-question-cursor.service';
 import { ViewerService } from '../services/viewer-service/viewer-service';
 import { eventName, pageId, TelemetryType } from '../telemetry-constants';
@@ -22,15 +22,7 @@ export class SectionPlayerComponent implements OnChanges {
   @Input() isFirstSection = false;
   @Input() jumpToQuestion;
   @Input() mainProgressBar;
-  @Input() parentConfig: {
-    loadScoreBoard: boolean;
-    endPageReached: boolean;
-    requiresSubmit: boolean;
-    isFirstSection: boolean;
-    isSectionsAvailable: boolean;
-    isReplayed: boolean;
-    contentName: string;
-  };
+  @Input() parentConfig: IParentConfig;
   @Output() playerEvent = new EventEmitter<any>();
   @Output() telemetryEvent = new EventEmitter<any>();
   @Output() sectionEnd = new EventEmitter<any>();
@@ -118,12 +110,8 @@ export class SectionPlayerComponent implements OnChanges {
   ) { }
 
   ngOnChanges(changes): void {
-    if (changes?.jumpToQuestion?.currentValue !== changes?.jumpToQuestion?.previousValue) {
-      this.goToQuestion(changes.jumpToQuestion.currentValue);
-    } else {
-      this.subscribeToEvents();
-      this.setConfig();
-    }
+    this.subscribeToEvents();
+    this.setConfig();
   }
 
   ngAfterViewInit() {
@@ -214,7 +202,7 @@ export class SectionPlayerComponent implements OnChanges {
     this.showTimer = this.sectionConfig.metadata?.showTimer?.toLowerCase() !== 'no';
     this.showFeedBack = this.sectionConfig.metadata?.showFeedback?.toLowerCase() !== 'no';
     this.showUserSolution = this.sectionConfig.metadata?.showSolutions?.toLowerCase() !== 'no';
-    this.startPageInstruction = this.sectionConfig.metadata?.instructions?.default;
+    this.startPageInstruction = this.sectionConfig.metadata?.instructions?.default || this.parentConfig.instructions;
     this.linearNavigation = this.sectionConfig.metadata.navigationMode === 'non-linear' ? false : true;
     this.showHints = this.sectionConfig.metadata?.showHints?.toLowerCase() !== 'no';
     this.points = this.sectionConfig.metadata?.points;
@@ -225,7 +213,7 @@ export class SectionPlayerComponent implements OnChanges {
     this.progressBarClass = this.parentConfig.isSectionsAvailable ? this.mainProgressBar.find(item => item.isActive)?.children :
       this.mainProgressBar;
 
-    this.questions = [];
+    this.questions = this.viewerService.getSectionQuestions(this.sectionConfig.metadata.identifier);
     this.resetQuestionState();
     if (this.jumpToQuestion) {
       this.goToQuestion(this.jumpToQuestion);
@@ -248,7 +236,7 @@ export class SectionPlayerComponent implements OnChanges {
 
   nextSlide() {
     this.currentQuestionsMedia = _.get(this.questions[this.currentSlideIndex], 'media');
-    this.setImageZoom();
+
     this.getQuestion();
     this.viewerService.raiseHeartBeatEvent(eventName.nextClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex() + 1);
     this.viewerService.raiseHeartBeatEvent(eventName.nextClicked, TelemetryType.impression, this.myCarousel.getCurrentSlideIndex() + 1);
@@ -282,6 +270,7 @@ export class SectionPlayerComponent implements OnChanges {
       this.setSkippedClass(this.myCarousel.getCurrentSlideIndex());
     }
     this.myCarousel.move(this.carouselConfig.NEXT);
+    this.setImageZoom();
     this.resetQuestionState();
     this.clearTimeInterval();
   }
@@ -350,9 +339,19 @@ export class SectionPlayerComponent implements OnChanges {
         this.validateSelectedOption(this.optionSelectedObj, 'previous');
       } else {
         this.stopAutoNavigation = true;
+        if (this.currentSlideIndex === 0 && this.parentConfig.isSectionsAvailable && this.getCurrentSectionIndex() > 0) {
+          const previousSectionId = this.mainProgressBar[this.getCurrentSectionIndex() - 1].identifier;
+          this.jumpToSection(previousSectionId);
+          return;
+        }
         this.prevSlide();
       }
     }
+  }
+
+  getCurrentSectionIndex(): number {
+    const currentSectionId = this.sectionConfig.metadata.identifier;
+    return this.mainProgressBar.findIndex(section => section.identifier === currentSectionId);
   }
 
   goToSlideClicked(event, index) {
@@ -439,6 +438,7 @@ export class SectionPlayerComponent implements OnChanges {
     if (jumpToSection) {
       eventObj.jumpToSection = jumpToSection;
     }
+    this.viewerService.updateSectionQuestions(this.sectionConfig.metadata.identifier, this.questions);
     this.sectionEnd.emit(eventObj);
   }
 
@@ -704,13 +704,21 @@ export class SectionPlayerComponent implements OnChanges {
   }
 
   setImageZoom() {
+    const index = this.myCarousel.getCurrentSlideIndex() - 1;
+    const currentQuestionId = this.questions[index]?.identifier;
     document.querySelectorAll('[data-asset-variable]').forEach(image => {
       const imageId = image.getAttribute('data-asset-variable');
       image.setAttribute('class', 'option-image');
       image.setAttribute('id', imageId);
       _.forEach(this.currentQuestionsMedia, (val) => {
-        if (val.baseUrl && imageId === val.id) {
-          image['src'] = val.baseUrl + val.src;
+        if (imageId === val.id) {
+          if (this.sectionConfig.metadata.isAvailableLocally && this.parentConfig.baseUrl) {
+            if (currentQuestionId) {
+              image['src'] = `${this.parentConfig.baseUrl}/${currentQuestionId}/${val.src}`;
+            }
+          } else if (val.baseUrl) {
+            image['src'] = val.baseUrl + val.src;
+          }
         }
       });
       const divElement = document.createElement('div');
