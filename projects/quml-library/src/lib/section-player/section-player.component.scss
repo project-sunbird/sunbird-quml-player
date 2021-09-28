@@ -349,6 +349,12 @@ scrollbar-width: none; /* Firefox */
           margin-right: 0px;
         }
       }
+      .singleContent{
+        display: flex;
+        .showFeedBack-progressBar:last-child {
+          margin-right: 2.25rem;
+        }
+      }
       .section{
         ul{
           top: -1.75rem;

@@ -74,14 +74,14 @@
                 </ul>
               </li>
             </div>
-            <div *ngIf="!parentConfig?.isSectionsAvailable && showFeedBack">
+            <div class="singleContent" *ngIf="!parentConfig?.isSectionsAvailable && showFeedBack">
               <li *ngFor="let question of progressBarClass; let j=index"
                 (click)="goToSlideClicked($event, question?.index)" class="showFeedBack-progressBar"
                 [ngClass]="(j + 1) === myCarousel.getCurrentSlideIndex() ? 'progressBar-border' : question.class">
                 {{question?.index}}
               </li>
             </div>
-            <div *ngIf="!parentConfig?.isSectionsAvailable && !showFeedBack">
+            <div class="singleContent" *ngIf="!parentConfig?.isSectionsAvailable && !showFeedBack">
               <li *ngFor="let question of progressBarClass; let j=index"
                 (click)="goToSlideClicked($event, question?.index)" class="showFeedBack-progressBar"
                 [ngClass]="(j+1) === myCarousel.getCurrentSlideIndex() ? 'progressBar-border': question.class === 'skipped' ? question.class: question.class === 'unattempted' ? '' : 'att-color'">
