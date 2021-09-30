@@ -92,7 +92,7 @@ export class MainPlayerComponent implements OnInit {
   initializeSections() {
     const childMimeType = _.map(this.playerConfig.metadata.children, 'mimeType');
     this.parentConfig.isSectionsAvailable = this.isSectionsAvailable = childMimeType[0] === 'application/vnd.sunbird.questionset';
-
+    this.viewerService.sectionQuestions = [];
     if (this.isSectionsAvailable) {
       this.isMultiLevelSection = this.getMultilevelSection(this.playerConfig.metadata);
 
