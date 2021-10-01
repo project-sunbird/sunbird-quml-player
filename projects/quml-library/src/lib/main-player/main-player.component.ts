@@ -102,10 +102,10 @@ export class MainPlayerComponent implements OnInit {
           messageTitle: 'Multi level sections are not supported as of now'
         };
       } else {
-        const children = this.playerConfig.metadata.children;
-
+        let children = this.playerConfig.metadata.children;
+        children = _.filter(children, section => section?.children?.length);
         this.sections = _.map(children, (child) => {
-          let childNodes = child?.children.map(item => item.identifier) || [];
+          let childNodes = child.children.map(item => item.identifier) || [];
           const maxQuestions = child?.maxQuestions;
           if (child?.shuffle) {
             childNodes = _.shuffle(childNodes);
