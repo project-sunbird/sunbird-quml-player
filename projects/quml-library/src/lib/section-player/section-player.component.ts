@@ -58,7 +58,6 @@ export class SectionPlayerComponent implements OnChanges {
   showFeedBack: boolean;
   showUserSolution: boolean;
   startPageInstruction: string;
-  shuffleQuestions: boolean;
   maxScore: number;
   points: number;
   initializeTimer: boolean;
@@ -147,6 +146,7 @@ export class SectionPlayerComponent implements OnChanges {
           return;
         }
         this.questions = _.uniqBy(this.questions.concat(res.questions), 'identifier');
+        this.sortQuestions();
         this.cdRef.detectChanges();
         this.noOfTimesApiCalled++;
         this.loadView = true;
@@ -218,6 +218,7 @@ export class SectionPlayerComponent implements OnChanges {
       this.mainProgressBar;
 
     this.questions = this.viewerService.getSectionQuestions(this.sectionConfig.metadata.identifier);
+    this.sortQuestions();
     this.resetQuestionState();
     if (this.jumpToQuestion) {
       this.goToQuestion(this.jumpToQuestion);
@@ -225,6 +226,19 @@ export class SectionPlayerComponent implements OnChanges {
       this.viewerService.getQuestion();
     } else if (this.threshold > 1) {
       this.viewerService.getQuestions();
+    }
+  }
+
+  sortQuestions() {
+    if (this.questions.length && this.questionIds.length) {
+      const ques = [];
+      this.questionIds.forEach((questionId) => {
+        const que = this.questions.find(question => question.identifier === questionId);
+        if (que) {
+          ques.push(que);
+        }
+      });
+      this.questions = ques;
     }
   }
 

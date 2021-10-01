@@ -44,7 +44,7 @@ export class ViewerService {
 
   initialize(config: QumlPlayerConfig , threshold, questionIds, isSectionsAvailable = false) {
     this.qumlLibraryService.initializeTelemetry(config, isSectionsAvailable);
-    this.identifiers = questionIds;
+    this.identifiers = _.cloneDeep(questionIds);
     this.parentIdentifier = config.metadata.identifier;
     this.threshold = threshold;
     this.rotation = 0;
