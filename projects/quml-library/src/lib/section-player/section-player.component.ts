@@ -13,7 +13,7 @@ import { UtilService } from '../util-service';
 @Component({
   selector: 'quml-section-player',
   templateUrl: './section-player.component.html',
-  styleUrls: ['./section-player.component.scss']
+  styleUrls: ['./section-player.component.scss', './../startpage/sb-ckeditor-styles.scss']
 })
 export class SectionPlayerComponent implements OnChanges {
 
