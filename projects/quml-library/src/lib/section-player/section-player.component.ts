@@ -152,6 +152,10 @@ export class SectionPlayerComponent implements OnChanges {
         this.loadView = true;
         if (this.currentSlideIndex > 0 && this.myCarousel) {
           this.myCarousel.selectSlide(this.currentSlideIndex);
+          if (this.questions[this.currentSlideIndex - 1]) {
+            this.currentQuestionsMedia = this.questions[this.currentSlideIndex - 1]?.media;
+            this.setImageZoom();
+          }
         }
 
         if (!this.showStartPage && this.currentSlideIndex === 0) {
@@ -571,7 +575,6 @@ export class SectionPlayerComponent implements OnChanges {
       return;
     }
     this.currentQuestionsMedia = _.get(this.questions[this.currentSlideIndex - 1], 'media');
-    this.setImageZoom();
     this.setSkippedClass(this.currentSlideIndex - 1);
     if (!this.initializeTimer) {
       this.initializeTimer = true;
@@ -583,6 +586,7 @@ export class SectionPlayerComponent implements OnChanges {
     } else if (this.questions[index - 1] !== undefined) {
       this.myCarousel.selectSlide(index);
     }
+    this.setImageZoom();
     this.currentSolutions = undefined;
   }
 
