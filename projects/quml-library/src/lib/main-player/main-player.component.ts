@@ -143,6 +143,7 @@ export class MainPlayerComponent implements OnInit {
         childNodes = _.shuffle(childNodes);
       }
       childNodes.forEach((element, index) => {
+        this.totalNoOfQuestions++;
         this.mainProgressBar.push({
           index: (index + 1), class: 'unattempted', value: undefined,
           score: 0,
