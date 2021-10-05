@@ -13,7 +13,7 @@ import { UtilService } from '../util-service';
 @Component({
   selector: 'quml-section-player',
   templateUrl: './section-player.component.html',
-  styleUrls: ['./section-player.component.scss']
+  styleUrls: ['./section-player.component.scss', './../startpage/sb-ckeditor-styles.scss']
 })
 export class SectionPlayerComponent implements OnChanges {
 
@@ -58,7 +58,6 @@ export class SectionPlayerComponent implements OnChanges {
   showFeedBack: boolean;
   showUserSolution: boolean;
   startPageInstruction: string;
-  shuffleQuestions: boolean;
   maxScore: number;
   points: number;
   initializeTimer: boolean;
@@ -147,11 +146,16 @@ export class SectionPlayerComponent implements OnChanges {
           return;
         }
         this.questions = _.uniqBy(this.questions.concat(res.questions), 'identifier');
+        this.sortQuestions();
         this.cdRef.detectChanges();
         this.noOfTimesApiCalled++;
         this.loadView = true;
         if (this.currentSlideIndex > 0 && this.myCarousel) {
           this.myCarousel.selectSlide(this.currentSlideIndex);
+          if (this.questions[this.currentSlideIndex - 1]) {
+            this.currentQuestionsMedia = this.questions[this.currentSlideIndex - 1]?.media;
+            this.setImageZoom();
+          }
         }
 
         if (!this.showStartPage && this.currentSlideIndex === 0) {
@@ -214,6 +218,7 @@ export class SectionPlayerComponent implements OnChanges {
       this.mainProgressBar;
 
     this.questions = this.viewerService.getSectionQuestions(this.sectionConfig.metadata.identifier);
+    this.sortQuestions();
     this.resetQuestionState();
     if (this.jumpToQuestion) {
       this.goToQuestion(this.jumpToQuestion);
@@ -221,6 +226,19 @@ export class SectionPlayerComponent implements OnChanges {
       this.viewerService.getQuestion();
     } else if (this.threshold > 1) {
       this.viewerService.getQuestions();
+    }
+  }
+
+  sortQuestions() {
+    if (this.questions.length && this.questionIds.length) {
+      const ques = [];
+      this.questionIds.forEach((questionId) => {
+        const que = this.questions.find(question => question.identifier === questionId);
+        if (que) {
+          ques.push(que);
+        }
+      });
+      this.questions = ques;
     }
   }
 
@@ -571,7 +589,6 @@ export class SectionPlayerComponent implements OnChanges {
       return;
     }
     this.currentQuestionsMedia = _.get(this.questions[this.currentSlideIndex - 1], 'media');
-    this.setImageZoom();
     this.setSkippedClass(this.currentSlideIndex - 1);
     if (!this.initializeTimer) {
       this.initializeTimer = true;
@@ -583,6 +600,7 @@ export class SectionPlayerComponent implements OnChanges {
     } else if (this.questions[index - 1] !== undefined) {
       this.myCarousel.selectSlide(index);
     }
+    this.setImageZoom();
     this.currentSolutions = undefined;
   }
 
