@@ -68,6 +68,7 @@ export class MainPlayerComponent implements OnInit {
   };
   userName: string;
   jumpToQuestion: any;
+  totalVisitedQuestion = 0;
 
   constructor(public viewerService: ViewerService, private utilService: UtilService) { }
 
@@ -92,7 +93,7 @@ export class MainPlayerComponent implements OnInit {
   initializeSections() {
     const childMimeType = _.map(this.playerConfig.metadata.children, 'mimeType');
     this.parentConfig.isSectionsAvailable = this.isSectionsAvailable = childMimeType[0] === 'application/vnd.sunbird.questionset';
-
+    this.viewerService.sectionQuestions = [];
     if (this.isSectionsAvailable) {
       this.isMultiLevelSection = this.getMultilevelSection(this.playerConfig.metadata);
 
@@ -102,10 +103,10 @@ export class MainPlayerComponent implements OnInit {
           messageTitle: 'Multi level sections are not supported as of now'
         };
       } else {
-        const children = this.playerConfig.metadata.children;
-
+        let children = this.playerConfig.metadata.children;
+        children = _.filter(children, section => section?.children?.length);
         this.sections = _.map(children, (child) => {
-          let childNodes = child?.children.map(item => item.identifier) || [];
+          let childNodes = child.children.map(item => item.identifier) || [];
           const maxQuestions = child?.maxQuestions;
           if (child?.shuffle) {
             childNodes = _.shuffle(childNodes);
@@ -142,6 +143,7 @@ export class MainPlayerComponent implements OnInit {
         childNodes = _.shuffle(childNodes);
       }
       childNodes.forEach((element, index) => {
+        this.totalNoOfQuestions++;
         this.mainProgressBar.push({
           index: (index + 1), class: 'unattempted', value: undefined,
           score: 0,
@@ -168,7 +170,7 @@ export class MainPlayerComponent implements OnInit {
     }
 
     this.attempts = {
-      max: this.playerConfig.metadata?.maxAttempts,
+      max: this.playerConfig.metadata?.maxAttempt,
       current: this.playerConfig.metadata?.currentAttempt ? this.playerConfig.metadata.currentAttempt + 1 : 1
     };
     this.totalScore = this.playerConfig.metadata.maxScore;
@@ -231,13 +233,16 @@ export class MainPlayerComponent implements OnInit {
   }
 
   getSummaryObject() {
-    const classObj = _.groupBy(this.mainProgressBar, 'class');
+    const progressBar = this.isSectionsAvailable ? _.flattenDeep(this.mainProgressBar.map(item => item.children)) : this.mainProgressBar;
+    const classObj = _.groupBy(progressBar, 'class');
     this.summary = {
       skipped: _.get(classObj, 'skipped.length') || 0,
       correct: _.get(classObj, 'correct.length') || 0,
       wrong: _.get(classObj, 'wrong.length') || 0,
       partial: _.get(classObj, 'partial.length') || 0
     };
+    this.totalVisitedQuestion = this.summary.correct + this.summary.wrong + this.summary.partial + this.summary.skipped;
+    this.viewerService.totalNumberOfQuestions = this.totalNoOfQuestions;
   }
 
   updateSectionScore(activeSectionIndex: number) {
@@ -291,8 +296,8 @@ export class MainPlayerComponent implements OnInit {
     } else {
       this.endPageReached = true;
       this.getSummaryObject();
-      this.viewerService.raiseSummaryEvent(this.currentSlideIndex, this.endPageReached, this.finalScore, this.summary);
-      this.raiseEndEvent(this.currentSlideIndex, 'endPage', this.finalScore);
+      this.viewerService.raiseSummaryEvent(this.totalVisitedQuestion, this.endPageReached, this.finalScore, this.summary);
+      this.raiseEndEvent(this.totalVisitedQuestion, this.endPageReached, this.finalScore);
       this.isSummaryEventRaised = true;
       this.isEndEventRaised = true;
 
@@ -307,6 +312,8 @@ export class MainPlayerComponent implements OnInit {
     this.isEndEventRaised = false;
     this.attempts.current = this.attempts.current + 1;
     this.showReplay = this.attempts?.max && this.attempts?.current >= this.attempts.max ? false : true;
+    this.totalNoOfQuestions = 0;
+    this.totalVisitedQuestion = 0;
     this.mainProgressBar = [];
     this.summary = {
       correct: 0,
@@ -365,9 +372,9 @@ export class MainPlayerComponent implements OnInit {
     if (event?.type === 'EXIT') {
       this.viewerService.raiseHeartBeatEvent(eventName.endPageExitClicked, TelemetryType.interact, 'endPage');
       this.getSummaryObject();
-      this.viewerService.raiseSummaryEvent(this.currentSlideIndex, this.endPageReached, this.finalScore, this.summary);
+      this.viewerService.raiseSummaryEvent(this.totalVisitedQuestion, this.endPageReached, this.finalScore, this.summary);
       this.isSummaryEventRaised = true;
-      this.raiseEndEvent(this.currentSlideIndex, 'endPage', this.finalScore);
+      this.raiseEndEvent(this.totalVisitedQuestion, this.endPageReached, this.finalScore);
     }
   }
 
@@ -397,16 +404,16 @@ export class MainPlayerComponent implements OnInit {
   }
 
   onScoreBoardSubmitted() {
+    this.endPageReached = true;
     this.getSummaryObject();
     if (this.playerConfig.metadata?.summaryType !== 'Score') {
       this.durationSpent = this.utilService.getTimeSpentText(this.initialTime);
     }
     this.viewerService.raiseHeartBeatEvent(eventName.scoreBoardSubmitClicked, TelemetryType.interact, pageId.submitPage);
-    this.viewerService.raiseSummaryEvent(this.currentSlideIndex, this.endPageReached, this.finalScore, this.summary);
-    this.raiseEndEvent(this.currentSlideIndex, this.endPageReached, this.finalScore);
+    this.viewerService.raiseSummaryEvent(this.totalVisitedQuestion, this.endPageReached, this.finalScore, this.summary);
+    this.raiseEndEvent(this.totalVisitedQuestion, this.endPageReached, this.finalScore);
     this.loadScoreBoard = false;
     this.isSummaryEventRaised = true;
-    this.endPageReached = true;
   }
 
   generateOutComeLabel() {
@@ -438,12 +445,11 @@ export class MainPlayerComponent implements OnInit {
   @HostListener('window:beforeunload')
   ngOnDestroy() {
     this.calculateScore();
-
+    this.getSummaryObject();
     if (this.isSummaryEventRaised === false) {
-      this.getSummaryObject();
-      this.viewerService.raiseSummaryEvent(this.currentSlideIndex, this.endPageReached, this.finalScore, this.summary);
+      this.viewerService.raiseSummaryEvent(this.totalVisitedQuestion, this.endPageReached, this.finalScore, this.summary);
     }
-    this.raiseEndEvent(this.currentSlideIndex, this.endPageReached, this.finalScore);
+    this.raiseEndEvent(this.totalVisitedQuestion, this.endPageReached, this.finalScore);
   }
 }
 
