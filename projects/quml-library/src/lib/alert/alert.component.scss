@@ -20,10 +20,10 @@
         padding: calculateRem(8px) calculateRem(24px) calculateRem(8px) calculateRem(8px);
         -webkit-animation-name: example;
         animation-name: example;
-        -webkit-animation-timing-function: ease-in;
-        animation-timing-function: ease-in;
+        -webkit-animation-timing-function: ease-in-out;
+        animation-timing-function: ease-in-out;
         -webkit-animation-duration: .3s;
-        animation-duration: .3s;
+        animation-duration: .4s;
         margin: 0 auto calculateRem(8px);
         width: calculateRem(372px);
         background: linear-gradient(145deg, #FFD555, #FFD555 60%, #f6bc42 60%);
