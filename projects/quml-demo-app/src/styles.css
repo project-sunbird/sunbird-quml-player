@@ -6,7 +6,3 @@ body {
 html, body {
     height: 100%;
 }
-
-figure.image img {
-    max-width: 100%;
-}
