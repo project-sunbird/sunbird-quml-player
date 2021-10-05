@@ -50,8 +50,8 @@
   &__next,
   &__previous {
     position: relative;
-    width: calculateRem(56px);
-    height: calculateRem(30px);
+    width: calculateRem(60px);
+    height: calculateRem(36px);
     background: var(--white);
     border: 0.5px solid #ccc;
     border-radius: calculateRem(16px);
@@ -70,10 +70,7 @@
       border-width: 0 calculateRem(2px) calculateRem(2px) 0;
     }
     &:hover,&--active {
-      background-color: var(--primary-color);
-      &::after {
-        border-color: var(--white)
-      }
+      background-color: #FFD555;
     }
   }
 
