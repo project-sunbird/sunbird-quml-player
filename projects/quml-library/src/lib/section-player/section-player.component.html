@@ -88,7 +88,7 @@
                 {{question?.index}}
               </li>
             </div>
-            <li class="requiresSubmit cursor-pointer" *ngIf="parentConfig.requiresSubmit"
+            <li class="requiresSubmit cursor-pointer showFeedBack-progressBar" *ngIf="parentConfig.requiresSubmit"
               (click)="disableNext = true; onScoreBoardClicked()">
               <img src="./assets/flag_inactive.svg" alt="">
             </li>
