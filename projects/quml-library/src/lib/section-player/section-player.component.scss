@@ -795,8 +795,7 @@ scrollbar-width: none; /* Firefox */
     .text-center,
     .text-left,
     .text-right,
-    .mcq-title p,
-    p {
+    .mcq-title p,h1,h2,h3,h4,h5,h6,p {
       text-align: center !important;
     }
   
@@ -806,7 +805,7 @@ scrollbar-width: none; /* Firefox */
   
     .image-style-align-right,
     .image-style-align-left {
-      float: none;
+      float: none !important;
       text-align: center !important;
       margin: 0 auto !important;
     }
