@@ -22,6 +22,7 @@ export class MainPlayerComponent implements OnInit {
   isMultiLevelSection = false;
   sections: any[] = [];
   isFirstSection = false;
+  sectionIndex = 0;
   activeSection: any;
   contentError: contentErrorMessage;
   parentConfig: IParentConfig = {
@@ -32,7 +33,7 @@ export class MainPlayerComponent implements OnInit {
     isReplayed: false,
     contentName: '',
     baseUrl: '',
-    instructions: {}
+    instructions: {},
   };
 
   showEndPage = true;
@@ -268,6 +269,7 @@ export class MainPlayerComponent implements OnInit {
       nextSectionIndex = sectionIndex > -1 ? sectionIndex : nextSectionIndex;
     }
 
+    this.sectionIndex = _.cloneDeep(nextSectionIndex);
     this.mainProgressBar.forEach((item, index) => {
       item.isActive = index === nextSectionIndex;
 

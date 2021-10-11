@@ -5,7 +5,7 @@
 <div *ngIf="!isLoading" class="main-container">
   <div class="main-container" [hidden]="!activeSection || loadScoreBoard || endPageReached">
     <quml-section-player [sectionConfig]="activeSection" (sectionEnd)="onSectionEnd($event)" [attempts]="attempts"
-      [isFirstSection]="isFirstSection" [mainProgressBar]="mainProgressBar" [parentConfig]="parentConfig"
+      [isFirstSection]="isFirstSection" [mainProgressBar]="mainProgressBar" [parentConfig]="parentConfig" [sectionIndex]="sectionIndex"
       [jumpToQuestion]="jumpToQuestion" (showScoreBoard)="onShowScoreBoard($event)" (playerEvent)="onPlayerEvent($event)">
     </quml-section-player>
   </div>
