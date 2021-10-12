@@ -1,6 +1,6 @@
 <!-- Default Layout-->
 <div class="quml-mcq layoutDefault" *ngIf="layout=='DEFAULT'">
-    <div class="quml-mcq--question mb-24">
+    <div class="quml-mcq--question mb-16">
         <quml-mcq-question [mcqQuestion]="mcqQuestion" [layout]="layout" (showPopup)="showPopup()"></quml-mcq-question>
     </div>
     <div class="quml-mcq--option">
@@ -12,7 +12,7 @@
 <!-- End of Default Layout-->
 <!--Image Grid Layout-->
 <div class="quml-mcq layoutImageGrid-mcq-horizontal" *ngIf="layout=='IMAGEGRID'">
-    <div class="quml-mcq--question mb-24">
+    <div class="quml-mcq--question mb-16">
         <quml-mcq-question [mcqQuestion]="mcqQuestion" [layout]="layout"></quml-mcq-question>
     </div>
     <div class="quml-mcq--option">
@@ -25,7 +25,7 @@
 <!--Image Multi Grid Layout-->
 <div class="quml-mcq layoutMultiImageGrid" *ngIf="layout==='MULTIIMAGEGRID'">
     <div class="imageqa-wrapper image-grid">
-        <div class="quml-mcq--question mb-24">
+        <div class="quml-mcq--question mb-16">
             <quml-mcq-question [mcqQuestion]="mcqQuestion" [layout]="layout"></quml-mcq-question>
         </div>
         <div class="quml-mcq--option">
@@ -39,7 +39,7 @@
 <!--Image QA Grid Layout-->
 <div class="quml-mcq layoutImageQAGridMCQ-vSplit" *ngIf="layout=='IMAGEQAGRID'">
     <div class="imageqa-wrapper">
-        <div class="quml-mcq--question mb-24">
+        <div class="quml-mcq--question mb-16">
             <quml-mcq-question [mcqQuestion]="mcqQuestion" [layout]="layout"></quml-mcq-question>
         </div>
         <div class="quml-mcq--option">
@@ -52,7 +52,7 @@
 <!--End of Image QA Grid Layout-->
 <!--Image QOption Layout-->
 <div class="quml-mcq layoutImageOption" *ngIf="layout=='IMAGEQOPTION'">
-    <div class="columnBlock questionBlock quml-mcq--question mb-24">
+    <div class="columnBlock questionBlock quml-mcq--question mb-16">
         <quml-mcq-question [mcqQuestion]="mcqQuestion" [layout]="layout"></quml-mcq-question>
     </div>
     <div class="columnBlock quml-mcq--option">

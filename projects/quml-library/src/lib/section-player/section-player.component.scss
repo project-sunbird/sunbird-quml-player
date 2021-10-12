@@ -100,7 +100,7 @@ scrollbar-width: none; /* Firefox */
   position: absolute;
   margin-right: 1rem;
   right: 0;
-  color: #ababab;
+  color: #575757;
   font-size: 0.75rem;
   height: calc(100% - 4rem);
   overflow-y: scroll;
@@ -112,6 +112,7 @@ scrollbar-width: none; /* Firefox */
     padding: 0;
     text-align: center;
     position: relative;
+    background-color: #fff;
     &::before {
       content: "";
       width: 0.0625rem;
@@ -127,8 +128,8 @@ scrollbar-width: none; /* Firefox */
       position: relative;
       z-index: 2;
       &.requiresSubmit {
-        color: #ababab;
-        border: .03125rem solid #ababab;
+        color: #575757;
+        border: .03125rem solid #575757;
         border-radius: 50%;
         width: 1.25rem;
         height: 1.25rem;
@@ -212,8 +213,8 @@ scrollbar-width: none; /* Firefox */
       margin-bottom: 2.25rem;
       cursor: pointer;
       &.requiresSubmit {
-        color: #ababab;
-        border: .03125rem solid #ababab;
+        color: #575757;
+        border: .03125rem solid #575757;
         border-radius: 50%;
         background: var(--white);
         &:hover {
@@ -233,8 +234,8 @@ scrollbar-width: none; /* Firefox */
         border: 0.0625rem solid #969696;
       }
       &.unattempted {
-        color: #ababab;
-        border: 0.03125rem solid #ababab;
+        color: #575757;
+        border: 0.03125rem solid #575757;
         &:hover {
           border: 0.0625rem solid var(--primary-color);
           color: var(--primary-color);
@@ -321,8 +322,8 @@ scrollbar-width: none; /* Firefox */
         }
       }
       &.unattempted {
-        color: #ababab;
-        border: 0.03125rem solid #ababab;
+        color: #575757;
+        border: 0.03125rem solid #575757;
         &:hover {
           border: 0.0625rem solid var(--primary-color);
           color: var(--primary-color);

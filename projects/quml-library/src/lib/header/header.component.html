@@ -6,17 +6,17 @@
 
   <div class="quml-header__metadata">
     <ng-container *ngIf="duration">
-      <div class="duration mr-16" *ngIf="duration && showTimer && !initializeTimer">
+      <div class="duration mr-16" tabindex="0" attr.aria-label="{{minutes}}:{{seconds}}" title="{{minutes}}:{{seconds}}" *ngIf="duration && showTimer && !initializeTimer">
         <quml-durationtimer></quml-durationtimer>
         <span>{{minutes}}:{{seconds}}</span>
       </div>
-      <div class="duration mr-16" *ngIf="duration && showTimer && initializeTimer && time">
+      <div class="duration mr-16" tabindex="0" attr.aria-label="{{minutes}}:{{seconds}}}}" title="{{minutes}}:{{seconds}}" *ngIf="duration && showTimer && initializeTimer && time">
         <quml-durationtimer></quml-durationtimer>
-        <span [ngClass]="{'blink': showWarning}">{{time}}</span>
+        <span [ngClass]="{'blink': showWarning}">{{time}}</span> 
       </div>
     </ng-container>
     <ng-container *ngIf="!duration && showTimer && initializeTimer">
-      <div class="duration mr-16">
+      <div class="duration mr-16" attr.aria-label="{{minutes}}:{{seconds}}" title="{{minutes}}:{{seconds}}" tabindex="0">
         <quml-durationtimer></quml-durationtimer>
         <span>{{time}}</span>
       </div>
@@ -31,12 +31,12 @@
       </span>
     </div> -->
     <div class="quml-navigation" *ngIf="!disableNext">
-      <div class="quml-navigation__previous" (click)="prevSlide()"
-        [ngClass]="(startPageInstruction && currentSlideIndex === 0) || (!showStartPage && currentSlideIndex === 1) ? 'navigation-icon-disabled': '' "></div>
-      <div class="quml-navigation__next ml-8" (click)="nextSlide()" *ngIf="!active"
-        [ngClass]="disableNext ? 'navigation-icon-disabled': '' "></div>
-      <div class="quml-navigation__next quml-navigation__next--active ml-8" (click)="nextSlide()" *ngIf="active"
-        [ngClass]="disableNext ? 'navigation-icon-disabled': '' "></div>
+      <div class="quml-navigation__previous" (click)="prevSlide()" aria-label="preview slide" title="preview slide"
+        [ngClass]="(startPageInstruction && currentSlideIndex === 0) || (!showStartPage && currentSlideIndex === 1) ? 'navigation-icon-disabled': '' " tabindex="0"></div>
+      <div class="quml-navigation__next ml-8" (click)="nextSlide()" aria-label="next slide" title="next slide" *ngIf="!active"
+        [ngClass]="disableNext ? 'navigation-icon-disabled': '' " tabindex="0"></div>
+      <div class="quml-navigation__next quml-navigation__next--active ml-8" (click)="nextSlide()"  aria-label="next slide" title="next slide" *ngIf="active"
+        [ngClass]="disableNext ? 'navigation-icon-disabled': '' " tabindex="0"></div>
     </div>
 
   </div>

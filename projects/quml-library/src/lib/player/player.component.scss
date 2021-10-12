@@ -103,7 +103,7 @@
 
   position: absolute;
   right: 1rem;
-  color: #ababab;
+  color: #575757;
   font-size: 0.75rem;
   height: calc(100% - 4rem);
   overflow-y: scroll;
@@ -190,8 +190,8 @@
       }
 
       &.unattempted {
-        color: #ABABAB;
-        border: 0.03125rem solid #ABABAB;
+        color: #575757;
+        border: 0.03125rem solid #575757;
 
         &:hover {
           border: .0625rem solid var(--primary-color);
