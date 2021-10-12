@@ -23,8 +23,7 @@
         </div>
       </div>
       <div class="landscape-content">
-        <carousel class="landscape-center" [interval]="slideInterval" [showIndicators]="showIndicator"
-          [noWrap]="noWrapSlides" #myCarousel>
+        <carousel class="landscape-center" [interval]="0" [showIndicators]="false" [noWrap]="true" #myCarousel>
           <slide>
             <quml-startpage [instructions]="startPageInstruction" [totalNoOfQuestions]="noOfQuestions" [points]="points"
               [time]="isFirstSection ? timeLimit : null" 
