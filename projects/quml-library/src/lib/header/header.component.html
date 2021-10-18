@@ -31,11 +31,19 @@
       </span>
     </div> -->
     <div class="quml-navigation" *ngIf="!disableNext">
+<<<<<<< HEAD
       <div class="quml-navigation__previous" (click)="prevSlide()" aria-label="preview slide" title="preview slide" role="navigation"
         [ngClass]="(startPageInstruction && currentSlideIndex === 0) || (!showStartPage && currentSlideIndex === 1) ? 'navigation-icon-disabled': '' " tabindex="0"></div>
       <div class="quml-navigation__next ml-8" (click)="nextSlide()" aria-label="next slide" title="next slide" *ngIf="!active" role="navigation"
         [ngClass]="disableNext ? 'navigation-icon-disabled': '' " tabindex="0"></div>
       <div class="quml-navigation__next quml-navigation__next--active ml-8" (click)="nextSlide()"  aria-label="next slide" title="next slide" *ngIf="active" role="navigation"
+=======
+      <div class="quml-navigation__previous" (click)="prevSlide()" aria-label="preview slide" title="preview slide"
+        [ngClass]="(startPageInstruction && currentSlideIndex === 0) || (!showStartPage && currentSlideIndex === 1) ? 'navigation-icon-disabled': '' " tabindex="0"></div>
+      <div class="quml-navigation__next ml-8" (click)="nextSlide()" aria-label="next slide" title="next slide" *ngIf="!active"
+        [ngClass]="disableNext ? 'navigation-icon-disabled': '' " tabindex="0"></div>
+      <div class="quml-navigation__next quml-navigation__next--active ml-8" (click)="nextSlide()"  aria-label="next slide" title="next slide" *ngIf="active"
+>>>>>>> b0618cdccd2c50bf5d9906ecd2824073f0419c13
         [ngClass]="disableNext ? 'navigation-icon-disabled': '' " tabindex="0"></div>
     </div>
 
