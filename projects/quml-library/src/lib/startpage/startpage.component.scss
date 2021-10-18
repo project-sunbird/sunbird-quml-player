@@ -1,7 +1,7 @@
 @import '../../../../../node_modules/@project-sunbird/sb-styles/assets/mixins/mixins';
 
 .startpage {
-    margin-top: 1rem;
+    //margin-top: 1.5rem;
 
     &__header {
         color: var(--primary-color);
@@ -16,12 +16,12 @@
         border-bottom: 0.0625rem solid #eee;
         align-items: center;
         line-height: normal;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
         padding-bottom: 1.5rem;
     }
 
     &__metadata {
-        margin: 0.5rem 4rem 0.5rem 0;
+        margin: 0 4rem 0.5rem 0;
     }
 
     &__md-heading {
@@ -45,18 +45,21 @@
     }
 
     &__instr-title {
-        padding: 1rem 0 0.5rem 0;
-        line-height: normal;
-        font-size: 0.75rem;
+        color: #6D7278;
+        font-size: calculateRem(12px);
         font-weight: bold;
+        letter-spacing: 0;
+        line-height: 18px;
     }
 
     &__instr-desc {
         padding: 1rem 0;
         max-height: calc(100vh - 14.625rem);
         overflow-y: auto;
-        line-height: normal;
-        font-size: 0.75rem;
+        color: #333333;
+        font-size: calculateRem(12px);
+        letter-spacing: 0;
+        line-height: 17px;
     }
 }
 

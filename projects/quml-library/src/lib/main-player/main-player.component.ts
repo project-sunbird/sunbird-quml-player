@@ -89,6 +89,12 @@ export class MainPlayerComponent implements OnInit {
     this.isLoading = true;
     this.setConfig();
     this.initializeSections();
+     // keyboard accessibility enter key click event
+     document.onkeydown = function(e) {
+      if (e.keyCode === 13) { // The Enter/Return key
+        (document.activeElement  as HTMLElement).click();
+      }
+    };
   }
 
   initializeSections() {
