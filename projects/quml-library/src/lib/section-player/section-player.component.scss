@@ -112,7 +112,6 @@ scrollbar-width: none; /* Firefox */
     padding: 0;
     text-align: center;
     position: relative;
-    background-color: #fff;
     &::before {
       content: "";
       width: 0.0625rem;
@@ -361,6 +360,7 @@ scrollbar-width: none; /* Firefox */
       position: relative;
       display: flex;
       height: 1.5rem;
+      margin-top: 0;
       .showFeedBack-progressBar {
         margin-right: 2.25rem;
         z-index: 1;
