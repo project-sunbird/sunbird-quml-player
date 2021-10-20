@@ -10,7 +10,7 @@
     "@project-sunbird/client-services": "4.0.1"
   },
   "dependencies": {
-    "@project-sunbird/sunbird-player-sdk-v9": "^4.4.1"
+    "@project-sunbird/sunbird-player-sdk-v9": "^4.4.2"
   },
   "whitelistedNonPeerDependencies": [
     "carousel",
