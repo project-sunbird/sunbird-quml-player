@@ -54,7 +54,6 @@ export class MainPlayerComponent implements OnInit {
   };
   isDurationExpired = false;
   finalScore = 0;
-  currentSlideIndex = 0;
   totalNoOfQuestions = 0;
   durationSpent: string;
   outcomeLabel: string;
@@ -323,6 +322,7 @@ export class MainPlayerComponent implements OnInit {
     this.totalNoOfQuestions = 0;
     this.totalVisitedQuestion = 0;
     this.mainProgressBar = [];
+    this.jumpToQuestion = undefined;
     this.summary = {
       correct: 0,
       partial: 0,
@@ -334,7 +334,6 @@ export class MainPlayerComponent implements OnInit {
     this.initializeSections();
     this.endPageReached = false;
     this.loadScoreBoard = false;
-    this.currentSlideIndex = 1;
     this.activeSection = this.isSectionsAvailable ? _.cloneDeep(this.sections[0]) : this.playerConfig;
     if (this.attempts?.max === this.attempts?.current) {
       this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(_.get(this.attempts, 'current'), false, true));
