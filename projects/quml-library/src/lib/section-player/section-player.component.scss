@@ -208,7 +208,8 @@ scrollbar-width: none; /* Firefox */
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 0.0625rem solid rgba(204, 204, 204, 1);
+      color: #575757;
+      border: 0.03125rem solid #575757;
       margin-bottom: 2.25rem;
       cursor: pointer;
       &.requiresSubmit {
@@ -220,11 +221,8 @@ scrollbar-width: none; /* Firefox */
           border: 0.0625rem solid var(--primary-color);
         }
       }
-      &.progressBar-border,
-      .active,
-      &.att-color {
-        color: var(--white);
-        background: var(--primary-color);
+      &.active{
+        color: var(--primary-color);
         border: 0.0625rem solid var(--primary-color);
       }
       &.skipped {
@@ -280,11 +278,14 @@ scrollbar-width: none; /* Firefox */
       &.progressBar-border,
       .active,
       &.att-color {
+        color: var(--primary-color);
+        border: 0.0625rem solid var(--primary-color);
+      }
+      &.info-page{
         color: var(--white);
         background: var(--primary-color);
         border: 0.0625rem solid var(--primary-color);
       }
-    
       &.skipped {
         color: var(--white);
         background: #969696;
