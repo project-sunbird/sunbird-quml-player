@@ -20,10 +20,10 @@
      
       
 
-      <div class="quml-alert__solution-container">
+      <div class="quml-alert__solution-container" tabindex="0">
         <div class="quml-alert__try-again" *ngIf="alertType === 'wrong' || alertType === 'correct' && !showSolutionButton">
-          <span *ngIf="alertType === 'wrong'" (click)="closeAlert.emit({type:'tryAgain'})">Try again</span>
-          <span *ngIf="alertType === 'correct' && !showSolutionButton" (click)="viewSolution()">View Solution</span>
+          <span *ngIf="alertType === 'wrong'" (click)="closeAlert.emit({type:'tryAgain'})" aria-label="Try again">Try again</span>
+          <span *ngIf="alertType === 'correct' && !showSolutionButton" (click)="viewSolution()" aria-label="View Solution">View Solution</span>
         </div>
         <!-- <div class="quml-alert__view-solution" *ngIf="!showSolutionButton">
           <span (click)="viewSolution()">View Solution</span>
