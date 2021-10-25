@@ -392,6 +392,7 @@ export class SectionPlayerComponent implements OnChanges {
   }
 
   onScoreBoardClicked() {
+    this.viewerService.updateSectionQuestions(this.sectionConfig.metadata.identifier, this.questions);
     this.showScoreBoard.emit();
   }
 
