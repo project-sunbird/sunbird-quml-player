@@ -53,6 +53,10 @@ export interface Config {
         showReplay?: boolean;
         showExit?: boolean;
     };
+    progressBar: any[];
+    questions: any[];
+    lastQuestionId: string;
+    duration: number;
 }
 
 export interface QumlPlayerConfig {
