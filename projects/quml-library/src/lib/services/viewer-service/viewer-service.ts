@@ -276,7 +276,7 @@ export class ViewerService {
 
   updateSectionQuestions(id: string, questions) {
     const index = this.sectionQuestions.findIndex(section => section.id === id);
-    if (index > 0) {
+    if (index > -1) {
       this.sectionQuestions[index].questions = questions;
     } else {
       this.sectionQuestions.push({ id, questions });
