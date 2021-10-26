@@ -39,8 +39,7 @@ export class ViewerService {
     public qumlLibraryService: QumlLibraryService,
     public utilService: UtilService,
     public questionCursor: QuestionCursor
-  ) {
-  }
+  ) { }
 
   initialize(config: QumlPlayerConfig , threshold, questionIds, isSectionsAvailable = false) {
     this.qumlLibraryService.initializeTelemetry(config, isSectionsAvailable);
@@ -63,9 +62,12 @@ export class ViewerService {
     this.metaData = {
       pagesHistory: [],
       totalPages: 0,
-      duration: [],
-      zoom: [],
-      rotation: []
+      duration: 0,
+      rotation: [],
+      progressBar: [],
+      questions: [],
+      questionIds: [],
+      lastQuestionId: '',
     };
     this.loadingProgress = 0;
     this.endPageSeen = false;
@@ -91,6 +93,7 @@ export class ViewerService {
   }
 
   raiseEndEvent(currentQuestionIndex,  endPageSeen , score) {
+    this.metaData.questions = this.sectionQuestions;
     const duration = new Date().getTime() - this.qumlPlayerStartTime;
     const endEvent: any = {
       eid: 'END',
@@ -273,7 +276,7 @@ export class ViewerService {
 
   updateSectionQuestions(id: string, questions) {
     const index = this.sectionQuestions.findIndex(section => section.id === id);
-    if (index > 0) {
+    if (index > -1) {
       this.sectionQuestions[index].questions = questions;
     } else {
       this.sectionQuestions.push({ id, questions });

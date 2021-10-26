@@ -143,7 +143,9 @@ export class SectionPlayerComponent implements OnChanges {
         if (!res?.questions) {
           return;
         }
-        this.questions = _.uniqBy(this.questions.concat(res.questions), 'identifier');
+        const unCommonQuestions = _.xorBy(this.questions, res.questions, 'identifier');
+        this.questions = _.uniqBy(this.questions.concat(unCommonQuestions), 'identifier');
+
         this.sortQuestions();
         this.cdRef.detectChanges();
         this.noOfTimesApiCalled++;
@@ -392,6 +394,7 @@ export class SectionPlayerComponent implements OnChanges {
   }
 
   onScoreBoardClicked() {
+    this.viewerService.updateSectionQuestions(this.sectionConfig.metadata.identifier, this.questions);
     this.showScoreBoard.emit();
   }
 
