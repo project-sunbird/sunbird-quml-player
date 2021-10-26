@@ -57,7 +57,7 @@
                 <li class="section relative" *ngFor="let section of mainProgressBar; let i=index;" attr.aria-label="section {{section?.index}}"
                   (click)="jumpToSection(section?.identifier)"
                   [ngClass]="{'attempted' : section.class === 'attempted', 'partial': section.class === 'partial'}">
-                  <label for="list-item-{{i}}" class="progressBar-border" tabindex="0">{{section?.index}}</label>
+                  <label for="list-item-{{i}}" class="progressBar-border" [ngClass] = "{'active' : section?.isActive}" tabindex="0">{{section?.index}}</label>
                   <ul *ngIf="section?.isActive && showFeedBack">
                     <li *ngFor="let question of progressBarClass; let j=index" tabindex="0" attr.aria-label="question number {{question?.index}}"
                       (click)="goToSlideClicked($event, question?.index)" class="showFeedBack-progressBar"
