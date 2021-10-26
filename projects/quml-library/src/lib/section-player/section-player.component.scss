@@ -99,8 +99,8 @@ scrollbar-width: none; /* Firefox */
 
   position: absolute;
   padding-right: 1rem;
-  right: 0;
-  color: #ababab;
+  right: 0.5rem;
+  color: #575757;
   font-size: 0.75rem;
   height: calc(100% - 4rem);
   overflow-y: scroll;
@@ -127,8 +127,8 @@ scrollbar-width: none; /* Firefox */
       position: relative;
       z-index: 2;
       &.requiresSubmit {
-        color: #ababab;
-        border: .03125rem solid #ababab;
+        color: #575757;
+        border: .03125rem solid #575757;
         border-radius: 50%;
         width: 1.25rem;
         height: 1.25rem;
@@ -199,6 +199,15 @@ scrollbar-width: none; /* Firefox */
         }
       }
     }
+    .section{
+      &.attempted, &.partial{
+        label{
+          color: var(--white);
+          background: var(--primary-color);
+          border: 0.03125rem solid var(--primary-color);
+        }
+      }
+    }
     .section label {
       background-color: var(--white);
       border-radius: 0.25rem;
@@ -208,23 +217,22 @@ scrollbar-width: none; /* Firefox */
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 0.0625rem solid rgba(204, 204, 204, 1);
+      color: #575757;
+      border: 0.03125rem solid #575757;
       margin-bottom: 2.25rem;
       cursor: pointer;
+      
       &.requiresSubmit {
-        color: #ababab;
-        border: .03125rem solid #ababab;
+        color: #575757;
+        border: .03125rem solid #575757;
         border-radius: 50%;
         background: var(--white);
         &:hover {
           border: 0.0625rem solid var(--primary-color);
         }
       }
-      &.progressBar-border,
-      .active,
-      &.att-color {
-        color: var(--white);
-        background: var(--primary-color);
+      &.active{
+        color: var(--primary-color);
         border: 0.0625rem solid var(--primary-color);
       }
       &.skipped {
@@ -233,8 +241,8 @@ scrollbar-width: none; /* Firefox */
         border: 0.0625rem solid #969696;
       }
       &.unattempted {
-        color: #ababab;
-        border: 0.03125rem solid #ababab;
+        color: #575757;
+        border: 0.03125rem solid #575757;
         &:hover {
           border: 0.0625rem solid var(--primary-color);
           color: var(--primary-color);
@@ -280,11 +288,14 @@ scrollbar-width: none; /* Firefox */
       &.progressBar-border,
       .active,
       &.att-color {
+        color: var(--primary-color);
+        border: 0.0625rem solid var(--primary-color);
+      }
+      &.info-page{
         color: var(--white);
         background: var(--primary-color);
         border: 0.0625rem solid var(--primary-color);
       }
-    
       &.skipped {
         color: var(--white);
         background: #969696;
@@ -321,8 +332,8 @@ scrollbar-width: none; /* Firefox */
         }
       }
       &.unattempted {
-        color: #ababab;
-        border: 0.03125rem solid #ababab;
+        color: #575757;
+        border: 0.03125rem solid #575757;
         &:hover {
           border: 0.0625rem solid var(--primary-color);
           color: var(--primary-color);
@@ -360,6 +371,7 @@ scrollbar-width: none; /* Firefox */
       position: relative;
       display: flex;
       height: 1.5rem;
+      margin-top: 0;
       .showFeedBack-progressBar {
         margin-right: 2.25rem;
         z-index: 1;

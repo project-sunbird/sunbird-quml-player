@@ -22,6 +22,7 @@ export class MainPlayerComponent implements OnInit {
   isMultiLevelSection = false;
   sections: any[] = [];
   isFirstSection = false;
+  sectionIndex = 0;
   activeSection: any;
   contentError: contentErrorMessage;
   parentConfig: IParentConfig = {
@@ -32,7 +33,7 @@ export class MainPlayerComponent implements OnInit {
     isReplayed: false,
     contentName: '',
     baseUrl: '',
-    instructions: {}
+    instructions: {},
   };
 
   showEndPage = true;
@@ -53,7 +54,6 @@ export class MainPlayerComponent implements OnInit {
   };
   isDurationExpired = false;
   finalScore = 0;
-  currentSlideIndex = 0;
   totalNoOfQuestions = 0;
   durationSpent: string;
   outcomeLabel: string;
@@ -88,6 +88,12 @@ export class MainPlayerComponent implements OnInit {
     this.isLoading = true;
     this.setConfig();
     this.initializeSections();
+     // keyboard accessibility enter key click event
+     document.onkeydown = function(e) {
+      if (e.keyCode === 13) { // The Enter/Return key
+        (document.activeElement  as HTMLElement).click();
+      }
+    };
   }
 
   initializeSections() {
@@ -108,7 +114,7 @@ export class MainPlayerComponent implements OnInit {
         this.sections = _.map(children, (child) => {
           let childNodes = child.children.map(item => item.identifier) || [];
           const maxQuestions = child?.maxQuestions;
-          if (child?.shuffle) {
+          if (child?.shuffle && !this.playerConfig.config?.progressBar?.length) {
             childNodes = _.shuffle(childNodes);
           }
 
@@ -139,7 +145,7 @@ export class MainPlayerComponent implements OnInit {
       if (maxQuestions) {
         childNodes = childNodes.slice(0, maxQuestions);
       }
-      if (this.playerConfig.metadata?.shuffle) {
+      if (this.playerConfig.metadata?.shuffle && !this.playerConfig.config?.progressBar?.length) {
         childNodes = _.shuffle(childNodes);
       }
       childNodes.forEach((element, index) => {
@@ -150,6 +156,15 @@ export class MainPlayerComponent implements OnInit {
         });
       });
       this.playerConfig.metadata.childNodes = childNodes;
+      if (this.playerConfig.config?.progressBar?.length) {
+        this.mainProgressBar = _.cloneDeep(this.playerConfig.config.progressBar);
+      }
+      if (this.playerConfig.config?.questions?.length) {
+        const questionsObj = this.playerConfig.config.questions.find(item => item.id === this.playerConfig.metadata.identifier);
+        if (questionsObj?.questions) {
+          this.viewerService.updateSectionQuestions(this.playerConfig.metadata.identifier, questionsObj.questions);
+        }
+      }
       this.activeSection = _.cloneDeep(this.playerConfig);
       this.isLoading = false;
       this.isFirstSection = true;
@@ -268,6 +283,7 @@ export class MainPlayerComponent implements OnInit {
       nextSectionIndex = sectionIndex > -1 ? sectionIndex : nextSectionIndex;
     }
 
+    this.sectionIndex = _.cloneDeep(nextSectionIndex);
     this.mainProgressBar.forEach((item, index) => {
       item.isActive = index === nextSectionIndex;
 
@@ -288,9 +304,7 @@ export class MainPlayerComponent implements OnInit {
 
   prepareEnd(event) {
     this.calculateScore();
-    if (this.playerConfig.metadata?.summaryType !== 'Score') {
-      this.durationSpent = this.utilService.getTimeSpentText(this.initialTime);
-    }
+    this.setDurationSpent();
     if (this.parentConfig.requiresSubmit) {
       this.loadScoreBoard = true;
     } else {
@@ -315,6 +329,7 @@ export class MainPlayerComponent implements OnInit {
     this.totalNoOfQuestions = 0;
     this.totalVisitedQuestion = 0;
     this.mainProgressBar = [];
+    this.jumpToQuestion = undefined;
     this.summary = {
       correct: 0,
       partial: 0,
@@ -326,7 +341,6 @@ export class MainPlayerComponent implements OnInit {
     this.initializeSections();
     this.endPageReached = false;
     this.loadScoreBoard = false;
-    this.currentSlideIndex = 1;
     this.activeSection = this.isSectionsAvailable ? _.cloneDeep(this.sections[0]) : this.playerConfig;
     if (this.attempts?.max === this.attempts?.current) {
       this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(_.get(this.attempts, 'current'), false, true));
@@ -358,7 +372,18 @@ export class MainPlayerComponent implements OnInit {
       this.mainProgressBar[this.mainProgressBar.length - 1] = {
         ..._.last(this.mainProgressBar), children
       };
+
+    if (this.playerConfig.config?.questions?.length) {
+      const questionsObj = this.playerConfig.config.questions.find(item => item.id === section.metadata?.identifier);
+      if (questionsObj?.questions) {
+        this.viewerService.updateSectionQuestions(section.metadata.identifier, questionsObj.questions);
+      }
+    }
     });
+    if (this.playerConfig.config?.progressBar?.length) {
+      this.mainProgressBar = _.cloneDeep(this.playerConfig.config.progressBar);
+      this.mainProgressBar[0].isActive = true;
+    }
   }
 
   calculateScore() {
@@ -384,6 +409,7 @@ export class MainPlayerComponent implements OnInit {
       return;
     }
     this.isEndEventRaised = true;
+    this.viewerService.metaData.progressBar = this.mainProgressBar;
     this.viewerService.raiseEndEvent(currentQuestionIndex, endPageSeen, score);
 
     if (_.get(this.attempts, 'current') >= _.get(this.attempts, 'max')) {
@@ -393,6 +419,7 @@ export class MainPlayerComponent implements OnInit {
 
   setDurationSpent() {
     if (this.playerConfig.metadata?.summaryType !== 'Score') {
+      this.viewerService.metaData.duration = new Date().getTime() - this.initialTime;
       this.durationSpent = this.utilService.getTimeSpentText(this.initialTime);
     }
   }
@@ -406,9 +433,7 @@ export class MainPlayerComponent implements OnInit {
   onScoreBoardSubmitted() {
     this.endPageReached = true;
     this.getSummaryObject();
-    if (this.playerConfig.metadata?.summaryType !== 'Score') {
-      this.durationSpent = this.utilService.getTimeSpentText(this.initialTime);
-    }
+    this.setDurationSpent();
     this.viewerService.raiseHeartBeatEvent(eventName.scoreBoardSubmitClicked, TelemetryType.interact, pageId.submitPage);
     this.viewerService.raiseSummaryEvent(this.totalVisitedQuestion, this.endPageReached, this.finalScore, this.summary);
     this.raiseEndEvent(this.totalVisitedQuestion, this.endPageReached, this.finalScore);

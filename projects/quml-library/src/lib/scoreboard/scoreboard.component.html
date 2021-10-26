@@ -9,14 +9,14 @@
   </div>
 
   <div class="scoreboard__points" *ngIf="!isSections && showFeedBack">
-    <div *ngFor="let score of scores; let i = index" class="scoreboard__index" (click)="goToQuestion(i+1)"
+    <div *ngFor="let score of scores; let i = index" class="scoreboard__index" (click)="goToQuestion(i+1)" tabindex="0" attr.aria-label="{{score.index}}"
       [ngClass]="score.class">
       {{score.index}}
     </div>
   </div>
 
   <div class="scoreboard__points" *ngIf="!isSections && !showFeedBack">
-    <div *ngFor="let score of scores; let i = index" class="scoreboard__index" (click)="goToQuestion(i+1)"
+    <div *ngFor="let score of scores; let i = index" class="scoreboard__index" (click)="goToQuestion(i+1)" tabindex="0" attr.aria-label="{{score.index}}"
       [ngClass]="score.class === 'skipped' ? score.class : score.class === 'unattempted' ? score.class : 'attempted'">
       {{score.index}}
     </div>
@@ -26,13 +26,13 @@
     <div *ngFor="let section of scores">
       <div class="sections-score-card__title">{{section?.index}}</div>
       <div class="sections-score-card__points" *ngIf="showFeedBack">
-        <div *ngFor="let score of section?.children; let i = index" class="scoreboard__index"
+        <div *ngFor="let score of section?.children; let i = index" class="scoreboard__index" tabindex="0" attr.aria-label="{{score.index}}"
           (click)="goToQuestion(i+1, section.identifier)" [ngClass]="score.class">
           {{score.index}}
         </div>
       </div>
       <div class="sections-score-card__points" *ngIf="!showFeedBack">
-        <div *ngFor="let score of section?.children; let i = index" class="scoreboard__index"
+        <div *ngFor="let score of section?.children; let i = index" class="scoreboard__index" tabindex="0" attr.aria-label="{{score.index}}"
           (click)="goToQuestion(i+1, section.identifier)" [ngClass]="score.class">
           {{score.index}}
         </div>

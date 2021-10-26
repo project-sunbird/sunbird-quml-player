@@ -22,6 +22,7 @@ export class SectionPlayerComponent implements OnChanges {
   @Input() isFirstSection = false;
   @Input() jumpToQuestion;
   @Input() mainProgressBar;
+  @Input() sectionIndex = 0;
   @Input() parentConfig: IParentConfig;
   @Output() playerEvent = new EventEmitter<any>();
   @Output() telemetryEvent = new EventEmitter<any>();
@@ -95,9 +96,6 @@ export class SectionPlayerComponent implements OnChanges {
   zoomImgSrc: string;
   imageZoomCount = 100;
   replayed = false;
-  slideInterval: number;
-  showIndicator: boolean;
-  noWrapSlides: boolean;
   sectionId: string;
 
   constructor(
@@ -145,7 +143,9 @@ export class SectionPlayerComponent implements OnChanges {
         if (!res?.questions) {
           return;
         }
-        this.questions = _.uniqBy(this.questions.concat(res.questions), 'identifier');
+        const unCommonQuestions = _.xorBy(this.questions, res.questions, 'identifier');
+        this.questions = _.uniqBy(this.questions.concat(unCommonQuestions), 'identifier');
+
         this.sortQuestions();
         this.cdRef.detectChanges();
         this.noOfTimesApiCalled++;
@@ -158,8 +158,12 @@ export class SectionPlayerComponent implements OnChanges {
           }
         }
 
-        if (!this.showStartPage && this.currentSlideIndex === 0) {
-          setTimeout(() => { this.nextSlide(); });
+        if (this.currentSlideIndex === 0) {
+          if (this.showStartPage) {
+            this.active = this.sectionIndex === 0;
+          } else {
+            setTimeout(() => { this.nextSlide(); });
+          }
         }
       });
   }
@@ -167,6 +171,8 @@ export class SectionPlayerComponent implements OnChanges {
   private setConfig() {
     this.noOfTimesApiCalled = 0;
     this.currentSlideIndex = 0;
+    this.active = this.currentSlideIndex === 0 && this.sectionIndex === 0 && this.showStartPage;
+
     if (this.myCarousel) {
       this.myCarousel.selectSlide(this.currentSlideIndex);
     }
@@ -198,9 +204,6 @@ export class SectionPlayerComponent implements OnChanges {
     this.viewerService.initialize(this.sectionConfig, this.threshold, this.questionIds, this.parentConfig.isSectionsAvailable);
     this.checkCompatibilityLevel(this.sectionConfig.metadata.compatibilityLevel);
     this.initialTime = new Date().getTime();
-    this.slideInterval = 0;
-    this.showIndicator = false;
-    this.noWrapSlides = true;
     this.timeLimit = this.sectionConfig.metadata?.timeLimits?.maxTime || 0;
     this.warningTime = this.sectionConfig.metadata?.timeLimits?.warningTime || 0;
     this.showTimer = this.sectionConfig.metadata?.showTimer?.toLowerCase() !== 'no';
@@ -309,6 +312,7 @@ export class SectionPlayerComponent implements OnChanges {
       this.myCarousel.move(this.carouselConfig.PREV);
     }
     this.currentSlideIndex = this.myCarousel.getCurrentSlideIndex();
+    this.active = this.currentSlideIndex === 0 && this.sectionIndex === 0 && this.showStartPage;
     this.currentQuestionsMedia = _.get(this.questions[this.myCarousel.getCurrentSlideIndex() - 1], 'media');
     this.setImageZoom();
     this.setSkippedClass(this.myCarousel.getCurrentSlideIndex() - 1);
@@ -374,6 +378,7 @@ export class SectionPlayerComponent implements OnChanges {
 
   goToSlideClicked(event, index) {
     event.stopPropagation();
+    this.active = false;
     this.jumpSlideIndex = index;
     if (this.optionSelectedObj && this.showFeedBack) {
       this.stopAutoNavigation = false;
@@ -389,6 +394,7 @@ export class SectionPlayerComponent implements OnChanges {
   }
 
   onScoreBoardClicked() {
+    this.viewerService.updateSectionQuestions(this.sectionConfig.metadata.identifier, this.questions);
     this.showScoreBoard.emit();
   }
 
@@ -586,6 +592,7 @@ export class SectionPlayerComponent implements OnChanges {
     if (index === 0) {
       this.optionSelectedObj = undefined;
       this.myCarousel.selectSlide(0);
+      this.active = this.currentSlideIndex === 0 && this.sectionIndex === 0 && this.showStartPage;
       return;
     }
     this.currentQuestionsMedia = _.get(this.questions[this.currentSlideIndex - 1], 'media');
@@ -605,6 +612,7 @@ export class SectionPlayerComponent implements OnChanges {
   }
 
   goToQuestion(event) {
+    this.active = false;
     this.disableNext = false;
     this.initializeTimer = true;
     const index = event.questionNo;
@@ -658,6 +666,7 @@ export class SectionPlayerComponent implements OnChanges {
 
   showAnswerClicked(event) {
     if (event?.showAnswer) {
+      this.active = true;
       this.progressBarClass[this.myCarousel.getCurrentSlideIndex() - 1].class = 'correct';
       this.viewerService.raiseHeartBeatEvent(eventName.showAnswer, TelemetryType.interact, pageId.shortAnswer);
       this.viewerService.raiseHeartBeatEvent(eventName.pageScrolled, TelemetryType.impression, this.myCarousel.getCurrentSlideIndex() - 1);
