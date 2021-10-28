@@ -65,7 +65,7 @@
                       {{question?.index}}
                     </li>
                   </ul>
-                  <ul *ngIf="section?.isActive && !showFeedBack">
+                  <ul class="nonFeedback" *ngIf="section?.isActive && !showFeedBack">
                     <li *ngFor="let question of progressBarClass; let j=index" tabindex="0" attr.aria-label="question number {{question?.index}}"
                       (click)="goToSlideClicked($event, question?.index)" class="showFeedBack-progressBar"
                       [ngClass]="(j+1) === myCarousel.getCurrentSlideIndex() ? 'progressBar-border': question.class === 'skipped' ? question.class: question.class === 'unattempted' ? '' : 'att-color'">
@@ -85,7 +85,7 @@
             </ul>
            </li>
           <li>
-            <ul class="singleContent" *ngIf="!parentConfig?.isSectionsAvailable && !showFeedBack">
+            <ul class="singleContent nonFeedback" *ngIf="!parentConfig?.isSectionsAvailable && !showFeedBack">
               <li *ngFor="let question of progressBarClass; let j=index" tabindex="0" attr.aria-label="question number {{question?.index}}"
                 (click)="goToSlideClicked($event, question?.index)" class="showFeedBack-progressBar"
                 [ngClass]="(j+1) === myCarousel.getCurrentSlideIndex() ? 'progressBar-border': question.class === 'skipped' ? question.class: question.class === 'unattempted' ? '' : 'att-color'">

@@ -54,8 +54,6 @@
 
     &__instr-desc {
         padding: 1rem 0;
-        max-height: calc(100vh - 14.625rem);
-        overflow-y: auto;
         color: #333333;
         font-size: calculateRem(12px);
         letter-spacing: 0;

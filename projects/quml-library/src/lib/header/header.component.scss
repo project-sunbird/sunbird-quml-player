@@ -69,7 +69,7 @@
       border: solid #333;
       border-width: 0 calculateRem(2px) calculateRem(2px) 0;
     }
-    &:hover,&--active {
+    &:hover,&--active,&:focus {
       background-color: #FFD555;
     }
   }
