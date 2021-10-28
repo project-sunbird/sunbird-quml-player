@@ -64,13 +64,13 @@
             border: 0px solid transparent;
           }
           &.correct {
-            --correct-bg:linear-gradient(90deg, #70d4ad 0, #47a480 100%);
+            --correct-bg:#08BC82;
             background: var(--correct-bg);
             &:hover {
             }
           }
           &.wrong {
-            --wrong-bg:linear-gradient(134.51deg, #F1635D 0%, #F97A74 100%);
+            --wrong-bg:#F1635D;
             background: var(--wrong-bg);
             &:hover {
             }
