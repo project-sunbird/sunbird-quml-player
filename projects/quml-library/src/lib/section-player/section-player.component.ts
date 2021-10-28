@@ -267,7 +267,7 @@ export class SectionPlayerComponent implements OnChanges {
       this.currentSlideIndex = this.currentSlideIndex + 1;
     }
 
-    if (this.myCarousel.getCurrentSlideIndex() === 0 && this.isFirstSection && !this.initializeTimer) {
+    if (!this.initializeTimer) {
       this.initializeTimer = true;
     }
 
