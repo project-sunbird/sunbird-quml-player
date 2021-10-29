@@ -60,7 +60,7 @@
 }
 
 .landscape-content {
-  padding: 2.5rem 3.5rem 0 4rem;
+  padding: 2.5rem 4rem 0 4rem;
   overflow: auto;
   height: 100%;
   width: 100%;
@@ -90,21 +90,22 @@
 
 .lanscape-mode-right {
   /* Hide scrollbar for Chrome, Safari and Opera */
-&::-webkit-scrollbar {
-  display: none;
-}
+// &::-webkit-scrollbar {
+//   display: none;
+// }
 /* Hide scrollbar for IE, Edge and Firefox */
 -ms-overflow-style: none; /* IE and Edge */
 scrollbar-width: none; /* Firefox */
 
   position: absolute;
-  margin-right: 1rem;
-  right: 0;
+  padding-right: 1rem;
+  right: 0.5rem;
   color: #575757;
   font-size: 0.75rem;
   height: calc(100% - 4rem);
-  overflow-y: scroll;
+  overflow-y: auto;
   top: 3.5rem;
+  padding-left: 1rem;
 
   ul {
     list-style: none;
@@ -112,6 +113,7 @@ scrollbar-width: none; /* Firefox */
     padding: 0;
     text-align: center;
     position: relative;
+   
     &::before {
       content: "";
       width: 0.0625rem;
@@ -126,6 +128,7 @@ scrollbar-width: none; /* Firefox */
     li {
       position: relative;
       z-index: 2;
+      
       &.requiresSubmit {
         color: #575757;
         border: .03125rem solid #575757;
@@ -135,10 +138,37 @@ scrollbar-width: none; /* Firefox */
         background: var(--white);
         &:hover {
           border: 0.0625rem solid var(--primary-color);
+         
         }
       }
     }
     .section {
+      ul {
+        &.nonFeedback{
+          li:hover{
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+          }
+          li.att-color{
+            color: #fff;
+            background: var(--primary-color);
+          }
+        }
+        li{
+          &:hover,&:focus, &.progressBar-border{
+            &::after{
+              border: 1px solid var(--primary-color);
+              content: '';
+              width: 1.65rem;
+              height: 1.65rem;
+              border-radius: 50%;
+              padding: 0.25rem;
+              position: absolute;
+            }
+          }
+        }
+      }
+      
       &.attempted {
         &::after {
           content: "";
@@ -153,41 +183,29 @@ scrollbar-width: none; /* Firefox */
           right: -0.7rem;
         }
       }
-      &.correct {
-        &::after {
-          content: "";
-          position: absolute;
-          top: 0.525rem;
-          right: -0.7rem;
-          --correct-bg: linear-gradient(90deg, #70d4ad 0, #47a480 100%);
-          background: var(--correct-bg);
-          height: 0.375rem;
+      &.correct::after , &.wrong::after, &.partial::after  {
+        content: "";
+        position: absolute;
+        top: 0.525rem;
+        right: -0.7rem;
+        height: 0.375rem;
           width: 0.375rem;
           border-radius: 0.375rem;
+      }
+      &.correct {
+        &::after {
+          --correct-bg: #08BC82;
+          background: var(--correct-bg);
         }
       }
       &.wrong {
         &::after {
-          content: "";
-          position: absolute;
-          top: 0.525rem;
-          right: -0.7rem;
-          --wrong-bg: linear-gradient(134.51deg, #f1635d 0%, #f97a74 100%);
+          --wrong-bg: #F1635D;
           background: var(--wrong-bg);
-          height: 0.375rem;
-          width: 0.375rem;
-          border-radius: 0.375rem;
         }
       }
       &.partial {
         &::after {
-          content: "";
-          position: absolute;
-          top: 0.525rem;
-          right: -0.7rem;
-          height: 0.375rem;
-          width: 0.375rem;
-          border-radius: 0.375rem;
           --partial-bg: linear-gradient(
             180deg,
             rgba(71, 164, 128, 1) 0%,
@@ -196,6 +214,13 @@ scrollbar-width: none; /* Firefox */
             rgba(249, 122, 116, 1) 100%
             );
           background: var(--partial-bg);
+        }
+      }
+      &.attempted, &.partial{
+        label{
+          color: var(--white) !important;
+          background: var(--primary-color);
+          border: 0.03125rem solid var(--primary-color);
         }
       }
     }
@@ -212,6 +237,7 @@ scrollbar-width: none; /* Firefox */
       border: 0.03125rem solid #575757;
       margin-bottom: 2.25rem;
       cursor: pointer;
+      
       &.requiresSubmit {
         color: #575757;
         border: .03125rem solid #575757;
@@ -221,9 +247,19 @@ scrollbar-width: none; /* Firefox */
           border: 0.0625rem solid var(--primary-color);
         }
       }
-      &.active{
+      &.active,&:hover,&:focus{
         color: var(--primary-color);
         border: 0.0625rem solid var(--primary-color);
+        &::after{
+          border: 1px solid var(--primary-color);
+           content: '';
+            height: 1.65rem;
+            border-radius: 0.25rem;
+            position: absolute;
+            width: 1.65rem;
+            background: var(--white);
+            z-index: -1;
+        }
       }
       &.skipped {
         color: var(--white);
@@ -275,12 +311,14 @@ scrollbar-width: none; /* Firefox */
           border: 0.0625rem solid var(--primary-color);
         }
       }
+
       &.progressBar-border,
       .active,
       &.att-color {
         color: var(--primary-color);
         border: 0.0625rem solid var(--primary-color);
       }
+     
       &.info-page{
         color: var(--white);
         background: var(--primary-color);
@@ -290,6 +328,9 @@ scrollbar-width: none; /* Firefox */
         color: var(--white);
         background: #969696;
         border: 0.0625rem solid #969696;
+        &:hover{
+          color: var(--white) !important;
+        }
       }
       &.partial,
       &.wrong,
@@ -298,13 +339,13 @@ scrollbar-width: none; /* Firefox */
         border: 0px solid transparent;
       }
       &.correct {
-        --correct-bg: linear-gradient(90deg, #70d4ad 0, #47a480 100%);
+        --correct-bg: #08BC82;
         background: var(--correct-bg);
         &:hover {
         }
       }
       &.wrong {
-        --wrong-bg: linear-gradient(134.51deg, #f1635d 0%, #f97a74 100%);
+        --wrong-bg: #F1635D;
         background: var(--wrong-bg);
         &:hover {
         }
@@ -331,6 +372,7 @@ scrollbar-width: none; /* Firefox */
       }
     }
   }
+
 }
 
 .current-slide {
@@ -841,3 +883,4 @@ scrollbar-width: none; /* Firefox */
 }
 input[type="checkbox"]:checked + label{
 }
+

@@ -38,7 +38,7 @@
               </div>
               <div *ngIf="question?.primaryCategory.toLowerCase() === 'subjective question'">
                 <quml-sa [questions]='question' [replayed]="parentConfig?.isReplayed" [baseUrl]="parentConfig?.baseUrl"
-                  (showAnswerClicked)="showAnswerClicked($event)">
+                  (showAnswerClicked)="showAnswerClicked($event, question)">
                 </quml-sa>
               </div>
             </div>
@@ -57,42 +57,42 @@
                 <li class="section relative" *ngFor="let section of mainProgressBar; let i=index;" attr.aria-label="section {{section?.index}}"
                   (click)="jumpToSection(section?.identifier)"
                   [ngClass]="{'attempted' : section.class === 'attempted', 'partial': section.class === 'partial'}">
-                  <label for="list-item-{{i}}" class="progressBar-border" tabindex="0">{{section?.index}}</label>
+                  <label for="list-item-{{i}}" class="progressBar-border" [ngClass] = "{'active' : section?.isActive && section.class !== 'attempted'}" tabindex="0">{{section?.index}}</label>
                   <ul *ngIf="section?.isActive && showFeedBack">
                     <li *ngFor="let question of progressBarClass; let j=index" tabindex="0" attr.aria-label="question number {{question?.index}}"
                       (click)="goToSlideClicked($event, question?.index)" class="showFeedBack-progressBar"
-                      [ngClass]="(j + 1) === myCarousel.getCurrentSlideIndex() ? 'progressBar-border' : question.class">
+                      [ngClass]="(j+1) === myCarousel.getCurrentSlideIndex() ? (question.class === 'skipped' ? 'progressBar-border' : 'progressBar-border ' + question.class) : question.class">
                       {{question?.index}}
                     </li>
                   </ul>
-                  <ul *ngIf="section?.isActive && !showFeedBack">
+                  <ul class="nonFeedback" *ngIf="section?.isActive && !showFeedBack">
                     <li *ngFor="let question of progressBarClass; let j=index" tabindex="0" attr.aria-label="question number {{question?.index}}"
                       (click)="goToSlideClicked($event, question?.index)" class="showFeedBack-progressBar"
-                      [ngClass]="(j+1) === myCarousel.getCurrentSlideIndex() ? 'progressBar-border': question.class === 'skipped' ? question.class: question.class === 'unattempted' ? '' : 'att-color'">
+                      [ngClass]="(j+1) === myCarousel.getCurrentSlideIndex() ? (question.class === 'skipped' ? 'progressBar-border' : 'att-color progressBar-border') : question.class === 'skipped' ? question.class: question.class === 'unattempted' ? '' : 'att-color'">
                       {{question?.index}}
                     </li>
                   </ul>
                 </li>
               </ul>
             </li>
-           <li>
+           <!-- <li>
             <ul class="singleContent" *ngIf="!parentConfig?.isSectionsAvailable && showFeedBack">
               <li *ngFor="let question of progressBarClass; let j=index" tabindex="0" attr.aria-label="question number {{question?.index}}"
                 (click)="goToSlideClicked($event, question?.index)" class="showFeedBack-progressBar"
-                [ngClass]="(j + 1) === myCarousel.getCurrentSlideIndex() ? 'progressBar-border' : question.class">
+                [ngClass]="(j+1) === myCarousel.getCurrentSlideIndex() ? (question.class === 'skipped' ? 'progressBar-border' : 'progressBar-border ' + question.class) : question.class">
                 {{question?.index}}
               </li>
             </ul>
-           </li>
-          <li>
-            <ul class="singleContent" *ngIf="!parentConfig?.isSectionsAvailable && !showFeedBack">
+           </li> -->
+          <!-- <li>
+            <ul class="singleContent nonFeedback" *ngIf="!parentConfig?.isSectionsAvailable && !showFeedBack">
               <li *ngFor="let question of progressBarClass; let j=index" tabindex="0" attr.aria-label="question number {{question?.index}}"
                 (click)="goToSlideClicked($event, question?.index)" class="showFeedBack-progressBar"
-                [ngClass]="(j+1) === myCarousel.getCurrentSlideIndex() ? 'progressBar-border': question.class === 'skipped' ? question.class: question.class === 'unattempted' ? '' : 'att-color'">
+                [ngClass]="(j+1) === myCarousel.getCurrentSlideIndex() ? (question.class === 'skipped' ? 'progressBar-border' : 'att-color progressBar-border') : question.class === 'skipped' ? question.class: question.class === 'unattempted' ? '' : 'att-color'">
                 {{question?.index}}
               </li>
             </ul>
-          </li>
+          </li> -->
             <li class="requiresSubmit cursor-pointer showFeedBack-progressBar" tabindex="0" aria-label="scoreboard" *ngIf="parentConfig.requiresSubmit"
               (click)="disableNext = true; onScoreBoardClicked()">
               <img src="./assets/flag_inactive.svg" alt="">
