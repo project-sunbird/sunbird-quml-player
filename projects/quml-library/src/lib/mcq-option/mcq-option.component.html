@@ -1,12 +1,12 @@
-<div class="quml-mcq-options" *ngIf="layout=='DEFAULT' || layout=='IMAGEQOPTION'">
+<div class="quml-mcq-options" role="radiogroup"  *ngIf="layout=='DEFAULT' || layout=='IMAGEQOPTION'">
     <div class="quml-option-card" *ngFor="let mcqOption of mcqOptions" (click)="onOptionSelect($event,mcqOption)">
-        <div class="quml-option"
+        <div class="quml-option" role="radio"
         [ngClass]="(mcqOption.selected==true)?'quml-option quml-option--selected':'quml-option'">
             <div class="option"
                 [innerHTML]="mcqOption.label | safeHtml">
             </div>
             <label class="container" tabindex="0">
-                <input type="radio" name="radio" role="radio" [checked]="mcqOption.selected" >
+                <input type="radio" name="radio" aria-checked="mcqOption.selected" [checked]="mcqOption.selected" >
                 <span class="checkmark"></span>
             </label>
         </div>
