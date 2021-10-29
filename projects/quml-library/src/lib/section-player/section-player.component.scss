@@ -60,7 +60,7 @@
 }
 
 .landscape-content {
-  padding: 2.5rem 3.5rem 0 4rem;
+  padding: 2.5rem 4rem 0 4rem;
   overflow: auto;
   height: 100%;
   width: 100%;
@@ -183,41 +183,29 @@ scrollbar-width: none; /* Firefox */
           right: -0.7rem;
         }
       }
-      &.correct {
-        &::after {
-          content: "";
-          position: absolute;
-          top: 0.525rem;
-          right: -0.7rem;
-          --correct-bg: #08BC82;
-          background: var(--correct-bg);
-          height: 0.375rem;
+      &.correct::after , &.wrong::after, &.partial::after  {
+        content: "";
+        position: absolute;
+        top: 0.525rem;
+        right: -0.7rem;
+        height: 0.375rem;
           width: 0.375rem;
           border-radius: 0.375rem;
+      }
+      &.correct {
+        &::after {
+          --correct-bg: #08BC82;
+          background: var(--correct-bg);
         }
       }
       &.wrong {
         &::after {
-          content: "";
-          position: absolute;
-          top: 0.525rem;
-          right: -0.7rem;
           --wrong-bg: #F1635D;
           background: var(--wrong-bg);
-          height: 0.375rem;
-          width: 0.375rem;
-          border-radius: 0.375rem;
         }
       }
       &.partial {
         &::after {
-          content: "";
-          position: absolute;
-          top: 0.525rem;
-          right: -0.7rem;
-          height: 0.375rem;
-          width: 0.375rem;
-          border-radius: 0.375rem;
           --partial-bg: linear-gradient(
             180deg,
             rgba(71, 164, 128, 1) 0%,
@@ -266,10 +254,11 @@ scrollbar-width: none; /* Firefox */
           border: 1px solid var(--primary-color);
            content: '';
             height: 1.65rem;
-            border-radius: 0.25em;
-            padding: 0.25rem;
+            border-radius: 0.25rem;
             position: absolute;
-            width: 1.95em;
+            width: 1.65rem;
+            background: var(--white);
+            z-index: -1;
         }
       }
       &.skipped {
