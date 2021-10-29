@@ -97,6 +97,7 @@ export class SectionPlayerComponent implements OnChanges {
   imageZoomCount = 100;
   replayed = false;
   sectionId: string;
+  showRootInstruction = true;
 
   constructor(
     public viewerService: ViewerService,
@@ -347,6 +348,10 @@ export class SectionPlayerComponent implements OnChanges {
   }
 
   nextSlideClicked(event) {
+    if (this.showRootInstruction && this.parentConfig.isSectionsAvailable) {
+      this.showRootInstruction = false;
+      return;
+    }
     if (this.myCarousel.getCurrentSlideIndex() === 0) {
       return this.nextSlide();
     }
@@ -391,6 +396,7 @@ export class SectionPlayerComponent implements OnChanges {
   }
 
   jumpToSection(identifier: string) {
+    this.showRootInstruction = false;
     this.emitSectionEnd(false, identifier);
   }
 
@@ -594,6 +600,7 @@ export class SectionPlayerComponent implements OnChanges {
       this.optionSelectedObj = undefined;
       this.myCarousel.selectSlide(0);
       this.active = this.currentSlideIndex === 0 && this.sectionIndex === 0 && this.showStartPage;
+      this.showRootInstruction = true;
       return;
     }
     this.currentQuestionsMedia = _.get(this.questions[this.currentSlideIndex - 1], 'media');
