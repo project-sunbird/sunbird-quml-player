@@ -145,8 +145,8 @@ export class SectionPlayerComponent implements OnChanges {
         }
         const unCommonQuestions = _.xorBy(this.questions, res.questions, 'identifier');
         this.questions = _.uniqBy(this.questions.concat(unCommonQuestions), 'identifier');
-
         this.sortQuestions();
+        this.viewerService.updateSectionQuestions(this.sectionConfig.metadata.identifier, this.questions);
         this.cdRef.detectChanges();
         this.noOfTimesApiCalled++;
         this.loadView = true;
@@ -222,6 +222,7 @@ export class SectionPlayerComponent implements OnChanges {
 
     this.questions = this.viewerService.getSectionQuestions(this.sectionConfig.metadata.identifier);
     this.sortQuestions();
+    this.viewerService.updateSectionQuestions(this.sectionConfig.metadata.identifier, this.questions);
     this.resetQuestionState();
     if (this.jumpToQuestion) {
       this.goToQuestion(this.jumpToQuestion);
@@ -266,7 +267,7 @@ export class SectionPlayerComponent implements OnChanges {
       this.currentSlideIndex = this.currentSlideIndex + 1;
     }
 
-    if (this.myCarousel.getCurrentSlideIndex() === 0 && this.isFirstSection && !this.initializeTimer) {
+    if (!this.initializeTimer) {
       this.initializeTimer = true;
     }
 
@@ -664,10 +665,17 @@ export class SectionPlayerComponent implements OnChanges {
     this.viewerService.raiseHeartBeatEvent(eventName.viewHint, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
   }
 
-  showAnswerClicked(event) {
+  showAnswerClicked(event, question?) {
     if (event?.showAnswer) {
       this.active = true;
       this.progressBarClass[this.myCarousel.getCurrentSlideIndex() - 1].class = 'correct';
+      if (question) {
+        const index = this.questions.findIndex(que => que.identifier === question.identifier);
+        if (index > -1) {
+          this.questions[index].isAnswerShown = true;
+          this.viewerService.updateSectionQuestions(this.sectionConfig.metadata.identifier, this.questions);
+        }
+      }
       this.viewerService.raiseHeartBeatEvent(eventName.showAnswer, TelemetryType.interact, pageId.shortAnswer);
       this.viewerService.raiseHeartBeatEvent(eventName.pageScrolled, TelemetryType.impression, this.myCarousel.getCurrentSlideIndex() - 1);
     }
