@@ -348,7 +348,7 @@ export class SectionPlayerComponent implements OnChanges {
   }
 
   nextSlideClicked(event) {
-    if (this.showRootInstruction) {
+    if (this.showRootInstruction && this.parentConfig.isSectionsAvailable) {
       this.showRootInstruction = false;
       return;
     }

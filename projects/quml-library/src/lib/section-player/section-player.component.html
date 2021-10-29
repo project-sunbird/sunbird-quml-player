@@ -76,7 +76,7 @@
                 </li>
               </ul>
             </li>
-           <!-- <li>
+           <li>
             <ul class="singleContent" *ngIf="!parentConfig?.isSectionsAvailable && showFeedBack">
               <li *ngFor="let question of progressBarClass; let j=index" tabindex="0" attr.aria-label="question number {{question?.index}}"
                 (click)="goToSlideClicked($event, question?.index)" class="showFeedBack-progressBar"
@@ -84,8 +84,8 @@
                 {{question?.index}}
               </li>
             </ul>
-           </li> -->
-          <!-- <li>
+           </li>
+          <li>
             <ul class="singleContent nonFeedback" *ngIf="!parentConfig?.isSectionsAvailable && !showFeedBack">
               <li *ngFor="let question of progressBarClass; let j=index" tabindex="0" attr.aria-label="question number {{question?.index}}"
                 (click)="goToSlideClicked($event, question?.index)" class="showFeedBack-progressBar"
@@ -93,7 +93,7 @@
                 {{question?.index}}
               </li>
             </ul>
-          </li> -->
+          </li>
             <li class="requiresSubmit cursor-pointer showFeedBack-progressBar" tabindex="0" aria-label="scoreboard" *ngIf="parentConfig.requiresSubmit"
               (click)="disableNext = true; onScoreBoardClicked()">
               <img src="./assets/flag_inactive.svg" alt="">
