@@ -28,8 +28,10 @@ export class SaComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
-    if(this.replayed) {
+    if (this.replayed) {
       this.showAnswer = false;
+    } else if (this.questions?.isAnswerShown) {
+      this.showAnswer = true;
     }
   }
 
