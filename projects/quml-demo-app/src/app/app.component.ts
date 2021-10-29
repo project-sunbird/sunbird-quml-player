@@ -8,13 +8,16 @@ import { data1 } from './quml-library-data';
 })
 export class AppComponent {
   title = 'quml-demo-app';
-  qumlMetaDataConfig: any = JSON.parse(localStorage.getItem('config')) || {};
+  qumlMetaDataConfig = {};
+  // qumlMetaDataConfig: any = JSON.parse(localStorage.getItem('config')) || {};  // to Get locally saved metaData
   config = { ...data1.config, ...this.qumlMetaDataConfig };
   QumlPlayerConfig = { ...data1, config: this.config };
 
   getPlayerEvents(event) {
     console.log('get player events', JSON.stringify(event));
-    if (event.eid === 'END') {
+
+    // Store the metaData locally
+    /* if (event.eid === 'END') {
       this.qumlMetaDataConfig = event?.metaData || {};
       localStorage.setItem('config', JSON.stringify(this.qumlMetaDataConfig));
       this.config = {
@@ -22,7 +25,7 @@ export class AppComponent {
         ...this.qumlMetaDataConfig,
       };
       this.QumlPlayerConfig.config = this.config;
-    }
+    } */
   }
 
   getTelemetryEvents(event) {

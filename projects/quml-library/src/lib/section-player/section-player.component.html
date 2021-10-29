@@ -25,9 +25,10 @@
       <div class="landscape-content">
         <carousel class="landscape-center" [interval]="0" [showIndicators]="false" [noWrap]="true" #myCarousel>
           <slide>
-            <quml-startpage [instructions]="startPageInstruction" [totalNoOfQuestions]="noOfQuestions" [points]="points"
-              [time]="isFirstSection ? timeLimit : null" 
-              [contentName]="parentConfig?.isSectionsAvailable ? sectionConfig?.metadata?.name : parentConfig?.contentName" [showTimer]="showTimer"></quml-startpage>
+            <quml-startpage [instructions]="showRootInstruction ? parentConfig?.instructions : sectionConfig.metadata?.instructions?.default || parentConfig?.instructions" [totalNoOfQuestions]="noOfQuestions" [points]="points"
+              [time]="showRootInstruction ? timeLimit : null" [showTimer]="showTimer"
+              [contentName]="showRootInstruction ? parentConfig?.contentName : parentConfig?.isSectionsAvailable ? sectionConfig?.metadata?.name : parentConfig?.contentName">
+            </quml-startpage>
           </slide>
           <slide *ngFor="let question of questions; let i= index">
             <div [id]="question.identifier">
@@ -49,7 +50,7 @@
         <ul>
           <ng-container>
             <li class="showFeedBack-progressBar info-page" tabindex="0" aria-label="info page"
-              [ngClass]="(currentSlideIndex === 0 || currentSlideIndex > 0) ? 'att-color': '' "
+            [ngClass]="(currentSlideIndex === 0) ? 'att-color progressBar-border': 'att-color' "
               (click)="goToSlideClicked($event, 0)">i
             </li>
             <li>
@@ -57,7 +58,7 @@
                 <li class="section relative" *ngFor="let section of mainProgressBar; let i=index;" attr.aria-label="section {{section?.index}}"
                   (click)="jumpToSection(section?.identifier)"
                   [ngClass]="{'attempted' : section.class === 'attempted', 'partial': section.class === 'partial'}">
-                  <label for="list-item-{{i}}" class="progressBar-border" [ngClass] = "{'active' : section?.isActive && section.class !== 'attempted'}" tabindex="0">{{section?.index}}</label>
+                  <label for="list-item-{{i}}" class="progressBar-border" [ngClass] = "{'active' : section?.isActive && !showRootInstruction && section.class !== 'attempted'}" tabindex="0">{{section?.index}}</label>
                   <ul *ngIf="section?.isActive && showFeedBack">
                     <li *ngFor="let question of progressBarClass; let j=index" tabindex="0" attr.aria-label="question number {{question?.index}}"
                       (click)="goToSlideClicked($event, question?.index)" class="showFeedBack-progressBar"
@@ -75,7 +76,7 @@
                 </li>
               </ul>
             </li>
-           <!-- <li>
+           <li>
             <ul class="singleContent" *ngIf="!parentConfig?.isSectionsAvailable && showFeedBack">
               <li *ngFor="let question of progressBarClass; let j=index" tabindex="0" attr.aria-label="question number {{question?.index}}"
                 (click)="goToSlideClicked($event, question?.index)" class="showFeedBack-progressBar"
@@ -83,8 +84,8 @@
                 {{question?.index}}
               </li>
             </ul>
-           </li> -->
-          <!-- <li>
+           </li>
+          <li>
             <ul class="singleContent nonFeedback" *ngIf="!parentConfig?.isSectionsAvailable && !showFeedBack">
               <li *ngFor="let question of progressBarClass; let j=index" tabindex="0" attr.aria-label="question number {{question?.index}}"
                 (click)="goToSlideClicked($event, question?.index)" class="showFeedBack-progressBar"
@@ -92,7 +93,7 @@
                 {{question?.index}}
               </li>
             </ul>
-          </li> -->
+          </li>
             <li class="requiresSubmit cursor-pointer showFeedBack-progressBar" tabindex="0" aria-label="scoreboard" *ngIf="parentConfig.requiresSubmit"
               (click)="disableNext = true; onScoreBoardClicked()">
               <img src="./assets/flag_inactive.svg" alt="">
