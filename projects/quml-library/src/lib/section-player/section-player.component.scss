@@ -141,17 +141,6 @@ scrollbar-width: none; /* Firefox */
          
         }
       }
-      &:hover,&:focus, &.progressBar-border{
-        &::after{
-          border: 1px solid var(--primary-color);
-          content: '';
-          width: 1.65rem;
-          height: 1.65rem;
-          border-radius: 50%;
-          padding: 0.25rem;
-          position: absolute;
-        }
-      }
     }
     .section {
       ul {
@@ -894,4 +883,16 @@ scrollbar-width: none; /* Firefox */
 }
 input[type="checkbox"]:checked + label{
 }
-
+.hover-effect{
+  &:hover,&:focus, &.progressBar-border{
+    &::after{
+      border: 1px solid var(--primary-color);
+      content: '';
+      width: 1.65rem;
+      height: 1.65rem;
+      border-radius: 50%;
+      padding: 0.25rem;
+      position: absolute;
+    }
+  }
+}

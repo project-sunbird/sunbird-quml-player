@@ -49,7 +49,7 @@
       <div class="lanscape-mode-right">
         <ul>
           <ng-container>
-            <li class="showFeedBack-progressBar info-page" tabindex="0" aria-label="info page"
+            <li class="showFeedBack-progressBar info-page hover-effect" tabindex="0" aria-label="info page"
             [ngClass]="(currentSlideIndex === 0) ? 'att-color progressBar-border': 'att-color' "
               (click)="goToSlideClicked($event, 0)">i
             </li>
@@ -79,7 +79,7 @@
            <li>
             <ul class="singleContent" *ngIf="!parentConfig?.isSectionsAvailable && showFeedBack">
               <li *ngFor="let question of progressBarClass; let j=index" tabindex="0" attr.aria-label="question number {{question?.index}}"
-                (click)="goToSlideClicked($event, question?.index)" class="showFeedBack-progressBar"
+                (click)="goToSlideClicked($event, question?.index)" class="showFeedBack-progressBar hover-effect"
                 [ngClass]="(j+1) === myCarousel.getCurrentSlideIndex() ? (question.class === 'skipped' ? 'progressBar-border' : 'progressBar-border ' + question.class) : question.class">
                 {{question?.index}}
               </li>
@@ -88,13 +88,13 @@
           <li>
             <ul class="singleContent nonFeedback" *ngIf="!parentConfig?.isSectionsAvailable && !showFeedBack">
               <li *ngFor="let question of progressBarClass; let j=index" tabindex="0" attr.aria-label="question number {{question?.index}}"
-                (click)="goToSlideClicked($event, question?.index)" class="showFeedBack-progressBar"
+                (click)="goToSlideClicked($event, question?.index)" class="showFeedBack-progressBar hover-effect"
                 [ngClass]="(j+1) === myCarousel.getCurrentSlideIndex() ? (question.class === 'skipped' ? 'progressBar-border' : 'att-color progressBar-border') : question.class === 'skipped' ? question.class: question.class === 'unattempted' ? '' : 'att-color'">
                 {{question?.index}}
               </li>
             </ul>
           </li>
-            <li class="requiresSubmit cursor-pointer showFeedBack-progressBar" tabindex="0" aria-label="scoreboard" *ngIf="parentConfig.requiresSubmit"
+            <li class="requiresSubmit cursor-pointer showFeedBack-progressBar hover-effect" tabindex="0" aria-label="scoreboard" *ngIf="parentConfig.requiresSubmit"
               (click)="disableNext = true; onScoreBoardClicked()">
               <img src="./assets/flag_inactive.svg" alt="">
             </li>
