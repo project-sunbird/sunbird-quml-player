@@ -34,6 +34,7 @@ export class MainPlayerComponent implements OnInit {
     contentName: '',
     baseUrl: '',
     instructions: {},
+    questionCount: 0,
   };
 
   showEndPage = true;
@@ -168,6 +169,7 @@ export class MainPlayerComponent implements OnInit {
       this.activeSection = _.cloneDeep(this.playerConfig);
       this.isLoading = false;
       this.isFirstSection = true;
+      this.parentConfig.questionCount = this.totalNoOfQuestions;
     }
   }
 
@@ -384,6 +386,7 @@ export class MainPlayerComponent implements OnInit {
       this.mainProgressBar = _.cloneDeep(this.playerConfig.config.progressBar);
       this.mainProgressBar[0].isActive = true;
     }
+    this.parentConfig.questionCount = this.totalNoOfQuestions;
   }
 
   calculateScore() {
