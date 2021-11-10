@@ -93,4 +93,5 @@ export interface IParentConfig {
     contentName: string;
     baseUrl: string;
     instructions: any;
+    questionCount: number;
 }

@@ -25,8 +25,8 @@
       <div class="landscape-content">
         <carousel class="landscape-center" [interval]="0" [showIndicators]="false" [noWrap]="true" #myCarousel>
           <slide>
-            <quml-startpage [instructions]="showRootInstruction ? parentConfig?.instructions : sectionConfig.metadata?.instructions?.default || parentConfig?.instructions" [totalNoOfQuestions]="noOfQuestions" [points]="points"
-              [time]="showRootInstruction ? timeLimit : null" [showTimer]="showTimer"
+            <quml-startpage [instructions]="showRootInstruction ? parentConfig?.instructions : sectionConfig.metadata?.instructions?.default || parentConfig?.instructions"  [points]="points"
+              [time]="showRootInstruction ? timeLimit : null" [showTimer]="showTimer" [totalNoOfQuestions]="showRootInstruction ? parentConfig?.questionCount : noOfQuestions"
               [contentName]="showRootInstruction ? parentConfig?.contentName : parentConfig?.isSectionsAvailable ? sectionConfig?.metadata?.name : parentConfig?.contentName">
             </quml-startpage>
           </slide>
