@@ -202,7 +202,7 @@ export class SectionPlayerComponent implements OnChanges {
     }
 
     this.noOfQuestions = this.questionIds.length;
-    this.viewerService.initialize(this.sectionConfig, this.threshold, this.questionIds, this.parentConfig.isSectionsAvailable);
+    this.viewerService.initialize(this.sectionConfig, this.threshold, this.questionIds, this.parentConfig);
     this.checkCompatibilityLevel(this.sectionConfig.metadata.compatibilityLevel);
     this.initialTime = new Date().getTime();
     this.timeLimit = this.sectionConfig.metadata?.timeLimits?.maxTime || 0;

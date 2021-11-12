@@ -1,5 +1,5 @@
 import { EventEmitter, Injectable } from '@angular/core';
-import { QumlPlayerConfig } from '../../quml-library-interface';
+import { IParentConfig, QumlPlayerConfig } from '../../quml-library-interface';
 import { QumlLibraryService } from '../../quml-library.service';
 import { UtilService } from '../../util-service';
 import { eventName, TelemetryType } from '../../telemetry-constants';
@@ -41,8 +41,8 @@ export class ViewerService {
     public questionCursor: QuestionCursor
   ) { }
 
-  initialize(config: QumlPlayerConfig , threshold, questionIds, isSectionsAvailable = false) {
-    this.qumlLibraryService.initializeTelemetry(config, isSectionsAvailable);
+  initialize(config: QumlPlayerConfig , threshold: number, questionIds: string[], parentConfig: IParentConfig) {
+    this.qumlLibraryService.initializeTelemetry(config, parentConfig);
     this.identifiers = _.cloneDeep(questionIds);
     this.parentIdentifier = config.metadata.identifier;
     this.threshold = threshold;
@@ -52,7 +52,7 @@ export class ViewerService {
     this.currentQuestionIndex = 1;
     this.contentName = config.metadata.name;
     this.isAvailableLocally = config.metadata.isAvailableLocally;
-    this.isSectionsAvailable = isSectionsAvailable;
+    this.isSectionsAvailable = parentConfig?.isSectionsAvailable;
     this.src = config.metadata.artifactUrl || '';
     this.questionSetId = config.metadata.identifier;
 
