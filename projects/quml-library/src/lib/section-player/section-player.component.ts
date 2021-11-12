@@ -487,7 +487,7 @@ export class SectionPlayerComponent implements OnChanges {
   }
 
   setSkippedClass(index) {
-    if (_.get(this.progressBarClass[index], 'class') === 'unattempted') {
+    if (this.progressBarClass && _.get(this.progressBarClass[index], 'class') === 'unattempted') {
       this.progressBarClass[index].class = 'skipped';
     }
   }
