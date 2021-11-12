@@ -90,6 +90,7 @@ export interface IParentConfig {
     isFirstSection: boolean;
     isSectionsAvailable: boolean;
     isReplayed: boolean;
+    identifier: string;
     contentName: string;
     baseUrl: string;
     instructions: any;
