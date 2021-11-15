@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { QumlLibraryComponent } from './quml-library.component';
 import { McqComponent } from './mcq/mcq.component';
 import { SaComponent } from './sa/sa.component';
-import { PlayerComponent } from './player/player.component';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
 import { HeaderComponent } from './header/header.component';
 import { McqQuestionComponent } from './mcq-question/mcq-question.component';
@@ -46,7 +45,6 @@ import { SectionPlayerComponent } from './section-player/section-player.componen
     McqComponent,
     HeaderComponent,
     SaComponent,
-    PlayerComponent,
     McqQuestionComponent,
     McqOptionComponent,
     QumlPopupComponent,
@@ -86,6 +84,6 @@ import { SectionPlayerComponent } from './section-player/section-player.componen
   providers: [
     QumlLibraryService
   ],
-  exports: [PlayerComponent, MainPlayerComponent]
+  exports: [MainPlayerComponent]
 })
 export class QumlLibraryModule { }

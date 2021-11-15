@@ -31,6 +31,7 @@ export class MainPlayerComponent implements OnInit {
     isFirstSection: false,
     isSectionsAvailable: false,
     isReplayed: false,
+    identifier: '',
     contentName: '',
     baseUrl: '',
     instructions: {},
@@ -175,6 +176,7 @@ export class MainPlayerComponent implements OnInit {
 
   setConfig() {
     this.parentConfig.contentName = this.playerConfig.metadata?.name;
+    this.parentConfig.identifier = this.playerConfig.metadata?.identifier;
     this.parentConfig.requiresSubmit = this.playerConfig.metadata?.requiresSubmit?.toLowerCase() !== 'no';
     this.parentConfig.instructions = this.playerConfig.metadata?.instructions?.default;
     this.showEndPage = this.playerConfig.metadata?.showEndPage?.toLowerCase() !== 'no';
