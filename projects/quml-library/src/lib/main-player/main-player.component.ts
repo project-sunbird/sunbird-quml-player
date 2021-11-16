@@ -142,7 +142,7 @@ export class MainPlayerComponent implements OnInit {
         this.isLoading = false;
       }
     } else {
-      let { childNodes } = this.playerConfig.metadata;
+      let { childNodes = [] } = this.playerConfig.metadata;
       const maxQuestions = this.playerConfig.metadata.maxQuestions;
       if (maxQuestions) {
         childNodes = childNodes.slice(0, maxQuestions);
