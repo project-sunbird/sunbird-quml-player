@@ -232,6 +232,11 @@ export class SectionPlayerComponent implements OnChanges {
     } else if (this.threshold > 1) {
       this.viewerService.getQuestions();
     }
+
+    if (!this.sectionConfig.metadata?.children?.length) {
+      this.loadView = true;
+      this.disableNext = true;
+    }
   }
 
   sortQuestions() {
@@ -383,6 +388,9 @@ export class SectionPlayerComponent implements OnChanges {
   }
 
   goToSlideClicked(event, index) {
+    if (!this.progressBarClass?.length) {
+      return;
+    }
     event.stopPropagation();
     this.active = false;
     this.jumpSlideIndex = index;

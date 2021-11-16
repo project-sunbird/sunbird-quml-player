@@ -94,7 +94,7 @@
               </li>
             </ul>
           </li>
-            <li class="requiresSubmit cursor-pointer showFeedBack-progressBar hover-effect" tabindex="0" aria-label="scoreboard" *ngIf="parentConfig.requiresSubmit"
+            <li class="requiresSubmit cursor-pointer showFeedBack-progressBar hover-effect" tabindex="0" aria-label="scoreboard" *ngIf="parentConfig.requiresSubmit && progressBarClass?.length"
               (click)="disableNext = true; onScoreBoardClicked()">
               <img src="./assets/flag_inactive.svg" alt="">
             </li>
