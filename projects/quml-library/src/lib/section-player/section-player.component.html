@@ -96,7 +96,7 @@
           </li>
             <li class="requiresSubmit cursor-pointer showFeedBack-progressBar hover-effect" tabindex="0" aria-label="scoreboard" *ngIf="parentConfig.requiresSubmit && progressBarClass?.length"
               (click)="disableNext = true; onScoreBoardClicked()">
-              <img src="./assets/flag_inactive.svg" alt="">
+              <img src="./assets/flag_inactive.svg" alt="Flag logo: Show scoreboard">
             </li>
             <!-- <li class="requiresSubmit" *ngIf="loadScoreBoard && parentConfig.requiresSubmit">
               <img src="./assets/flag_active.svg" alt="">
@@ -127,7 +127,7 @@
   <div class="image-viewer__close" (click)="closeZoom()">
   </div>
   <div class="image-viewer__container">
-    <img #imageModal id="imageModal" class="image-viewer__img" [src]="zoomImgSrc" alt="image">
+    <img #imageModal id="imageModal" class="image-viewer__img" [src]="zoomImgSrc" alt="Zoomed image">
   </div>
   <div class="image-viewer__zoom">
     <div class="image-viewer__zoomin" (click)="zoomIn()"></div>
