@@ -1,12 +1,19 @@
 @import '../../../../../node_modules/@project-sunbird/sb-styles/assets/mixins/mixins';
+::ng-deep :root {
+  --quml-btn-border: #ccc;
+  --quml-color-gray: #666;
+  --quml-checkmark: #cdcdcd;
+  --quml-color-primary-shade: rgba(0, 0, 0, .1);
+}
+
  .quml-mcq-option-card {
    position: relative;
    background-color:var(--white);
    padding: 0.25rem;
    border-radius: 0.25rem;
-   border: 0.0625rem solid #CCCCCC;
+   border: 0.0625rem solid var(--quml-btn-border);
    padding: 1rem;
-   box-shadow: 0 0.125rem 0.75rem 0 rgba(0,0,0,.1);
+   box-shadow: 0 0.125rem 0.75rem 0 var(--quml-color-primary-shade);
    display: flex;
    align-items: center;
    justify-content: space-between;
@@ -24,7 +31,7 @@
   }
 
   .option {
-    color: #666666;
+    color: var(--quml-color-gray);
     font-size: 0.75rem;
     font-weight: bold;
     flex: 1;
@@ -76,7 +83,7 @@
     height: 1.25rem;
     width: 1.25rem;
     border-radius: 50%;
-    border: 0.125rem solid #cdcdcd;
+    border: 0.125rem solid var(--quml-checkmark);
   }
   
   /* Hide the browser's default radio button */

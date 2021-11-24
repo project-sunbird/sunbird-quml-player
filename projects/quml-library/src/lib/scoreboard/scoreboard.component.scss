@@ -1,5 +1,14 @@
 @import '../../../../../node_modules/@project-sunbird/sb-styles/assets/mixins/mixins';
 
+::ng-deep :root {
+  --quml-scoreboard-sub-title: #6D7278;
+  --quml-scoreboard-skipped: #969696;
+  --quml-scoreboard-unattempted: #575757;
+  --quml-color-success: #08BC82;
+  --quml-color-danger: #F1635D;
+  --quml-color-primary-contrast: #333;
+}
+
 .scoreboard {
     display: flex;
     flex-direction: column;
@@ -27,7 +36,7 @@
     }
 
     &__subtitle {
-        color: #6D7278;
+        color: var(--quml-scoreboard-sub-title);
         font-size: calculateRem(14px);
         margin-top: calculateRem(8px);
     }
@@ -56,21 +65,21 @@
         cursor: pointer;
         &.skipped {
             color: var(--white);
-            background: #969696;
-            border: 0.0625rem solid #969696;
+            background: var( --quml-scoreboard-skipped);
+            border: 0.0625rem solid var( --quml-scoreboard-skipped);
           }
           &.partial, &.wrong, &.correct {
             color: var(--white);
             border: 0px solid transparent;
           }
           &.correct {
-            --correct-bg:#08BC82;
+            --correct-bg: var(--quml-color-success);
             background: var(--correct-bg);
             &:hover {
             }
           }
           &.wrong {
-            --wrong-bg:#F1635D;
+            --wrong-bg: var( --quml-color-danger);
             background: var(--wrong-bg);
             &:hover {
             }
@@ -82,26 +91,13 @@
             }
           }
           &.unattempted {
-            color: #575757;
-            border: 0.03125rem solid #575757;
+            color: var(--quml-scoreboard-unattempted);
+            border: 0.03125rem solid var(--quml-scoreboard-unattempted);
             &:hover {
               border: .0625rem solid var(--primary-color);
               color: var(--primary-color);
             }
         }
-    }
-
-    &__btn {
-        // color: var(--white);
-        // font-size: calculateRem(12px);
-        // font-weight: 500;
-        // text-align: center;
-        // border: none;
-        // padding: calculateRem(6px) calculateRem(24px);
-        // border-radius: calculateRem(16px);
-        // background-color: var(--primary-color);
-        // box-shadow: inset 0 -1px 2px 0 rgba(0, 0, 0, .5);
-        // outline: none;
     }
 
 }
@@ -114,7 +110,7 @@
   }
   &__title{
     width: 100%;
-    color: #333333;
+    color: var(--quml-color-primary-contrast);
     font-size: calculateRem(14px);
     font-weight: bold;
     text-align: center;
