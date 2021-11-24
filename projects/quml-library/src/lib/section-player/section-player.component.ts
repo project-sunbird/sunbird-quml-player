@@ -425,7 +425,6 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     const currentIndex = this.myCarousel.getCurrentSlideIndex() - 1;
     this.viewerService.raiseHeartBeatEvent(eventName.optionClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
 
-    console.log('optionSelected', optionSelected);
     // This optionSelected comes empty whenever the try again is clicked on feedback popup
     if (_.isEmpty(optionSelected?.option)) {
       this.optionSelectedObj = undefined;
@@ -451,17 +450,15 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
       });
     }
     if (!this.showFeedBack) {
-      console.log('in getOptionSelected');
-      
       this.validateSelectedOption(this.optionSelectedObj);
     }
 
-    const element = document.getElementsByClassName('quml-navigation__next')[0];
-    console.log('element', element);
+    // const element = document.getElementsByClassName('quml-navigation__next--active')[0];
     
-    if (element) {
-      (element as HTMLElement)?.focus();
-    }
+    // if (element) {
+    //   console.log('element', element);
+    //   (element as HTMLElement)?.focus();
+    // }
   }
 
   durationEnds() {
@@ -641,13 +638,6 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     }
     this.setImageZoom();
     this.currentSolutions = undefined;
-    
-    const el = document.querySelector('.item.active');
-    console.log("questionSlide", this.questionSlide.nativeElement);
-    // if (el) {
-    //   (el.previousElementSibling as HTMLElement)?.focus();
-    //   // el.setAttribute('tabindex', '0');
-    // }
     this.highlightQuestion();
   }
 
