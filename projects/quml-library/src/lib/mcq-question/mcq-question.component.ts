@@ -14,6 +14,7 @@ export class McqQuestionComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+    console.log("mcqQuestion", this.mcqQuestion); 
   }
 
   showQumlPopup() {

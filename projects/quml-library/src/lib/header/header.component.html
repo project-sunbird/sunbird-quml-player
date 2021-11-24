@@ -6,17 +6,17 @@
 
   <div class="quml-header__metadata">
     <ng-container *ngIf="duration">
-      <div class="duration mr-16" tabindex="0" title="{{minutes}}:{{seconds}}" *ngIf="duration && showTimer && !initializeTimer">
+      <div class="duration mr-16" title="{{minutes}}:{{seconds}}" *ngIf="duration && showTimer && !initializeTimer">
         <quml-durationtimer></quml-durationtimer>
         <span>{{minutes}}:{{seconds}}</span>
       </div>
-      <div class="duration mr-16" tabindex="0" title="{{minutes}}:{{seconds}}" *ngIf="duration && showTimer && initializeTimer && time">
+      <div class="duration mr-16" title="{{minutes}}:{{seconds}}" *ngIf="duration && showTimer && initializeTimer && time">
         <quml-durationtimer></quml-durationtimer>
         <span [ngClass]="{'blink': showWarning}">{{time}}</span> 
       </div>
     </ng-container>
     <ng-container *ngIf="!duration && showTimer && initializeTimer">
-      <div class="duration mr-16" title="{{minutes}}:{{seconds}}" tabindex="0">
+      <div class="duration mr-16" title="{{minutes}}:{{seconds}}">
         <quml-durationtimer></quml-durationtimer>
         <span>{{time}}</span>
       </div>

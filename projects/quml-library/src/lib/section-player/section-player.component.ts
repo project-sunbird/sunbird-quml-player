@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, EventEmitter, HostListener, Input, OnChanges, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, HostListener, Input, OnChanges, Output, ViewChild } from '@angular/core';
 import { errorCode, errorMessage, ErrorService } from '@project-sunbird/sunbird-player-sdk-v9';
 import * as _ from 'lodash-es';
 import { CarouselComponent } from 'ngx-bootstrap/carousel';
@@ -15,7 +15,7 @@ import { UtilService } from '../util-service';
   templateUrl: './section-player.component.html',
   styleUrls: ['./section-player.component.scss', './../startpage/sb-ckeditor-styles.scss']
 })
-export class SectionPlayerComponent implements OnChanges {
+export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
   @Input() sectionConfig: QumlPlayerConfig;
   @Input() attempts: { max: number, current: number };
@@ -33,6 +33,7 @@ export class SectionPlayerComponent implements OnChanges {
 
   @ViewChild('myCarousel', { static: false }) myCarousel: CarouselComponent;
   @ViewChild('imageModal', { static: true }) imageModal;
+  @ViewChild('questionSlide', { static: false }) questionSlide;
 
   destroy$: Subject<boolean> = new Subject<boolean>();
   loadView = false;
@@ -177,7 +178,7 @@ export class SectionPlayerComponent implements OnChanges {
     if (this.myCarousel) {
       this.myCarousel.selectSlide(this.currentSlideIndex);
     }
-    this.sideMenuConfig = { ...this.sideMenuConfig, ...this.sectionConfig.config?.sideMenu };
+    this.sideMenuConfig = { ...this.sideMenuConfig, ...this.sectionConfig?.config?.sideMenu };
     this.threshold = this.sectionConfig.context?.threshold || 3;
     this.questionIds = _.cloneDeep(this.sectionConfig.metadata.childNodes);
 
@@ -420,6 +421,7 @@ export class SectionPlayerComponent implements OnChanges {
     const currentIndex = this.myCarousel.getCurrentSlideIndex() - 1;
     this.viewerService.raiseHeartBeatEvent(eventName.optionClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
 
+    console.log('optionSelected', optionSelected);
     // This optionSelected comes empty whenever the try again is clicked on feedback popup
     if (_.isEmpty(optionSelected?.option)) {
       this.optionSelectedObj = undefined;
@@ -445,7 +447,16 @@ export class SectionPlayerComponent implements OnChanges {
       });
     }
     if (!this.showFeedBack) {
+      console.log('in getOptionSelected');
+      
       this.validateSelectedOption(this.optionSelectedObj);
+    }
+
+    const element = document.getElementsByClassName('quml-navigation__next')[0];
+    console.log('element', element);
+    
+    if (element) {
+      (element as HTMLElement)?.focus();
     }
   }
 
@@ -537,7 +548,8 @@ export class SectionPlayerComponent implements OnChanges {
           const currentScore = this.getScore(currentIndex, key, true);
           this.viewerService.raiseAssesEvent(edataItem, currentIndex, 'Yes', currentScore, [option.option], new Date().getTime());
           this.alertType = 'correct';
-          this.correctFeedBackTimeOut(type);
+          if (this.showFeedBack) 
+            this.correctFeedBackTimeOut(type);
           this.updateScoreBoard(currentIndex, 'correct', undefined, currentScore);
         } else {
           const currentScore = this.getScore(currentIndex, key, false, option);
@@ -549,18 +561,15 @@ export class SectionPlayerComponent implements OnChanges {
       if (option.cardinality === 'multiple') {
         const responseDeclaration = this.questions[currentIndex].responseDeclaration;
         const currentScore = this.utilService.getMultiselectScore(option.option, responseDeclaration);
-        if (this.showFeedBack) {
-          this.showAlert = true;
-          if (currentScore === 0) {
-            this.alertType = 'wrong';
-            this.updateScoreBoard((currentIndex + 1), 'wrong');
-          } else {
-            this.updateScoreBoard(((currentIndex + 1)), 'correct', undefined, currentScore);
-            this.correctFeedBackTimeOut(type);
-            this.alertType = 'correct';
-          }
+        this.showAlert = true;
+        if (currentScore === 0) {
+          this.alertType = 'wrong';
+          this.updateScoreBoard((currentIndex + 1), 'wrong');
         } else {
-          this.nextSlide();
+          this.updateScoreBoard(((currentIndex + 1)), 'correct', undefined, currentScore);
+          if (this.showFeedBack) 
+            this.correctFeedBackTimeOut(type);
+          this.alertType = 'correct';
         }
       }
       this.optionSelectedObj = undefined;
@@ -625,6 +634,14 @@ export class SectionPlayerComponent implements OnChanges {
     }
     this.setImageZoom();
     this.currentSolutions = undefined;
+    
+    const el = document.querySelector('.item.active');
+    console.log("questionSlide", this.questionSlide.nativeElement);
+    // if (el) {
+    //   (el.previousElementSibling as HTMLElement)?.focus();
+    //   // el.setAttribute('tabindex', '0');
+    // }
+    this.highlightQuestion();
   }
 
   goToQuestion(event) {
@@ -635,6 +652,16 @@ export class SectionPlayerComponent implements OnChanges {
     this.viewerService.getQuestions(0, index);
     this.currentSlideIndex = index;
     this.myCarousel.selectSlide(index);
+    this.highlightQuestion();
+  }
+
+  highlightQuestion() {
+    const element = document.getElementById(this.questions[this.currentSlideIndex - 1].identifier);
+    if (element) {
+      setTimeout(() => {
+        element.focus();
+      });
+    }
   }
 
   getSolutions() {
