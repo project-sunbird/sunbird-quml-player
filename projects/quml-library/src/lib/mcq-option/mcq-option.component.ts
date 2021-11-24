@@ -31,10 +31,6 @@ export class McqOptionComponent implements OnChanges {
     if (this.tryAgain) {
       this.unselectOption();
     }
-    // const el = document.querySelector(".container");
-    // if (el) {
-    //   el.setAttribute("tabindex", "0");
-    // }
   }
 
   unselectOption(){

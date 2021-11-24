@@ -452,13 +452,6 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     if (!this.showFeedBack) {
       this.validateSelectedOption(this.optionSelectedObj);
     }
-
-    // const element = document.getElementsByClassName('quml-navigation__next--active')[0];
-    
-    // if (element) {
-    //   console.log('element', element);
-    //   (element as HTMLElement)?.focus();
-    // }
   }
 
   durationEnds() {
