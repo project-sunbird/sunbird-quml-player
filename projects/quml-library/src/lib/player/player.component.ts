@@ -12,7 +12,7 @@ import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'quml-player',
-  templateUrl: './player.component.html'
+  templateUrl: './player.component.html',
   styleUrls: ['./player.component.scss', './../startpage/sb-ckeditor-styles.scss']
 })
 export class PlayerComponent implements OnInit, AfterViewInit {
