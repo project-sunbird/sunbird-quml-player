@@ -202,7 +202,7 @@ export class SectionPlayerComponent implements OnChanges {
     }
 
     this.noOfQuestions = this.questionIds.length;
-    this.viewerService.initialize(this.sectionConfig, this.threshold, this.questionIds, this.parentConfig.isSectionsAvailable);
+    this.viewerService.initialize(this.sectionConfig, this.threshold, this.questionIds, this.parentConfig);
     this.checkCompatibilityLevel(this.sectionConfig.metadata.compatibilityLevel);
     this.initialTime = new Date().getTime();
     this.timeLimit = this.sectionConfig.metadata?.timeLimits?.maxTime || 0;
@@ -231,6 +231,11 @@ export class SectionPlayerComponent implements OnChanges {
       this.viewerService.getQuestion();
     } else if (this.threshold > 1) {
       this.viewerService.getQuestions();
+    }
+
+    if (!this.sectionConfig.metadata?.children?.length) {
+      this.loadView = true;
+      this.disableNext = true;
     }
   }
 
@@ -383,6 +388,9 @@ export class SectionPlayerComponent implements OnChanges {
   }
 
   goToSlideClicked(event, index) {
+    if (!this.progressBarClass?.length) {
+      return;
+    }
     event.stopPropagation();
     this.active = false;
     this.jumpSlideIndex = index;
@@ -487,7 +495,7 @@ export class SectionPlayerComponent implements OnChanges {
   }
 
   setSkippedClass(index) {
-    if (_.get(this.progressBarClass[index], 'class') === 'unattempted') {
+    if (this.progressBarClass && _.get(this.progressBarClass[index], 'class') === 'unattempted') {
       this.progressBarClass[index].class = 'skipped';
     }
   }

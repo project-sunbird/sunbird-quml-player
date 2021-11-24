@@ -31,9 +31,11 @@ export class MainPlayerComponent implements OnInit {
     isFirstSection: false,
     isSectionsAvailable: false,
     isReplayed: false,
+    identifier: '',
     contentName: '',
     baseUrl: '',
     instructions: {},
+    questionCount: 0,
   };
 
   showEndPage = true;
@@ -140,7 +142,7 @@ export class MainPlayerComponent implements OnInit {
         this.isLoading = false;
       }
     } else {
-      let { childNodes } = this.playerConfig.metadata;
+      let { childNodes = [] } = this.playerConfig.metadata;
       const maxQuestions = this.playerConfig.metadata.maxQuestions;
       if (maxQuestions) {
         childNodes = childNodes.slice(0, maxQuestions);
@@ -168,11 +170,13 @@ export class MainPlayerComponent implements OnInit {
       this.activeSection = _.cloneDeep(this.playerConfig);
       this.isLoading = false;
       this.isFirstSection = true;
+      this.parentConfig.questionCount = this.totalNoOfQuestions;
     }
   }
 
   setConfig() {
     this.parentConfig.contentName = this.playerConfig.metadata?.name;
+    this.parentConfig.identifier = this.playerConfig.metadata?.identifier;
     this.parentConfig.requiresSubmit = this.playerConfig.metadata?.requiresSubmit?.toLowerCase() !== 'no';
     this.parentConfig.instructions = this.playerConfig.metadata?.instructions?.default;
     this.showEndPage = this.playerConfig.metadata?.showEndPage?.toLowerCase() !== 'no';
@@ -384,6 +388,7 @@ export class MainPlayerComponent implements OnInit {
       this.mainProgressBar = _.cloneDeep(this.playerConfig.config.progressBar);
       this.mainProgressBar[0].isActive = true;
     }
+    this.parentConfig.questionCount = this.totalNoOfQuestions;
   }
 
   calculateScore() {
