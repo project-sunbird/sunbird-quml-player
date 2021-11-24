@@ -389,6 +389,10 @@ export class SectionPlayerComponent implements OnChanges {
 
   goToSlideClicked(event, index) {
     if (!this.progressBarClass?.length) {
+      if (index === 0) {
+        this.jumpSlideIndex = 0;
+        this.goToSlide(this.jumpSlideIndex);
+      }
       return;
     }
     event.stopPropagation();
@@ -609,6 +613,9 @@ export class SectionPlayerComponent implements OnChanges {
       this.myCarousel.selectSlide(0);
       this.active = this.currentSlideIndex === 0 && this.sectionIndex === 0 && this.showStartPage;
       this.showRootInstruction = true;
+      if (!this.sectionConfig.metadata?.children?.length) {
+        this.disableNext = true;
+      }
       return;
     }
     this.currentQuestionsMedia = _.get(this.questions[this.currentSlideIndex - 1], 'media');
