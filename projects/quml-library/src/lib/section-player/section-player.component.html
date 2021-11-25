@@ -1,5 +1,6 @@
 <div class="quml-container" *ngIf="loadView" [hidden]="showZoomModal">
   <div [hidden]="showSolution" class="quml-landscape">
+    <sb-player-side-menu-icon class="notVisible" *ngIf="sideMenuConfig.enable"></sb-player-side-menu-icon>
     <quml-header class="main-header" (durationEnds)="durationEnds()" [disablePreviousNavigation]="linearNavigation"
       [duration]="timeLimit" [warningTime]="warningTime" [showTimer]="showTimer"
       (nextSlideClicked)="nextSlideClicked($event)" (prevSlideClicked)="previousSlideClicked($event)"
@@ -9,7 +10,6 @@
       [startPageInstruction]="startPageInstruction" [attempts]="attempts" [showStartPage]="showStartPage">
     </quml-header>
 
-    <sb-player-side-menu-icon class="notVisible" *ngIf="sideMenuConfig.enable"></sb-player-side-menu-icon>
     <sb-player-sidebar [title]="parentConfig?.contentName" (sidebarEvent)="sideBarEvents($event)"
       [config]="sideMenuConfig">
     </sb-player-sidebar>
@@ -30,8 +30,8 @@
               [contentName]="showRootInstruction ? parentConfig?.contentName : parentConfig?.isSectionsAvailable ? sectionConfig?.metadata?.name : parentConfig?.contentName">
             </quml-startpage>
           </slide>
-          <slide *ngFor="let question of questions; let i= index">
-            <div [id]="question.identifier">
+          <slide *ngFor="let question of questions; let i= index" #questionSlide>
+            <div [id]="question.identifier" tabindex="0">
               <div *ngIf="question?.primaryCategory.toLowerCase() === 'multiple choice question'">
                 <quml-mcq [question]='question' [replayed]="parentConfig?.isReplayed"
                   (optionSelected)="getOptionSelected($event)" [identifier]="question.id" [tryAgain]="tryAgainClicked">
@@ -49,7 +49,7 @@
       <div class="lanscape-mode-right">
         <ul>
           <ng-container>
-            <li class="showFeedBack-progressBar info-page hover-effect" tabindex="0" aria-label="info page"
+            <li class="showFeedBack-progressBar info-page hover-effect" tabindex="0"
             [ngClass]="(currentSlideIndex === 0) ? 'att-color progressBar-border': 'att-color' "
               (click)="goToSlideClicked($event, 0)">i
             </li>

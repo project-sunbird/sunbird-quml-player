@@ -9,7 +9,6 @@ import { QumlLibraryComponent } from '../../../quml-library/src/lib/quml-library
 import { McqComponent } from '../../../quml-library/src/lib/mcq/mcq.component';
 import { HeaderComponent } from '../../../quml-library/src/lib/header/header.component';
 import { SaComponent } from '../../../quml-library/src/lib/sa/sa.component';
-import { PlayerComponent } from '../../../quml-library/src/lib/player/player.component';
 import { McqQuestionComponent } from '../../../quml-library/src/lib/mcq-question/mcq-question.component';
 import { McqOptionComponent } from '../../../quml-library/src/lib/mcq-option/mcq-option.component';
 import { QumlPopupComponent } from '../../../quml-library/src/lib/quml-popup/quml-popup.component';
@@ -50,7 +49,6 @@ import { HttpClientModule } from '@angular/common/http';
     McqComponent,
     HeaderComponent,
     SaComponent,
-    PlayerComponent,
     McqQuestionComponent,
     McqOptionComponent,
     QumlPopupComponent,
