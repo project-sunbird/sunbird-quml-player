@@ -30,7 +30,6 @@
     "@angular/router": "^9.1.12",
     "@project-sunbird/client-services": "4.0.1",
     "@project-sunbird/sb-styles": "0.0.7",
-    "@project-sunbird/sunbird-quml-player-v9": "^4.4.15",
     "@project-sunbird/telemetry-sdk": "0.0.26",
     "bootstrap": "4.1.1",
     "core-js": "^2.5.4",
