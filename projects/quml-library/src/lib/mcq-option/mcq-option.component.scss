@@ -1,4 +1,13 @@
 @import '../../../../../node_modules/@project-sunbird/sb-styles/assets/mixins/mixins';
+::ng-deep :root {
+  --quml-btn-border: #ccc;
+  --quml-color-gray: #666;
+  --quml-checkmark: #cdcdcd;
+  --quml-color-primary-shade: rgba(0, 0, 0, .1);
+  --quml-color-success: #08BC82;
+  --quml-color-danger: #F1635D;
+}
+
 .quml-mcq-options {
   align-items: center;
   margin-bottom: 0.5rem;
@@ -6,7 +15,7 @@
 
 .quml-option-card .option {
   font-weight: bold;
-  color: #666666;
+  color: var( --quml-active-slide);
 }
 
 ::ng-deep .quml-option-card .option p {
@@ -27,9 +36,9 @@
   background-color:var(--white);
   padding: 0.25rem;
   border-radius: 0.25rem;
-  border: 0.0625rem solid #CCCCCC;
+  border: 0.0625rem solid var(--quml-btn-border);
   padding: 1rem;
-  box-shadow: 0 0.125rem 0.75rem 0 rgba(0,0,0,.1);
+  box-shadow: 0 0.125rem 0.75rem 0 var(--quml-color-primary-shade);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -44,19 +53,19 @@
   border: 0.125rem solid var(--primary-color);
 }
 .quml-option--correct {
-  border: 0.125rem solid #31A679;
+  border: 0.125rem solid var(--quml-color-success);
 }
 .quml-option--wrong {
-  border: 0.125rem solid #F1635D;
+  border: 0.125rem solid var(--quml-color-danger);
 }
 
 .quml-option-card .option {
-  color: #666666;
+  color: var(--quml-color-gray);
   font-size: 0.875rem;
 }
 
 .selected-option {
-  border: 0.125rem solid #5649dc;
+  border: 0.125rem solid var(--primary-color);
 }
 
 .selected-option-text {
@@ -73,7 +82,7 @@
   height: 1.25rem;
   width: 1.25rem;
   border-radius: 50%;
-  border: 0.125rem solid #cdcdcd;
+  border: 0.125rem solid var(--quml-checkmark);
 }
 
 /* Hide the browser's default radio button */
@@ -116,18 +125,18 @@ input:checked~.checkmark:after, .quml-option--selected .checkmark:after {
 }
 
 .quml-option--correct .container input:checked ~ .checkmark {
-  border-color: #31A679;
-  background-color: #31A679;
+  border-color: var(--quml-color-success);
+  background-color: var(--quml-color-success);
   &:after {
     content: '\2714';
     color: var(--white);
   }
 }
 .quml-option--wrong .container input:checked ~ .checkmark {
-  border-color: #F1635D;
+  border-color: var(--quml-color-danger);
   &:after {
     content: '\2716';
-    color: #F1635D;
+    color: var(--quml-color-danger);
   }
 }
 .quml-option--wrong, .quml-option--correct {

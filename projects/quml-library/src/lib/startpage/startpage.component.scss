@@ -1,5 +1,10 @@
 @import '../../../../../node_modules/@project-sunbird/sb-styles/assets/mixins/mixins';
 
+::ng-deep :root {
+    --quml-scoreboard-sub-title: #6D7278;
+    --quml-color-primary-contrast: #333;
+  }
+  
 .startpage {
     //margin-top: 1.5rem;
 
@@ -25,7 +30,7 @@
     }
 
     &__md-heading {
-        color: #6d7278;
+        color: var(--quml-scoreboard-sub-title);
         font-size: 0.75rem;
         line-height: normal;
         margin-bottom: 0.5rem;
@@ -45,7 +50,7 @@
     }
 
     &__instr-title {
-        color: #6D7278;
+        color: var(--quml-scoreboard-sub-title);
         font-size: calculateRem(12px);
         font-weight: bold;
         letter-spacing: 0;
@@ -54,7 +59,7 @@
 
     &__instr-desc {
         padding: 1rem 0;
-        color: #333333;
+        color: var( --quml-color-primary-contrast);
         font-size: calculateRem(12px);
         letter-spacing: 0;
         line-height: 17px;
