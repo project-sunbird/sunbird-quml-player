@@ -115,7 +115,7 @@
     font-weight: bold;
     text-align: center;
     margin-top: calculateRem(32px);
-    margin-bottom: 8px
+    margin-bottom: calculateRem(8px);
   }
   &__points{
     display: flex;
