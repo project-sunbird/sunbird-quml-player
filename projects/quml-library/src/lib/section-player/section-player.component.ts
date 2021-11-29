@@ -408,14 +408,35 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     }
   }
 
+  onEnter(event, index) {
+    if (event.keyCode === 13) {
+      this.goToSlideClicked(event, index);
+    }
+  }
+
   jumpToSection(identifier: string) {
     this.showRootInstruction = false;
     this.emitSectionEnd(false, identifier);
   }
 
+  onSectionEnter(event, identifier: string) {
+    if (event.keyCode === 13) {
+      event.stopPropagation();
+      if (this.optionSelectedObj) {
+        this.validateSelectedOption(this.optionSelectedObj, 'jump');
+      }
+      this.jumpToSection(identifier);
+    }
+  }
+
   onScoreBoardClicked() {
     this.viewerService.updateSectionQuestions(this.sectionConfig.metadata.identifier, this.questions);
     this.showScoreBoard.emit();
+  }
+
+  onScoreBoardEnter(event: KeyboardEvent) {
+    event.stopPropagation();
+    this.onScoreBoardClicked();
   }
 
 

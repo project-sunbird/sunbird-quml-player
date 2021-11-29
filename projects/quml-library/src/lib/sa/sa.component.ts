@@ -1,31 +1,24 @@
-import { Component, OnInit, Input, SecurityContext, Output, EventEmitter, OnChanges } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { katex } from 'katex';
-import { shortAnswerQuestionData } from './data';
-
-declare var katex: any;
 
 @Component({
   selector: 'quml-sa',
   templateUrl: './sa.component.html',
   styleUrls: ['./sa.component.scss', '../quml-library.component.scss']
 })
-export class SaComponent implements OnInit, OnChanges {
+export class SaComponent implements OnInit, OnChanges, AfterViewInit {
 
   @Input() questions?: any;
   @Input() replayed?: boolean;
   @Input() baseUrl: string;
   @Output() componentLoaded = new EventEmitter<any>();
   @Output() showAnswerClicked = new EventEmitter<any>();
+
   showAnswer = false;
   solutions: any;
   question: any;
   answer: any;
-  constructor(
-    public domSanitizer: DomSanitizer
-  ) {
-
-  }
+  constructor( public domSanitizer: DomSanitizer ) { }
 
   ngOnChanges() {
     if (this.replayed) {
@@ -35,11 +28,36 @@ export class SaComponent implements OnInit, OnChanges {
     }
   }
 
-  showAnswerToUser(){
+  showAnswerToUser() {
     this.showAnswer = true;
+    const el: HTMLElement = document.getElementById('quml-sa') as HTMLElement;
+    
+    if (el) {
+      el.setAttribute('tabindex', '1');
+      el.focus();
+    }
     this.showAnswerClicked.emit({
       showAnswer: this.showAnswer
-    })
+    });
+  }
+
+  onEnter(event) {
+    if (event.keyCode === 13) {
+      event.stopPropagation();
+      this.showAnswerToUser();
+    }
+  }
+
+  handleKeyboardAccessibility() {
+    const elements = Array.from(document.getElementsByClassName('option-body') as HTMLCollectionOf<Element>);
+    elements.forEach((element: HTMLElement) => {
+      if (element.offsetHeight) {
+        const children = Array.from(element.querySelectorAll("a"));
+        children.forEach((child: HTMLElement) => {
+            child.setAttribute('tabindex', '-1');
+        });
+      }
+    });
   }
 
   ngOnInit() {
@@ -63,5 +81,9 @@ export class SaComponent implements OnInit, OnChanges {
         });
       } 
     });
+  }
+
+  ngAfterViewInit() {
+    this.handleKeyboardAccessibility()
   }
 }

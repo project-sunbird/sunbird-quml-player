@@ -49,6 +49,7 @@ export class McqOptionComponent implements OnChanges {
   }
 
   onOptionSelect(event, mcqOption) {
+    event.stopPropagation();
     this.mcqOptions.forEach((ele) => {
       if (this.cardinality === 'single') {
         if (ele.label === mcqOption.label) {
@@ -79,5 +80,11 @@ export class McqOptionComponent implements OnChanges {
 
   showQumlPopup() {
     this.showPopup.emit();
+  }
+
+  onEnter(event: KeyboardEvent, mcqOption) {
+    if (event.keyCode === 13) {
+      this.onOptionSelect(event, mcqOption);
+    }
   }
 }
