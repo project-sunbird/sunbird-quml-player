@@ -8,10 +8,15 @@
   --quml-color-danger: #F1635D;
   --quml-color-primary-contrast: #333;
   --quml-btn-border: #ccc;
+  --quml-heder-text-color:#6250f5;
+  --quml-header-bg-color: #c2c2c2;
+  --quml-mcq-title-txt: #131415;
+  --quml-zoom-btn-txt: #eee;
+  --quml-zoom-btn-hover: #f2f2f2;
 }
 
 .quml-header {
-  background: #c2c2c2;
+  background: var(--quml-header-bg-color);
   display: flow-root;
   height: 2.25rem;
   position: fixed;
@@ -620,7 +625,7 @@ scrollbar-width: none; /* Firefox */
 }
 
 .potrait-header-top .quml-menu {
-  color: #6250f5;
+  color: var(--quml-heder-text-color);
   font-size: 1.5rem;
   padding-left: 1.25rem;
   margin-top: 0.25rem;
@@ -628,7 +633,7 @@ scrollbar-width: none; /* Firefox */
 
 .potrait-header-top .quml-header-text {
   font-size: 0.875rem;
-  color: #6250f5;
+  color: var(--quml-heder-text-color);
 }
 
 .row {
@@ -707,7 +712,7 @@ scrollbar-width: none; /* Firefox */
     overflow: hidden;
     z-index: 99999;
     position: fixed;
-    border: 0.0625rem solid #eee;
+    border: 0.0625rem solid var(--quml-zoom-btn-txt);
   }
 
   &__zoomin,
@@ -719,7 +724,7 @@ scrollbar-width: none; /* Firefox */
     cursor: pointer;
 
     &:hover {
-      background-color: #f2f2f2;
+      background-color: var(--quml-zoom-btn-hover);
     }
 
     &::after {
@@ -751,7 +756,7 @@ scrollbar-width: none; /* Firefox */
   quml-ans {
     cursor: pointer;
     svg circle {
-      fill: #eee;
+      fill: var(--quml-zoom-btn-txt);
     }
   }
 
@@ -828,7 +833,7 @@ scrollbar-width: none; /* Firefox */
   quml-sa,
   quml-mcq-solutions {
     .mcq-title {
-      color: #131415;
+      color: var(--quml-mcq-title-txt);
       @media only screen and (max-width: 480px){
         margin-top: 1rem;
       }

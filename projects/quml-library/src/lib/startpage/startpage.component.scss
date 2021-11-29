@@ -3,6 +3,8 @@
 ::ng-deep :root {
     --quml-scoreboard-sub-title: #6D7278;
     --quml-color-primary-contrast: #333;
+    --quml-zoom-btn-txt: #eee;
+  --quml-zoom-btn-hover: #f2f2f2;
   }
   
 .startpage {
@@ -18,7 +20,7 @@
 
     &__content {
         display: flex;
-        border-bottom: 0.0625rem solid #eee;
+        border-bottom: 0.0625rem solid var(--quml-zoom-btn-txt);
         align-items: center;
         line-height: normal;
         margin-bottom: 1rem;
@@ -88,7 +90,7 @@
         }
 
         tr:nth-child(even) {
-            background-color: #f2f2f2;
+            background-color: var(--quml-zoom-btn-hover);
         }
     }
 }
