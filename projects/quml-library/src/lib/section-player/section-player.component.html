@@ -23,7 +23,7 @@
         </div>
       </div>
       <div class="landscape-content">
-        <carousel class="landscape-center" [interval]="0" [showIndicators]="false" [noWrap]="true" #myCarousel>
+        <carousel class="landscape-center" [interval]="0" [showIndicators]="false" [noWrap]="true" #myCarousel (activeSlideChange)="activeSlideChange($event)">
           <slide>
             <quml-startpage [instructions]="showRootInstruction ? parentConfig?.instructions : sectionConfig.metadata?.instructions?.default || parentConfig?.instructions"  [points]="points"
               [time]="showRootInstruction ? timeLimit : null" [showTimer]="showTimer" [totalNoOfQuestions]="showRootInstruction ? parentConfig?.questionCount : noOfQuestions"
