@@ -99,6 +99,8 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   replayed = false;
   sectionId: string;
   showRootInstruction = true;
+  slideDuration = 0;
+  initialSlideDuration: number;
 
   constructor(
     public viewerService: ViewerService,
@@ -205,7 +207,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     this.noOfQuestions = this.questionIds.length;
     this.viewerService.initialize(this.sectionConfig, this.threshold, this.questionIds, this.parentConfig);
     this.checkCompatibilityLevel(this.sectionConfig.metadata.compatibilityLevel);
-    this.initialTime = new Date().getTime();
+    this.initialTime = this.initialSlideDuration = new Date().getTime();
     this.timeLimit = this.sectionConfig.metadata?.timeLimits?.maxTime || 0;
     this.warningTime = this.sectionConfig.metadata?.timeLimits?.warningTime || 0;
     this.showTimer = this.sectionConfig.metadata?.showTimer?.toLowerCase() !== 'no';
@@ -351,6 +353,10 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     this.currentQuestion = undefined;
     this.currentOptions = undefined;
     this.currentSolutions = undefined;
+  }
+
+  activeSlideChange(event) {
+      this.initialSlideDuration = new Date().getTime();
   }
 
   nextSlideClicked(event) {
@@ -538,20 +544,32 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     const isSubjectiveQuestion = this.utilService.getQuestionType(this.questions, currentIndex) === 'SA';
     const onStartPage = this.startPageInstruction && this.myCarousel.getCurrentSlideIndex() === 0;
     const isActive = !this.optionSelectedObj && this.active;
+    const selectedQuestion = this.questions[currentIndex];
 
     if (this.optionSelectedObj) {
-      const key = this.utilService.getKeyValue(Object.keys(this.questions[currentIndex].responseDeclaration));
-      this.currentQuestion = this.questions[currentIndex].body;
-      this.currentOptions = this.questions[currentIndex].interactions[key].options;
+      const key = this.utilService.getKeyValue(Object.keys(selectedQuestion.responseDeclaration));
+      this.currentQuestion = selectedQuestion.body;
+      this.currentOptions = selectedQuestion.interactions[key].options;
 
+      const getParams = () => {
+        if (selectedQuestion.qType.toUpperCase() === 'MCQ' && selectedQuestion?.editorState?.options) {
+          return selectedQuestion.editorState.options;
+        } else if (selectedQuestion.qType.toUpperCase() === 'MCQ' && !_.isEmpty(selectedQuestion?.editorState)) {
+          return [selectedQuestion?.editorState];
+        } else {
+          return [];
+        }
+      };
       if (option.cardinality === 'single') {
-        const correctOptionValue = Number(this.questions[currentIndex].responseDeclaration[key].correctResponse.value);
+        const correctOptionValue = Number(selectedQuestion.responseDeclaration[key].correctResponse.value);
+        this.slideDuration = Math.round((new Date().getTime() - this.initialSlideDuration) / 1000);
         const edataItem: any = {
-          'id': this.questions[currentIndex].identifier,
-          'title': this.questions[currentIndex].name,
-          'desc': this.questions[currentIndex].description,
-          'maxscore': this.questions[currentIndex].responseDeclaration[key].maxScore || 0,
-          'params': []
+          'id': selectedQuestion.identifier,
+          'title': selectedQuestion.name,
+          'desc': selectedQuestion.description,
+          'type': selectedQuestion.qType.toLowerCase(),
+          'maxscore': selectedQuestion.responseDeclaration[key].maxScore || 0,
+          'params': getParams()
         };
 
         if (edataItem && this.parentConfig.isSectionsAvailable) {
@@ -561,7 +579,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
         this.showAlert = true;
         if (option.option?.value === correctOptionValue) {
           const currentScore = this.getScore(currentIndex, key, true);
-          this.viewerService.raiseAssesEvent(edataItem, currentIndex, 'Yes', currentScore, [option.option], new Date().getTime());
+          this.viewerService.raiseAssesEvent(edataItem, currentIndex + 1, 'Yes', currentScore, [option.option], this.slideDuration);
           this.alertType = 'correct';
           if (this.showFeedBack) 
             this.correctFeedBackTimeOut(type);
