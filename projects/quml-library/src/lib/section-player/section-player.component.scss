@@ -14,6 +14,8 @@
   --quml-zoom-btn-txt: #eee;
   --quml-zoom-btn-hover: #f2f2f2;
   --quml-main-bg: #fff;
+  --quml-btn-color:#fff;
+  --quml-question-bg:#fff;
 }
 
 .quml-header {
@@ -57,7 +59,7 @@
   background-color: var(--primary-color);
   /* Navy Blue */
   border: none;
-  color: var(--white);
+  color: var(--quml-btn-color);
   padding: 0.25rem;
   text-align: center;
   text-decoration: none;
@@ -242,7 +244,7 @@ scrollbar-width: none; /* Firefox */
       }
     }
     .section label {
-      background-color: var(--white);
+      background-color: var(--quml-question-bg);
       border-radius: 0.25rem;
       width: 1.25rem;
       padding: 0.25rem;
@@ -274,8 +276,9 @@ scrollbar-width: none; /* Firefox */
             border-radius: 0.25rem;
             position: absolute;
             width: 1.65rem;
-            background: var(--white);
+            background: var(--quml-question-bg);
             z-index: -1;
+
         }
       }
       &.skipped {
@@ -312,7 +315,7 @@ scrollbar-width: none; /* Firefox */
       }
     }
     .showFeedBack-progressBar {
-      background-color: var(--white);
+      background-color: var(--quml-question-bg);
       border-radius: 50%;
       width: 1.25rem;
       padding: 0.25rem;
