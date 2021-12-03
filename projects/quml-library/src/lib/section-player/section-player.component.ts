@@ -360,6 +360,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   }
 
   nextSlideClicked(event) {
+    this.showRootInstruction = false;
     if (this.showRootInstruction && this.parentConfig.isSectionsAvailable) {
       this.showRootInstruction = false;
       return;
@@ -646,6 +647,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     this.viewerService.raiseHeartBeatEvent(eventName.goToQuestion, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
     this.disableNext = false;
     this.currentSlideIndex = index;
+    this.showRootInstruction = false;
     if (index === 0) {
       this.optionSelectedObj = undefined;
       this.myCarousel.selectSlide(0);
@@ -675,6 +677,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
   goToQuestion(event) {
     this.active = false;
+    this.showRootInstruction = false;
     this.disableNext = false;
     this.initializeTimer = true;
     const index = event.questionNo;
@@ -685,7 +688,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   }
 
   highlightQuestion() {
-    const element = document.getElementById(this.questions[this.currentSlideIndex - 1].identifier);
+    const element = document.getElementById(this.questions[this.currentSlideIndex - 1]?.identifier);
     if (element) {
       setTimeout(() => {
         element.focus();

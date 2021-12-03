@@ -136,7 +136,13 @@ export class MainPlayerComponent implements OnInit {
         this.isLoading = false;
       }
     } else {
-      let { childNodes = [] } = this.playerConfig.metadata;
+      let childNodes = [];
+      if (this.playerConfig.metadata?.children?.length) {
+        childNodes = this.playerConfig.metadata.children.map(item => item.identifier);
+      } else {
+        childNodes = this.playerConfig.metadata.childNodes;
+      }
+
       const maxQuestions = this.playerConfig.metadata.maxQuestions;
       if (maxQuestions) {
         childNodes = childNodes.slice(0, maxQuestions);

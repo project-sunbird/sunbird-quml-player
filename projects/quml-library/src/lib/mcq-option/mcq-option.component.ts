@@ -49,7 +49,6 @@ export class McqOptionComponent implements OnChanges {
   }
 
   onOptionSelect(event, mcqOption) {
-    event.stopPropagation();
     this.mcqOptions.forEach((ele) => {
       if (this.cardinality === 'single') {
         if (ele.label === mcqOption.label) {
