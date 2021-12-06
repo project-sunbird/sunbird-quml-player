@@ -15,7 +15,7 @@
     </sb-player-sidebar>
     <div class="landscape-mode">
       <div class="lanscape-mode-left">
-        <div class="current-slide">
+        <div class="current-slide" *ngIf="!showRootInstruction">
           {{myCarousel.getCurrentSlideIndex()}}/{{noOfQuestions}}
         </div>
         <div *ngIf="currentSolutions && showUserSolution">
