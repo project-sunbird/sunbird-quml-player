@@ -6,6 +6,9 @@
   --quml-color-primary-shade: rgba(0, 0, 0, .1);
   --quml-color-success: #08BC82;
   --quml-color-danger: #F1635D;
+  --quml-option-card-bg: #fff;
+  --quml-option-selected-checkmark:#fff;
+  --quml-option-selected-checkmark-icon:#fff;
 }
 
 .quml-mcq-options {
@@ -33,7 +36,7 @@
 
 .quml-option {
   position: relative;
-  background-color:var(--white);
+  background-color:var(--quml-option-card-bg);
   padding: 0.25rem;
   border-radius: 0.25rem;
   border: 0.0625rem solid var(--quml-btn-border);
@@ -95,7 +98,7 @@
 /* When the radio button is checked, add a blue background */
 .container input:checked~.checkmark, .quml-option--selected .checkmark {
   position: relative;
-  background-color: var(--white);
+  background-color: var(--quml-option-selected-checkmark);
   border: 0.125rem solid var(--primary-color);
 }
 
@@ -129,7 +132,7 @@ input:checked~.checkmark:after, .quml-option--selected .checkmark:after {
   background-color: var(--quml-color-success);
   &:after {
     content: '\2714';
-    color: var(--white);
+    color: var(--quml-option-selected-checkmark-icon);
   }
 }
 .quml-option--wrong .container input:checked ~ .checkmark {
