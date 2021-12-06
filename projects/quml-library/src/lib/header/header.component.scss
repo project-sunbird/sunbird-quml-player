@@ -6,6 +6,9 @@
   --quml-color-warning: #ff0000;
   --quml-btn-border: #ccc;
   --quml-color-gray: #666;
+  --quml-main-bg: #fff;
+  --quml-navigation-btns:#333;
+  --quml-header-metadata: #fff;
 }
 .quml-header {
 
@@ -19,7 +22,7 @@
     justify-content: space-between;
     position: absolute;
     top: 0;
-    background: var(--white);
+    background: var( --quml-main-bg);
     min-height: calculateRem(56px);
     width: 100%;
     padding: calculateRem(8px) calculateRem(16px) calculateRem(8px) 0;
@@ -59,7 +62,7 @@
     position: relative;
     width: calculateRem(60px);
     height: calculateRem(36px);
-    background: var(--white);
+    background: var(--quml-header-metadata);
     border: calculateRem(0.5px) solid var(--quml-btn-border);
     border-radius: calculateRem(16px);
     box-shadow: inset 0 calculateRem(-1.5px) calculateRem(1px) 0 rgb(0 0 0 / 20%);
@@ -73,7 +76,7 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      border: solid var(--quml-color-primary-contrast);
+      border: solid var(--quml-navigation-btns);
       border-width: 0 calculateRem(2px) calculateRem(2px) 0;
     }
     &:hover,&--active,&:focus {
