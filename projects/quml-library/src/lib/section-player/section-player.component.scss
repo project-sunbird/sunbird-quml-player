@@ -161,6 +161,16 @@ scrollbar-width: none; /* Firefox */
         }
       }
     }
+    .singleContent.nonFeedback {
+      li:hover{
+        border: 1px solid var(--primary-color);
+        color: var(--primary-color);
+      }
+      li.att-color{
+        color: var(--white);
+        background: var(--primary-color);
+      }
+    }
     .section {
       ul {
         &.nonFeedback{
