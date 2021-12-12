@@ -417,6 +417,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
   onEnter(event, index) {
     if (event.keyCode === 13) {
+      event.stopPropagation();
       this.goToSlideClicked(event, index);
     }
   }
@@ -443,11 +444,20 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
   onScoreBoardEnter(event: KeyboardEvent) {
     event.stopPropagation();
-    this.onScoreBoardClicked();
+    if (event.keyCode === 13) {
+      this.onScoreBoardClicked();
+    }
   }
 
+  focusOnNextButton() {
+    const nextBtn = document.querySelector('.quml-navigation__next') as HTMLElement;
+    if (nextBtn) {
+      nextBtn.focus();
+    }
+  }
 
   getOptionSelected(optionSelected) {
+    this.focusOnNextButton();
     this.active = true;
     this.currentOptionSelected = optionSelected;
     const currentIndex = this.myCarousel.getCurrentSlideIndex() - 1;
@@ -741,6 +751,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
   showAnswerClicked(event, question?) {
     if (event?.showAnswer) {
+      this.focusOnNextButton();
       this.active = true;
       this.progressBarClass[this.myCarousel.getCurrentSlideIndex() - 1].class = 'correct';
       if (question) {
