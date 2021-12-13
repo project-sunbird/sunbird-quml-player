@@ -1,6 +1,6 @@
 <div class="quml-container" *ngIf="loadView" [hidden]="showZoomModal">
   <div [hidden]="showSolution" class="quml-landscape">
-    <sb-player-side-menu-icon class="notVisible" *ngIf="sideMenuConfig.enable"></sb-player-side-menu-icon>
+    <sb-player-side-menu-icon class="notVisible" *ngIf="sideMenuConfig.enable" (sidebarMenuEvent)="sideBarEvents($event)"></sb-player-side-menu-icon>
     <quml-header class="main-header" (durationEnds)="durationEnds()" [disablePreviousNavigation]="linearNavigation"
       [duration]="timeLimit" [warningTime]="warningTime" [showTimer]="showTimer"
       (nextSlideClicked)="nextSlideClicked($event)" (prevSlideClicked)="previousSlideClicked($event)"

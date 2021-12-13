@@ -83,6 +83,7 @@ export class McqOptionComponent implements OnChanges {
 
   onEnter(event: KeyboardEvent, mcqOption) {
     if (event.keyCode === 13) {
+      event.stopPropagation();
       this.onOptionSelect(event, mcqOption);
     }
   }
