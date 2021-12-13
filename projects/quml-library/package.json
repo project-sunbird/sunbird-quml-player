@@ -1,6 +1,6 @@
 {
   "name": "@project-sunbird/sunbird-quml-player-v9",
-  "version": "4.5.10",
+  "version": "4.5.11",
   "peerDependencies": {
     "@angular/common": ">=9.0.0",
     "@angular/core": ">=9.0.0",
@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@project-sunbird/sunbird-player-sdk-v9": "4.5.1",
-    "ally.js": "^1.4.1"
+    "ally.js": "1.4.1"
   },
   "homepage": "https://github.com/project-sunbird/sunbird-quml-player/blob/release-4.3.0/README.md",
   "keywords": [
