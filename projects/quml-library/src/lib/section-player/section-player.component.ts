@@ -9,6 +9,7 @@ import { QuestionCursor } from '../quml-question-cursor.service';
 import { ViewerService } from '../services/viewer-service/viewer-service';
 import { eventName, pageId, TelemetryType } from '../telemetry-constants';
 import { UtilService } from '../util-service';
+import maintain from 'ally.js/esm/maintain/_maintain';
 
 @Component({
   selector: 'quml-section-player',
@@ -101,6 +102,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   showRootInstruction = true;
   slideDuration = 0;
   initialSlideDuration: number;
+  disabledHandle: any;
 
   constructor(
     public viewerService: ViewerService,
@@ -450,10 +452,12 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   }
 
   focusOnNextButton() {
-    const nextBtn = document.querySelector('.quml-navigation__next') as HTMLElement;
-    if (nextBtn) {
-      nextBtn.focus();
-    }
+    setTimeout(() => {
+      const nextBtn = document.querySelector('.quml-navigation__next') as HTMLElement;
+      if (nextBtn) {
+        nextBtn.focus();
+      }
+    }, 100);
   }
 
   getOptionSelected(optionSelected) {
@@ -544,7 +548,22 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   }
 
   sideBarEvents(event) {
-    this.viewerService.raiseHeartBeatEvent(event, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex() + 1);
+    if (event.type === 'OPEN_MENU' || event.type === 'CLOSE_MENU') {
+      this.handleSideBarAccessibility(event);
+    }
+    this.viewerService.raiseHeartBeatEvent(event.type, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex() + 1);
+  }
+
+  handleSideBarAccessibility(event) {
+    const overlayInput = document.getElementById('overlay-input') as HTMLElement;
+    const overlayButton = document.getElementById('overlay-button') as HTMLInputElement;
+    const navBlock = document.querySelector('.navBlock') as HTMLInputElement;
+
+    if (event.type === 'OPEN_MENU') {
+      this.disabledHandle = maintain.disabled({ filter: [navBlock, overlayButton, overlayInput] });
+    } else if (event.type === 'CLOSE_MENU' && this.disabledHandle) {
+      this.disabledHandle.disengage();
+    }
   }
 
   validateSelectedOption(option, type?: string) {
