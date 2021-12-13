@@ -10,12 +10,9 @@
     "@project-sunbird/client-services": "4.0.1"
   },
   "dependencies": {
-    "@project-sunbird/sunbird-player-sdk-v9": "4.5.0"
+    "@project-sunbird/sunbird-player-sdk-v9": "4.5.1",
+    "ally.js": "^1.4.1"
   },
-  "whitelistedNonPeerDependencies": [
-    "carousel",
-    "@project-sunbird/sunbird-player-sdk-v9"
-  ],
   "homepage": "https://github.com/project-sunbird/sunbird-quml-player/blob/release-4.3.0/README.md",
   "keywords": [
     "sunbird",
