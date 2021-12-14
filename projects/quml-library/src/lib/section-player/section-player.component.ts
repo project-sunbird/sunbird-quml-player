@@ -574,6 +574,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
         }
       });
     } else if (event.type === 'CLOSE_MENU' && this.disabledHandle) {
+      this.disabledHandle = null;
       this.disabledHandle.disengage();
       this.disabledHandle = null;
       if (this.subscription) {
