@@ -2,7 +2,7 @@ import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, HostListener
 import { errorCode, errorMessage, ErrorService } from '@project-sunbird/sunbird-player-sdk-v9';
 import * as _ from 'lodash-es';
 import { CarouselComponent } from 'ngx-bootstrap/carousel';
-import { Subject } from 'rxjs';
+import { fromEvent, Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { QumlPlayerConfig, IParentConfig } from '../quml-library-interface';
 import { QuestionCursor } from '../quml-question-cursor.service';
@@ -103,7 +103,8 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   slideDuration = 0;
   initialSlideDuration: number;
   disabledHandle: any;
-
+  disabledHandle1: any;
+  subscription: Subscription;
   constructor(
     public viewerService: ViewerService,
     public utilService: UtilService,
@@ -555,13 +556,24 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   }
 
   handleSideBarAccessibility(event) {
-    const overlayInput = document.getElementById('overlay-input') as HTMLElement;
-    const overlayButton = document.getElementById('overlay-button') as HTMLInputElement;
     const navBlock = document.querySelector('.navBlock') as HTMLInputElement;
 
     if (event.type === 'OPEN_MENU') {
-      this.disabledHandle = maintain.disabled({ filter: [navBlock, overlayButton, overlayInput] });
+      this.disabledHandle = maintain.tabFocus({ context: navBlock });
+      this.subscription = fromEvent(document, 'keydown').subscribe((e: KeyboardEvent) => {
+        if (e['key'] === 'Escape') {
+          const inputChecked = document.getElementById('overlay-input') as HTMLInputElement;
+          inputChecked.checked = false;
+          document.getElementById('playerSideMenu').style.visibility = 'hidden';
+          document.querySelector<HTMLElement>('.navBlock').style.marginLeft = '-100%';
+          this.viewerService.raiseHeartBeatEvent('CLOSE_MENU', TelemetryType.interact, this.myCarousel.getCurrentSlideIndex() + 1);
+          this.disabledHandle.disengage();
+          this.disabledHandle = null;
+          this.subscription = null;
+        }
+      });
     } else if (event.type === 'CLOSE_MENU' && this.disabledHandle) {
+      this.disabledHandle = null;
       this.disabledHandle.disengage();
     }
   }
@@ -919,5 +931,8 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
     this.errorService.getInternetConnectivityError.unsubscribe();
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }
