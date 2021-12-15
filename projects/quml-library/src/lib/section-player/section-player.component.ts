@@ -574,7 +574,6 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
         }
       });
     } else if (event.type === 'CLOSE_MENU' && this.disabledHandle) {
-      this.disabledHandle = null;
       this.disabledHandle.disengage();
       this.disabledHandle = null;
       if (this.subscription) {
@@ -780,6 +779,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     this.viewerService.raiseHeartBeatEvent(eventName.solutionClosed, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
     this.showSolution = false;
     this.myCarousel.selectSlide(this.currentSlideIndex);
+    this.focusOnNextButton();
   }
 
   viewHint() {
