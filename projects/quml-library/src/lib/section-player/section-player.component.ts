@@ -568,6 +568,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
           document.querySelector<HTMLElement>('.navBlock').style.marginLeft = '-100%';
           this.viewerService.raiseHeartBeatEvent('CLOSE_MENU', TelemetryType.interact, this.myCarousel.getCurrentSlideIndex() + 1);
           this.disabledHandle.disengage();
+          this.subscription.unsubscribe();
           this.disabledHandle = null;
           this.subscription = null;
         }
@@ -575,6 +576,11 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     } else if (event.type === 'CLOSE_MENU' && this.disabledHandle) {
       this.disabledHandle = null;
       this.disabledHandle.disengage();
+      this.disabledHandle = null;
+      if (this.subscription) {
+        this.subscription.unsubscribe();
+        this.subscription = null;
+      }
     }
   }
 
