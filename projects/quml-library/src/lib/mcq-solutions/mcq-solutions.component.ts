@@ -1,11 +1,11 @@
-import { Component, Input, Output, EventEmitter, ViewChild, ElementRef, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 
 @Component({
   selector: 'quml-mcq-solutions',
   templateUrl: './mcq-solutions.component.html',
   styleUrls: ['./mcq-solutions.component.scss']
 })
-export class McqSolutionsComponent implements OnInit, OnDestroy {
+export class McqSolutionsComponent  {
   @Input() question: any;
   @Input() options: any;
   @Input() solutions: any;
@@ -15,9 +15,6 @@ export class McqSolutionsComponent implements OnInit, OnDestroy {
   showVideoSolution: boolean;
   previousActiveElement: HTMLElement;
 
-  ngOnInit(): void {
-    this.previousActiveElement = document.activeElement as HTMLElement;
-  }
 
   closeSolution() {
     if (this.solutionVideoPlayer) {
@@ -28,9 +25,4 @@ export class McqSolutionsComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {
-    if (this.previousActiveElement) {
-      this.previousActiveElement.focus();
-    }
-  }
 }
