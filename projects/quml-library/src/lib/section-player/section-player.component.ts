@@ -103,7 +103,6 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   slideDuration = 0;
   initialSlideDuration: number;
   disabledHandle: any;
-  disabledHandle1: any;
   subscription: Subscription;
   constructor(
     public viewerService: ViewerService,
@@ -198,6 +197,13 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
       this.currentQuestionsMedia = _.get(this.questions[0], 'media');
       this.setImageZoom();
       this.loadView = true;
+
+      setTimeout(() => {
+        const firstSlide = document.querySelector('.carousel.slide') as HTMLElement;
+        if (firstSlide) { 
+          firstSlide.focus();
+        }
+      }, 100);
     }
 
     this.questionIdsCopy = _.cloneDeep(this.sectionConfig.metadata.childNodes);
@@ -557,9 +563,13 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
   handleSideBarAccessibility(event) {
     const navBlock = document.querySelector('.navBlock') as HTMLInputElement;
+    const overlayInput = document.querySelector('#overlay-input') as HTMLElement;
+    const overlayButton = document.querySelector('#overlay-button') as HTMLElement;
+    const sideBarList = document.querySelector('#sidebar-list') as HTMLElement;
 
     if (event.type === 'OPEN_MENU') {
-      this.disabledHandle = maintain.tabFocus({ context: navBlock });
+      const isMobile = this.sectionConfig.config?.sideMenu?.showExit;
+      this.disabledHandle = isMobile ? maintain.hidden({ filter: [ sideBarList, overlayButton, overlayInput ] }) : maintain.tabFocus({ context: navBlock });
       this.subscription = fromEvent(document, 'keydown').subscribe((e: KeyboardEvent) => {
         if (e['key'] === 'Escape') {
           const inputChecked = document.getElementById('overlay-input') as HTMLInputElement;
