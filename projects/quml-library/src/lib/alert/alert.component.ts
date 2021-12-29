@@ -1,5 +1,8 @@
-import { Component, Output, EventEmitter, Input, 
-  AfterViewInit, OnDestroy, OnInit, HostListener } from '@angular/core';
+import {
+  Component, Output, EventEmitter, Input,
+  AfterViewInit, OnDestroy, OnInit, HostListener
+} from '@angular/core';
+import { fromEvent, Subscription } from 'rxjs';
 
 @Component({
   selector: 'quml-alert',
@@ -14,6 +17,9 @@ export class AlertComponent implements OnInit, AfterViewInit, OnDestroy {
   @Output() showSolution = new EventEmitter();
   @Output() showHint = new EventEmitter();
 
+  subscription: Subscription;
+  isFocusSet = false;
+
 
   @HostListener('document:keydown.escape', ['$event']) onKeydownHandler(event: KeyboardEvent) {
     this.close('close');
@@ -23,7 +29,21 @@ export class AlertComponent implements OnInit, AfterViewInit, OnDestroy {
   previousActiveElement: HTMLElement;
 
   ngOnInit() {
+    this.isFocusSet = false;
     this.previousActiveElement = document.activeElement as HTMLElement;
+    this.subscription = fromEvent(document, 'keydown').subscribe((e: KeyboardEvent) => {
+      if (e['key'] === 'Tab') {
+        console.log('Tab pressed');
+        
+        const nextBtn = document.querySelector('.quml-navigation__previous') as HTMLElement;
+        if (nextBtn) {
+          this.close('close');
+          nextBtn.focus();
+          this.isFocusSet = true;
+          e.stopPropagation();
+        }
+      }
+    });
   }
 
   ngAfterViewInit() {
@@ -33,7 +53,7 @@ export class AlertComponent implements OnInit, AfterViewInit, OnDestroy {
       const wrongButton = document.querySelector('#wrongButton') as HTMLElement;
       const correctButton = document.querySelector('#correctButton') as HTMLElement;
       const hintButton = document.querySelector('#hintButton') as HTMLElement;
-  
+
       if (this.alertType === 'wrong') {
         wrongButton.focus();
       } else if (this.alertType === 'correct' && this.showSolutionButton) {
@@ -59,8 +79,12 @@ export class AlertComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.previousActiveElement) {
+    if (this.previousActiveElement && !this.isFocusSet) {
       this.previousActiveElement.focus();
+    }
+
+    if (this.subscription) {
+      this.subscription.unsubscribe();
     }
   }
 }
