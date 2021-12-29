@@ -5,13 +5,16 @@ import { Component, Input, Output, EventEmitter, ViewChild, ElementRef } from '@
   templateUrl: './mcq-solutions.component.html',
   styleUrls: ['./mcq-solutions.component.scss']
 })
-export class McqSolutionsComponent {
-  @Output() close = new EventEmitter();
+export class McqSolutionsComponent  {
   @Input() question: any;
   @Input() options: any;
   @Input() solutions: any;
-  showVideoSolution: boolean;
+  @Output() close = new EventEmitter();
   @ViewChild('solutionVideoPlayer' , {static: true}) solutionVideoPlayer: ElementRef;
+  
+  showVideoSolution: boolean;
+  previousActiveElement: HTMLElement;
+
 
   closeSolution() {
     if (this.solutionVideoPlayer) {
