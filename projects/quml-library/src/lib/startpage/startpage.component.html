@@ -1,27 +1,27 @@
 <div class="startpage">
-  <div class="startpage__header">
+  <div class="startpage__header" [attr.aria-label]="'question set title '+contentName">
     {{contentName}}
   </div>
   <div class="startpage__content">
     <div class="startpage__metadata">
       <div class="startpage__md-heading">Questions</div>
       <div class="startpage__md-scores">
-        <quml-content class="startpage__md-icon"></quml-content><span
-          class="startpage__md-desc">{{totalNoOfQuestions}}</span>
+        <quml-content class="startpage__md-icon"></quml-content>
+        <span class="startpage__md-desc">{{totalNoOfQuestions}}</span>
       </div>
     </div>
     <div class="startpage__metadata" *ngIf="showTimer && time > 0">
       <div class="startpage__md-heading">Minutes</div>
       <div class="startpage__md-scores">
-        <quml-timer class="startpage__md-icon"></quml-timer><span
-          class="startpage__md-desc">{{minutes}}:{{seconds}}</span>
+        <quml-timer class="startpage__md-icon"></quml-timer>
+        <span class="startpage__md-desc">{{minutes}}:{{seconds}}</span>
       </div>
     </div>
     <div class="startpage__metadata" *ngIf="points">
       <div class="startpage__md-heading">Points</div>
       <div class="startpage__md-scores">
-        <quml-startpagestaricon class="startpage__md-icon">i</quml-startpagestaricon><span
-          class="startpage__md-desc">{{points}}</span>
+        <quml-startpagestaricon class="startpage__md-icon">i</quml-startpagestaricon>
+        <span class="startpage__md-desc">{{points}}</span>
       </div>
     </div>
   </div>
