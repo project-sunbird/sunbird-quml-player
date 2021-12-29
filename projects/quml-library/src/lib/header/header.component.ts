@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input, OnChanges, OnDestroy } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, OnChanges, OnDestroy, AfterViewInit } from '@angular/core';
 
 
 @Component({
@@ -6,7 +6,7 @@ import { Component, OnInit, Output, EventEmitter, Input, OnChanges, OnDestroy } 
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
+export class HeaderComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
 
   @Input() questions?: any;
   @Input() duration?: any;
@@ -34,6 +34,7 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
   seconds: string | number;
   private intervalRef?;
   showWarning = false;
+  isMobilePortrait = false;
 
   time: any;
   constructor() {
@@ -61,6 +62,10 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
       clearInterval(this.intervalRef)
       this.showCountUp();
     }
+  }
+
+  ngAfterViewInit() {
+    this.isMobilePortrait = window.matchMedia("(max-width: 480px)").matches;;
   }
 
   ngOnDestroy() {

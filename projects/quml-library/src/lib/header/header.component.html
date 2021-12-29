@@ -30,7 +30,7 @@
         47
       </span>
     </div> -->
-    <div class="quml-navigation" *ngIf="!disableNext">
+    <div class="quml-navigation" *ngIf="!disableNext && !isMobilePortrait">
       <div class="quml-navigation__previous" (click)="prevSlide()" aria-label="preview slide" title="preview slide" role="navigation"
         [ngClass]="(startPageInstruction && currentSlideIndex === 0) || (!showStartPage && currentSlideIndex === 1) ? 'navigation-icon-disabled': '' " tabindex="0"></div>
       <div class="quml-navigation__next ml-8" (click)="nextSlide()" (keydown.enter)="nextSlide()" aria-label="next slide" title="next slide" *ngIf="!active" role="navigation"
@@ -44,22 +44,13 @@
 
 <div class="quml-header__metadata quml-header__metadata--portrait" *ngIf="!loadScoreBoard && !endPageReached">
   <div class="current-slide fnormal">{{currentSlideIndex}}/{{totalNoOfQuestions}}</div>
-  <!-- <div>
-    <quml-bookmark></quml-bookmark>
-  </div> -->
-  <!-- <div>
-    <quml-hint></quml-hint>
-  </div> -->
-  <!-- <div>
-    <quml-share></quml-share>
-  </div> -->
   <div class="ml-16" *ngIf="currentSolutions && showFeedBack">
     <quml-ans (click)="showSolution.emit()"></quml-ans>
   </div>
   <div class="quml-navigation ml-auto">
-    <div class="quml-navigation__previous" (click)="prevSlide()"></div>
-    <div class="quml-navigation__next ml-8" (click)="nextSlide()" (keydown.enter)="nextSlide()" *ngIf="!active"></div>
-    <div class="quml-navigation__next quml-navigation__next--active ml-8" (click)="nextSlide()" (keydown.enter)="nextSlide()"  *ngIf="active"></div>
+    <div class="quml-navigation__previous" tabindex="0" (click)="prevSlide()" (keydown.enter)="prevSlide()" aria-label="preview slide"></div>
+    <div class="quml-navigation__next ml-8" tabindex="0" (click)="nextSlide()" (keydown.enter)="nextSlide()" *ngIf="!active" aria-label="next slide"></div>
+    <div class="quml-navigation__next quml-navigation__next--active ml-8" tabindex="0" (click)="nextSlide()" (keydown.enter)="nextSlide()" *ngIf="active" aria-label="next slide"></div>
   </div>
 
 </div>

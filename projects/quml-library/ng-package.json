@@ -2,9 +2,14 @@
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
   "dest": "../../dist/quml-library",
   "lib": {
-    "entryFile": "src/public_api.ts"
+    "entryFile": "src/public_api.ts",
+    "umdModuleIds": {
+      "ally.js": "ally.js"
+    }
   },
   "whitelistedNonPeerDependencies": [
-    "."
+    "ally.js",
+    "carousel",
+    "@project-sunbird/sunbird-player-sdk-v9"
   ]
 }

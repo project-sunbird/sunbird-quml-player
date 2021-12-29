@@ -2,13 +2,14 @@ import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, HostListener
 import { errorCode, errorMessage, ErrorService } from '@project-sunbird/sunbird-player-sdk-v9';
 import * as _ from 'lodash-es';
 import { CarouselComponent } from 'ngx-bootstrap/carousel';
-import { Subject } from 'rxjs';
+import { fromEvent, Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { QumlPlayerConfig, IParentConfig } from '../quml-library-interface';
 import { QuestionCursor } from '../quml-question-cursor.service';
 import { ViewerService } from '../services/viewer-service/viewer-service';
 import { eventName, pageId, TelemetryType } from '../telemetry-constants';
 import { UtilService } from '../util-service';
+import maintain from 'ally.js/esm/maintain/_maintain';
 
 @Component({
   selector: 'quml-section-player',
@@ -101,7 +102,8 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   showRootInstruction = true;
   slideDuration = 0;
   initialSlideDuration: number;
-
+  disabledHandle: any;
+  subscription: Subscription;
   constructor(
     public viewerService: ViewerService,
     public utilService: UtilService,
@@ -195,6 +197,13 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
       this.currentQuestionsMedia = _.get(this.questions[0], 'media');
       this.setImageZoom();
       this.loadView = true;
+
+      setTimeout(() => {
+        const firstSlide = document.querySelector('.carousel.slide') as HTMLElement;
+        if (firstSlide) { 
+          firstSlide.focus();
+        }
+      }, 100);
     }
 
     this.questionIdsCopy = _.cloneDeep(this.sectionConfig.metadata.childNodes);
@@ -417,6 +426,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
   onEnter(event, index) {
     if (event.keyCode === 13) {
+      event.stopPropagation();
       this.goToSlideClicked(event, index);
     }
   }
@@ -443,11 +453,22 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
   onScoreBoardEnter(event: KeyboardEvent) {
     event.stopPropagation();
-    this.onScoreBoardClicked();
+    if (event.keyCode === 13) {
+      this.onScoreBoardClicked();
+    }
   }
 
+  focusOnNextButton() {
+    setTimeout(() => {
+      const nextBtn = document.querySelector('.quml-navigation__next') as HTMLElement;
+      if (nextBtn) {
+        nextBtn.focus();
+      }
+    }, 100);
+  }
 
   getOptionSelected(optionSelected) {
+    this.focusOnNextButton();
     this.active = true;
     this.currentOptionSelected = optionSelected;
     const currentIndex = this.myCarousel.getCurrentSlideIndex() - 1;
@@ -534,7 +555,42 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   }
 
   sideBarEvents(event) {
-    this.viewerService.raiseHeartBeatEvent(event, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex() + 1);
+    if (event.type === 'OPEN_MENU' || event.type === 'CLOSE_MENU') {
+      this.handleSideBarAccessibility(event);
+    }
+    this.viewerService.raiseHeartBeatEvent(event.type, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex() + 1);
+  }
+
+  handleSideBarAccessibility(event) {
+    const navBlock = document.querySelector('.navBlock') as HTMLInputElement;
+    const overlayInput = document.querySelector('#overlay-input') as HTMLElement;
+    const overlayButton = document.querySelector('#overlay-button') as HTMLElement;
+    const sideBarList = document.querySelector('#sidebar-list') as HTMLElement;
+
+    if (event.type === 'OPEN_MENU') {
+      const isMobile = this.sectionConfig.config?.sideMenu?.showExit;
+      this.disabledHandle = isMobile ? maintain.hidden({ filter: [ sideBarList, overlayButton, overlayInput ] }) : maintain.tabFocus({ context: navBlock });
+      this.subscription = fromEvent(document, 'keydown').subscribe((e: KeyboardEvent) => {
+        if (e['key'] === 'Escape') {
+          const inputChecked = document.getElementById('overlay-input') as HTMLInputElement;
+          inputChecked.checked = false;
+          document.getElementById('playerSideMenu').style.visibility = 'hidden';
+          document.querySelector<HTMLElement>('.navBlock').style.marginLeft = '-100%';
+          this.viewerService.raiseHeartBeatEvent('CLOSE_MENU', TelemetryType.interact, this.myCarousel.getCurrentSlideIndex() + 1);
+          this.disabledHandle.disengage();
+          this.subscription.unsubscribe();
+          this.disabledHandle = null;
+          this.subscription = null;
+        }
+      });
+    } else if (event.type === 'CLOSE_MENU' && this.disabledHandle) {
+      this.disabledHandle.disengage();
+      this.disabledHandle = null;
+      if (this.subscription) {
+        this.subscription.unsubscribe();
+        this.subscription = null;
+      }
+    }
   }
 
   validateSelectedOption(option, type?: string) {
@@ -733,6 +789,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     this.viewerService.raiseHeartBeatEvent(eventName.solutionClosed, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
     this.showSolution = false;
     this.myCarousel.selectSlide(this.currentSlideIndex);
+    this.focusOnNextButton();
   }
 
   viewHint() {
@@ -741,6 +798,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
   showAnswerClicked(event, question?) {
     if (event?.showAnswer) {
+      this.focusOnNextButton();
       this.active = true;
       this.progressBarClass[this.myCarousel.getCurrentSlideIndex() - 1].class = 'correct';
       if (question) {
@@ -889,5 +947,8 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
     this.errorService.getInternetConnectivityError.unsubscribe();
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }
