@@ -1,6 +1,6 @@
 <div class="solutions">
-    <div class="close-icon" (click)="closeSolution()">
-        <quml-close></quml-close>
+    <div class="close-icon" role="button" tabindex="0" aria-label="Close"  (click)="closeSolution()" (keydown.enter)="closeSolution()">
+        <quml-close tabindex="-1"></quml-close>
     </div>
     <div class="solution-header">Question</div>
     <div [innerHtml]="question | safeHtml"></div>
