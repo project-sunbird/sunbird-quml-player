@@ -10,6 +10,7 @@ import { ViewerService } from '../services/viewer-service/viewer-service';
 import { eventName, pageId, TelemetryType } from '../telemetry-constants';
 import { UtilService } from '../util-service';
 import maintain from 'ally.js/esm/maintain/_maintain';
+import { ISideBarEvent } from '@project-sunbird/sunbird-player-sdk-v9/sunbird-player-sdk.interface';
 
 @Component({
   selector: 'quml-section-player',
@@ -369,7 +370,6 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   }
 
   nextSlideClicked(event) {
-    this.showRootInstruction = false;
     if (this.showRootInstruction && this.parentConfig.isSectionsAvailable) {
       this.showRootInstruction = false;
       return;
@@ -554,7 +554,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     }
   }
 
-  sideBarEvents(event) {
+  sideBarEvents(event: ISideBarEvent) {
     if (event.type === 'OPEN_MENU' || event.type === 'CLOSE_MENU') {
       this.handleSideBarAccessibility(event);
     }
