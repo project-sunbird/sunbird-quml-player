@@ -103,7 +103,7 @@
 }
 .sections-score-card{
   width: 100%;
-  max-height: calc(100% - 12rem);
+  max-height: calc(100% - 20rem);
   overflow-y: auto;
   @include respond-below(sm) {
     max-height: calc(100% - 8.125rem);
