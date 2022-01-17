@@ -5302,7 +5302,7 @@ const mockQuestionSet = {
     'pkgVersion': 1
 }
 
-export const data1 = {
+export const playerConfig1 = {
     'context': {
         'threshold': 3,
         'mode': 'play',
@@ -5359,7 +5359,7 @@ export const data1 = {
     }
 }
 
-export const data2 = {
+export const playerConfig2 = {
     'context': {
         'identifier': 'do_1133781055902433281292',
         'channel': '01309282781705830427',

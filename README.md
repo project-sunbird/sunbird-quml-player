@@ -1,5 +1,5 @@
-# :diamond_shape_with_a_dot_inside: Quml player library for Sunbird platform!
-Contains Quml player library components powered by angular. These components are designed to be used in sunbird consumption platforms *(mobile app, web portal, offline desktop app)* to drive reusability, maintainability hence reducing the redundant development effort significantly.
+# :diamond_shape_with_a_dot_inside: QuML-player library for Sunbird platform!
+Contains QuML player library components powered by angular. These components are designed to be used in sunbird consumption platforms *(mobile app, web portal, offline desktop app)* to drive reusability, maintainability hence reducing the redundant development effort significantly.
 
 # :bookmark_tabs: Getting Started...
 For help getting started with a new Angular app, check out the [Angular CLI](https://angular.io/tutorial/toh-pt0).
@@ -12,14 +12,30 @@ These are the peerDependencies of the library, need to be installed in order to 
     npm install @project-sunbird/sunbird-quml-player-v9 --save
     npm install @project-sunbird/sb-styles --save
     npm install @project-sunbird/client-services --save
-    npm install bootstrap --save
+    npm install bootstrap@4.6.1 --save
     npm install jquery --save
     npm install katex --save
     npm install lodash-es --save
-    npm install ngx-bootstrap --save
+    npm install ngx-bootstrap@6.0.0 --save
 
-## :label: Step 2: Include the styles, scripts and assets in angular.json
-  Add following under architect.build.assets for default project
+P.S. *As QuML library is build with angular version 9, we are using **bootstrap@4.6.1** and **ngx-bootstrap@6.0.0** which are the compatible versions.  
+For more reference Check compatibility document for ng-bootstrap [here](https://valor-software.com/ngx-bootstrap/#/documentation#getting-started)*  
+
+## :label: Step 2: Add 
+Copy CSS code from the below given `styles.css` to app's default `styles.css` or `styles.scss`  
+keep `quml-carousel.css` in root folder.
+
+  - [styles.css](https://github.com/project-sunbird/sunbird-quml-player/blob/release-4.7.0/projects/quml-demo-app/src/styles.css)  
+  - [quml-carousel.css](https://github.com/project-sunbird/sunbird-quml-player/blob/release-4.7.0/quml-carousel.css)  
+
+## :label: Step 3: Add question-cursor-implementation.service
+Create a **question-cursor-implementation.service.ts** in a project and which will implement the `QuestionCursor` abstract class.  
+`QuestionCursor` is an abstract class, exported from the library, which needs to be implemented. Basically it has some methods which should make an API request over HTTP  
+
+For reference check this [question-cursor-implementation.service.ts](https://github.com/project-sunbird/sunbird-quml-player/blob/release-4.7.0/projects/quml-demo-app/src/app/question-cursor-implementation.service.ts) and don't forgot to add your question list API URL here, for example: [https://staging.sunbirded.org/api/question/v1/list](https://staging.sunbirded.org/api/question/v1/list)
+
+## :label: Step 3: Include the styles, scripts and assets in angular.json
+  Add following under `architect.build.assets` for default project  
 ```javascript
 {
   ...
@@ -56,21 +72,19 @@ These are the peerDependencies of the library, need to be installed in order to 
 },
 ```
   
-
-## :label: Step 3: Import the modules and components
-Import the required modules such as CarouselModule, QumlLibraryModule etc.
-Add [question-cursor-implementation.service.ts](https://github.com/project-sunbird/sunbird-quml-player/blob/release-4.7.0/projects/quml-demo-app/src/app/question-cursor-implementation.service.ts)
-`QuestionCursor` is an abstract class which needs to be implemented, basically it has some methods which should make API request over HTTP
+## :label: Step 4: Import the modules and components
+Import the required modules such as **CarouselModule**, **QumlLibraryModule**, **HttpClientModule** and **question-cursor-implementation.service** as below:
 
 ```javascript
+  import { HttpClientModule } from '@angular/common/http';
+  import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml-player-v9';
   import { CarouselModule } from 'ngx-bootstrap/carousel';
   import { QuestionCursorImplementationService } from './question-cursor-implementation.service';
-  import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml-player-v9';
 
   @NgModule({
    ...
 
-   imports: [ QumlLibraryModule, CarouselModule.forRoot() ],
+   imports: [ QumlLibraryModule, CarouselModule.forRoot(), HttpClientModule ],
    providers: [{
      provide: QuestionCursor,
      useClass: QuestionCursorImplementationService
@@ -81,20 +95,17 @@ Add [question-cursor-implementation.service.ts](https://github.com/project-sunbi
 
  export class AppModule { }
 ```
-## :label: Step 4: Add css 
-copy css code from the below given `styles.css` to app's default `styles.css` or `styles.scss`
-keep `quml-carousel.css` in root folder.
-
-  - [styles.css](https://github.com/project-sunbird/sunbird-quml-player/blob/release-4.7.0/projects/quml-demo-app/src/styles.css)  
-  - [quml-carousel.css](https://github.com/project-sunbird/sunbird-quml-player/blob/release-4.7.0/quml-carousel.css)  
-
 
 ## :label: Step 5: Send input to render Quml player
 User can get an response from the `api/questionset/v1/hierarchy/:do_id` or for demo purpose can use provided mock config
 
-Use the mock config in your component to send input to Quml player
-Click to see the mock - [playerConfig](https://github.com/project-sunbird/sunbird-quml-player/blob/release-4.7.0/projects/quml-demo-app/src/app/quml-library-data.ts)
-Use 'singleContentRes' for single questionset and 'sectionContent' for section questionset in the mock
+Use the mock config in your component to send input to Quml player as `playerConfig`  
+Click to see the mock - [playerConfig1](https://github.com/project-sunbird/sunbird-quml-player/blob/release-4.7.0/projects/quml-demo-app/src/app/quml-library-data.ts)  
+
+```html
+<quml-main-player [playerConfig]="playerConfig" ><quml-main-player>
+```
+
 
 ## :orange_circle: Available components
 |Feature| Notes| Selector|Code|Input|Output
@@ -114,9 +125,10 @@ Use 'singleContentRes' for single questionset and 'sectionContent' for section q
 ### :small_red_triangle_down: Output Events
 1. playerEvent()    - It provides heartbeat event for the each action performed in the player.
 2. telemetryEvent() - It provides the sequence of telemetry events such as `START, INTERACT, IMPRESSION, SUMMARY, END`
-	
 
-
+---
+---
+   
 
 # Use as web components :earth_asia:
 QuML Library can also be used as web component which means user can import this library in any web application and use these custom component.
@@ -155,7 +167,7 @@ Follow below-mentioned steps to use it in plain javascript project:
 
 - Append this element to existing element
 	```javascript
-	const  myPlayer = document.getElementById("my-player");
+	const myPlayer = document.getElementById("my-player");
 	myPlayer.appendChild(qumlPlayerElement);
 	```
 - :arrow_forward: Refer demo [example](https://github.com/project-sunbird/sunbird-quml-player/blob/release-4.7.0/web-component/index.html)
