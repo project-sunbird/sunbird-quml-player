@@ -18,10 +18,11 @@ These are the peerDependencies of the library, need to be installed in order to 
     npm install lodash-es --save
     npm install ngx-bootstrap@6.0.0 --save
 
-P.S. *As QuML library is build with angular version 9, we are using **bootstrap@4.6.1** and **ngx-bootstrap@6.0.0** which are the compatible versions.  
-For more reference Check compatibility document for ng-bootstrap [here](https://valor-software.com/ngx-bootstrap/#/documentation#getting-started)*  
 
-## :label: Step 2: Add 
+P.S. *As QuML library is build with angular version 9, we are using **bootstrap@4.6.1** and **ngx-bootstrap@6.0.0** which are the compatible versions.  
+For more reference Check compatibility document for ng-bootstrap [here](https://valor-software.com/ngx-bootstrap/#/documentation#compatibility)*  
+
+## :label: Step 2: Add CSS
 Copy CSS code from the below given `styles.css` to app's default `styles.css` or `styles.scss`  
 keep `quml-carousel.css` in root folder.
 
@@ -100,7 +101,7 @@ Import the required modules such as **CarouselModule**, **QumlLibraryModule**, *
 User can get an response from the `api/questionset/v1/hierarchy/:do_id` or for demo purpose can use provided mock config
 
 Use the mock config in your component to send input to Quml player as `playerConfig`  
-Click to see the mock - [playerConfig1](https://github.com/project-sunbird/sunbird-quml-player/blob/release-4.7.0/projects/quml-demo-app/src/app/quml-library-data.ts)  
+Click to see the mock - [playerConfig1](https://github.com/project-sunbird/sunbird-quml-player/blob/release-4.7.0/projects/quml-demo-app/src/app/quml-library-data.ts#L5305)  
 
 ```html
 <quml-main-player [playerConfig]="playerConfig" ><quml-main-player>
@@ -156,18 +157,18 @@ Follow below-mentioned steps to use it in plain javascript project:
 	**Note:** Attribute should be in **string** type
 - Listen for the output events: **playerEvent** and **telemetryEvent**
 
-	```javascript
-	qumlPlayerElement.addEventListener('playerEvent', (event) => {
-		console.log("On playerEvent", event);
-	});
-	qumlPlayerElement.addEventListener('telemetryEvent', (event) => {
-		console.log("On telemetryEvent", event);
-	});
-	```
+  ```javascript
+  qumlPlayerElement.addEventListener('playerEvent', (event) => {
+    console.log("On playerEvent", event);
+  });
+  qumlPlayerElement.addEventListener('telemetryEvent', (event) => {
+    console.log("On telemetryEvent", event);
+  });
+  ```
 
 - Append this element to existing element
-	```javascript
-	const myPlayer = document.getElementById("my-player");
-	myPlayer.appendChild(qumlPlayerElement);
-	```
+  ```javascript
+  const myPlayer = document.getElementById("my-player");
+  myPlayer.appendChild(qumlPlayerElement);
+  ```
 - :arrow_forward: Refer demo [example](https://github.com/project-sunbird/sunbird-quml-player/blob/release-4.7.0/web-component/index.html)
