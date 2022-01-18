@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { data1 } from './quml-library-data';
+import { playerConfig1 } from './quml-library-data';
 
 @Component({
   selector: 'app-root',
@@ -10,8 +10,8 @@ export class AppComponent {
   title = 'quml-demo-app';
   qumlMetaDataConfig = {};
   // qumlMetaDataConfig: any = JSON.parse(localStorage.getItem('config')) || {};  // to Get locally saved metaData
-  config = { ...data1.config, ...this.qumlMetaDataConfig };
-  QumlPlayerConfig = { ...data1, config: this.config };
+  config = { ...playerConfig1.config, ...this.qumlMetaDataConfig };
+  QumlPlayerConfig = { ...playerConfig1, config: this.config };
 
   getPlayerEvents(event) {
     console.log('get player events', JSON.stringify(event));
