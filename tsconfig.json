@@ -26,8 +26,15 @@
         "dist/quml-library"
       ],
       "quml-library/*": [
-        "dist/quml-library/*"
-      ]
+        "dist/quml-library/*",
+        
+      ],
+      "@project-sunbird/sunbird-quml-player-v9":[
+        "dist/quml-library",
+      ],
+      "@project-sunbird/sunbird-quml-player-v9/*":[
+        "dist/quml-library/*",
+      ],
     }
   }
 }

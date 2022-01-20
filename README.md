@@ -176,13 +176,13 @@ Follow below-mentioned steps to use it in plain javascript project:
 
 # :bookmark_tabs: QuML Player Contribution Guide  
 ## Repo Setup  
-  - Clone the Repo with desired release-branch - https://github.com/project-sunbird/sunbird-quml-player  
-  - Open two terminal window one with root folder and other with `projects/quml-library`  
-  - Run `npm i` in root folder  
-  - In `projects/quml-library` Run `npm i`  
-  - In `projects/quml-library` Run `npm run mybuild` once this run completely run next command  
-  - Run `npm run serve` in root folder (This will copy assets from the `quml-library` to the library dist folder and serves the project)  
-  - Now it will be served on `http://localhost:4200/`  
-  - To build the web-component run `npm run build-web-component`  
+  - Clone the Repo with desired release-branch - https://github.com/project-sunbird/sunbird-quml-player
+  - Run `npm i` in root folder
+  - Run `npm i` in `projects/quml-library` 
+  - Open two terminal windows (on root folder)
+  - Run `npm run mybuild` once this run completely run next command - let it be running on 1st terminal window
+  - Run `npm run serve` on second terminal window (This will copy assets from the `quml-library` to the library dist folder)
+  - Now it will be served on `http://localhost:4200/`
+  - To Run the web-component `npm run build-web-component`
 
 
