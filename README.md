@@ -128,7 +128,6 @@ Click to see the mock - [playerConfig1](https://github.com/project-sunbird/sunbi
 2. telemetryEvent() - It provides the sequence of telemetry events such as `START, INTERACT, IMPRESSION, SUMMARY, END`
 
 ---
----
    
 
 # Use as web components :earth_asia:
@@ -171,4 +170,19 @@ Follow below-mentioned steps to use it in plain javascript project:
   const myPlayer = document.getElementById("my-player");
   myPlayer.appendChild(qumlPlayerElement);
   ```
-- :arrow_forward: Refer demo [example](https://github.com/project-sunbird/sunbird-quml-player/blob/release-4.7.0/web-component/index.html)
+- :arrow_forward: Refer demo [example](https://github.com/project-sunbird/sunbird-quml-player/blob/release-4.7.0/web-component/index.html)  
+
+---
+
+# :bookmark_tabs: QuML Player Contribution Guide  
+## Repo Setup  
+  - Clone the Repo with desired release-branch - https://github.com/project-sunbird/sunbird-quml-player  
+  - Open two terminal window one with root folder and other with `projects/quml-library`  
+  - Run `npm i` in root folder  
+  - In `projects/quml-library` Run `npm i`  
+  - In `projects/quml-library` Run `npm run mybuild` once this run completely run next command  
+  - Run `npm run serve` in root folder (This will copy assets from the `quml-library` to the library dist folder)  
+  - Now it will be served on `http://localhost:4200/`  
+  - To build the web-component run `npm run build-web-component`  
+
+
