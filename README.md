@@ -177,6 +177,7 @@ Follow below-mentioned steps to use it in plain javascript project:
 # :bookmark_tabs: QuML Player Contribution Guide  
 ## Repo Setup  
   - Clone the Repo with desired release-branch - https://github.com/project-sunbird/sunbird-quml-player
+  - Add the your questionList API_URL in `/projects/quml-demo-app/src/app/question-cursor-implementation.service.ts`
   - Run `npm i` in root folder
   - Run `npm i` in `projects/quml-library` 
   - Open two terminal windows (on root folder)
