@@ -1,32 +1,31 @@
 <div class="quml-sa">
-<div class="question-container">
-  <div class="sa-title">Question</div>
-  <div class="question" [innerHTML]="question | safeHtml"></div>
-</div>
-<div class="sa-button-container">
-  <div *ngIf="!showAnswer" id="submit-answer" tabindex="0" class="sb-btn sb-btn-primary sb-btn-normal sb-btn-radius" 
-  (click)="showAnswerToUser()" (keydown)="onEnter($event)">Show Answer</div>
-</div>
-<div class="option-container-blurred"
-  [ngClass]="showAnswer ? 'option-container-blurred-out': 'option-container-blurred'">
-  <div class="sa-title" [attr.aria-hidden]="showAnswer? null : 'true'">Answer</div>
-  <div class="option-body" [innerHTML]="answer | safeHtml" [attr.aria-hidden]="showAnswer? null : 'true'"></div>
-  <ng-container *ngIf="solutions && solutions.length">
-    <div class="sa-title">Solution</div>
-    <div class="solutions" *ngFor="let solution of solutions">
-      <ng-container [ngSwitch]="solution.type">
-        <div *ngSwitchCase="'html'" [innerHTML]="solution.value | safeHtml" tabindex="-1"></div>
-        <div *ngSwitchCase="'video'">
-          <video width="400" controls [poster]="solution.thumbnail">
-            <source [src]="solution.src" type="video/mp4">
-            <source [src]="solution.src" type="video/webm">
-          </video>
-        </div>
-        <div *ngSwitchCase="'image'">
-          <img [src]="solution.src" alt="Subjective question solution with image">
-        </div>
-      </ng-container>
-    </div>
-  </ng-container>
-</div>
+  <div class="question-container" tabindex="0">
+    <div class="sa-title">Question</div>
+    <div class="question" [innerHTML]="question | safeHtml"></div>
+  </div>
+  <div class="sa-button-container">
+    <div *ngIf="!showAnswer" id="submit-answer" tabindex="0" class="sb-btn sb-btn-primary sb-btn-normal sb-btn-radius"
+      (click)="showAnswerToUser()" (keydown)="onEnter($event)">Show Answer</div>
+  </div>
+  <div id="answer-container" [ngClass]="showAnswer ? 'option-container-blurred-out': 'option-container-blurred'">
+    <div class="sa-title" [attr.aria-hidden]="showAnswer ? null : true">Answer</div>
+    <div class="option-body" [innerHTML]="answer | safeHtml" [attr.aria-hidden]="showAnswer ? null : true"></div>
+    <ng-container *ngIf="solutions?.length" [attr.aria-hidden]="showAnswer ? null : true">
+      <div class="sa-title">Solution</div>
+      <div class="solutions" *ngFor="let solution of solutions">
+        <ng-container [ngSwitch]="solution.type">
+          <div *ngSwitchCase="'html'" [innerHTML]="solution.value | safeHtml" tabindex="-1"></div>
+          <div *ngSwitchCase="'video'">
+            <video width="400" controls [poster]="solution.thumbnail">
+              <source [src]="solution.src" type="video/mp4">
+              <source [src]="solution.src" type="video/webm">
+            </video>
+          </div>
+          <div *ngSwitchCase="'image'">
+            <img [src]="solution.src" alt="Subjective question solution with image">
+          </div>
+        </ng-container>
+      </div>
+    </ng-container>
+  </div>
 </div>

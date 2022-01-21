@@ -30,12 +30,6 @@ export class SaComponent implements OnInit, OnChanges, AfterViewInit {
 
   showAnswerToUser() {
     this.showAnswer = true;
-    const el: HTMLElement = document.getElementById('quml-sa') as HTMLElement;
-    
-    if (el) {
-      el.setAttribute('tabindex', '1');
-      el.focus();
-    }
     this.showAnswerClicked.emit({
       showAnswer: this.showAnswer
     });

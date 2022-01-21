@@ -34,6 +34,13 @@ export class McqImageOptionComponent implements OnInit {
     );
   }
 
+  onEnter(event: KeyboardEvent, mcqOption) {
+    if (event.keyCode === 13) {
+      event.stopPropagation();
+      this.optionClicked(mcqOption);
+    }
+  }
+
   openPopup(optionHtml) {
     this.showQumlPopup = true;
     this.qumlPopupImage = optionHtml;
