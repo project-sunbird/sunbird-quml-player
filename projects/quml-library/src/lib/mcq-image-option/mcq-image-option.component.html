@@ -1,5 +1,5 @@
-<div class="quml-mcq-option-card" (click)="optionClicked(mcqOption)" tabindex="0" (keydown.enter)="optionClicked(mcqOption)"
-  [ngClass]="(mcqOption?.selected==true)?'quml-mcq-option-card quml-option--selected':'quml-mcq-option-card'">
+<div class="quml-mcq-option-card" (click)="optionClicked(mcqOption)" tabindex="0" (keydown)="onEnter($event, mcqOption)"
+  [ngClass]="mcqOption?.selected ? 'quml-mcq-option-card quml-option--selected' : 'quml-mcq-option-card'">
   <div class="option" *ngIf="mcqOption"
     [innerHTML]="mcqOption.label | safeHtml"></div>
     <label class="container">

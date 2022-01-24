@@ -172,6 +172,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
             setTimeout(() => { this.nextSlide(); });
           }
         }
+        this.removeAttribute();
       });
   }
 
@@ -198,6 +199,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
       this.currentQuestionsMedia = _.get(this.questions[0], 'media');
       this.setImageZoom();
       this.loadView = true;
+      this.removeAttribute();
 
       setTimeout(() => {
         const firstSlide = document.querySelector('.carousel.slide') as HTMLElement;
@@ -250,6 +252,15 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
       this.loadView = true;
       this.disableNext = true;
     }
+  }
+
+  removeAttribute() {
+    setTimeout(() => {
+      const firstSlide = document.querySelector('.carousel.slide') as HTMLElement;
+      if (firstSlide) { 
+        firstSlide.removeAttribute("tabindex"); 
+      }
+    }, 100);
   }
 
   sortQuestions() {
