@@ -788,8 +788,8 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     this.showSolution = true;
     this.showAlert = false;
     this.currentQuestionsMedia = _.get(this.questions[this.myCarousel.getCurrentSlideIndex() - 1], 'media');
-    this.setImageZoom();
     setTimeout(() => {
+      this.setImageZoom();
       this.setImageHeightWidthClass();
     });
     clearTimeout(this.intervalRef);
