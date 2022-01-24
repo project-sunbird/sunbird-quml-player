@@ -202,9 +202,9 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
       this.removeAttribute();
 
       setTimeout(() => {
-        const firstSlide = document.querySelector('.carousel.slide') as HTMLElement;
-        if (firstSlide) { 
-          firstSlide.focus();
+        const menuBtn = document.querySelector('#overlay-button') as HTMLElement;
+        if (menuBtn) { 
+          menuBtn.focus();
         }
       }, 100);
     }
