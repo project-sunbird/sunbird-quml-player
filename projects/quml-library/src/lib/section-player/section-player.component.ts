@@ -162,6 +162,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
           if (this.questions[this.currentSlideIndex - 1]) {
             this.currentQuestionsMedia = this.questions[this.currentSlideIndex - 1]?.media;
             this.setImageZoom();
+            this.highlightQuestion();
           }
         }
 
@@ -755,11 +756,21 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   }
 
   highlightQuestion() {
-    const element = document.getElementById(this.questions[this.currentSlideIndex - 1]?.identifier);
-    if (element) {
-      setTimeout(() => {
-        element.focus();
-      });
+    const currentQuestion = this.questions[this.currentSlideIndex - 1];
+    const questionType = currentQuestion?.qType?.toUpperCase();
+    const element = document.getElementById(currentQuestion?.identifier) as HTMLElement;
+    if (element && questionType) {
+      let questionTitleElement;
+      if (questionType === 'MCQ') {
+        questionTitleElement = element.querySelector('.mcq-title') as HTMLElement;
+      } else if (questionType === 'SA') {
+        questionTitleElement = element.querySelector('.question-container') as HTMLElement;
+      }
+      if (questionTitleElement) {
+        setTimeout(() => {
+          questionTitleElement.focus();
+        }, 0);
+      }
     }
   }
 
