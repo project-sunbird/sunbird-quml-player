@@ -761,11 +761,15 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     const element = document.getElementById(currentQuestion?.identifier) as HTMLElement;
     if (element && questionType) {
       let questionTitleElement;
-      if (questionType === 'MCQ') {
-        questionTitleElement = element.querySelector('.mcq-title') as HTMLElement;
-      } else if (questionType === 'SA') {
-        questionTitleElement = element.querySelector('.question-container') as HTMLElement;
+
+      switch (questionType) {
+        case 'MCQ':
+          questionTitleElement = element.querySelector('.mcq-title') as HTMLElement;
+          break;
+        default:
+          questionTitleElement = element.querySelector('.question-container') as HTMLElement;
       }
+
       if (questionTitleElement) {
         setTimeout(() => {
           questionTitleElement.focus();
