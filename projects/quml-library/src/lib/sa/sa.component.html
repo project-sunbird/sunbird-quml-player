@@ -5,7 +5,7 @@
   </div>
   <div class="sa-button-container">
     <div *ngIf="!showAnswer" id="submit-answer" tabindex="0" class="sb-btn sb-btn-primary sb-btn-normal sb-btn-radius"
-      (click)="showAnswerToUser()" (keydown)="onEnter($event)">Show Answer</div>
+    aria-label="Show Answer" (click)="showAnswerToUser()" (keydown)="onEnter($event)">Show Answer</div>
   </div>
   <div id="answer-container" [ngClass]="showAnswer ? 'option-container-blurred-out': 'option-container-blurred'">
     <div class="sa-title" [attr.aria-hidden]="showAnswer ? null : true">Answer</div>
