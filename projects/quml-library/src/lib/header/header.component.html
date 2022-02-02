@@ -46,7 +46,7 @@
 <div class="quml-header__metadata quml-header__metadata--portrait" *ngIf="!loadScoreBoard && !endPageReached">
   <div class="current-slide fnormal">{{currentSlideIndex}}/{{totalNoOfQuestions}}</div>
   <div class="ml-16" *ngIf="currentSolutions && showFeedBack">
-    <quml-ans (click)="showSolution.emit()"></quml-ans>
+    <quml-ans (click)="showSolution.emit()" (keydown)="onAnswerKeyDown($event)"></quml-ans>
   </div>
   <div class="quml-navigation ml-auto">
     <div class="quml-navigation__previous" tabindex="0" (click)="prevSlide()" (keydown.enter)="prevSlide()" aria-label="preview slide"></div>
