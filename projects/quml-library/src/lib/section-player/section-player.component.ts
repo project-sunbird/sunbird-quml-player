@@ -822,6 +822,13 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     this.viewerService.raiseHeartBeatEvent(eventName.viewHint, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
   }
 
+  onAnswerKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      event.stopPropagation();
+      this.getSolutions();
+    }
+  }
+
   showAnswerClicked(event, question?) {
     if (event?.showAnswer) {
       this.focusOnNextButton();

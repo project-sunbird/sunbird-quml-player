@@ -19,7 +19,7 @@
           {{myCarousel.getCurrentSlideIndex()}}/{{noOfQuestions}}
         </div>
         <div *ngIf="currentSolutions && showUserSolution">
-          <quml-ans (click)="getSolutions()"></quml-ans>
+          <quml-ans (click)="getSolutions()" (keydown)="onAnswerKeyDown($event)"></quml-ans>
         </div>
       </div>
       <div class="landscape-content">
