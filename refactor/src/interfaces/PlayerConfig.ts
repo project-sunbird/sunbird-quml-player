@@ -1,3 +1,4 @@
+import { LifeCycle } from "./Lifecycle";
 import { Context } from "./Telemetry";
 
 export interface Config {
@@ -37,6 +38,9 @@ export interface Question {
   mimeType: string;
   primaryCategory: string;
   solutions: any;
+
+  //LifeCycle Hooks
+  lifeCycle?: LifeCycle;
 }
 
 export interface IParentConfig {

@@ -14,6 +14,7 @@ import { QuestionIterator } from "./question/QuestionIterator";
 class Player {
   user: User | null;
   collection: any;
+  rendererId: string;
 
   private shouldEmit: boolean = false;
   private emitter: ScheduledEventEmitter<Event>;
