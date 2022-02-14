@@ -40,7 +40,8 @@ class Player {
     // TODO: Initialize Persistance
   }
 
-  // TODO: Related to Questions
+  // Question Iterator should allows for getting the next question and all questions (needed in the Angular player with ints all
+  // sections this way)
 
   // State Related Methods
 
