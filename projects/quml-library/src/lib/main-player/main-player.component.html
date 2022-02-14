@@ -22,7 +22,7 @@
     <sb-player-end-page *ngIf="endPageReached && showEndPage" [contentName]="parentConfig.contentName"
       [outcome]="outcomeLabel" [outcomeLabel]="'Score: '" [userName]="userName" [timeSpentLabel]="durationSpent"
       (replayContent)="replayContent()" (exitContent)="exitContent($event)" [showExit]="sideMenuConfig.showExit"
-      [showReplay]="showReplay">
+      [showReplay]="showReplay" [nextContent]="nextContent" (playNextContent)="playNextContent($event)">
 
       <span class="sb-color-primary mt-8 fnormal font-weight-bold d-block"
         *ngIf="attempts?.max && attempts?.current && attempts.max !== attempts.current">Attempt no {{attempts.current}}/{{attempts.max}}

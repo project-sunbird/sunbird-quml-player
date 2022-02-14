@@ -1,7 +1,8 @@
 import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { contentErrorMessage } from '@project-sunbird/sunbird-player-sdk-v9/lib/player-utils/interfaces/errorMessage';
+import { NextContent } from '@project-sunbird/sunbird-player-sdk-v9/sunbird-player-sdk.interface';
 import * as _ from 'lodash-es';
-import { QumlPlayerConfig, IParentConfig } from '../quml-library-interface';
+import { IParentConfig, QumlPlayerConfig } from '../quml-library-interface';
 import { ViewerService } from '../services/viewer-service/viewer-service';
 import { eventName, pageId, TelemetryType } from '../telemetry-constants';
 import { UtilService } from '../util-service';
@@ -71,6 +72,7 @@ export class MainPlayerComponent implements OnInit {
   userName: string;
   jumpToQuestion: any;
   totalVisitedQuestion = 0;
+  nextContent: NextContent;
 
   constructor(public viewerService: ViewerService, private utilService: UtilService) { }
 
@@ -179,6 +181,7 @@ export class MainPlayerComponent implements OnInit {
     this.parentConfig.identifier = this.playerConfig.metadata?.identifier;
     this.parentConfig.requiresSubmit = this.playerConfig.metadata?.requiresSubmit?.toLowerCase() !== 'no';
     this.parentConfig.instructions = this.playerConfig.metadata?.instructions?.default;
+    this.nextContent = this.playerConfig.config?.nextContent;
     this.showEndPage = this.playerConfig.metadata?.showEndPage?.toLowerCase() !== 'no';
     this.showFeedBack = this.playerConfig.metadata?.showFeedback?.toLowerCase() !== 'no';
     this.sideMenuConfig = { ...this.sideMenuConfig, ...this.playerConfig.config.sideMenu };
@@ -349,7 +352,7 @@ export class MainPlayerComponent implements OnInit {
     if (this.attempts?.max === this.attempts?.current) {
       this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(_.get(this.attempts, 'current'), false, true));
     }
-    this.viewerService.raiseHeartBeatEvent(eventName.replayClicked, TelemetryType.interact, 1);
+    this.viewerService.raiseHeartBeatEvent(eventName.replayClicked, TelemetryType.interact, pageId.endPage);
 
     setTimeout(() => {
       this.parentConfig.isReplayed = false;
@@ -400,7 +403,7 @@ export class MainPlayerComponent implements OnInit {
   exitContent(event) {
     this.calculateScore();
     if (event?.type === 'EXIT') {
-      this.viewerService.raiseHeartBeatEvent(eventName.endPageExitClicked, TelemetryType.interact, 'endPage');
+      this.viewerService.raiseHeartBeatEvent(eventName.endPageExitClicked, TelemetryType.interact, pageId.endPage);
       this.getSummaryObject();
       this.viewerService.raiseSummaryEvent(this.totalVisitedQuestion, this.endPageReached, this.finalScore, this.summary);
       this.isSummaryEventRaised = true;
@@ -470,6 +473,10 @@ export class MainPlayerComponent implements OnInit {
     }
     this.jumpToQuestion = event;
     this.loadScoreBoard = false;
+  }
+
+  playNextContent(event) {
+    this.viewerService.raiseHeartBeatEvent(event.type, TelemetryType.interact, pageId.endPage);
   }
 
   @HostListener('window:beforeunload')

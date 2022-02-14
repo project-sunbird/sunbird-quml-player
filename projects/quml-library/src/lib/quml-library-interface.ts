@@ -1,3 +1,4 @@
+import { NextContent } from '@project-sunbird/sunbird-player-sdk-v9/sunbird-player-sdk.interface';
 export interface Context {
     mode: string;
     threshold?: number;
@@ -57,6 +58,7 @@ export interface Config {
     questions: any[];
     lastQuestionId: string;
     duration: number;
+    nextContent?: NextContent;
 }
 
 export interface QumlPlayerConfig {
