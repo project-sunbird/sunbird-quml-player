@@ -3,30 +3,30 @@ import { Event } from "./interfaces/Event";
 import { EventAudit } from "./interfaces/EventAudit";
 import { ScheduledEventEmitter } from "./interfaces/ScheduledEventEmitter";
 import {
-  Persistance,
-  PersistanceResult,
-  PersistanceStatus,
-} from "./interfaces/Persistance";
+  Persistence,
+  PersistenceResult,
+  PersistenceStatus,
+} from "./interfaces/Persistence";
 import { QumlPlayerConfig } from "./interfaces/PlayerConfig";
 import { RendererState } from "./interfaces/RendererState";
 import { QuestionIterator } from "./question/QuestionIterator";
 
 class Player {
   user: User | null;
-  collection: any;
+  collectionId: any;
   rendererId: string;
 
-  private shouldEmit: boolean = false;
+  private shouldEmit: boolean = false; //Renderer may no live when the player is live.
   private emitter: ScheduledEventEmitter<Event>;
   private rendererState: RendererState | null;
   private eventBacklog: Event[] = [];
   private shouldPersist: boolean = false;
-  private shouldHydrateFromPersistance: boolean;
-  private persistance: Persistance;
+  private shouldHydrateFromPersistence: boolean;
+  private Persistence: Persistence;
 
   private playerConfig: QumlPlayerConfig;
 
-  questionIterator: QuestionIterator;
+  public questionIterator: QuestionIterator;
 
   constructor(
     user: User,
@@ -37,7 +37,7 @@ class Player {
     // TODO: Download Collection
     // TODO: Initialize PlayerConfig
     // TODO: Initialize Renderer and Player with default values
-    // TODO: Initialize Persistance
+    // TODO: Initialize Persistence
   }
 
   // Question Iterator should allows for getting the next question and all questions (needed in the Angular player with ints all
@@ -99,11 +99,11 @@ class Player {
     }
   }
 
-  // Persistance Related Methods
-  async persist(meta: any): Promise<PersistanceResult> {
+  // Persistence Related Methods
+  async persist(meta: any): Promise<PersistenceResult> {
     // Persist state
     if (this.shouldPersist) {
-      return this.persistance.persist(
+      return this.Persistence.persist(
         {
           renderState: this.getRendererState(),
           playerState: this.getPlayerState(),
@@ -117,20 +117,31 @@ class Player {
           meta: meta,
         },
         response: {
-          error: "Persistance is not enabled",
+          error: "Persistence is not enabled",
           data: null,
         },
-        status: PersistanceStatus.FAILURE,
+        status: PersistenceStatus.FAILURE,
       };
     }
   }
 
-  hydrateFromPersistance() {
-    // Hydrate state from persistance
-    if (this.shouldHydrateFromPersistance) {
-      const state = this.persistance.fetch().response.data;
+  hydrateFromPersistence() {
+    // Hydrate state from Persistence
+    if (this.shouldHydrateFromPersistence) {
+      const state = this.Persistence.fetch().response.data;
       this.setRendererState(state.renderState);
       this.setPlayerState(state.playerState);
+    }
+  }
+
+
+
+  sendTelemetryEvent(event: Event, callback) {
+    if(event.type === T) {
+      callback(event).then(s => {
+        this.emit()
+      });
+      
     }
   }
 

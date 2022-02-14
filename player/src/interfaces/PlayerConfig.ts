@@ -43,6 +43,8 @@ export interface Question {
   lifeCycle?: LifeCycle;
 }
 
+// QuestionSet
+
 export interface IParentConfig {
   loadScoreBoard: boolean;
   requiresSubmit: boolean;

@@ -12,4 +12,9 @@ export declare abstract class QuestionIterator {
     question: Question,
     parentId?: string
   ): Promise<Question>;
+
+  abstract getPreviousQuestion(
+    question: Question,
+    parentId?: string
+  ): Promise<Question>;
 }
