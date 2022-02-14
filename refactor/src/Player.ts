@@ -9,6 +9,7 @@ import {
 } from "./interfaces/Persistance";
 import { QumlPlayerConfig } from "./interfaces/PlayerConfig";
 import { RendererState } from "./interfaces/RendererState";
+import { QuestionIterator } from "./question/QuestionIterator";
 
 class Player {
   user: User | null;
@@ -23,6 +24,8 @@ class Player {
   private persistance: Persistance;
 
   private playerConfig: QumlPlayerConfig;
+
+  questionIterator: QuestionIterator;
 
   constructor(
     user: User,
