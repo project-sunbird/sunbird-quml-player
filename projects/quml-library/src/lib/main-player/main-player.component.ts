@@ -476,7 +476,7 @@ export class MainPlayerComponent implements OnInit {
   }
 
   playNextContent(event) {
-    this.viewerService.raiseHeartBeatEvent(event.type, TelemetryType.interact, pageId.endPage);
+    this.viewerService.raiseHeartBeatEvent(event?.type, TelemetryType.interact, pageId.endPage, event?.identifier);
   }
 
   @HostListener('window:beforeunload')
