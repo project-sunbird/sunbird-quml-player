@@ -41,38 +41,6 @@
 - Start with refactoring projects/quml-library/src/lib/main-player/main-player.component.ts
 - Player State
 
-  ```js
-  isSectionsAvailable = false;
-  isMultiLevelSection = false;
-  sections: any[] = [];
-  isFirstSection = false;
-  sectionIndex = 0;
-  activeSection: any;
-  contentError: contentErrorMessage;
-  showEndPage = true;
-  showFeedBack: boolean;
-  endPageReached = false;
-  isEndEventRaised = false;
-  isSummaryEventRaised = false;
-  showReplay = true;
+### Open Questions
 
-  attempts: { max: number, current: number };
-  mainProgressBar = [];
-  loadScoreBoard = false;
-  summary: {
-  correct: 0,
-  partial: 0,
-  skipped: 0,
-  wrong: 0
-  };
-  isDurationExpired = false;
-  finalScore = 0;
-  totalNoOfQuestions = 0;
-  durationSpent: string;
-  outcomeLabel: string;
-  totalScore: number;
-  initialTime: number;
-  userName: string;
-  jumpToQuestion: any;
-  totalVisitedQuestion = 0;
-  ```
+- Should player allow for processign of events - example telemetry?
