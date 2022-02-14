@@ -7,41 +7,8 @@ import {
   PersistanceResult,
   PersistanceStatus,
 } from "./interfaces/Persistance";
-
-interface RendererState {
-  isSectionsAvailable: boolean;
-  isMultiLevelSection: boolean;
-  sections: any;
-  isFirstSection: boolean;
-  sectionIndex: number;
-  activeSection: any;
-  contentError: Event;
-  showEndPage: boolean;
-  showFeedBack: boolean;
-  endPageReached: boolean;
-  isEndEventRaised: boolean;
-  isSummaryEventRaised: boolean;
-
-  attempts: { max: number; current: number };
-  mainProgressBar: string[];
-  loadScoreBoard: boolean;
-  summary: {
-    correct: number;
-    partial: number;
-    skipped: number;
-    wrong: number;
-  };
-  isDurationExpired: boolean;
-  finalScore: number;
-  totalNoOfQuestions: number;
-  durationSpent: string;
-  outcomeLabel: string;
-  totalScore: number;
-  initialTime: number;
-  userName: string;
-  jumpToQuestion: any;
-  totalVisitedQuestion: number;
-}
+import { QumlPlayerConfig } from "./interfaces/PlayerConfig";
+import { RendererState } from "./interfaces/RendererState";
 
 class Player {
   user: User | null;
@@ -55,14 +22,27 @@ class Player {
   private shouldHydrateFromPersistance: boolean;
   private persistance: Persistance;
 
-  constructor(user: User, shouldEmit: boolean, collection: any) {
-    // Download Collection
-    // Initialize Renderer and Player with default values
+  private playerConfig: QumlPlayerConfig;
+
+  constructor(
+    user: User,
+    shouldEmit: boolean,
+    collection: any,
+    playerConfig: QumlPlayerConfig
+  ) {
+    // TODO: Download Collection
+    // TODO: Initialize PlayerConfig
+    // TODO: Initialize Renderer and Player with default values
+    // TODO: Initialize Persistance
   }
 
-  // Relatedd to Questions
+  // TODO: Related to Questions
 
   // State Related Methods
+
+  getPlayerConfig(): QumlPlayerConfig {
+    return this.playerConfig;
+  }
 
   getRendererState(): RendererState {
     return this.rendererState;
@@ -148,4 +128,6 @@ class Player {
       this.setPlayerState(state.playerState);
     }
   }
+
+  // Utility Methods
 }
