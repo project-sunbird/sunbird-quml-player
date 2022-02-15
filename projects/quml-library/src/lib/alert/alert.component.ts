@@ -59,7 +59,7 @@ export class AlertComponent implements OnInit, AfterViewInit, OnDestroy {
       } else if (this.alertType === 'correct' && this.showSolutionButton && correctButton) {
         correctButton.focus();
       }
-    }, 100);
+    }, 200);
   }
 
   viewHint() {
