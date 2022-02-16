@@ -11,7 +11,7 @@ export class AppComponent {
   qumlMetaDataConfig = {};
   // qumlMetaDataConfig: any = JSON.parse(localStorage.getItem('config')) || {};  // to Get locally saved metaData
   config = { ...playerConfig1.config, ...this.qumlMetaDataConfig };
-  QumlPlayerConfig = { ...playerConfig1, config: this.config };
+  QumlPlayerConfig = { ...playerConfig1, config: {...this.config, nextContent: { name: 'Roti aur Kutta', identifier: 'do_231234332232' }}};
 
   getPlayerEvents(event) {
     console.log('get player events', JSON.stringify(event));
