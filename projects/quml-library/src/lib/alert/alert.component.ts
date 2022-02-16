@@ -54,12 +54,12 @@ export class AlertComponent implements OnInit, AfterViewInit, OnDestroy {
       const correctButton = document.querySelector('#correctButton') as HTMLElement;
       const hintButton = document.querySelector('#hintButton') as HTMLElement;
 
-      if (this.alertType === 'wrong') {
+      if (this.alertType === 'wrong' && wrongButton) {
         wrongButton.focus();
-      } else if (this.alertType === 'correct' && this.showSolutionButton) {
+      } else if (this.alertType === 'correct' && this.showSolutionButton && correctButton) {
         correctButton.focus();
       }
-    }, 100);
+    }, 200);
   }
 
   viewHint() {
