@@ -18,17 +18,18 @@ class Player {
 
   private shouldEmit: boolean = false; //Renderer may no live when the player is live.
   private emitter: ScheduledEventEmitter<Event>;
-  private rendererState: RendererState | null;
   private eventBacklog: Event[] = [];
   private shouldPersist: boolean = false;
   private shouldHydrateFromPersistence: boolean;
   private Persistence: Persistence;
 
   private playerConfig: QumlPlayerConfig;
+  private rendererState: RendererState | null;
 
   public questionIterator: QuestionIterator;
 
   constructor(
+    questionSetURL: string,
     user: User,
     shouldEmit: boolean,
     collection: any,
@@ -37,7 +38,7 @@ class Player {
     // TODO: Download Collection
     // TODO: Initialize PlayerConfig
     // TODO: Initialize Renderer and Player with default values
-    // TODO: Initialize Persistence
+    // TODO: Initialize Persistence if needed
   }
 
   // Question Iterator should allows for getting the next question and all questions (needed in the Angular player with ints all
