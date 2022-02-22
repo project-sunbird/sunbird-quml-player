@@ -53,12 +53,28 @@ class Player {
     return this.rendererState;
   }
 
+  private getDiff(): any {
+    return {};
+  }
+
+  setRendererState(state: RendererState) {
+    const diff = this.getDiff(this.rendererState, state)
+    //emit events based on diff
+
+    // update old state
+    this.rendererState = state;
+  }
+
   getPlayerState() {
     throw new Error("Method not implemented.");
   }
 
-  setPlayerState(playerState: any) {
-    throw new Error("Method not implemented.");
+  setPlayerState(playerState: QumlPlayerConfig) {
+    const diff = this.getDiff(this.rendererState, state)
+    //emit events based on diff
+
+    // update old state
+    this.playerConfig = playerState;
   }
 
   async setRendererState(newState: RendererState) {
@@ -136,12 +152,9 @@ class Player {
 
 
 
-  sendTelemetryEvent(event: Event, callback) {
+  sendTelemetryEvent(event: Event) {
     if(event.type === T) {
-      callback(event).then(s => {
-        this.emit()
-      });
-      
+      this.emit()      
     }
   }
 

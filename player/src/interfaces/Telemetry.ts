@@ -43,3 +43,7 @@ export interface ObjectRollup {
   l3?: string;
   l4?: string;
 }
+
+export interface TelemetryPacket {
+  
+}
