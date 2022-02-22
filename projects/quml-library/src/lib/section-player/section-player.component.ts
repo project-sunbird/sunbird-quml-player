@@ -640,9 +640,8 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
       edataItem.sectionId = this.sectionConfig.metadata.identifier;
     }
 
-    if (!this.optionSelectedObj) {
-      const pass = selectedQuestion.qType.toLowerCase() === 'sa' ? 'Yes' : 'No';
-      this.viewerService.raiseAssesEvent(edataItem, currentIndex + 1, pass, 0, [], this.slideDuration);
+    if (!this.optionSelectedObj && selectedQuestion.qType.toUpperCase() !== 'SA') {
+      this.viewerService.raiseAssesEvent(edataItem, currentIndex + 1, 'No', 0, [], this.slideDuration);
     }
 
     if (this.optionSelectedObj) {
