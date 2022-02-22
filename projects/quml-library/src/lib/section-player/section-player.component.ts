@@ -46,9 +46,9 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   sideMenuConfig = {
     enable: true,
     showShare: true,
-    showDownload: true,
+    showDownload: false,
     showReplay: false,
-    showExit: true,
+    showExit: false,
   };
   threshold: number;
   questions = [];
@@ -220,7 +220,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     this.noOfQuestions = this.questionIds.length;
     this.viewerService.initialize(this.sectionConfig, this.threshold, this.questionIds, this.parentConfig);
     this.checkCompatibilityLevel(this.sectionConfig.metadata.compatibilityLevel);
-    this.initialTime = this.initialSlideDuration = new Date().getTime();
+    
     this.timeLimit = this.sectionConfig.metadata?.timeLimits?.maxTime || 0;
     this.warningTime = this.sectionConfig.metadata?.timeLimits?.warningTime || 0;
     this.showTimer = this.sectionConfig.metadata?.showTimer?.toLowerCase() !== 'no';
@@ -253,6 +253,11 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
       this.loadView = true;
       this.disableNext = true;
     }
+
+    if (!this.initializeTimer) {
+      this.initializeTimer = true;
+    }
+    this.initialTime = this.initialSlideDuration = new Date().getTime();
   }
 
   removeAttribute() {
@@ -298,9 +303,6 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
       this.currentSlideIndex = this.currentSlideIndex + 1;
     }
 
-    if (!this.initializeTimer) {
-      this.initializeTimer = true;
-    }
 
     if (this.myCarousel.getCurrentSlideIndex() === this.noOfQuestions) {
       this.emitSectionEnd();
@@ -614,36 +616,41 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     const onStartPage = this.startPageInstruction && this.myCarousel.getCurrentSlideIndex() === 0;
     const isActive = !this.optionSelectedObj && this.active;
     const selectedQuestion = this.questions[currentIndex];
+    const key = selectedQuestion.responseDeclaration ? this.utilService.getKeyValue(Object.keys(selectedQuestion.responseDeclaration)) : '';
+    this.slideDuration = Math.round((new Date().getTime() - this.initialSlideDuration) / 1000);
+    const getParams = () => {
+      if (selectedQuestion.qType.toUpperCase() === 'MCQ' && selectedQuestion?.editorState?.options) {
+        return selectedQuestion.editorState.options;
+      } else if (selectedQuestion.qType.toUpperCase() === 'MCQ' && !_.isEmpty(selectedQuestion?.editorState)) {
+        return [selectedQuestion?.editorState];
+      } else {
+        return [];
+      }
+    };
+    const edataItem: any = {
+      'id': selectedQuestion.identifier,
+      'title': selectedQuestion.name,
+      'desc': selectedQuestion.description,
+      'type': selectedQuestion.qType.toLowerCase(),
+      'maxscore': key.length === 0 ? 0 : selectedQuestion.responseDeclaration[key].maxScore || 0,
+      'params': getParams()
+    };
+
+    if (edataItem && this.parentConfig.isSectionsAvailable) {
+      edataItem.sectionId = this.sectionConfig.metadata.identifier;
+    }
+
+    if (!this.optionSelectedObj) {
+      const pass = selectedQuestion.qType.toLowerCase() === 'sa' ? 'Yes' : 'No';
+      this.viewerService.raiseAssesEvent(edataItem, currentIndex + 1, pass, 0, [], this.slideDuration);
+    }
 
     if (this.optionSelectedObj) {
-      const key = this.utilService.getKeyValue(Object.keys(selectedQuestion.responseDeclaration));
       this.currentQuestion = selectedQuestion.body;
       this.currentOptions = selectedQuestion.interactions[key].options;
 
-      const getParams = () => {
-        if (selectedQuestion.qType.toUpperCase() === 'MCQ' && selectedQuestion?.editorState?.options) {
-          return selectedQuestion.editorState.options;
-        } else if (selectedQuestion.qType.toUpperCase() === 'MCQ' && !_.isEmpty(selectedQuestion?.editorState)) {
-          return [selectedQuestion?.editorState];
-        } else {
-          return [];
-        }
-      };
       if (option.cardinality === 'single') {
         const correctOptionValue = Number(selectedQuestion.responseDeclaration[key].correctResponse.value);
-        this.slideDuration = Math.round((new Date().getTime() - this.initialSlideDuration) / 1000);
-        const edataItem: any = {
-          'id': selectedQuestion.identifier,
-          'title': selectedQuestion.name,
-          'desc': selectedQuestion.description,
-          'type': selectedQuestion.qType.toLowerCase(),
-          'maxscore': selectedQuestion.responseDeclaration[key].maxScore || 0,
-          'params': getParams()
-        };
-
-        if (edataItem && this.parentConfig.isSectionsAvailable) {
-          edataItem.sectionId = this.sectionConfig.metadata.identifier;
-        }
 
         this.showAlert = true;
         if (option.option?.value === correctOptionValue) {

@@ -4,7 +4,7 @@ import { NextContent } from '@project-sunbird/sunbird-player-sdk-v9/sunbird-play
 import * as _ from 'lodash-es';
 import { IParentConfig, QumlPlayerConfig } from '../quml-library-interface';
 import { ViewerService } from '../services/viewer-service/viewer-service';
-import { eventName, pageId, TelemetryType } from '../telemetry-constants';
+import { eventName, pageId, TelemetryType, MimeType } from '../telemetry-constants';
 import { UtilService } from '../util-service';
 
 @Component({
@@ -65,9 +65,9 @@ export class MainPlayerComponent implements OnInit {
   sideMenuConfig = {
     enable: true,
     showShare: true,
-    showDownload: true,
+    showDownload: false,
     showReplay: false,
-    showExit: true,
+    showExit: false,
   };
   userName: string;
   jumpToQuestion: any;
@@ -97,7 +97,7 @@ export class MainPlayerComponent implements OnInit {
 
   initializeSections() {
     const childMimeType = _.map(this.playerConfig.metadata.children, 'mimeType');
-    this.parentConfig.isSectionsAvailable = this.isSectionsAvailable = childMimeType[0] === 'application/vnd.sunbird.questionset';
+    this.parentConfig.isSectionsAvailable = this.isSectionsAvailable = childMimeType[0] === MimeType.questionSet;
     this.viewerService.sectionQuestions = [];
     if (this.isSectionsAvailable) {
       this.isMultiLevelSection = this.getMultilevelSection(this.playerConfig.metadata);
@@ -489,16 +489,3 @@ export class MainPlayerComponent implements OnInit {
     this.raiseEndEvent(this.totalVisitedQuestion, this.endPageReached, this.finalScore);
   }
 }
-
-/*
- * Should Take care of the following
- *  - handle end page
- *  - handle scoreboard
- *  - handle max Attempts
- *  - handle telemetry initialization
- *  - handle telemetry events - endpage / scoreboard / maxattempts
- *  - handle Jump to question or section
- *  - handle summary event
- *  - handle next/previous button on start and end of the section
- * -  handle raising all the outputs back to the client
-*/

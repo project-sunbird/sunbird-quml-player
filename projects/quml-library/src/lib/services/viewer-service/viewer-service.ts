@@ -141,7 +141,7 @@ export class ViewerService {
 
   }
 
-  raiseAssesEvent(questionData , index , pass , score , resValues , duration){
+  raiseAssesEvent(questionData , index: number , pass: string , score , resValues , duration: number){
     const assessEvent = {
           item: questionData,
           index: index,
