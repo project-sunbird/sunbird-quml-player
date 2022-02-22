@@ -40,3 +40,17 @@ new Event(EventType.TELEMETRY, tp, desc, 0);
 
 
 // emitMaxAttemptEvents
+
+// onMaxAttemptExhausted()  -- Need to calculate the score and jump to the end page
+// onMaxTimeExhausted()  -- Need to calculate the score and jump to the end page
+// onSectionCompleted(sectionId: string, nextSectionId: string)
+// onPlayerCrashed/onInternetConnectionError
+// onExit() -- Need to raise End/summary event before exiting the player
+
+
+// Need some callbacks events for these actions
+
+// onJumpToQuestion(questionId: string)
+// onJumpToSection(sectionId: string)
+// onHintClicked/onViewSolution(questionId: string)
+// onQuestionSetReplay()
