@@ -8,6 +8,7 @@ export interface RendererState {
   contentError: Event;
   showEndPage: boolean;
   showFeedBack: boolean;
+  showWarningTime: boolean;
   endPageReached: boolean;
   isEndEventRaised: boolean;
   isSummaryEventRaised: boolean;

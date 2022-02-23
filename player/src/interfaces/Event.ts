@@ -1,8 +1,17 @@
-enum EventType {
+export enum EventType {
   TELEMETRY,
   ERROR,
-  PERSITANCE,
-
+  PERSISTANCE,
+  MAX_ATTEMPT_EXCEEDED,
+  MAX_TIME_EXCEEDED,
+  SHOW_WARNING_TIME,
+  SHOW_FEEDBACK,
+  NAVIGATE_TO_NEXT_QUESTION,
+  SECTION_COMPLETED,
+  PLAYER_CRASHED,
+  INTERNET_CONNECTION_ERROR,
+  PLAYER_EXIT,
+  CONTENT_ERROR,
   // TODO: List all events here and add them to the documentation
 }
 

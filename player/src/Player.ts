@@ -1,5 +1,5 @@
 import { User } from "./interfaces/User";
-import { Event } from "./interfaces/Event";
+import { Event, EventType } from "./interfaces/Event";
 import { EventAudit } from "./interfaces/EventAudit";
 import { ScheduledEventEmitter } from "./interfaces/ScheduledEventEmitter";
 import {
@@ -7,7 +7,7 @@ import {
   PersistenceResult,
   PersistenceStatus,
 } from "./interfaces/Persistence";
-import { QumlPlayerConfig } from "./interfaces/PlayerConfig";
+import { QumlPlayerConfig, Question } from "./interfaces/PlayerConfig";
 import { RendererState } from "./interfaces/RendererState";
 import { QuestionIterator } from "./question/QuestionIterator";
 
@@ -54,7 +54,7 @@ class Player {
     return this.rendererState;
   }
 
-  private getDiff(oldState:RendererState, newState: RendererState): any {
+  private getDiff(oldState: RendererState, newState: RendererState): any {
     return {};
   }
 
@@ -154,76 +154,141 @@ class Player {
 
 
   sendTelemetryEvent(event: Event) {
-    if(event.type === T) {
-      this.emit()      
+    if (event.type === T) {
+      this.emit()
     }
   }
 
+
+  /**
+   * Emit an event when the max attempts are exhausted
+   * @param {RendererState} state - RendererState
+   */
   emitMaxAttemptsExhausted(state: RendererState) {
     // this.rendererState.isMaxAttemptExhausted = true;
-    const diff = this.getDiff(this.rendererState, state)
-    //emit events based on diff
-
-    // update old state
-    this.rendererState = state;
+    const desc = 'Max attempts are exhausted';
+    const event = new Event(EventType.MAX_ATTEMPT_EXCEEDED, {}, desc, 0);
+    this.emit(event);
   }
+
+
+  /**
+   * Emit an event when the max time is exhausted
+   * @param {RendererState} state - RendererState
+   */
   emitMaxTimeExhausted(state: RendererState) {
     // this.rendererState.isDurationExpired = true;
-    const diff = this.getDiff(this.rendererState, state)
-    //emit events based on diff
-
-    // update old state
-    this.rendererState = state;
+    const desc = 'Max attempts are exhausted';
+    const event = new Event(EventType.MAX_TIME_EXCEEDED, {}, desc, 0);
+    this.emit(event);
   }
+
+  /**
+   * Emit an event when the warning time started
+   * @param {RendererState} state - RendererState
+   */
+  emitShowWarningTime(state: RendererState) {
+    // this.rendererState.showWarningTime = true;
+    const desc = 'Warning time started';
+    const event = new Event(EventType.SHOW_WARNING_TIME, {}, desc, 0);
+    this.emit(event);
+  }
+
+
+/**
+ * Emit an event when user answers the question and showFeedBack is ON for a question set
+ * @param {RendererState} state - RendererState
+ */
   emitShowFeedBack(state: RendererState) {
-    // Emit this event if configuration is set to show feedback
-    const diff = this.getDiff(this.rendererState, state)
-    //emit events based on diff
-
-    // update old state
-    this.rendererState = state;
+    // this.rendererState.showWarningTime = true;
+    const desc = 'Show feedback popup';
+    const data = {
+      isCorrect: true
+    }
+    const event = new Event(EventType.SHOW_FEEDBACK, data, desc, 0);
+    this.emit(event);
   }
-  emitNavigateToNextQuestion(state: RendererState) {
-    // On answering the question, the player will show feedback popup and it should navigate to the next question
-    const diff = this.getDiff(this.rendererState, state)
-    //emit events based on diff
 
-    // update old state
-    this.rendererState = state;
+/**
+ * Emit an event when feedback popup closes, with the next question data
+ * @param {RendererState} state - RendererState
+ * @param {Question} question - Question
+ */
+  emitNavigateToNextQuestion(state: RendererState, question: Question) {
+    const event = new Event(EventType.NAVIGATE_TO_NEXT_QUESTION, question, '', 0);
+    this.emit(event);
   }
-  emitSectionCompleted(state: RendererState) {
+
+/**
+ * Emit an event to the renderer to navigate to the next question
+ * @param {RendererState} state - RendererState
+ * @param {string} nextSection - The id of the next section.
+ */
+  emitSectionCompleted(state: RendererState, nextSection: string) {
     // this.rendererState.isSectionCompleted = true;
-    // this.rendererState.activeSection = activeSection;
-    const diff = this.getDiff(this.rendererState, state)
-    //emit events based on diff
-
-    // update old state
-    this.rendererState = state;
+    const data = {
+      activeSection: state.activeSection,
+      nextSection: nextSection
+    }
+    const event = new Event(EventType.SECTION_COMPLETED, data, '', 0);
+    this.emit(event);
+    // this.rendererState.activeSection = this.rendererState.sections[this.rendererState.sectionIndex];
   }
+
+/**
+ * Emit an event to the renderer when the player crashed
+ * @param {RendererState} state - RendererState
+ */
   emitPlayerCrashed(state: RendererState) {
-    const diff = this.getDiff(this.rendererState, state)
-    //emit events based on diff
-
-    // update old state
-    this.rendererState = state;
+    const data = {
+      crashType: '',
+      error: '',
+    }
+    const event = new Event(EventType.PLAYER_CRASHED, data, '', 0);
+    this.emit(event);
   }
+
+
+/**
+ * It emits an event to the renderer on internet connection lost
+ * @param {RendererState} state - RendererState
+ */
   emitInternetConnectionError(state: RendererState) {
-    const diff = this.getDiff(this.rendererState, state)
-    //emit events based on diff
-
-    // update old state
-    this.rendererState = state;
-  }
-  emitExit(state: RendererState) {
-    const diff = this.getDiff(this.rendererState, state)
-    //emit events based on diff
-
-    // update old state
-    this.rendererState = state;
+    this.persist({});
+    const data = {
+      isConnected: false,
+    }
+    const event = new Event(EventType.INTERNET_CONNECTION_ERROR, data, '', 0);
+    this.emit(event);
   }
 
-  emitContentError(state: RendererState) {
-    // emit event
+/**
+ * Emit an event to the event bus
+ * @param {RendererState} state - The state of the renderer.
+ * @param {boolean} [isForcefulExit=false] - boolean to indicate forceful exit
+ */
+  emitExit(state: RendererState, isForcefulExit: boolean = false) {
+    this.rendererState = state;
+    const data = {
+      isForcefulExit,
+    }
+    const event = new Event(EventType.PLAYER_EXIT, data, '', 0);
+    this.emit(event);
+  }
+
+
+/**
+ * Emit an event to the renderer
+ * @param {RendererState} state - The current state of the renderer.
+ * @param {string} error - The error message to be displayed.
+ * @param {string} errorCode - The error code that will be used to identify the error.
+ */
+  emitContentError(state: RendererState, error: string, errorCode: string) {
+    const data = {
+      error,
+      errorCode
+    }
+    const event = new Event(EventType.CONTENT_ERROR, {}, '', 0);
   }
 
 
