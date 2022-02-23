@@ -194,7 +194,6 @@ class Player {
     this.emit(event);
   }
 
-
 /**
  * Emit an event when user answers the question and showFeedBack is ON for a question set
  * @param {RendererState} state - RendererState
@@ -263,7 +262,7 @@ class Player {
   }
 
 /**
- * Emit an event to the event bus
+ * Emit an event when player is ready to exit
  * @param {RendererState} state - The state of the renderer.
  * @param {boolean} [isForcefulExit=false] - boolean to indicate forceful exit
  */
