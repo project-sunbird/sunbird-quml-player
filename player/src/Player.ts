@@ -54,7 +54,7 @@ class Player {
     return this.rendererState;
   }
 
-  private getDiff(): any {
+  private getDiff(oldState:RendererState, newState: RendererState): any {
     return {};
   }
 
@@ -158,6 +158,74 @@ class Player {
       this.emit()      
     }
   }
+
+  emitMaxAttemptsExhausted(state: RendererState) {
+    // this.rendererState.isMaxAttemptExhausted = true;
+    const diff = this.getDiff(this.rendererState, state)
+    //emit events based on diff
+
+    // update old state
+    this.rendererState = state;
+  }
+  emitMaxTimeExhausted(state: RendererState) {
+    // this.rendererState.isDurationExpired = true;
+    const diff = this.getDiff(this.rendererState, state)
+    //emit events based on diff
+
+    // update old state
+    this.rendererState = state;
+  }
+  emitShowFeedBack(state: RendererState) {
+    // Emit this event if configuration is set to show feedback
+    const diff = this.getDiff(this.rendererState, state)
+    //emit events based on diff
+
+    // update old state
+    this.rendererState = state;
+  }
+  emitNavigateToNextQuestion(state: RendererState) {
+    // On answering the question, the player will show feedback popup and it should navigate to the next question
+    const diff = this.getDiff(this.rendererState, state)
+    //emit events based on diff
+
+    // update old state
+    this.rendererState = state;
+  }
+  emitSectionCompleted(state: RendererState) {
+    // this.rendererState.isSectionCompleted = true;
+    // this.rendererState.activeSection = activeSection;
+    const diff = this.getDiff(this.rendererState, state)
+    //emit events based on diff
+
+    // update old state
+    this.rendererState = state;
+  }
+  emitPlayerCrashed(state: RendererState) {
+    const diff = this.getDiff(this.rendererState, state)
+    //emit events based on diff
+
+    // update old state
+    this.rendererState = state;
+  }
+  emitInternetConnectionError(state: RendererState) {
+    const diff = this.getDiff(this.rendererState, state)
+    //emit events based on diff
+
+    // update old state
+    this.rendererState = state;
+  }
+  emitExit(state: RendererState) {
+    const diff = this.getDiff(this.rendererState, state)
+    //emit events based on diff
+
+    // update old state
+    this.rendererState = state;
+  }
+
+  emitContentError(state: RendererState) {
+    // emit event
+  }
+
 
   // Utility Methods
 }

@@ -22,6 +22,7 @@ export interface RendererState {
     wrong: number;
   };
   isDurationExpired: boolean;
+  isMaxAttemptExhausted: boolean;
   finalScore: number;
   totalNoOfQuestions: number;
   durationSpent: string;
