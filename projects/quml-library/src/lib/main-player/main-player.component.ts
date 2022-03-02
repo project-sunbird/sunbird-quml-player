@@ -37,6 +37,12 @@ export class MainPlayerComponent implements OnInit {
     baseUrl: '',
     instructions: {},
     questionCount: 0,
+    sideMenuConfig: {
+      enable: true,
+      showShare: true,
+      showDownload: false,
+      showExit: false,
+    }
   };
 
   showEndPage = true;
@@ -62,13 +68,6 @@ export class MainPlayerComponent implements OnInit {
   outcomeLabel: string;
   totalScore: number;
   initialTime: number;
-  sideMenuConfig = {
-    enable: true,
-    showShare: true,
-    showDownload: false,
-    showReplay: false,
-    showExit: false,
-  };
   userName: string;
   jumpToQuestion: any;
   totalVisitedQuestion = 0;
@@ -184,7 +183,7 @@ export class MainPlayerComponent implements OnInit {
     this.nextContent = this.playerConfig.config?.nextContent;
     this.showEndPage = this.playerConfig.metadata?.showEndPage?.toLowerCase() !== 'no';
     this.showFeedBack = this.playerConfig.metadata?.showFeedback?.toLowerCase() !== 'no';
-    this.sideMenuConfig = { ...this.sideMenuConfig, ...this.playerConfig.config.sideMenu };
+    this.parentConfig.sideMenuConfig = { ...this.parentConfig.sideMenuConfig, ...this.playerConfig.config.sideMenu };
     this.userName = this.playerConfig.context.userData.firstName + ' ' + this.playerConfig.context.userData.lastName;
 
     if (this.playerConfig.metadata.isAvailableLocally && this.playerConfig.metadata.basePath) {

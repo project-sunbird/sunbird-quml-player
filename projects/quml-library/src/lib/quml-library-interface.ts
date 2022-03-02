@@ -86,6 +86,12 @@ export interface Question {
     solutions: any;
 }
 
+export interface ISideMenuConfig {
+    enable: boolean;
+    showShare: boolean;
+    showDownload: boolean;
+    showExit: boolean;
+}
 export interface IParentConfig {
     loadScoreBoard: boolean;
     requiresSubmit: boolean;
@@ -97,4 +103,5 @@ export interface IParentConfig {
     baseUrl: string;
     instructions: any;
     questionCount: number;
+    sideMenuConfig: ISideMenuConfig;
 }
