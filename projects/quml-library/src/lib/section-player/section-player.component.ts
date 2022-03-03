@@ -1,10 +1,10 @@
-import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, HostListener, Input, OnChanges, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Output, ViewChild } from '@angular/core';
 import { errorCode, errorMessage, ErrorService } from '@project-sunbird/sunbird-player-sdk-v9';
 import * as _ from 'lodash-es';
 import { CarouselComponent } from 'ngx-bootstrap/carousel';
 import { fromEvent, Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { QumlPlayerConfig, IParentConfig } from '../quml-library-interface';
+import { QumlPlayerConfig, IParentConfig, IAttempts } from '../quml-library-interface';
 import { QuestionCursor } from '../quml-question-cursor.service';
 import { ViewerService } from '../services/viewer-service/viewer-service';
 import { eventName, pageId, TelemetryType } from '../telemetry-constants';
@@ -20,7 +20,7 @@ import { ISideBarEvent } from '@project-sunbird/sunbird-player-sdk-v9/sunbird-pl
 export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
   @Input() sectionConfig: QumlPlayerConfig;
-  @Input() attempts: { max: number, current: number };
+  @Input() attempts: IAttempts;
   @Input() isFirstSection = false;
   @Input() jumpToQuestion;
   @Input() mainProgressBar;
@@ -34,8 +34,8 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   @Output() showScoreBoard = new EventEmitter<any>();
 
   @ViewChild('myCarousel', { static: false }) myCarousel: CarouselComponent;
-  @ViewChild('imageModal', { static: true }) imageModal;
-  @ViewChild('questionSlide', { static: false }) questionSlide;
+  @ViewChild('imageModal', { static: true }) imageModal: ElementRef;
+  @ViewChild('questionSlide', { static: false }) questionSlide: ElementRef;
 
   destroy$: Subject<boolean> = new Subject<boolean>();
   loadView = false;
@@ -57,7 +57,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   noOfQuestions: number;
   initialTime: number;
   timeLimit: any;
-  warningTime: number;
+  warningTime: string;
   showTimer: any;
   showFeedBack: boolean;
   showUserSolution: boolean;

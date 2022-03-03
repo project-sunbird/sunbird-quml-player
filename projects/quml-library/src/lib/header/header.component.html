@@ -1,6 +1,5 @@
 <div class="quml-header__container">
   <div>
-    <!-- <quml-menu class="quml-menu"></quml-menu> -->
     <div *ngIf="attempts?.max && attempts?.current" class="attempts sb-color-primary fnormal font-weight-bold pl-64">Attempt no {{attempts.current}}/{{attempts.max}}</div>
   </div>
 
@@ -22,14 +21,6 @@
       </div>
     </ng-container>
 
-    <!-- <div class="star-container">
-      <span div class="star">
-        <quml-star></quml-star>
-      </span>
-      <span class="score">
-        47
-      </span>
-    </div> -->
     <div class="quml-navigation" *ngIf="!disableNext && !isMobilePortrait">
       <div class="quml-navigation__previous" (click)="prevSlide()" aria-label="preview slide" title="preview slide" role="navigation"
         [ngClass]="(startPageInstruction && currentSlideIndex === 0) || (!showStartPage && currentSlideIndex === 1) ? 'navigation-icon-disabled': '' " 

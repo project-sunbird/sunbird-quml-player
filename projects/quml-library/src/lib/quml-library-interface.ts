@@ -54,17 +54,17 @@ export interface Config {
         showReplay?: boolean;
         showExit?: boolean;
     };
-    progressBar: any[];
-    questions: any[];
-    lastQuestionId: string;
-    duration: number;
+    progressBar?: any[];
+    questions?: any[];
+    lastQuestionId?: string;
+    duration?: number;
     nextContent?: NextContent;
 }
 
 export interface QumlPlayerConfig {
     context: Context;
     metadata: any;
-    data: any;
+    data?: any;
     config: Config;
 }
 
@@ -104,4 +104,16 @@ export interface IParentConfig {
     instructions: any;
     questionCount: number;
     sideMenuConfig: ISideMenuConfig;
+}
+
+export interface ISummary {
+    correct: number;
+    partial: number;
+    skipped: number;
+    wrong: number;
+}
+
+export interface IAttempts {
+    max: number;
+    current: number;
 }
