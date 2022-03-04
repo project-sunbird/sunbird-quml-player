@@ -3,7 +3,7 @@
   <div class="option" *ngIf="mcqOption"
     [innerHTML]="mcqOption.label | safeHtml"></div>
     <label class="container">
-      <input type="radio" name="radio" role="radio" [checked]="mcqOption.selected" >
+      <input type="radio" name="radio" role="radio" [checked]="mcqOption?.selected" >
       <span class="checkmark"></span>
   </label>
 </div>

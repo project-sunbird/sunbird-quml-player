@@ -75,7 +75,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   disableNext: boolean;
   endPageReached: boolean;
   tryAgainClicked = false;
-  currentOptionSelected: string;
+  currentOptionSelected: any;
   carouselConfig = {
     NEXT: 1,
     PREV: 2
@@ -467,7 +467,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
   onScoreBoardEnter(event: KeyboardEvent) {
     event.stopPropagation();
-    if (event.keyCode === 13) {
+    if (event.key === 'Enter') {
       this.onScoreBoardClicked();
     }
   }

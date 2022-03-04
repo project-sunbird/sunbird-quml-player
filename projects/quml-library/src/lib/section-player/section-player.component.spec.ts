@@ -7,19 +7,26 @@ import { of } from 'rxjs';
 import { fakeMainProgressBar } from '../main-player/main-player.component.spec.data';
 import { QumlLibraryService } from '../quml-library.service';
 import { ViewerService } from '../services/viewer-service/viewer-service';
+import { UtilService } from '../util-service';
 import { QuestionCursor } from './../quml-question-cursor.service';
 import { SectionPlayerComponent } from './section-player.component';
-import { mockSectionConfig, mockSectionProgressBar, mockSectionQuestions } from './section-player.component.spec.data';
+import { mockParentConfig, mockSectionConfig, mockSectionProgressBar, mockSectionQuestions } from './section-player.component.spec.data';
 
 describe('SectionPlayerComponent', () => {
   let component: SectionPlayerComponent;
   let fixture: ComponentFixture<SectionPlayerComponent>;
-  let viewerService;
+  let viewerService, utilService, errorService;
 
   class ViewerServiceMock {
+    initialize() { }
     raiseStartEvent() { }
     raiseHeartBeatEvent() { }
     getQuestions() { }
+    updateSectionQuestions() { }
+    raiseExceptionLog() { }
+    getQuestion() { }
+    raiseResponseEvent() { }
+    getSectionQuestions() { }
   }
 
   class ElementRefMock {
@@ -32,7 +39,7 @@ describe('SectionPlayerComponent', () => {
   }
 
   const myCarousel = jasmine.createSpyObj("CarouselComponent", {
-    "getCurrentSlideIndex": 1, "selectSlide": {}
+    "getCurrentSlideIndex": 1, "selectSlide": {}, "move": {}
   }
   );
 
@@ -58,6 +65,8 @@ describe('SectionPlayerComponent', () => {
     fixture = TestBed.createComponent(SectionPlayerComponent);
     component = fixture.componentInstance;
     viewerService = TestBed.get(ViewerService);
+    utilService = TestBed.get(UtilService);
+    errorService = TestBed.get(ErrorService);
     component.imageModal = TestBed.get(ElementRef);
     component.questionSlide = TestBed.get(ElementRef);
     fixture.detectChanges();
@@ -75,9 +84,308 @@ describe('SectionPlayerComponent', () => {
     expect(component['setConfig']).toHaveBeenCalled();
   });
 
-  it('should add skipped class', ()=> {
+  it('should set all the configuration for the section', () => {
+    component.sectionIndex = 0;
+    component.showStartPage = true;
+    component.sectionConfig = mockSectionConfig;
+    component.parentConfig = mockParentConfig;
+    component.myCarousel = myCarousel;
+    component.mainProgressBar = fakeMainProgressBar;
+    spyOn(viewerService, 'getSectionQuestions').and.returnValue(mockSectionQuestions);
+    spyOn(viewerService, 'raiseStartEvent');
+    spyOn(viewerService, 'raiseHeartBeatEvent');
+    spyOn(component, 'setImageZoom');
+    spyOn(component, 'removeAttribute');
+    spyOn(viewerService, 'initialize');
+    spyOn<any>(component, 'checkCompatibilityLevel');
+    spyOn(component, 'sortQuestions');
+    spyOn(viewerService, 'updateSectionQuestions');
+    spyOn(component, 'resetQuestionState');
+    component['setConfig']();
+    expect(viewerService.raiseStartEvent).toHaveBeenCalled();
+    expect(viewerService.raiseHeartBeatEvent).toHaveBeenCalled();
+    expect(component.setImageZoom).toHaveBeenCalled();
+    expect(component.removeAttribute).toHaveBeenCalled();
+    expect(viewerService.initialize).toHaveBeenCalled();
+    expect(component['checkCompatibilityLevel']).toHaveBeenCalled();
+    expect(viewerService.getSectionQuestions).toHaveBeenCalled();
+    expect(component.sortQuestions).toHaveBeenCalled();
+    expect(viewerService.updateSectionQuestions).toHaveBeenCalled();
+    expect(component.resetQuestionState).toHaveBeenCalled();
+  });
+
+  it('should remove the attribute from the html element', fakeAsync(() => {
+    const element = document.createElement('div');
+    spyOn(document, 'querySelector').and.returnValue(element);
+    spyOn(element, 'removeAttribute');
+    component.removeAttribute();
+    tick(100);
+    expect(element.removeAttribute).toHaveBeenCalled();
+  }));
+
+  it('should sort the questions', () => {
+    component.questionIds = ["do_21348431559137689613", "do_21348431640099225615"]
+    component.questions = mockSectionQuestions;
+    component.sortQuestions();
+    expect(component.questions[0].identifier).toBe("do_21348431559137689613");
+  });
+
+  it('should move to the next slide', () => {
+    component.questions = mockSectionQuestions;
+    component.myCarousel = myCarousel;
+    component.noOfQuestions = 1;
+    spyOn(viewerService, 'raiseHeartBeatEvent');
+    spyOn(component, 'emitSectionEnd');
+    component.nextSlide();
+    expect(viewerService.raiseHeartBeatEvent).toHaveBeenCalledTimes(2);
+    expect(component.emitSectionEnd).toHaveBeenCalled();
+  });
+
+  it('should calculate the score on click of next button', () => {
+    component.questions = mockSectionQuestions;
+    component.myCarousel = jasmine.createSpyObj("CarouselComponent", {
+      "getCurrentSlideIndex": 1, "move": {}, isLast: true
+    });
+    component.noOfQuestions = 2;
+    component.currentOptionSelected = { option: 'option 1' };
+    spyOn(viewerService, 'raiseHeartBeatEvent');
+    spyOn(component, 'calculateScore');
+    spyOn(viewerService, 'raiseResponseEvent');
+    spyOn(component, 'setImageZoom');
+    spyOn(component, 'resetQuestionState');
+    spyOn(component, 'clearTimeInterval');
+    component.nextSlide();
+    expect(viewerService.raiseHeartBeatEvent).toHaveBeenCalledTimes(2);
+    expect(component.calculateScore).toHaveBeenCalled();
+    expect(viewerService.raiseResponseEvent).toHaveBeenCalled();
+    expect(component.setImageZoom).toHaveBeenCalled();
+    expect(component.resetQuestionState).toHaveBeenCalled();
+    expect(component.clearTimeInterval).toHaveBeenCalled();
+  });
+
+  it('should navigate to previous slide', () => {
+    spyOn(viewerService, 'raiseHeartBeatEvent');
+    spyOn(component, 'setImageZoom');
+    spyOn(component, 'setSkippedClass');
+    component.myCarousel = myCarousel;
+    component.questions = mockSectionQuestions;
+    component.prevSlide();
+    expect(component['showAlert']).toBe(false);
+    expect(component.setImageZoom).toHaveBeenCalled();
+    expect(component.setSkippedClass).toHaveBeenCalled();
+  });
+
+  it('should navigate to next slide, not root page', () => {
+    component.showRootInstruction = true;
+    component.parentConfig = mockParentConfig;
+    component.nextSlideClicked({ type: 'next' });
+    expect(component.showRootInstruction).toBeFalsy();
+  });
+
+  it('should change the slide', () => {
+    component.activeSlideChange({});
+    expect(component.initialSlideDuration > 0).toBeTruthy();
+  });
+
+  it('should getQuestion', () => {
+    component.myCarousel = myCarousel;
+    component.threshold = 2;
+    component.noOfTimesApiCalled = 1;
+    spyOn(viewerService, 'getQuestions');
+    component.getQuestion();
+    expect(viewerService.getQuestions).toHaveBeenCalled();
+  });
+
+  it('should fetch a Question', () => {
+    component.myCarousel = myCarousel;
+    component.threshold = 1;
+    component.noOfTimesApiCalled = 1;
+    spyOn(viewerService, 'getQuestion');
+    component.getQuestion();
+    expect(viewerService.getQuestion).toHaveBeenCalled();
+  });
+
+  it('should reset the question stage', () => {
+    component.resetQuestionState();
+    expect(component.active).toBeFalsy();
+    expect(component.showAlert).toBeFalsy();
+    expect(component.optionSelectedObj).toBeUndefined();
+    expect(component.currentOptionSelected).toBeUndefined();
+    expect(component.currentQuestion).toBeUndefined();
+    expect(component.currentOptions).toBeUndefined();
+    expect(component.currentSolutions).toBeUndefined();
+  });
+
+  it('should navigate to root page', () => {
+    component.showRootInstruction = true;
+    component.parentConfig = mockParentConfig;
+    component.parentConfig.isSectionsAvailable = false;
+    component.myCarousel = jasmine.createSpyObj("CarouselComponent", {
+      "getCurrentSlideIndex": 0, "move": {}
+    });
+    spyOn(component, 'nextSlide');
+    component.nextSlideClicked({ type: 'next' });
+    expect(component.nextSlide).toHaveBeenCalled();
+  });
+
+  it('should validate the option before moving to the next question', () => {
+    spyOn(component, 'validateSelectedOption');
+    component.parentConfig = mockParentConfig;
+    component.parentConfig.isSectionsAvailable = true;
+    component.showRootInstruction = false;
+    component.myCarousel = myCarousel;
+    component.nextSlideClicked({ type: 'next' });
+    expect(component.validateSelectedOption).toHaveBeenCalled();
+  })
+
+  it('should navigate to previous question', () => {
+    component.optionSelectedObj = { value: 1 };
+    component.showFeedBack = true;
+    component.myCarousel = myCarousel;
+    spyOn(component, 'validateSelectedOption');
+    component.previousSlideClicked({ event: 'previous clicked' });
+    expect(component.stopAutoNavigation).toBe(false);
+    expect(component.validateSelectedOption).toHaveBeenCalled();
+  });
+
+  it('should navigate to previous section', () => {
+    component.currentSlideIndex = 0;
+    component.parentConfig = mockParentConfig;
+    component.mainProgressBar = fakeMainProgressBar;
+    component.myCarousel = myCarousel;
+    spyOn(component, 'getCurrentSectionIndex').and.returnValue(1);
+    spyOn(component, 'jumpToSection');
+    component.previousSlideClicked({ event: 'previous clicked' });
+    expect(component.getCurrentSectionIndex).toHaveBeenCalled();
+    expect(component.jumpToSection).toHaveBeenCalledWith('do_21348431528472576011');
+  });
+
+  it('should navigate to the previous slide', () => {
+    component.currentSlideIndex = 1;
+    spyOn(component, 'prevSlide');
+    component.previousSlideClicked({ event: 'previous clicked' })
+    expect(component.prevSlide).toHaveBeenCalled();
+  });
+
+  it('should return the current slide index', () => {
+    component.sectionConfig = mockSectionConfig;
+    component.mainProgressBar = fakeMainProgressBar;
+    const index = component.getCurrentSectionIndex();
+    expect(index).toBe(0);
+  });
+
+  it('should jump to slide clicked', () => {
+    component.progressBarClass = []
+    spyOn(component, 'goToSlide');
+    component.goToSlideClicked({}, 0);
+    expect(component.jumpSlideIndex).toBe(0);
+    expect(component.goToSlide).toHaveBeenCalled();
+  });
+
+  it('should keypress Enter', () => {
+    const event = {
+      keyCode: 13,
+      stopPropagation: () => { },
+    }
+    spyOn(event, 'stopPropagation');
+    spyOn(component, 'goToSlideClicked');
+    component.onEnter(event, 2);
+    expect(event.stopPropagation).toHaveBeenCalled();
+    expect(component.goToSlideClicked).toHaveBeenCalled();
+  });
+
+  it('should jump to the section on enter', () => {
+    const event = {
+      keyCode: 13,
+      stopPropagation: () => { },
+    }
+    spyOn<any>(event, 'stopPropagation');
+    component.myCarousel = myCarousel;
+    component.sectionConfig = mockSectionConfig;
+    component.onSectionEnter(event, 'do_1234343');
+    expect(event['stopPropagation']).toHaveBeenCalled();
+  });
+
+  it('should emit the scoreboard event', () => {
+    component.sectionConfig = mockSectionConfig;
+    component.questions = mockSectionQuestions;
+    spyOn(viewerService, 'updateSectionQuestions');
+    spyOn(component.showScoreBoard, 'emit');
+    component.onScoreBoardClicked();
+    expect(viewerService.updateSectionQuestions).toHaveBeenCalled();
+    expect(component.showScoreBoard.emit).toHaveBeenCalled();
+  });
+
+  it('should open scoreboard on press of enter key', () => {
+    const ev = new KeyboardEvent('keypress', { key: 'Enter' });
+    spyOn(ev, 'stopPropagation');
+    spyOn(component, 'onScoreBoardClicked');
+    component.onScoreBoardEnter(ev);
+    expect(ev.stopPropagation).toHaveBeenCalled();
+    expect(component.onScoreBoardClicked).toHaveBeenCalled();
+  })
+
+  it('should focus on next tab', fakeAsync(() => {
+    const ele = document.createElement('div');
+    spyOn(document, 'querySelector').and.returnValue(ele);
+    spyOn(ele, 'focus');
+    component.focusOnNextButton();
+    tick(100);
+    expect(ele.focus).toHaveBeenCalled();
+  }));
+
+  it('should handle the duration end', () => {
+    spyOn(component, 'emitSectionEnd');
+    component.durationEnds();
+    expect(component.showSolution).toBe(false);
+    expect(component.showAlert).toBe(false);
+    expect(component.emitSectionEnd).toHaveBeenCalledWith(true);
+  });
+
+  it('should check compatibility of the questionset', () => {
+    spyOn(errorService, 'checkContentCompatibility').and.returnValue(false);
+    spyOn(viewerService, 'raiseExceptionLog')
+    component['checkCompatibilityLevel'](3);
+    expect(errorService.checkContentCompatibility).toHaveBeenCalled();
+    expect(viewerService.raiseExceptionLog).toHaveBeenCalled();
+  });
+
+  it('should emit the event on end of section', () => {
+    component.myCarousel = myCarousel;
+    component.sectionConfig = mockSectionConfig;
+    spyOn(component, 'createSummaryObj');
+    spyOn(component, 'calculateScore');
+    spyOn(utilService, 'getTimeSpentText');
+    spyOn(viewerService, 'updateSectionQuestions');
+    spyOn(component.sectionEnd, 'emit');
+    component.emitSectionEnd(false, 'do_sectionId')
+    expect(component.createSummaryObj).toHaveBeenCalled();
+    expect(component.calculateScore).toHaveBeenCalled();
+    expect(utilService.getTimeSpentText).toHaveBeenCalled();
+    expect(viewerService.updateSectionQuestions).toHaveBeenCalled();
+    expect(component.sectionEnd.emit).toHaveBeenCalled();
+  });
+
+  it('should close the alert when clicked on close button', () => {
+    spyOn(viewerService, 'raiseHeartBeatEvent');
+    component.myCarousel = myCarousel;
+    component.closeAlertBox({ type: 'close' });
+    expect(viewerService.raiseHeartBeatEvent).toHaveBeenCalled();
+    expect(component.showAlert).toBe(false);
+  });
+
+  it('should close the alert when clicked on tryAgain button', () => {
+    spyOn(viewerService, 'raiseHeartBeatEvent');
+    component.myCarousel = myCarousel;
+    component.closeAlertBox({ type: 'tryAgain' });
+    expect(viewerService.raiseHeartBeatEvent).toHaveBeenCalled();
+    expect(component.showAlert).toBe(false);
+  });
+
+  it('should add skipped class', () => {
     component.progressBarClass = fakeMainProgressBar;
     component.setSkippedClass(0);
+    expect(component.progressBarClass[0].class).toBe('skipped');
   });
 
   it('should handle sideBarEvents', () => {
@@ -90,11 +398,88 @@ describe('SectionPlayerComponent', () => {
     expect(viewerService['raiseHeartBeatEvent']).toHaveBeenCalled();
   });
 
+  it('should validate the selected option', () => {
+    component.myCarousel = myCarousel;
+    const option = {
+      "name": "optionSelect",
+      "option": {
+        "label": "<p>Narendra Modi</p>",
+        "value": 1,
+        "selected": true
+      },
+      "cardinality": "single",
+      "solutions": []
+    }
+    component.optionSelectedObj = {
+      "name": "optionSelect",
+      "option": {
+        "label": "<p>Narendra Modi</p>",
+        "value": 1,
+        "selected": true
+      },
+      "cardinality": "single",
+      "solutions": []
+    }
+    component.questions = mockSectionQuestions;
+    component.parentConfig = mockParentConfig;
+    component.sectionConfig = mockSectionConfig;
+    component.progressBarClass = mockSectionProgressBar.children;
+    component.validateSelectedOption(option, "next");
+
+  });
 
   it('should hide the popup once the time is over', fakeAsync(() => {
     component.infoPopupTimeOut();
     tick(2000);
     expect(component.infoPopup).toBe(false);
+  }));
+
+
+  it('should jump to next question on correct feedback popup times out- direction next', fakeAsync(() => {
+    component.myCarousel = jasmine.createSpyObj("CarouselComponent", {
+      "getCurrentSlideIndex": 1, "move": {}, isLast: false
+    });
+    spyOn(component, 'nextSlide');
+    component.correctFeedBackTimeOut('next');
+    tick(4000);
+    expect(component.showAlert).toBe(false);
+    expect(component.nextSlide).toHaveBeenCalled();
+  }));
+
+  it('should jump to next question on correct feedback popup timesout- direction previous', fakeAsync(() => {
+    component.myCarousel = jasmine.createSpyObj("CarouselComponent", {
+      "getCurrentSlideIndex": 1, "move": {}, isLast: false
+    });
+    spyOn(component, 'prevSlide');
+    component.correctFeedBackTimeOut('previous');
+    tick(4000);
+    expect(component.showAlert).toBe(false);
+    expect(component.prevSlide).toHaveBeenCalled();
+  }));
+
+  it('should jump to next question on correct feedback popup timesout - direction jump', fakeAsync(() => {
+    component.stopAutoNavigation = false;
+    component.myCarousel = jasmine.createSpyObj("CarouselComponent", {
+      "getCurrentSlideIndex": 1, "move": {}, isLast: false
+    });
+    spyOn(component, 'goToSlide');
+    component.correctFeedBackTimeOut('jump');
+    tick(4000);
+    expect(component.showAlert).toBe(false);
+    expect(component.goToSlide).toHaveBeenCalled();
+  }));
+
+  it('should jump to next question on correct feedback popup timesout', fakeAsync(() => {
+    component.stopAutoNavigation = true;
+    component.myCarousel = jasmine.createSpyObj("CarouselComponent", {
+      "getCurrentSlideIndex": 1, "move": {}, isLast: true
+    });
+    spyOn(component, 'emitSectionEnd');
+    component.correctFeedBackTimeOut('');
+    tick(4000);
+    expect(component.showAlert).toBe(false);
+    expect(component.endPageReached).toBe(true);
+    expect(component.emitSectionEnd).toHaveBeenCalled();
   }));
 
   it('should navigate to the instruction page', () => {
@@ -203,10 +588,37 @@ describe('SectionPlayerComponent', () => {
     expect(enterKeyEvent.stopPropagation).toHaveBeenCalled();
   });
 
+
+  it('should highlight the selected answer', () => {
+    component.progressBarClass = mockSectionProgressBar.children;
+    component.myCarousel = myCarousel;
+    component.questions = mockSectionQuestions;
+    component.sectionConfig = mockSectionConfig;
+    spyOn(component, 'focusOnNextButton');
+    spyOn(viewerService, 'updateSectionQuestions');
+    spyOn(viewerService, 'raiseHeartBeatEvent')
+    component.showAnswerClicked({ showAnswer: true }, mockSectionQuestions[0]);
+    expect(component.focusOnNextButton).toHaveBeenCalled();
+    expect(viewerService.updateSectionQuestions).toHaveBeenCalled();
+    expect(viewerService.raiseHeartBeatEvent).toHaveBeenCalledTimes(2);
+  });
+
+  it('should return a score for a question', () => {
+    component.questions = mockSectionQuestions;
+    const response = component.getScore(0, 'response1', true, {
+      "answer": true,
+      "value": {
+        "body": "<p>Jeff Bezos</p>",
+        "value": 0
+      }
+    });
+    expect(response).toEqual(1);
+  });
+
   it('should calculate the score', () => {
     component.progressBarClass = mockSectionProgressBar.children;
     const score = component.calculateScore();
-    expect(score).toBe(2);
+    expect(score).toBe(1);
   });
 
   it('should call updateScoreBoard', () => {

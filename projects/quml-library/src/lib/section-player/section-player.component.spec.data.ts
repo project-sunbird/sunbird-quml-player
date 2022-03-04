@@ -574,3 +574,22 @@ export const mockSectionConfig = {
     }
   }
 }
+
+export const mockParentConfig = {
+  loadScoreBoard: true,
+  requiresSubmit: true,
+  isFirstSection: true,
+  isSectionsAvailable: true,
+  isReplayed: true,
+  identifier: 'do_21348431528472576011',
+  contentName: 'test',
+  baseUrl: 'http://localhost:8081/__app__',
+  instructions: 'test',
+  questionCount: 2,
+  sideMenuConfig: {
+    enable: true,
+    showShare: true,
+    showDownload: true,
+    showExit: true
+  }
+}
