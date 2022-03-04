@@ -913,8 +913,10 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
       _.forEach(this.currentQuestionsMedia, (val) => {
         if (imageId === val.id) {
           if (this.sectionConfig.metadata.isAvailableLocally && this.parentConfig.baseUrl) {
+            let baseUrl = this.parentConfig.baseUrl;
+            baseUrl = `${baseUrl.substring(0, baseUrl.lastIndexOf('/'))}/${this.sectionConfig.metadata.identifier}`;
             if (currentQuestionId) {
-              image['src'] = `${this.parentConfig.baseUrl}/${currentQuestionId}/${val.src}`;
+              image['src'] = `${baseUrl}/${currentQuestionId}/${val.src}`;
             }
           } else if (val.baseUrl) {
             image['src'] = val.baseUrl + val.src;
