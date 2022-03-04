@@ -35,7 +35,7 @@ export class McqImageOptionComponent implements OnInit {
   }
 
   onEnter(event: KeyboardEvent, mcqOption) {
-    if (event.keyCode === 13) {
+    if (event.key === 'Enter') {
       event.stopPropagation();
       this.optionClicked(mcqOption);
     }

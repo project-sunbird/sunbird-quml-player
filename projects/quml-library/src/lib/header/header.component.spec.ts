@@ -29,7 +29,7 @@ describe('HeaderComponent', () => {
 
   it('Check Timer method', () => {  
     component.duration = 5;
-    component.warningTime = 2;
+    component.warningTime = '2';
     let durationInSec = component.duration;
     spyOn(component.durationEnds, 'emit');
     setInterval(() => {

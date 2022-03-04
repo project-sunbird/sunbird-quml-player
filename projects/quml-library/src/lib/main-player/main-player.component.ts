@@ -2,10 +2,10 @@ import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@a
 import { contentErrorMessage } from '@project-sunbird/sunbird-player-sdk-v9/lib/player-utils/interfaces/errorMessage';
 import { NextContent } from '@project-sunbird/sunbird-player-sdk-v9/sunbird-player-sdk.interface';
 import * as _ from 'lodash-es';
-import { IParentConfig, QumlPlayerConfig } from '../quml-library-interface';
-import { ViewerService } from '../services/viewer-service/viewer-service';
-import { eventName, pageId, TelemetryType, MimeType } from '../telemetry-constants';
-import { UtilService } from '../util-service';
+import { IAttempts, IParentConfig, ISummary, QumlPlayerConfig } from './../quml-library-interface';
+import { ViewerService } from './../services/viewer-service/viewer-service';
+import { eventName, pageId, TelemetryType, MimeType } from './../telemetry-constants';
+import { UtilService } from './../util-service';
 
 @Component({
   selector: 'quml-main-player',
@@ -52,10 +52,10 @@ export class MainPlayerComponent implements OnInit {
   isSummaryEventRaised = false;
   showReplay = true;
 
-  attempts: { max: number, current: number };
+  attempts: IAttempts;
   mainProgressBar = [];
   loadScoreBoard = false;
-  summary: {
+  summary: ISummary = {
     correct: 0,
     partial: 0,
     skipped: 0,
@@ -92,7 +92,7 @@ export class MainPlayerComponent implements OnInit {
     this.setConfig();
     this.initializeSections();
   }
-  
+
 
   initializeSections() {
     const childMimeType = _.map(this.playerConfig.metadata.children, 'mimeType');
@@ -191,7 +191,7 @@ export class MainPlayerComponent implements OnInit {
     }
 
     this.attempts = {
-      max: this.playerConfig.metadata?.maxAttempt,
+      max: this.playerConfig.metadata?.maxAttempts,
       current: this.playerConfig.metadata?.currentAttempt ? this.playerConfig.metadata.currentAttempt + 1 : 1
     };
     this.totalScore = this.playerConfig.metadata.maxScore;
@@ -219,9 +219,9 @@ export class MainPlayerComponent implements OnInit {
   }
 
   emitMaxAttemptEvents() {
-    if ((this.playerConfig.metadata?.maxAttempt - 1) === this.playerConfig.metadata?.currentAttempt) {
+    if ((this.playerConfig.metadata?.maxAttempts - 1) === this.playerConfig.metadata?.currentAttempt) {
       this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(this.attempts?.current, false, true));
-    } else if (this.playerConfig.metadata?.currentAttempt >= this.playerConfig.metadata?.maxAttempt) {
+    } else if (this.playerConfig.metadata?.currentAttempt >= this.playerConfig.metadata?.maxAttempts) {
       this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(this.attempts?.current, true, false));
     }
   }
@@ -320,7 +320,6 @@ export class MainPlayerComponent implements OnInit {
       this.raiseEndEvent(this.totalVisitedQuestion, this.endPageReached, this.finalScore);
       this.isSummaryEventRaised = true;
       this.isEndEventRaised = true;
-
     }
   }
 
@@ -379,12 +378,12 @@ export class MainPlayerComponent implements OnInit {
         ..._.last(this.mainProgressBar), children
       };
 
-    if (this.playerConfig.config?.questions?.length) {
-      const questionsObj = this.playerConfig.config.questions.find(item => item.id === section.metadata?.identifier);
-      if (questionsObj?.questions) {
-        this.viewerService.updateSectionQuestions(section.metadata.identifier, questionsObj.questions);
+      if (this.playerConfig.config?.questions?.length) {
+        const questionsObj = this.playerConfig.config.questions.find(item => item.id === section.metadata?.identifier);
+        if (questionsObj?.questions) {
+          this.viewerService.updateSectionQuestions(section.metadata.identifier, questionsObj.questions);
+        }
       }
-    }
     });
     if (this.playerConfig.config?.progressBar?.length) {
       this.mainProgressBar = _.cloneDeep(this.playerConfig.config.progressBar);
