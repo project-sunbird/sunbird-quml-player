@@ -33,8 +33,6 @@ export class AlertComponent implements OnInit, AfterViewInit, OnDestroy {
     this.previousActiveElement = document.activeElement as HTMLElement;
     this.subscription = fromEvent(document, 'keydown').subscribe((e: KeyboardEvent) => {
       if (e['key'] === 'Tab') {
-        console.log('Tab pressed');
-        
         const nextBtn = document.querySelector('.quml-navigation__previous') as HTMLElement;
         if (nextBtn) {
           this.close('close');
