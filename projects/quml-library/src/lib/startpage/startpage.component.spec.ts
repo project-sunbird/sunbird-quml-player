@@ -1,4 +1,6 @@
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { SafeHtmlPipe } from '../pipes/safe-html/safe-html.pipe';
 
 import { StartpageComponent } from './startpage.component';
 
@@ -8,7 +10,8 @@ describe('StartpageComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ StartpageComponent ]
+      declarations: [ StartpageComponent, SafeHtmlPipe ],
+      schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
   }));
