@@ -1,17 +1,13 @@
-import {
-  Component,
-  EventEmitter,
-  HostListener,
-  Input,
-  OnInit,
-  Output,
-} from "@angular/core";
-import { contentErrorMessage } from "@project-sunbird/sunbird-player-sdk-v9/lib/player-utils/interfaces/errorMessage";
-import * as _ from "lodash-es";
-import { QumlPlayerConfig, IParentConfig } from "../quml-library-interface";
-import { ViewerService } from "../services/viewer-service/viewer-service";
-import { eventName, pageId, TelemetryType } from "../telemetry-constants";
-import { UtilService } from "../util-service";
+import * as _ from 'lodash-es';
+
+import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
+import { IAttempts, IParentConfig, ISummary, QumlPlayerConfig } from './../quml-library-interface';
+import { MimeType, TelemetryType, eventName, pageId } from './../telemetry-constants';
+
+import { NextContent } from '@project-sunbird/sunbird-player-sdk-v9/sunbird-player-sdk.interface';
+import { UtilService } from './../util-service';
+import { ViewerService } from './../services/viewer-service/viewer-service';
+import { contentErrorMessage } from '@project-sunbird/sunbird-player-sdk-v9/lib/player-utils/interfaces/errorMessage';
 
 @Component({
   selector: "quml-main-player",
@@ -42,6 +38,12 @@ export class MainPlayerComponent implements OnInit {
     baseUrl: "",
     instructions: {},
     questionCount: 0,
+    sideMenuConfig: {
+      enable: true,
+      showShare: true,
+      showDownload: false,
+      showExit: false,
+    }
   };
 
   showEndPage = true;
@@ -51,14 +53,14 @@ export class MainPlayerComponent implements OnInit {
   isSummaryEventRaised = false;
   showReplay = true;
 
-  attempts: { max: number; current: number };
+  attempts: IAttempts;
   mainProgressBar = [];
   loadScoreBoard = false;
-  summary: {
-    correct: 0;
-    partial: 0;
-    skipped: 0;
-    wrong: 0;
+  summary: ISummary = {
+    correct: 0,
+    partial: 0,
+    skipped: 0,
+    wrong: 0
   };
   isDurationExpired = false;
   finalScore = 0;
@@ -67,16 +69,10 @@ export class MainPlayerComponent implements OnInit {
   outcomeLabel: string;
   totalScore: number;
   initialTime: number;
-  sideMenuConfig = {
-    enable: true,
-    showShare: true,
-    showDownload: true,
-    showReplay: false,
-    showExit: true,
-  };
   userName: string;
   jumpToQuestion: any;
   totalVisitedQuestion = 0;
+  nextContent: NextContent;
 
   constructor(
     public viewerService: ViewerService,
@@ -101,13 +97,10 @@ export class MainPlayerComponent implements OnInit {
     this.initializeSections();
   }
 
+
   initializeSections() {
-    const childMimeType = _.map(
-      this.playerConfig.metadata.children,
-      "mimeType"
-    );
-    this.parentConfig.isSectionsAvailable = this.isSectionsAvailable =
-      childMimeType[0] === "application/vnd.sunbird.questionset";
+    const childMimeType = _.map(this.playerConfig.metadata.children, 'mimeType');
+    this.parentConfig.isSectionsAvailable = this.isSectionsAvailable = childMimeType[0] === MimeType.questionSet;
     this.viewerService.sectionQuestions = [];
     if (this.isSectionsAvailable) {
       this.isMultiLevelSection = this.getMultilevelSection(
@@ -210,22 +203,13 @@ export class MainPlayerComponent implements OnInit {
   setConfig() {
     this.parentConfig.contentName = this.playerConfig.metadata?.name;
     this.parentConfig.identifier = this.playerConfig.metadata?.identifier;
-    this.parentConfig.requiresSubmit =
-      this.playerConfig.metadata?.requiresSubmit?.toLowerCase() !== "no";
-    this.parentConfig.instructions =
-      this.playerConfig.metadata?.instructions?.default;
-    this.showEndPage =
-      this.playerConfig.metadata?.showEndPage?.toLowerCase() !== "no";
-    this.showFeedBack =
-      this.playerConfig.metadata?.showFeedback?.toLowerCase() !== "no";
-    this.sideMenuConfig = {
-      ...this.sideMenuConfig,
-      ...this.playerConfig.config.sideMenu,
-    };
-    this.userName =
-      this.playerConfig.context.userData.firstName +
-      " " +
-      this.playerConfig.context.userData.lastName;
+    this.parentConfig.requiresSubmit = this.playerConfig.metadata?.requiresSubmit?.toLowerCase() !== 'no';
+    this.parentConfig.instructions = this.playerConfig.metadata?.instructions?.default;
+    this.nextContent = this.playerConfig.config?.nextContent;
+    this.showEndPage = this.playerConfig.metadata?.showEndPage?.toLowerCase() !== 'no';
+    this.showFeedBack = this.playerConfig.metadata?.showFeedback?.toLowerCase() !== 'no';
+    this.parentConfig.sideMenuConfig = { ...this.parentConfig.sideMenuConfig, ...this.playerConfig.config.sideMenu };
+    this.userName = this.playerConfig.context.userData.firstName + ' ' + this.playerConfig.context.userData.lastName;
 
     if (
       this.playerConfig.metadata.isAvailableLocally &&
@@ -235,10 +219,8 @@ export class MainPlayerComponent implements OnInit {
     }
 
     this.attempts = {
-      max: this.playerConfig.metadata?.maxAttempt,
-      current: this.playerConfig.metadata?.currentAttempt
-        ? this.playerConfig.metadata.currentAttempt + 1
-        : 1,
+      max: this.playerConfig.metadata?.maxAttempts,
+      current: this.playerConfig.metadata?.currentAttempt ? this.playerConfig.metadata.currentAttempt + 1 : 1
     };
     this.totalScore = this.playerConfig.metadata.maxScore;
     this.showReplay =
@@ -269,28 +251,10 @@ export class MainPlayerComponent implements OnInit {
   }
 
   emitMaxAttemptEvents() {
-    if (
-      this.playerConfig.metadata?.maxAttempt - 1 ===
-      this.playerConfig.metadata?.currentAttempt
-    ) {
-      this.playerEvent.emit(
-        this.viewerService.generateMaxAttemptEvents(
-          this.attempts?.current,
-          false,
-          true
-        )
-      );
-    } else if (
-      this.playerConfig.metadata?.currentAttempt >=
-      this.playerConfig.metadata?.maxAttempt
-    ) {
-      this.playerEvent.emit(
-        this.viewerService.generateMaxAttemptEvents(
-          this.attempts?.current,
-          true,
-          false
-        )
-      );
+    if ((this.playerConfig.metadata?.maxAttempts - 1) === this.playerConfig.metadata?.currentAttempt) {
+      this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(this.attempts?.current, false, true));
+    } else if (this.playerConfig.metadata?.currentAttempt >= this.playerConfig.metadata?.maxAttempts) {
+      this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(this.attempts?.current, true, false));
     }
   }
 
@@ -458,11 +422,7 @@ export class MainPlayerComponent implements OnInit {
         )
       );
     }
-    this.viewerService.raiseHeartBeatEvent(
-      eventName.replayClicked,
-      TelemetryType.interact,
-      1
-    );
+    this.viewerService.raiseHeartBeatEvent(eventName.replayClicked, TelemetryType.interact, pageId.endPage);
 
     setTimeout(() => {
       this.parentConfig.isReplayed = false;
@@ -496,14 +456,9 @@ export class MainPlayerComponent implements OnInit {
       };
 
       if (this.playerConfig.config?.questions?.length) {
-        const questionsObj = this.playerConfig.config.questions.find(
-          (item) => item.id === section.metadata?.identifier
-        );
+        const questionsObj = this.playerConfig.config.questions.find(item => item.id === section.metadata?.identifier);
         if (questionsObj?.questions) {
-          this.viewerService.updateSectionQuestions(
-            section.metadata.identifier,
-            questionsObj.questions
-          );
+          this.viewerService.updateSectionQuestions(section.metadata.identifier, questionsObj.questions);
         }
       }
     });
@@ -525,12 +480,8 @@ export class MainPlayerComponent implements OnInit {
 
   exitContent(event) {
     this.calculateScore();
-    if (event?.type === "EXIT") {
-      this.viewerService.raiseHeartBeatEvent(
-        eventName.endPageExitClicked,
-        TelemetryType.interact,
-        "endPage"
-      );
+    if (event?.type === 'EXIT') {
+      this.viewerService.raiseHeartBeatEvent(eventName.endPageExitClicked, TelemetryType.interact, pageId.endPage);
       this.getSummaryObject();
       this.viewerService.raiseSummaryEvent(
         this.totalVisitedQuestion,
@@ -634,7 +585,11 @@ export class MainPlayerComponent implements OnInit {
     this.loadScoreBoard = false;
   }
 
-  @HostListener("window:beforeunload")
+  playNextContent(event) {
+    this.viewerService.raiseHeartBeatEvent(event?.type, TelemetryType.interact, pageId.endPage, event?.identifier);
+  }
+
+  @HostListener('window:beforeunload')
   ngOnDestroy() {
     this.calculateScore();
     this.getSummaryObject();
@@ -653,16 +608,3 @@ export class MainPlayerComponent implements OnInit {
     );
   }
 }
-
-/*
- * Should Take care of the following
- *  - handle end page
- *  - handle scoreboard
- *  - handle max Attempts
- *  - handle telemetry initialization
- *  - handle telemetry events - endpage / scoreboard / maxattempts
- *  - handle Jump to question or section
- *  - handle summary event
- *  - handle next/previous button on start and end of the section
- * -  handle raising all the outputs back to the client
- */

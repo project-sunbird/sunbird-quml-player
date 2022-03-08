@@ -138,4 +138,11 @@ export class HeaderComponent implements OnInit, OnChanges, AfterViewInit, OnDest
       }
     }, 1000);
   }
+
+  onAnswerKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      event.stopPropagation();
+      this.showSolution.emit()
+    }
+  }
 }

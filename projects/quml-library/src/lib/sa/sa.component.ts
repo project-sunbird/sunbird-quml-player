@@ -55,12 +55,12 @@ export class SaComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   ngOnInit() {
-    this.question = this.questions.body;
-    this.answer = this.questions.answer;
-    this.solutions = this.questions.solutions;
-    this.questions.solutions.forEach(ele => {
+    this.question = this.questions?.body;
+    this.answer = this.questions?.answer;
+    this.solutions = this.questions?.solutions;
+    this.questions?.solutions.forEach(ele => {
       if (ele.type === 'video' || ele.type === 'image') {
-        this.questions.media.forEach(e => {
+        this.questions?.media.forEach(e => {
           if (ele.value === e.id) {
             if (this.baseUrl) {
               ele.src = `${this.baseUrl}/${this.questions.identifier}/${e.src}`;
