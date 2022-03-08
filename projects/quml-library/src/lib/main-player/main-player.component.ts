@@ -354,7 +354,11 @@ export class MainPlayerComponent implements OnInit {
 
     setTimeout(() => {
       this.parentConfig.isReplayed = false;
-    }, 200);
+      const element = document.querySelector('li.info-page') as HTMLElement;
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 1000);
   }
 
   setInitialScores(activeSectionIndex = 0) {
