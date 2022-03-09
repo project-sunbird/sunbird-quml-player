@@ -356,7 +356,7 @@ export class MainPlayerComponent implements OnInit {
       this.parentConfig.isReplayed = false;
       const element = document.querySelector('li.info-page') as HTMLElement;
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
+        element.scrollIntoView({ behavior: 'smooth'});
       }
     }, 1000);
   }
