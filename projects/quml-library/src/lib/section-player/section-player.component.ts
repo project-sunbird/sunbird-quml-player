@@ -380,9 +380,11 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
   activeSlideChange(event) {
     this.initialSlideDuration = new Date().getTime();
-    const element = document.querySelector('li.progressBar-border');
-    if (element && !this.parentConfig.isReplayed) {
-      element.scrollIntoView({ behavior: 'smooth' });
+    const questionElement = document.querySelector('li.progressBar-border') as HTMLElement;
+    const progressBarContainer = document.querySelector(".lanscape-mode-right") as HTMLElement;
+
+    if (progressBarContainer && questionElement && !this.parentConfig.isReplayed) {
+      this.utilService.scrollParentToChild(progressBarContainer, questionElement);
     }
   }
 
