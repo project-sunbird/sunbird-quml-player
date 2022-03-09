@@ -74,7 +74,7 @@ export class UtilService {
     }
 
     scrollParentToChild(parent: HTMLElement, child: HTMLElement) {
-        const isMobilePortrait = window.matchMedia("(max-width: 480px)").matches;;
+        const isMobilePortrait = window.matchMedia("(max-width: 480px)").matches;
         const parentRect = parent.getBoundingClientRect();
         const childRect = child.getBoundingClientRect();
 
