@@ -102,7 +102,6 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   showZoomModal = false;
   zoomImgSrc: string;
   imageZoomCount = 100;
-  replayed = false;
   sectionId: string;
   showRootInstruction = true;
   slideDuration = 0;
@@ -194,13 +193,13 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     this.questionIds = _.cloneDeep(this.sectionConfig.metadata.childNodes);
 
     if (this.parentConfig.isReplayed) {
-      this.replayed = true;
       this.initializeTimer = true;
       this.viewerService.raiseStartEvent(0);
       this.viewerService.raiseHeartBeatEvent(eventName.startPageLoaded, 'impression', 0);
       this.disableNext = false;
-      this.currentSlideIndex = 1;
-      this.myCarousel.selectSlide(1);
+      this.currentSlideIndex = 0;
+      this.myCarousel.selectSlide(0);
+      this.showRootInstruction = true;
       this.currentQuestionsMedia = _.get(this.questions[0], 'media');
       this.setImageZoom();
       this.loadView = true;
@@ -211,7 +210,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
         if (menuBtn) {
           menuBtn.focus();
         }
-      }, 100);
+      }, 200);
     }
 
     this.questionIdsCopy = _.cloneDeep(this.sectionConfig.metadata.childNodes);
@@ -385,6 +384,10 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
   activeSlideChange(event) {
     this.initialSlideDuration = new Date().getTime();
+    const element = document.querySelector('li.progressBar-border');
+    if (element && !this.parentConfig.isReplayed) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
   }
 
   nextSlideClicked(event) {
