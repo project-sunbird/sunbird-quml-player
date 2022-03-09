@@ -1,16 +1,16 @@
+import { ComponentFixture, TestBed, async } from '@angular/core/testing';
+import { fakeMainProgressBar, fakeSections, playerConfig, singleContent } from './main-player.component.spec.data';
+
 import { CommonModule } from '@angular/common';
+import { MainPlayerComponent } from './main-player.component';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { SunbirdPlayerSdkModule } from '@project-sunbird/sunbird-player-sdk-v9';
 import { QuestionCursor } from './../quml-question-cursor.service';
 import { QumlLibraryService } from '../quml-library.service';
-
-import { MainPlayerComponent } from './main-player.component';
-import { ViewerService } from '../services/viewer-service/viewer-service';
-import { fakeMainProgressBar, fakeSections, playerConfig, singleContent } from './main-player.component.spec.data';
+import { SunbirdPlayerSdkModule } from '@project-sunbird/sunbird-player-sdk-v9';
 import { UtilService } from '../util-service';
+import { ViewerService } from '../services/viewer-service/viewer-service';
 
-describe('MainPlayerComponent', () => {
+fdescribe('MainPlayerComponent', () => {
   let component: MainPlayerComponent;
   let fixture: ComponentFixture<MainPlayerComponent>;
 

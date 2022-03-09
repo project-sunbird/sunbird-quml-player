@@ -14,8 +14,6 @@ export class ScheduledEventEmitter<T> extends EventEmitter<T> {
 
   /**
    * Schedule an emit of an event at a certain date
-   * @param {Object} Event
-   * @param {Date} date
    */
   scheduleEmit(event: T, date: Date) {
     const job = scheduleJob(date, () => this.emit(event));

@@ -12,18 +12,23 @@ export enum EventType {
   INTERNET_CONNECTION_ERROR,
   PLAYER_EXIT,
   CONTENT_ERROR,
-  // TODO: List all events here and add them to the documentation
 }
 
 export class Event {
 
   constructor(type: EventType, data: any, description: string, shouldEmitAfterInMs: number) {
+    this.createdAt = Date.now();
     this.type = type;
     this.data = data;
     this.description = description;
     this.shouldEmitAfterInMs = shouldEmitAfterInMs;
   }
 
+  toString(): string{
+    return `Event: CreateAt - ${this.createdAt}; shouldEmitAfterInMs: ${this.shouldEmitAfterInMs}; Type: ${this.type}; Data: ${JSON.stringify(this.data)};`
+  }
+
+  createdAt: number;
   type: EventType;
   data: any;
   description?: string;
@@ -39,9 +44,9 @@ export class Event {
 // TODO: ASSESS: 
 // TODO: START (QuestionSet), END(QuestionSet), SUMMARY(End of Session)
 // TODO: When (state change of Player State) to emit
-const tp: TelemetryPacket = {};
-const desc: string = "Describe the type of telemetry event";
-new Event(EventType.TELEMETRY, tp, desc, 0);
+// const tp: TelemetryPacket = {};
+// const desc: string = "Describe the type of telemetry event";
+// new Event(EventType.TELEMETRY, tp, desc, 0);
 
 // ---------- ERROR ------------------
 

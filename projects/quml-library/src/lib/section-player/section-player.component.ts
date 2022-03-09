@@ -1,16 +1,19 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Output, ViewChild } from '@angular/core';
-import { errorCode, errorMessage, ErrorService } from '@project-sunbird/sunbird-player-sdk-v9';
 import * as _ from 'lodash-es';
+
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Output, ViewChild } from '@angular/core';
+import { ErrorService, errorCode, errorMessage } from '@project-sunbird/sunbird-player-sdk-v9';
+import { IAttempts, IParentConfig, QumlPlayerConfig } from '../quml-library-interface';
+import { Subject, Subscription, fromEvent } from 'rxjs';
+import { TelemetryType, eventName, pageId } from '../telemetry-constants';
+
 import { CarouselComponent } from 'ngx-bootstrap/carousel';
-import { fromEvent, Subject, Subscription } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { QumlPlayerConfig, IParentConfig, IAttempts } from '../quml-library-interface';
-import { QuestionCursor } from '../quml-question-cursor.service';
-import { ViewerService } from '../services/viewer-service/viewer-service';
-import { eventName, pageId, TelemetryType } from '../telemetry-constants';
-import { UtilService } from '../util-service';
-import maintain from 'ally.js/esm/maintain/_maintain';
 import { ISideBarEvent } from '@project-sunbird/sunbird-player-sdk-v9/sunbird-player-sdk.interface';
+import { Player } from '../player/src/Player';
+import { QuestionCursor } from '../quml-question-cursor.service';
+import { UtilService } from '../util-service';
+import { ViewerService } from '../services/viewer-service/viewer-service';
+import maintain from 'ally.js/esm/maintain/_maintain';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'quml-section-player',
@@ -26,6 +29,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   @Input() mainProgressBar;
   @Input() sectionIndex = 0;
   @Input() parentConfig: IParentConfig;
+  @Input() player: Player;
   @Output() playerEvent = new EventEmitter<any>();
   @Output() telemetryEvent = new EventEmitter<any>();
   @Output() sectionEnd = new EventEmitter<any>();
@@ -204,7 +208,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
       setTimeout(() => {
         const menuBtn = document.querySelector('#overlay-button') as HTMLElement;
-        if (menuBtn) { 
+        if (menuBtn) {
           menuBtn.focus();
         }
       }, 100);
@@ -220,7 +224,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     this.noOfQuestions = this.questionIds.length;
     this.viewerService.initialize(this.sectionConfig, this.threshold, this.questionIds, this.parentConfig);
     this.checkCompatibilityLevel(this.sectionConfig.metadata.compatibilityLevel);
-    
+
     this.timeLimit = this.sectionConfig.metadata?.timeLimits?.maxTime || 0;
     this.warningTime = this.sectionConfig.metadata?.timeLimits?.warningTime || 0;
     this.showTimer = this.sectionConfig.metadata?.showTimer?.toLowerCase() !== 'no';
@@ -234,9 +238,9 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     this.allowSkip = this.sectionConfig.metadata?.allowSkip?.toLowerCase() !== 'no';
     this.showStartPage = this.sectionConfig.metadata?.showStartPage?.toLowerCase() !== 'no';
     this.totalScore = this.sectionConfig.metadata?.maxScore;
-    this.progressBarClass = this.parentConfig.isSectionsAvailable ? this.mainProgressBar.find(item => item.isActive)?.children :
-      this.mainProgressBar;
-
+    const x = this.parentConfig.isSectionsAvailable ? this.mainProgressBar.find(item => item.isActive)?.children :
+      this.mainProgressBar
+    this.player.setRendererState({ singleParam: { paramName: "progressBarClass", paramData: x } });
     this.questions = this.viewerService.getSectionQuestions(this.sectionConfig.metadata.identifier);
     this.sortQuestions();
     this.viewerService.updateSectionQuestions(this.sectionConfig.metadata.identifier, this.questions);
@@ -263,8 +267,8 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   removeAttribute() {
     setTimeout(() => {
       const firstSlide = document.querySelector('.carousel.slide') as HTMLElement;
-      if (firstSlide) { 
-        firstSlide.removeAttribute("tabindex"); 
+      if (firstSlide) {
+        firstSlide.removeAttribute("tabindex");
       }
     }, 100);
   }
@@ -283,7 +287,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   }
 
   createSummaryObj() {
-    const classObj = _.groupBy(this.progressBarClass, 'class');
+    const classObj = _.groupBy(this.player.getRendererState().progressBarClass, 'class');
     return {
       skipped: classObj?.skipped?.length || 0,
       correct: classObj?.correct?.length || 0,
@@ -380,7 +384,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   }
 
   activeSlideChange(event) {
-      this.initialSlideDuration = new Date().getTime();
+    this.initialSlideDuration = new Date().getTime();
   }
 
   nextSlideClicked(event) {
@@ -419,7 +423,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   }
 
   goToSlideClicked(event, index) {
-    if (!this.progressBarClass?.length) {
+    if (!this.player.getRendererState().progressBarClass?.length) {
       if (index === 0) {
         this.jumpSlideIndex = 0;
         this.goToSlide(this.jumpSlideIndex);
@@ -563,8 +567,8 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   }
 
   setSkippedClass(index) {
-    if (this.progressBarClass && _.get(this.progressBarClass[index], 'class') === 'unattempted') {
-      this.progressBarClass[index].class = 'skipped';
+    if (this.player.getRendererState().progressBarClass && _.get(this.player.getRendererState().progressBarClass[index], 'class') === 'unattempted') {
+      this.player.getRendererState().progressBarClass[index].class = 'skipped';
     }
   }
 
@@ -583,7 +587,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
     if (event.type === 'OPEN_MENU') {
       const isMobile = this.sectionConfig.config?.sideMenu?.showExit;
-      this.disabledHandle = isMobile ? maintain.hidden({ filter: [ sideBarList, overlayButton, overlayInput ] }) : maintain.tabFocus({ context: navBlock });
+      this.disabledHandle = isMobile ? maintain.hidden({ filter: [sideBarList, overlayButton, overlayInput] }) : maintain.tabFocus({ context: navBlock });
       this.subscription = fromEvent(document, 'keydown').subscribe((e: KeyboardEvent) => {
         if (e['key'] === 'Escape') {
           const inputChecked = document.getElementById('overlay-input') as HTMLInputElement;
@@ -656,13 +660,13 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
           const currentScore = this.getScore(currentIndex, key, true);
           this.viewerService.raiseAssesEvent(edataItem, currentIndex + 1, 'Yes', currentScore, [option.option], this.slideDuration);
           this.alertType = 'correct';
-          if (this.showFeedBack) 
+          if (this.showFeedBack)
             this.correctFeedBackTimeOut(type);
           this.updateScoreBoard(currentIndex, 'correct', undefined, currentScore);
         } else {
           const currentScore = this.getScore(currentIndex, key, false, option);
           this.alertType = 'wrong';
-          const classType = this.progressBarClass[currentIndex].class === 'partial' ? 'partial' : 'wrong';
+          const classType = this.player.getRendererState().progressBarClass[currentIndex].class === 'partial' ? 'partial' : 'wrong';
           this.updateScoreBoard(currentIndex, classType, selectedOptionValue, currentScore);
         }
       }
@@ -675,7 +679,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
           this.updateScoreBoard((currentIndex + 1), 'wrong');
         } else {
           this.updateScoreBoard(((currentIndex + 1)), 'correct', undefined, currentScore);
-          if (this.showFeedBack) 
+          if (this.showFeedBack)
             this.correctFeedBackTimeOut(type);
           this.alertType = 'correct';
         }
@@ -685,11 +689,11 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
       this.nextSlide();
     } else if (this.startPageInstruction && !this.optionSelectedObj && !this.active && !this.allowSkip &&
       this.myCarousel.getCurrentSlideIndex() > 0 && this.utilService.getQuestionType(this.questions, currentIndex) === 'MCQ'
-      && this.utilService.canGo(this.progressBarClass[this.myCarousel.getCurrentSlideIndex()])) {
+      && this.utilService.canGo(this.player.getRendererState().progressBarClass[this.myCarousel.getCurrentSlideIndex()])) {
       this.infoPopupTimeOut();
     } else if (!this.optionSelectedObj && !this.active && !this.allowSkip && this.myCarousel.getCurrentSlideIndex() >= 0
       && this.utilService.getQuestionType(this.questions, currentIndex) === 'MCQ'
-      && this.utilService.canGo(this.progressBarClass[this.myCarousel.getCurrentSlideIndex()])) {
+      && this.utilService.canGo(this.player.getRendererState().progressBarClass[this.myCarousel.getCurrentSlideIndex()])) {
       this.infoPopupTimeOut();
     }
   }
@@ -839,7 +843,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     if (event?.showAnswer) {
       this.focusOnNextButton();
       this.active = true;
-      this.progressBarClass[this.myCarousel.getCurrentSlideIndex() - 1].class = 'correct';
+      this.player.getRendererState().progressBarClass[this.myCarousel.getCurrentSlideIndex() - 1].class = 'correct';
       if (question) {
         const index = this.questions.findIndex(que => que.identifier === question.identifier);
         if (index > -1) {
@@ -867,7 +871,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
           if (selectedOptionValue === val.response) {
             score = val.outcomes.SCORE || 0;
             if (val.outcomes.SCORE) {
-              this.progressBarClass[currentIndex].class = 'partial';
+              this.player.getRendererState().progressBarClass[currentIndex].class = 'partial';
             }
           }
         });
@@ -877,11 +881,11 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   }
 
   calculateScore() {
-    return this.progressBarClass.reduce((accumulator, element) => accumulator + element.score, 0);
+    return this.player.getRendererState().progressBarClass.reduce((accumulator, element) => accumulator + element.score, 0);
   }
 
   updateScoreBoard(index, classToBeUpdated, optionValue?, score?) {
-    this.progressBarClass.forEach((ele) => {
+    this.player.getRendererState().progressBarClass.forEach((ele) => {
       if (ele.index - 1 === index) {
         ele.class = classToBeUpdated;
         ele.score = score ? score : 0;

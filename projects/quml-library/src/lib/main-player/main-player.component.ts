@@ -5,6 +5,7 @@ import { IAttempts, IParentConfig, ISummary, QumlPlayerConfig } from './../quml-
 import { MimeType, TelemetryType, eventName, pageId } from './../telemetry-constants';
 
 import { NextContent } from '@project-sunbird/sunbird-player-sdk-v9/sunbird-player-sdk.interface';
+import {Player} from "../player/src/Player"
 import { UtilService } from './../util-service';
 import { ViewerService } from './../services/viewer-service/viewer-service';
 import { contentErrorMessage } from '@project-sunbird/sunbird-player-sdk-v9/lib/player-utils/interfaces/errorMessage';
@@ -18,6 +19,8 @@ export class MainPlayerComponent implements OnInit {
   @Input() playerConfig: QumlPlayerConfig;
   @Output() playerEvent = new EventEmitter<any>();
   @Output() telemetryEvent = new EventEmitter<any>();
+
+  player: Player = new Player();
 
   isLoading = false;
   isSectionsAvailable = false;
@@ -77,7 +80,8 @@ export class MainPlayerComponent implements OnInit {
   constructor(
     public viewerService: ViewerService,
     private utilService: UtilService
-  ) {}
+  ) {
+  }
 
   @HostListener("document:TelemetryEvent", ["$event"])
   onTelemetryEvent(event) {

@@ -12,7 +12,7 @@ import { QuestionCursor } from './../quml-question-cursor.service';
 import { SectionPlayerComponent } from './section-player.component';
 import { mockParentConfig, mockSectionConfig, mockSectionProgressBar, mockSectionQuestions } from './section-player.component.spec.data';
 
-describe('SectionPlayerComponent', () => {
+fdescribe('SectionPlayerComponent', () => {
   let component: SectionPlayerComponent;
   let fixture: ComponentFixture<SectionPlayerComponent>;
   let viewerService, utilService, errorService;
