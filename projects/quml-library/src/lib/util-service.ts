@@ -86,13 +86,7 @@ export class UtilService {
         if (isMobilePortrait) {
             parent.scrollLeft = childRect.left + parent.scrollLeft - parentRect.left;
         } else {
-            let isViewable = (childRect.top >= parentRect.top) && (childRect.top <= parentRect.top + parentViewableArea.height);
-
-            // if you can't see the child try to scroll parent
-            if (!isViewable) {
-                // scroll by offset relative to parent
-                parent.scrollTop = (childRect.top + parent.scrollTop) - parentRect.top;
-            }
+            parent.scrollTop = (childRect.top + parent.scrollTop) - parentRect.top;
         }
     }
 
