@@ -857,12 +857,10 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   }
 
   calculateScore() {
-    // return this.player.getRendererState().sections[this.activeSectionIndex].data.progressBarClass.reduce((accumulator, element) => accumulator + element.score, 0);
     return this.player.getRendererState().progressBarClass.reduce((accumulator, element) => accumulator + element.score, 0);
   }
 
   updateScoreBoard(index, classToBeUpdated, optionValue?, score?) {
-    // const progressBarClass = this.player.getRendererState().sections[this.activeSectionIndex].data.progressBarClass;
     const progressBarClass = this.player.getRendererState().progressBarClass;
     progressBarClass.forEach((ele) => {
       if (ele.index - 1 === index) {
@@ -874,7 +872,6 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
         }
       }
     });
-    // this.setSectionRendererState("progressBarClass", progressBarClass);
     this.player.setRendererState({ singleParam: { paramName: "progressBarClass", paramData: progressBarClass } });
   }
 
