@@ -43,13 +43,6 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   noOfTimesApiCalled = 0;
   currentSlideIndex = 0;
   showStartPage = true;
-  sideMenuConfig = {
-    enable: true,
-    showShare: true,
-    showDownload: false,
-    showReplay: false,
-    showExit: false,
-  };
   threshold: number;
   questions = [];
   questionIds: string[];
@@ -65,7 +58,6 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   maxScore: number;
   points: number;
   initializeTimer: boolean;
-
   totalScore: number;
   linearNavigation: boolean;
   showHints: any;
@@ -91,19 +83,18 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   intervalRef: any;
   alertType: string;
   infoPopup: boolean;
-  outcomeLabel: string;
   stopAutoNavigation: boolean;
   jumpSlideIndex: any;
   showQuestions = false;
   showZoomModal = false;
   zoomImgSrc: string;
   imageZoomCount = 100;
-  sectionId: string;
   showRootInstruction = true;
   slideDuration = 0;
   initialSlideDuration: number;
   disabledHandle: any;
   subscription: Subscription;
+  isAssessEventRaised = false;
   constructor(
     public viewerService: ViewerService,
     public utilService: UtilService,
@@ -184,7 +175,6 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     if (this.myCarousel) {
       this.myCarousel.selectSlide(this.currentSlideIndex);
     }
-    this.sideMenuConfig = { ...this.sideMenuConfig, ...this.sectionConfig?.config?.sideMenu };
     this.threshold = this.sectionConfig.context?.threshold || 3;
     this.questionIds = _.cloneDeep(this.sectionConfig.metadata.childNodes);
 
@@ -380,6 +370,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
   activeSlideChange(event) {
     this.initialSlideDuration = new Date().getTime();
+    this.isAssessEventRaised = false;
     const questionElement = document.querySelector('li.progressBar-border') as HTMLElement;
     const progressBarContainer = document.querySelector(".lanscape-mode-right") as HTMLElement;
 
@@ -500,6 +491,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
       this.updateScoreBoard(currentIndex, 'skipped');
     } else {
       this.optionSelectedObj = optionSelected;
+      this.isAssessEventRaised = false;
       this.currentSolutions = !_.isEmpty(optionSelected.solutions) ? optionSelected.solutions : undefined;
     }
     this.media = this.questions[this.myCarousel.getCurrentSlideIndex() - 1].media;
@@ -645,7 +637,8 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
       edataItem.sectionId = this.sectionConfig.metadata.identifier;
     }
 
-    if (!this.optionSelectedObj && selectedQuestion.qType.toUpperCase() !== 'SA') {
+    if (!this.optionSelectedObj && !this.isAssessEventRaised && selectedQuestion.qType.toUpperCase() !== 'SA') {
+      this.isAssessEventRaised = true;
       this.viewerService.raiseAssesEvent(edataItem, currentIndex + 1, 'No', 0, [], this.slideDuration);
     }
 
@@ -659,7 +652,10 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
         this.showAlert = true;
         if (option.option?.value === correctOptionValue) {
           const currentScore = this.getScore(currentIndex, key, true);
-          this.viewerService.raiseAssesEvent(edataItem, currentIndex + 1, 'Yes', currentScore, [option.option], this.slideDuration);
+          if (!this.isAssessEventRaised) {
+            this.isAssessEventRaised = true;
+            this.viewerService.raiseAssesEvent(edataItem, currentIndex + 1, 'Yes', currentScore, [option.option], this.slideDuration);
+          }
           this.alertType = 'correct';
           if (this.showFeedBack) 
             this.correctFeedBackTimeOut(type);
@@ -669,6 +665,10 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
           this.alertType = 'wrong';
           const classType = this.progressBarClass[currentIndex].class === 'partial' ? 'partial' : 'wrong';
           this.updateScoreBoard(currentIndex, classType, selectedOptionValue, currentScore);
+          if (!this.isAssessEventRaised) {
+            this.isAssessEventRaised = true;
+            this.viewerService.raiseAssesEvent(edataItem, currentIndex + 1, 'No', 0, [option.option], this.slideDuration);
+          }
         }
       }
       if (option.cardinality === 'multiple') {
