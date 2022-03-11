@@ -6,7 +6,7 @@
       (nextSlideClicked)="nextSlideClicked($event)" (prevSlideClicked)="previousSlideClicked($event)"
       [currentSlideIndex]="currentSlideIndex" [totalNoOfQuestions]="noOfQuestions" [active]="active"
       [showFeedBack]="showFeedBack" [currentSolutions]="currentSolutions" (showSolution)="viewSolution()"
-      [initializeTimer]="initializeTimer" [replayed]="parentConfig?.isReplayed" [disableNext]="disableNext"
+      [initializeTimer]="player.getRendererState().initializeTimer" [replayed]="parentConfig?.isReplayed" [disableNext]="disableNext"
       [startPageInstruction]="startPageInstruction" [attempts]="attempts" [showStartPage]="showStartPage">
     </quml-header>
 
@@ -107,11 +107,11 @@
     </div>
   </div>
 
-  <quml-alert *ngIf="showAlert && showFeedBack" [alertType]="alertType" [isHintAvailable]="showHints"
+  <quml-alert *ngIf="showAlert && showFeedBack" [alertType]="player.getRendererState().alertType" [isHintAvailable]="showHints"
     [showSolutionButton]="showUserSolution" (showSolution)="viewSolution()" (showHint)="viewHint()"
     (closeAlert)="closeAlertBox($event)"></quml-alert>
 
-  <quml-mcq-solutions *ngIf="showSolution" [question]="currentQuestion" [options]="currentOptions"
+  <quml-mcq-solutions *ngIf="showSolution" [question]="player.getRendererState().currentQuestion" [options]="currentOptions"
     [solutions]="currentSolutions" (close)="closeSolution()"></quml-mcq-solutions>
 </div>
 

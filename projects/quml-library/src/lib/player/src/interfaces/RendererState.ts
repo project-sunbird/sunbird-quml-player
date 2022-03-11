@@ -1,6 +1,15 @@
 export interface RendererState {
   progressBarClass?: any;
   activeSection?: any;
+  currentOptionSelected?: any;
+  initializeTimer?: boolean;
+  alertType?: string;
+  initialTime?: number;
+  initialSlideDuration?: number;
+  questionIds?: string[];
+  currentQuestionsMedia?: any;
+  jumpSlideIndex?: number;
+  currentQuestion?: any;
   // isSectionsAvailable: boolean;
   // isMultiLevelSection: boolean;
   // sections: any;
@@ -36,3 +45,11 @@ export interface RendererState {
   // jumpToQuestion: any;
   // totalVisitedQuestion: number;
 }
+
+// interface Section {
+//   id: string,
+//   data: SectionData;
+// }
+// export interface SectionData {
+//   progressBarClass?: any;
+// }

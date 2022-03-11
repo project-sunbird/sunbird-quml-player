@@ -28,7 +28,6 @@ export class MainPlayerComponent implements OnInit {
   sections: any[] = [];
   isFirstSection = false;
   sectionIndex = 0;
-  activeSection: any;
   contentError: contentErrorMessage;
   parentConfig: IParentConfig = {
     loadScoreBoard: false,
@@ -147,7 +146,7 @@ export class MainPlayerComponent implements OnInit {
         });
 
         this.setInitialScores();
-        this.activeSection = _.cloneDeep(this.sections[0]);
+        this.player.setRendererState({ singleParam: { paramName: "activeSection", paramData: _.cloneDeep(this.sections[0]) } });
         this.isFirstSection = true;
         this.isLoading = false;
       }
@@ -197,7 +196,7 @@ export class MainPlayerComponent implements OnInit {
           );
         }
       }
-      this.activeSection = _.cloneDeep(this.playerConfig);
+      this.player.setRendererState({ singleParam: { paramName: "activeSection", paramData: _.cloneDeep(this.playerConfig) } });
       this.isLoading = false;
       this.isFirstSection = true;
       this.parentConfig.questionCount = this.totalNoOfQuestions;
@@ -265,7 +264,7 @@ export class MainPlayerComponent implements OnInit {
   getActiveSectionIndex() {
     return this.sections.findIndex(
       (sec) =>
-        sec.metadata?.identifier === this.activeSection.metadata?.identifier
+        sec.metadata?.identifier === this.player.getRendererState().activeSection.metadata?.identifier
     );
   }
 
@@ -358,7 +357,7 @@ export class MainPlayerComponent implements OnInit {
       }
     });
     if (nextSectionIndex < this.sections.length) {
-      this.activeSection = _.cloneDeep(this.sections[nextSectionIndex]);
+      this.player.setRendererState({ singleParam: { paramName: "activeSection", paramData: _.cloneDeep(this.sections[nextSectionIndex]) } });
     } else {
       this.prepareEnd(event);
     }
@@ -414,9 +413,8 @@ export class MainPlayerComponent implements OnInit {
     this.initializeSections();
     this.endPageReached = false;
     this.loadScoreBoard = false;
-    this.activeSection = this.isSectionsAvailable
-      ? _.cloneDeep(this.sections[0])
-      : this.playerConfig;
+    const activeSection = this.isSectionsAvailable ? _.cloneDeep(this.sections[0]) : this.playerConfig;
+    this.player.setRendererState({ singleParam: { paramName: "activeSection", paramData: activeSection } });
     if (this.attempts?.max === this.attempts?.current) {
       this.playerEvent.emit(
         this.viewerService.generateMaxAttemptEvents(
@@ -584,7 +582,7 @@ export class MainPlayerComponent implements OnInit {
       const sectionIndex = this.sections.findIndex(
         (sec) => sec.metadata?.identifier === event.identifier
       );
-      this.activeSection = _.cloneDeep(this.sections[sectionIndex]);
+      this.player.setRendererState({ singleParam: { paramName: "activeSection", paramData: _.cloneDeep(this.sections[sectionIndex]) } });
       this.mainProgressBar.forEach((item, index) => {
         item.isActive = index === sectionIndex;
       });
