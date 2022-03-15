@@ -75,20 +75,14 @@
           &.correct {
             --correct-bg: var(--quml-color-success);
             background: var(--correct-bg);
-            &:hover {
-            }
           }
           &.wrong {
             --wrong-bg: var( --quml-color-danger);
             background: var(--wrong-bg);
-            &:hover {
-            }
           }
           &.partial {
             --partial-bg: linear-gradient(180deg, rgba(71,164,128,1) 0%, rgba(71,164,128,1) 50%, rgba(249,122,116,1) 50%, rgba(249,122,116,1) 100%);
             background: var(--partial-bg);
-            &:hover {
-            }
           }
           &.unattempted {
             color: var(--quml-scoreboard-unattempted);
