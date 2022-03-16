@@ -103,8 +103,11 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     public errorService: ErrorService
   ) { }
 
-  ngOnChanges(changes): void {
+  ngOnInit() {
     this.subscribeToEvents();
+  }
+
+  ngOnChanges(changes): void {
     this.setConfig();
   }
 
