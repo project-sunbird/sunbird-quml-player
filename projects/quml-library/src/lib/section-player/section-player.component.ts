@@ -296,11 +296,6 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     }
 
 
-    if (this.myCarousel.getCurrentSlideIndex() === this.noOfQuestions) {
-      this.emitSectionEnd();
-      return;
-    }
-
     if (this.myCarousel.isLast(this.myCarousel.getCurrentSlideIndex()) || this.noOfQuestions === this.myCarousel.getCurrentSlideIndex()) {
       this.calculateScore();
     }
@@ -315,6 +310,11 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
     if (this.questions[this.myCarousel.getCurrentSlideIndex()]) {
       this.setSkippedClass(this.myCarousel.getCurrentSlideIndex());
+    }
+
+    if (this.myCarousel.getCurrentSlideIndex() === this.noOfQuestions) {
+      this.emitSectionEnd();
+      return;
     }
     this.myCarousel.move(this.carouselConfig.NEXT);
     this.setImageZoom();
@@ -481,6 +481,9 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   }
 
   getOptionSelected(optionSelected) {
+    if (JSON.stringify(this.currentOptionSelected) === JSON.stringify(optionSelected)) {
+      return; // Same option selected
+    }
     this.focusOnNextButton();
     this.active = true;
     this.currentOptionSelected = optionSelected;
