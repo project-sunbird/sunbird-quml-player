@@ -50,6 +50,7 @@ export class McqOptionComponent implements OnChanges {
   }
 
   onOptionSelect(event: MouseEvent | KeyboardEvent, mcqOption, index?: number) {
+    event.stopImmediatePropagation();
     if (this.cardinality === Cardinality.single) {
       if (index !== undefined) {
         this.mcqOptions.forEach((ele) => ele.selected = false);
