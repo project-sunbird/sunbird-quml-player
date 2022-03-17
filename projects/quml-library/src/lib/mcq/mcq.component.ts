@@ -38,7 +38,7 @@ export class McqComponent implements OnInit, AfterViewInit {
 
   async ngOnInit() {
 
-    if (this.question.solutions) {
+    if (this.question?.solutions) {
       this.solutions = this.question.solutions;
     }
     let  key:any = this.utilService.getKeyValue(Object.keys(this.question.responseDeclaration));
@@ -85,8 +85,6 @@ export class McqComponent implements OnInit, AfterViewInit {
     }
   }
 
-
-
   renderLatex() {
     const _instance = this;
     setTimeout(function () {
@@ -107,24 +105,6 @@ export class McqComponent implements OnInit, AfterViewInit {
         katex.render(textToRender, mathExp, { displayMode: false, output: 'html', throwOnError: true });
       }
     }
-  }
-
-  onOptionSelect(event) {
-    const mcqOption = event.option;
-    const solutions = event.solutions;
-    this.mcqOptions.forEach(mcqOptionElement => {
-      if (mcqOptionElement.index === event.option.index) {
-        mcqOptionElement.selected = true;
-      } else {
-        mcqOptionElement.selected = false;
-      }
-    });
-    mcqOption.solutions = solutions;
-    this.getSelectedOptionAndResult(mcqOption);
-
-  }
-  optionSelectedInImage(event) {
-    this.onOptionSelect(event);
   }
 
   getSelectedOptionAndResult(optionObj) {

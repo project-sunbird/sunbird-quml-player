@@ -113,7 +113,7 @@ export class ViewerService {
     this.qumlLibraryService.end(duration, currentQuestionIndex, this.totalNumberOfQuestions, this.totalNumberOfQuestions, endPageSeen , score);
   }
 
-  raiseHeartBeatEvent(type: string, telemetryType: string, pageId: any) {
+  raiseHeartBeatEvent(type: string, telemetryType: string, pageId: number | string, nextContentId?: string) {
     const hearBeatEvent: any = {
       eid: 'HEARTBEAT',
       ver: this.version,
@@ -123,6 +123,10 @@ export class ViewerService {
       },
       metaData: this.metaData
     };
+
+    if (type === eventName.nextContentPlay && nextContentId) {
+      hearBeatEvent.edata.nextContentId = nextContentId;
+    }
 
     if (this.isSectionsAvailable) {
       hearBeatEvent.edata.sectionId = this.questionSetId;
@@ -137,7 +141,7 @@ export class ViewerService {
 
   }
 
-  raiseAssesEvent(questionData , index , pass , score , resValues , duration){
+  raiseAssesEvent(questionData , index: number , pass: string , score , resValues , duration: number){
     const assessEvent = {
           item: questionData,
           index: index,

@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
+import { Cardinality } from '../telemetry-constants';
 import { UtilService } from '../util-service';
 
 @Component({
@@ -14,18 +15,18 @@ export class McqOptionComponent implements OnChanges {
   @Input() cardinality: string;
   @Output() showPopup = new EventEmitter();
   @Output() optionSelected = new EventEmitter<any>();
-  selectedOption = []; 
-  @Input() replayed : boolean;
-  @Input() tryAgain? : boolean;
+  selectedOption = [];
+  @Input() replayed: boolean;
+  @Input() tryAgain?: boolean;
 
   constructor(
-    public utilService : UtilService
+    public utilService: UtilService
   ) { }
 
   ngOnChanges() {
-    if(this.replayed) {
+    if (this.replayed) {
       this.mcqOptions.forEach((ele) => {
-         ele.selected = false;
+        ele.selected = false;
       })
     }
     if (this.tryAgain) {
@@ -33,7 +34,7 @@ export class McqOptionComponent implements OnChanges {
     }
   }
 
-  unselectOption(){
+  unselectOption() {
     this.mcqOptions.forEach((ele) => {
       ele.selected = false;
     });
@@ -48,21 +49,26 @@ export class McqOptionComponent implements OnChanges {
     );
   }
 
-  onOptionSelect(event, mcqOption) {
-    this.mcqOptions.forEach((ele) => {
-      if (this.cardinality === 'single') {
-        if (ele.label === mcqOption.label) {
-          ele.selected = true;
-        } else {
-          ele.selected = false;
-        }
-      } else if(this.cardinality === 'multiple') {
-        if (ele.label === mcqOption.label && !this.utilService.hasDuplicates(this.selectedOption , mcqOption)) {
-          ele.selected = true;
+  onOptionSelect(event: MouseEvent | KeyboardEvent, mcqOption, index?: number) {
+    event.stopImmediatePropagation();
+    if (this.cardinality === Cardinality.single) {
+      if (index !== undefined) {
+        this.mcqOptions.forEach((ele) => ele.selected = false);
+        this.mcqOptions[index].selected = this.mcqOptions[index].label === mcqOption.label
+      } else {
+        this.mcqOptions.forEach(element => {
+          element.selected = element.label === mcqOption.label;
+        });
+      }
+    } else if (this.cardinality === Cardinality.multiple) {
+      this.mcqOptions.forEach(element => {
+        if (element.label === mcqOption.label && !this.utilService.hasDuplicates(this.selectedOption, mcqOption)) {
+          element.selected = true;
           this.selectedOption.push(mcqOption)
         }
-      }
-    });
+      });
+    }
+
     this.optionSelected.emit(
       {
         name: 'optionSelect',
@@ -81,10 +87,10 @@ export class McqOptionComponent implements OnChanges {
     this.showPopup.emit();
   }
 
-  onEnter(event: KeyboardEvent, mcqOption) {
-    if (event.keyCode === 13) {
+  onEnter(event: KeyboardEvent, mcqOption, index: number) {
+    if (event.key === 'Enter') {
       event.stopPropagation();
-      this.onOptionSelect(event, mcqOption);
+      this.onOptionSelect(event, mcqOption, index);
     }
   }
 }

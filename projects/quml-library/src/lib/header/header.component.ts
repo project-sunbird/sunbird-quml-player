@@ -65,7 +65,7 @@ export class HeaderComponent implements OnInit, OnChanges, AfterViewInit, OnDest
   }
 
   ngAfterViewInit() {
-    this.isMobilePortrait = window.matchMedia("(max-width: 480px)").matches;;
+    this.isMobilePortrait = window.matchMedia("(max-width: 480px)").matches;
   }
 
   ngOnDestroy() {
