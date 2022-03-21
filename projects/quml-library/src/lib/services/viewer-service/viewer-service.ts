@@ -51,7 +51,7 @@ export class ViewerService {
     this.qumlPlayerStartTime = this.qumlPlayerLastPageTime = new Date().getTime();
     this.currentQuestionIndex = 1;
     this.contentName = config.metadata.name;
-    this.isAvailableLocally = config.metadata.isAvailableLocally;
+    this.isAvailableLocally = parentConfig.isAvailableLocally;
     this.isSectionsAvailable = parentConfig?.isSectionsAvailable;
     this.src = config.metadata.artifactUrl || '';
     this.questionSetId = config.metadata.identifier;

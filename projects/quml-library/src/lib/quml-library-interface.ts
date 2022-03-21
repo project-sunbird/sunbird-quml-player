@@ -101,6 +101,7 @@ export interface IParentConfig {
     identifier: string;
     contentName: string;
     baseUrl: string;
+    isAvailableLocally: boolean;
     instructions: any;
     questionCount: number;
     sideMenuConfig: ISideMenuConfig;
