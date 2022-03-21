@@ -35,6 +35,7 @@ export class MainPlayerComponent implements OnInit {
     identifier: '',
     contentName: '',
     baseUrl: '',
+    isAvailableLocally: false,
     instructions: {},
     questionCount: 0,
     sideMenuConfig: {
@@ -188,6 +189,7 @@ export class MainPlayerComponent implements OnInit {
 
     if (this.playerConfig.metadata.isAvailableLocally && this.playerConfig.metadata.basePath) {
       this.parentConfig.baseUrl = this.playerConfig.metadata.basePath;
+      this.parentConfig.isAvailableLocally = true;
     }
 
     this.attempts = {
