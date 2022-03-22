@@ -9,6 +9,8 @@ import {Player} from "../player/src/Player"
 import { UtilService } from './../util-service';
 import { ViewerService } from './../services/viewer-service/viewer-service';
 import { contentErrorMessage } from '@project-sunbird/sunbird-player-sdk-v9/lib/player-utils/interfaces/errorMessage';
+import { PlayerService } from '../services/player.service';
+import { Event, EventType } from '../player/src/interfaces/Event';
 
 @Component({
   selector: "quml-main-player",
@@ -20,7 +22,7 @@ export class MainPlayerComponent implements OnInit {
   @Output() playerEvent = new EventEmitter<any>();
   @Output() telemetryEvent = new EventEmitter<any>();
 
-  player: Player = new Player();
+  player: Player;
 
   isLoading = false;
   isSectionsAvailable = false;
@@ -78,7 +80,8 @@ export class MainPlayerComponent implements OnInit {
 
   constructor(
     public viewerService: ViewerService,
-    private utilService: UtilService
+    private utilService: UtilService,
+    private playerService: PlayerService
   ) {
   }
 
@@ -88,6 +91,7 @@ export class MainPlayerComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.player = this.playerService.getPlayerInstance();
     if (typeof this.playerConfig === "string") {
       try {
         this.playerConfig = JSON.parse(this.playerConfig);
@@ -256,8 +260,10 @@ export class MainPlayerComponent implements OnInit {
   emitMaxAttemptEvents() {
     if ((this.playerConfig.metadata?.maxAttempts - 1) === this.playerConfig.metadata?.currentAttempt) {
       this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(this.attempts?.current, false, true));
+      this.player.emitMaxAttemptsExhausted(this.player.getRendererState());
     } else if (this.playerConfig.metadata?.currentAttempt >= this.playerConfig.metadata?.maxAttempts) {
       this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(this.attempts?.current, true, false));
+      this.player.emitMaxAttemptsExhausted(this.player.getRendererState());
     }
   }
 
@@ -557,6 +563,13 @@ export class MainPlayerComponent implements OnInit {
       this.endPageReached,
       this.finalScore
     );
+    const data = {
+      totalVisitedQuestion: this.totalVisitedQuestion,
+      endPageReached: this.endPageReached,
+      finalScore: this.finalScore
+    }
+    const event = new Event(EventType.TELEMETRY, data, '', 0);
+    this.player.sendTelemetryEvent(event);
     this.loadScoreBoard = false;
     this.isSummaryEventRaised = true;
   }

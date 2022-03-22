@@ -6,6 +6,8 @@ import { eventName, TelemetryType } from '../../telemetry-constants';
 import { QuestionCursor } from '../../quml-question-cursor.service';
 import * as _ from 'lodash-es';
 import { forkJoin } from 'rxjs';
+import { PlayerService } from '../player.service';
+import { Player } from '../../player/src/Player';
 
 @Injectable({
   providedIn: 'root'
@@ -34,12 +36,17 @@ export class ViewerService {
   questionSetId: string;
   parentIdentifier: string;
   sectionQuestions = [];
+  player: Player;
 
   constructor(
     public qumlLibraryService: QumlLibraryService,
     public utilService: UtilService,
-    public questionCursor: QuestionCursor
-  ) { }
+    public questionCursor: QuestionCursor,
+    public playerService: PlayerService
+  ) {
+    this.player = this.playerService.getPlayerInstance();
+    this.listenToPlayerEvents();
+  }
 
   initialize(config: QumlPlayerConfig , threshold: number, questionIds: string[], parentConfig: IParentConfig) {
     this.qumlLibraryService.initializeTelemetry(config, parentConfig);
@@ -71,6 +78,12 @@ export class ViewerService {
     };
     this.loadingProgress = 0;
     this.endPageSeen = false;
+  }
+
+  listenToPlayerEvents() {
+    this.player.emitter.subscribe((event) => {
+      console.log('event', event);
+    });
   }
 
   raiseStartEvent(currentQuestionIndex) {

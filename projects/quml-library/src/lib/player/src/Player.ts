@@ -19,8 +19,7 @@ export class Player {
   rendererId: string;
   private logger: Logger = new Logger();
 
-  private shouldEmit: boolean = false; //Renderer may no live when the player is live.
-  private emitter: ScheduledEventEmitter<Event>;
+  private shouldEmit: boolean = true; //Renderer may no live when the player is live.
   private eventBacklog: Event[] = [];
   private shouldPersist: boolean = false;
   private shouldHydrateFromPersistence: boolean;
@@ -29,6 +28,7 @@ export class Player {
   private playerConfig: QumlPlayerConfig;
   private rendererState: RendererState | null;
 
+  public emitter: ScheduledEventEmitter<Event> = new ScheduledEventEmitter<any>();
   public questionIterator: QuestionIterator;
 
   constructor(
