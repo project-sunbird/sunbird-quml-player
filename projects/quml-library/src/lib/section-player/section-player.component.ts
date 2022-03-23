@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { errorCode, errorMessage, ErrorService } from '@project-sunbird/sunbird-player-sdk-v9';
 import * as _ from 'lodash-es';
 import { CarouselComponent } from 'ngx-bootstrap/carousel';
@@ -103,11 +103,10 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     public errorService: ErrorService
   ) { }
 
-  ngOnInit() {
-    this.subscribeToEvents();
-  }
-
-  ngOnChanges(changes): void {
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes && Object.values(changes)[0].firstChange) {
+      this.subscribeToEvents();
+    }
     this.setConfig();
   }
 
@@ -196,7 +195,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
       setTimeout(() => {
         const menuBtn = document.querySelector('#overlay-button') as HTMLElement;
-        if (menuBtn) { 
+        if (menuBtn) {
           menuBtn.focus();
         }
       }, 200);
@@ -212,7 +211,6 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     this.noOfQuestions = this.questionIds.length;
     this.viewerService.initialize(this.sectionConfig, this.threshold, this.questionIds, this.parentConfig);
     this.checkCompatibilityLevel(this.sectionConfig.metadata.compatibilityLevel);
-    
     this.timeLimit = this.sectionConfig.metadata?.timeLimits?.maxTime || 0;
     this.warningTime = this.sectionConfig.metadata?.timeLimits?.warningTime || 0;
     this.showTimer = this.sectionConfig.metadata?.showTimer?.toLowerCase() !== 'no';
@@ -255,8 +253,8 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   removeAttribute() {
     setTimeout(() => {
       const firstSlide = document.querySelector('.carousel.slide') as HTMLElement;
-      if (firstSlide) { 
-        firstSlide.removeAttribute("tabindex"); 
+      if (firstSlide) {
+        firstSlide.removeAttribute("tabindex");
       }
     }, 100);
   }
@@ -586,7 +584,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
     if (event.type === 'OPEN_MENU') {
       const isMobile = this.sectionConfig.config?.sideMenu?.showExit;
-      this.disabledHandle = isMobile ? maintain.hidden({ filter: [ sideBarList, overlayButton, overlayInput ] }) : maintain.tabFocus({ context: navBlock });
+      this.disabledHandle = isMobile ? maintain.hidden({ filter: [sideBarList, overlayButton, overlayInput] }) : maintain.tabFocus({ context: navBlock });
       this.subscription = fromEvent(document, 'keydown').subscribe((e: KeyboardEvent) => {
         if (e['key'] === 'Escape') {
           const inputChecked = document.getElementById('overlay-input') as HTMLInputElement;
@@ -663,7 +661,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
             this.viewerService.raiseAssesEvent(edataItem, currentIndex + 1, 'Yes', currentScore, [option.option], this.slideDuration);
           }
           this.alertType = 'correct';
-          if (this.showFeedBack) 
+          if (this.showFeedBack)
             this.correctFeedBackTimeOut(type);
           this.updateScoreBoard(currentIndex, 'correct', undefined, currentScore);
         } else {
@@ -686,7 +684,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
           this.updateScoreBoard((currentIndex + 1), 'wrong');
         } else {
           this.updateScoreBoard(((currentIndex + 1)), 'correct', undefined, currentScore);
-          if (this.showFeedBack) 
+          if (this.showFeedBack)
             this.correctFeedBackTimeOut(type);
           this.alertType = 'correct';
         }
