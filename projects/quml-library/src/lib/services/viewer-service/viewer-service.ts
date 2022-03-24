@@ -3,7 +3,7 @@ import { IParentConfig, QumlPlayerConfig } from '../../quml-library-interface';
 import { QumlLibraryService } from '../../quml-library.service';
 import { UtilService } from '../../util-service';
 import { eventName, TelemetryType } from '../../telemetry-constants';
-import { QuestionCursor } from '../../quml-question-cursor.service';
+import { PlayerQuestionCursor } from '../../player/src/question/PlayerQuestionCursor';
 import * as _ from 'lodash-es';
 import { forkJoin } from 'rxjs';
 import { PlayerService } from '../player.service';
@@ -37,15 +37,16 @@ export class ViewerService {
   parentIdentifier: string;
   sectionQuestions = [];
   player: Player;
+  questionCursor: PlayerQuestionCursor;
 
   constructor(
     public qumlLibraryService: QumlLibraryService,
     public utilService: UtilService,
-    public questionCursor: QuestionCursor,
     public playerService: PlayerService
   ) {
     this.player = this.playerService.getPlayerInstance();
     this.listenToPlayerEvents();
+    this.questionCursor = this.player.playerQuestionCursor;
   }
 
   initialize(config: QumlPlayerConfig , threshold: number, questionIds: string[], parentConfig: IParentConfig) {

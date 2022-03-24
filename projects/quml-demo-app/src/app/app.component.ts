@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { playerConfig1 } from './quml-library-data';
+import { PlayerService } from 'projects/quml-library/src/lib/services/player.service';
+import { QuestionCursor } from '@project-sunbird/sunbird-quml-player-v9';
 
 @Component({
   selector: 'app-root',
@@ -7,11 +9,16 @@ import { playerConfig1 } from './quml-library-data';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+
+  constructor(public playerService: PlayerService, private questionCursorImplementationService: QuestionCursor) {
+    this.playerService.getPlayerInstance().questionCursorImplementationService = this.questionCursorImplementationService;
+  }
+
   title = 'quml-demo-app';
   qumlMetaDataConfig = {};
   // qumlMetaDataConfig: any = JSON.parse(localStorage.getItem('config')) || {};  // to Get locally saved metaData
   config = { ...playerConfig1.config, ...this.qumlMetaDataConfig };
-  QumlPlayerConfig = { ...playerConfig1, config: {...this.config, nextContent: { name: 'Roti aur Kutta', identifier: 'do_231234332232' }}};
+  QumlPlayerConfig = { ...playerConfig1, config: { ...this.config, nextContent: { name: 'Roti aur Kutta', identifier: 'do_231234332232' } } };
 
   getPlayerEvents(event) {
     console.log('get player events', JSON.stringify(event));

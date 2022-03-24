@@ -1,17 +1,17 @@
+import { QuestionCursor } from "../../quml-question-cursor.service";
 import { Event, EventType } from "./interfaces/Event";
+import { Logger } from "./interfaces/Logger";
 import {
   Persistence,
   PersistenceResult,
-  PersistenceStatus,
+  PersistenceStatus
 } from "./interfaces/Persistence";
 import { Question, QumlPlayerConfig } from "./interfaces/PlayerConfig";
-
-import { EventAudit } from "./interfaces/EventAudit";
-import { Logger } from "./interfaces/Logger"
-import { QuestionIterator } from "./question/QuestionIterator";
 import { RendererState } from "./interfaces/RendererState";
 import { ScheduledEventEmitter } from "./interfaces/ScheduledEventEmitter";
 import { User } from "./interfaces/User";
+import { PlayerQuestionCursor } from "./question/PlayerQuestionCursor";
+import { QuestionIterator } from "./question/QuestionIterator";
 
 export class Player {
   user: User | null;
@@ -30,6 +30,9 @@ export class Player {
 
   public emitter: ScheduledEventEmitter<Event> = new ScheduledEventEmitter<any>();
   public questionIterator: QuestionIterator;
+
+  public questionCursorImplementationService: QuestionCursor;
+  public playerQuestionCursor: PlayerQuestionCursor;
 
   constructor(
     questionSetURL?: string,

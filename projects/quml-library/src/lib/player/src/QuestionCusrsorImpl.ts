@@ -1,56 +1,33 @@
 import { HttpClient } from "@angular/common/http";
-import { QuestionCursor } from "@project-sunbird/sunbird-quml-player-v9";
+import { PlayerQuestionCursor } from "./question/PlayerQuestionCursor";
 import { Observable, of, throwError as observableThrowError } from "rxjs";
 import { map, mergeMap } from "rxjs/operators";
+import { QuestionCursor } from "../../quml-question-cursor.service";
 
-export class QuestionCursorImplementationService implements QuestionCursor {
-  listUrl: string = "https://staging.sunbirded.org/api/question/v1/list"; // Define this url to call list api in server
-  constructor(private http: HttpClient) {}
+export class PlayerQuestionCursorImplementationService implements PlayerQuestionCursor {
+  questionCursorImplementationService: QuestionCursor;
+  constructor(
+    questionCursorImplementationService: QuestionCursor,
+    public getQuestionsCallback: Function = () => { },
+    public getQuestionCallback: Function = () => { }) {
+    this.questionCursorImplementationService = questionCursorImplementationService;
+  }
 
   getQuestions(identifiers: string[]): Observable<any> {
-    const option: any = {
-      url: this.listUrl,
-      data: {
-        request: {
-          search: { identifier: identifiers },
-        },
-      },
-    };
-    return this.post(option).pipe(map((data) => data.result));
+    this.getQuestionCallback();
+    return this.questionCursorImplementationService.getQuestions(identifiers);
   }
 
   getQuestion(identifier: string): Observable<any> {
-    const option: any = {
-      url: this.listUrl,
-      data: {
-        request: {
-          search: { identifier: [identifier] },
-        },
-      },
-    };
-    return this.post(option).pipe(map((data) => data.result));
+    this.getQuestionCallback();
+    return this.questionCursorImplementationService.getQuestion(identifier);
   }
 
   getQuestionSet(identifier: string): Observable<any> {
-    return of({});
+    throw new Error("Method not implemented.");
   }
 
-  private post(requestParam): Observable<any> {
-    const httpOptions = {
-      headers: { "Content-Type": "application/json" },
-    };
-    return this.http
-      .post(requestParam.url, requestParam.data, httpOptions)
-      .pipe(
-        mergeMap((data: any) => {
-          if (data.responseCode !== "OK") {
-            return observableThrowError(data);
-          }
-          return of(data);
-        })
-      );
-  }
-  getAllQuestionSet(identifiers: string[]) {
-    return of({});
+  getAllQuestionSet(identifiers: string[]): Observable<any> {
+    throw new Error("Method not implemented.");
   }
 }
