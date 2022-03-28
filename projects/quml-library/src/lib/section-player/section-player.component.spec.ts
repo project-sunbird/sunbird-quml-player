@@ -10,13 +10,14 @@ import { ViewerService } from '../services/viewer-service/viewer-service';
 import { UtilService } from '../util-service';
 import { QuestionCursor } from './../quml-question-cursor.service';
 import { SectionPlayerComponent } from './section-player.component';
-import { mockParentConfig, mockSectionConfig, mockSectionProgressBar, mockSectionQuestions } from './section-player.component.spec.data';
+import { mockSectionPlayerConfig } from './section-player.component.spec.data';
+
 
 describe('SectionPlayerComponent', () => {
   let component: SectionPlayerComponent;
   let fixture: ComponentFixture<SectionPlayerComponent>;
   let viewerService, utilService, errorService;
-
+  const { changes, mockParentConfig, mockSectionConfig, mockSectionProgressBar, mockSectionQuestions } = mockSectionPlayerConfig;
   class ViewerServiceMock {
     initialize() { }
     raiseStartEvent() { }
@@ -27,6 +28,7 @@ describe('SectionPlayerComponent', () => {
     getQuestion() { }
     raiseResponseEvent() { }
     getSectionQuestions() { }
+    raiseAssesEvent() { }
   }
 
   class ElementRefMock {
@@ -39,7 +41,7 @@ describe('SectionPlayerComponent', () => {
   }
 
   const myCarousel = jasmine.createSpyObj("CarouselComponent", {
-    "getCurrentSlideIndex": 1, "selectSlide": {}, "move": {}
+    "getCurrentSlideIndex": 1, "selectSlide": {}, "move": {}, isLast: false
   }
   );
 
@@ -47,7 +49,6 @@ describe('SectionPlayerComponent', () => {
     TestBed.configureTestingModule({
       declarations: [SectionPlayerComponent, CarouselComponent],
       imports: [
-        SunbirdPlayerSdkModule,
         CommonModule
       ],
       providers: [
@@ -79,7 +80,7 @@ describe('SectionPlayerComponent', () => {
   it('should subscribe to events and set config on every changes', () => {
     spyOn<any>(component, 'subscribeToEvents');
     spyOn<any>(component, 'setConfig');
-    component.ngOnChanges({});
+    component.ngOnChanges(changes);
     expect(component['subscribeToEvents']).toHaveBeenCalled();
     expect(component['setConfig']).toHaveBeenCalled();
   });
@@ -425,7 +426,6 @@ describe('SectionPlayerComponent', () => {
     component.sectionConfig = mockSectionConfig;
     component.progressBarClass = mockSectionProgressBar.children;
     component.validateSelectedOption(option, "next");
-
   });
 
   it('should hide the popup once the time is over', fakeAsync(() => {
