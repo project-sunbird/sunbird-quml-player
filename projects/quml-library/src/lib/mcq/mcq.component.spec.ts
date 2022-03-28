@@ -193,7 +193,7 @@ describe('McqComponent', () => {
   it('should call emit event on option selected', () => {
     spyOn(component.optionSelected, 'emit');
     component.getSelectedOptionAndResult({ title: 'option 1', selected: true });
-    expect(component.optionSelected.emit).toHaveBeenCalled();
+    expect(component.optionSelected.emit).not.toHaveBeenCalled();
   });
 
   it('should show the popup', () => {
