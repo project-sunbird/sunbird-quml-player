@@ -1,4 +1,5 @@
 export interface RendererState {
+  questions?: any[];
   progressBarClass?: any;
   activeSection?: any;
   currentOptionSelected?: any;

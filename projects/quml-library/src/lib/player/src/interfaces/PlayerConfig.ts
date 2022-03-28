@@ -1,3 +1,4 @@
+import { NextContent } from "@project-sunbird/sunbird-player-sdk-v9";
 import { LifeCycle } from "./Lifecycle";
 import { Context } from "./Telemetry";
 
@@ -10,17 +11,18 @@ export interface Config {
     showReplay?: boolean;
     showExit?: boolean;
   };
-  progressBar: any[];
-  questions: any[];
-  lastQuestionId: string;
-  duration: number;
+  progressBar?: any[];
+  questions?: any[];
+  lastQuestionId?: string;
+  duration?: number;
+  nextContent?: NextContent;
 }
 
 export interface QumlPlayerConfig {
   context: Context; //TODO: Query - why is the telemetry context defined here?
   metadata: any; //TODO: define metadata interface
-  data: any; //TODO: define data interface
   config: Config;
+  data?: any; //TODO: define data interface
 }
 
 export interface Question {

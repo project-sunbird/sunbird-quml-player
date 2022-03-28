@@ -57,6 +57,10 @@ export class Player {
     return this.playerConfig;
   }
 
+  setPlayerConfig(config: QumlPlayerConfig): void {
+    this.playerConfig = config;
+  }
+
   getRendererState(): RendererState {
     return this.rendererState;
   }
@@ -288,4 +292,17 @@ export class Player {
 
 
   // Utility Methods
+
+  sortQuestions() {
+    if (this.getRendererState().questions.length && this.getRendererState().questionIds.length) {
+      const ques = [];
+      this.getRendererState().questionIds.forEach((questionId) => {
+        const que = this.getRendererState().questions.find(question => question.identifier === questionId);
+        if (que) {
+          ques.push(que);
+        }
+      });
+      this.setRendererState({ singleParam: { paramName: "questions", paramData: ques } });
+    }
+  }
 }

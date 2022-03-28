@@ -18,11 +18,11 @@ import { Event, EventType } from '../player/src/interfaces/Event';
   styleUrls: ["./main-player.component.scss"],
 })
 export class MainPlayerComponent implements OnInit {
-  @Input() playerConfig: QumlPlayerConfig;
   @Output() playerEvent = new EventEmitter<any>();
   @Output() telemetryEvent = new EventEmitter<any>();
 
   player: Player;
+  playerConfig: QumlPlayerConfig;
 
   isLoading = false;
   isSectionsAvailable = false;
@@ -92,6 +92,7 @@ export class MainPlayerComponent implements OnInit {
 
   ngOnInit(): void {
     this.player = this.playerService.getPlayerInstance();
+    this.playerConfig = this.player.getPlayerConfig();
     if (typeof this.playerConfig === "string") {
       try {
         this.playerConfig = JSON.parse(this.playerConfig);

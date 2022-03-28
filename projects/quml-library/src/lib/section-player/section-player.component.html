@@ -30,7 +30,7 @@
               [contentName]="showRootInstruction ? parentConfig?.contentName : parentConfig?.isSectionsAvailable ? sectionConfig?.metadata?.name : parentConfig?.contentName">
             </quml-startpage>
           </slide>
-          <slide *ngFor="let question of questions; let i= index" #questionSlide>
+          <slide *ngFor="let question of player.getRendererState().questions; let i= index" #questionSlide>
             <div [id]="question.identifier">
               <div *ngIf="question?.primaryCategory.toLowerCase() === 'multiple choice question'">
                 <quml-mcq [question]='question' [replayed]="parentConfig?.isReplayed"
