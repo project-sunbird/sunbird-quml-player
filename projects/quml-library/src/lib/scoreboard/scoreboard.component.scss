@@ -15,9 +15,7 @@
     align-items: center;
     justify-content: space-evenly;
     width: 100%;
-    position: absolute;
-    top: calculateRem(56px);
-    height: calc(100% - 56px);
+    height: 100%;
     left: 0;
     right: 0;
     @include respond-below(sm) {
@@ -97,7 +95,7 @@
 }
 .sections-score-card{
   width: 100%;
-  max-height: calc(100% - 20rem);
+  max-height: calc(100% - 12rem);
   overflow-y: auto;
   @include respond-below(sm) {
     max-height: calc(100% - 8.125rem);
