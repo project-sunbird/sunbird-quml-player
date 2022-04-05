@@ -311,6 +311,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     }
 
     if (this.myCarousel.getCurrentSlideIndex() === this.noOfQuestions) {
+      this.clearTimeInterval();
       this.emitSectionEnd();
       return;
     }
@@ -712,16 +713,18 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
   correctFeedBackTimeOut(type?: string) {
     this.intervalRef = setTimeout(() => {
-      this.showAlert = false;
-      if (!this.myCarousel.isLast(this.myCarousel.getCurrentSlideIndex()) && type === 'next') {
-        this.nextSlide();
-      } else if (type === 'previous' && !this.stopAutoNavigation) {
-        this.prevSlide();
-      } else if (type === 'jump' && !this.stopAutoNavigation) {
-        this.goToSlide(this.jumpSlideIndex);
-      } else if (this.myCarousel.isLast(this.myCarousel.getCurrentSlideIndex())) {
-        this.endPageReached = true;
-        this.emitSectionEnd();
+      if (this.showAlert) {
+        this.showAlert = false;
+        if (!this.myCarousel.isLast(this.myCarousel.getCurrentSlideIndex()) && type === 'next') {
+          this.nextSlide();
+        } else if (type === 'previous' && !this.stopAutoNavigation) {
+          this.prevSlide();
+        } else if (type === 'jump' && !this.stopAutoNavigation) {
+          this.goToSlide(this.jumpSlideIndex);
+        } else if (this.myCarousel.isLast(this.myCarousel.getCurrentSlideIndex())) {
+          this.endPageReached = true;
+          this.emitSectionEnd();
+        }
       }
     }, 4000);
   }
@@ -988,7 +991,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
   clearTimeInterval() {
     if (this.intervalRef) {
-      clearInterval(this.intervalRef);
+      clearTimeout(this.intervalRef);
     }
   }
 
