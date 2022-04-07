@@ -5,8 +5,9 @@
 <div *ngIf="!isLoading" class="main-container">
   <div class="main-container" [hidden]="!activeSection || loadScoreBoard || endPageReached">
     <quml-section-player [sectionConfig]="activeSection" (sectionEnd)="onSectionEnd($event)" [attempts]="attempts"
-      [isFirstSection]="isFirstSection" [mainProgressBar]="mainProgressBar" [parentConfig]="parentConfig" [sectionIndex]="sectionIndex"
-      [jumpToQuestion]="jumpToQuestion" (showScoreBoard)="onShowScoreBoard($event)" (playerEvent)="onPlayerEvent($event)">
+      [mainProgressBar]="mainProgressBar" [parentConfig]="parentConfig" [sectionIndex]="sectionIndex"
+      [jumpToQuestion]="jumpToQuestion" (showScoreBoard)="onShowScoreBoard($event)"
+      (playerEvent)="onPlayerEvent($event)">
     </quml-section-player>
   </div>
 
@@ -14,18 +15,21 @@
   <quml-scoreboard *ngIf="loadScoreBoard && parentConfig?.requiresSubmit && !endPageReached"
     (scoreBoardLoaded)="onScoreBoardLoaded($event)" (submitClicked)="onScoreBoardSubmitted()"
     [contentName]="parentConfig.contentName" [scores]="mainProgressBar" [totalNoOfQuestions]="totalNoOfQuestions"
-    [showFeedBack]="showFeedBack" (emitQuestionNo)="goToQuestion($event)" [isSections]="parentConfig?.isSectionsAvailable">
+    [showFeedBack]="showFeedBack" (emitQuestionNo)="goToQuestion($event)"
+    [isSections]="parentConfig?.isSectionsAvailable" [summary]="summary">
   </quml-scoreboard>
 
   <!-- Show player end page -->
   <div class="endPage-container" *ngIf="endPageReached" [ngClass]="endPageReached ? 'endPage-container-height': ''">
     <sb-player-end-page *ngIf="endPageReached && showEndPage" [contentName]="parentConfig.contentName"
       [outcome]="outcomeLabel" [outcomeLabel]="'Score: '" [userName]="userName" [timeSpentLabel]="durationSpent"
-      (replayContent)="replayContent()" (exitContent)="exitContent($event)" [showExit]="parentConfig?.sideMenuConfig.showExit"
-      [showReplay]="showReplay" [nextContent]="nextContent" (playNextContent)="playNextContent($event)">
+      (replayContent)="replayContent()" (exitContent)="exitContent($event)"
+      [showExit]="parentConfig?.sideMenuConfig.showExit" [showReplay]="showReplay" [nextContent]="nextContent"
+      (playNextContent)="playNextContent($event)">
 
       <span class="sb-color-primary mt-8 fnormal font-weight-bold d-block"
-        *ngIf="attempts?.max && attempts?.current && attempts.max !== attempts.current">Attempt no {{attempts.current}}/{{attempts.max}}
+        *ngIf="attempts?.max && attempts?.current && attempts.max !== attempts.current">Attempt no
+        {{attempts.current}}/{{attempts.max}}
       </span>
 
       <span class="attempts sb-color-primary mt-8 fnormal font-weight-bold d-block"

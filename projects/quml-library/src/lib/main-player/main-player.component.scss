@@ -1,7 +1,11 @@
-::ng-deep :root {
-  --quml-main-bg: #fff;
+::ng-deep {
+  :root {
+    --quml-main-bg: #fff;
+  }
+  #overlay-button {
+    top: 0.6rem !important;
+  }
 }
-
 .main-container {
   width: 100%;
   height: 100%;

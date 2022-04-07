@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { fromEvent, Subscription } from 'rxjs';
+import { ISummary } from '../quml-library-interface';
 
 @Component({
   selector: 'quml-scoreboard',
@@ -12,6 +13,7 @@ export class ScoreboardComponent implements OnInit, OnDestroy {
   @Input() contentName: string;
   @Input() showFeedBack: boolean;
   @Input() isSections: boolean;
+  @Input() summary: ISummary;
   @Output() submitClicked = new EventEmitter<any>();
   @Output() emitQuestionNo = new EventEmitter<any>();
   @Output() scoreBoardLoaded = new EventEmitter<any>();

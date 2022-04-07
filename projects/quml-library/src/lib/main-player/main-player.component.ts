@@ -22,14 +22,12 @@ export class MainPlayerComponent implements OnInit {
   isSectionsAvailable = false;
   isMultiLevelSection = false;
   sections: any[] = [];
-  isFirstSection = false;
   sectionIndex = 0;
   activeSection: any;
   contentError: contentErrorMessage;
   parentConfig: IParentConfig = {
     loadScoreBoard: false,
     requiresSubmit: false,
-    isFirstSection: false,
     isSectionsAvailable: false,
     isReplayed: false,
     identifier: '',
@@ -43,10 +41,11 @@ export class MainPlayerComponent implements OnInit {
       showShare: true,
       showDownload: false,
       showExit: false,
-    }
+    },
+    showFeedback: false
   };
 
-  showEndPage = true;
+  showEndPage: boolean;
   showFeedBack: boolean;
   endPageReached = false;
   isEndEventRaised = false;
@@ -134,7 +133,6 @@ export class MainPlayerComponent implements OnInit {
 
         this.setInitialScores();
         this.activeSection = _.cloneDeep(this.sections[0]);
-        this.isFirstSection = true;
         this.isLoading = false;
       }
     } else {
@@ -171,7 +169,6 @@ export class MainPlayerComponent implements OnInit {
       }
       this.activeSection = _.cloneDeep(this.playerConfig);
       this.isLoading = false;
-      this.isFirstSection = true;
       this.parentConfig.questionCount = this.totalNoOfQuestions;
     }
   }
@@ -183,7 +180,7 @@ export class MainPlayerComponent implements OnInit {
     this.parentConfig.instructions = this.playerConfig.metadata?.instructions?.default;
     this.nextContent = this.playerConfig.config?.nextContent;
     this.showEndPage = this.playerConfig.metadata?.showEndPage?.toLowerCase() !== 'no';
-    this.showFeedBack = this.playerConfig.metadata?.showFeedback?.toLowerCase() !== 'no';
+    this.parentConfig.showFeedback = this.showFeedBack = this.playerConfig.metadata?.showFeedback?.toLowerCase() === 'yes';
     this.parentConfig.sideMenuConfig = { ...this.parentConfig.sideMenuConfig, ...this.playerConfig.config.sideMenu };
     this.userName = this.playerConfig.context.userData.firstName + ' ' + this.playerConfig.context.userData.lastName;
 
@@ -237,12 +234,12 @@ export class MainPlayerComponent implements OnInit {
       const activeSectionIndex = this.getActiveSectionIndex();
       this.updateSectionScore(activeSectionIndex);
     }
+    this.getSummaryObject();
     this.loadScoreBoard = true;
   }
 
   onSectionEnd(event) {
     if (this.parentConfig.isSectionsAvailable) {
-      this.isFirstSection = false;
       const activeSectionIndex = this.getActiveSectionIndex();
       this.updateSectionScore(activeSectionIndex);
       this.setNextSection(event, activeSectionIndex);
@@ -313,11 +310,11 @@ export class MainPlayerComponent implements OnInit {
   prepareEnd(event) {
     this.calculateScore();
     this.setDurationSpent();
+    this.getSummaryObject();
     if (this.parentConfig.requiresSubmit) {
       this.loadScoreBoard = true;
     } else {
       this.endPageReached = true;
-      this.getSummaryObject();
       this.viewerService.raiseSummaryEvent(this.totalVisitedQuestion, this.endPageReached, this.finalScore, this.summary);
       this.raiseEndEvent(this.totalVisitedQuestion, this.endPageReached, this.finalScore);
       this.isSummaryEventRaised = true;
@@ -358,7 +355,7 @@ export class MainPlayerComponent implements OnInit {
       this.parentConfig.isReplayed = false;
       const element = document.querySelector('li.info-page') as HTMLElement;
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth'});
+        element.scrollIntoView({ behavior: 'smooth' });
       }
     }, 1000);
   }

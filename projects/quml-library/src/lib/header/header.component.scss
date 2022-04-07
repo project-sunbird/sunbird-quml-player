@@ -13,6 +13,7 @@
 .quml-header {
 
   &__container,
+  &__features,
   &__metadata {
     display: flex;
     align-items: center;
@@ -29,7 +30,20 @@
     z-index: 9;
   }
 
+  &__features {
+    justify-content: space-between;
+
+    img {
+      margin: 0 1rem;
+      cursor: pointer;
+    }
+  }
+
   &__metadata {
+    img {
+      margin: 0 1rem;
+      cursor: pointer;
+    }
     &--portrait {
       display: none;
       

@@ -22,21 +22,27 @@ export class HeaderComponent implements OnInit, OnChanges, AfterViewInit, OnDest
   @Input() replayed: boolean;
   @Input() currentSolutions: any;
   @Input() showFeedBack: boolean;
-  @Output() nextSlideClicked = new EventEmitter<any>();
-  @Output() prevSlideClicked = new EventEmitter<any>();
-  @Output() durationEnds = new EventEmitter<any>();
-  @Output() showSolution = new EventEmitter<any>();
   @Input() disableNext?: boolean;
   @Input() startPageInstruction?: string;
   @Input() showStartPage?: boolean;
   @Input() attempts?: { max: number, current: number };
+  @Input() showDeviceOrientation: boolean = false;
+
+
+  @Output() nextSlideClicked = new EventEmitter<any>();
+  @Output() prevSlideClicked = new EventEmitter<any>();
+  @Output() durationEnds = new EventEmitter<any>();
+  @Output() showSolution = new EventEmitter<any>();
+  @Output() toggleScreenRotate = new EventEmitter<any>();
+
+
   minutes: number;
   seconds: string | number;
   private intervalRef?;
   showWarning = false;
   isMobilePortrait = false;
-
   time: any;
+  showProgressIndicatorPopUp = false;
   constructor() {
   }
 

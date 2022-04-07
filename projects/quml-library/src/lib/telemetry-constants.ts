@@ -27,7 +27,8 @@ export enum eventName {
     zoomOutClicked = 'ZOOM_OUT_CLICKED',
     zoomCloseClicked = 'ZOOM_CLOSE_CLICKED',
     goToQuestion = 'GO_TO_QUESTION',
-    nextContentPlay = 'NEXT_CONTENT_PLAY'
+    nextContentPlay = 'NEXT_CONTENT_PLAY',
+    deviceRotationClicked = 'DEVICE_ROTATION_CLICKED',
 }
 
 export enum TelemetryType {
