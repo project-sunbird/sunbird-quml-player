@@ -1,12 +1,15 @@
-import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { contentErrorMessage } from '@project-sunbird/sunbird-player-sdk-v9/lib/player-utils/interfaces/errorMessage';
 import { NextContent } from '@project-sunbird/sunbird-player-sdk-v9/sunbird-player-sdk.interface';
 import * as _ from 'lodash-es';
+import { SectionPlayerComponent } from '../section-player/section-player.component';
 import { IAttempts, IParentConfig, ISummary, QumlPlayerConfig } from './../quml-library-interface';
 import { ViewerService } from './../services/viewer-service/viewer-service';
 import { eventName, pageId, TelemetryType, MimeType } from './../telemetry-constants';
 import { UtilService } from './../util-service';
-
+import { ISideBarEvent } from '@project-sunbird/sunbird-player-sdk-v9/sunbird-player-sdk.interface';
+import { fromEvent, Subscription } from 'rxjs';
+import maintain from 'ally.js/esm/maintain/_maintain';
 @Component({
   selector: 'quml-main-player',
   templateUrl: './main-player.component.html',
@@ -17,6 +20,8 @@ export class MainPlayerComponent implements OnInit {
   @Input() playerConfig: QumlPlayerConfig;
   @Output() playerEvent = new EventEmitter<any>();
   @Output() telemetryEvent = new EventEmitter<any>();
+
+  @ViewChild(SectionPlayerComponent) sectionPlayer!: SectionPlayerComponent;
 
   isLoading = false;
   isSectionsAvailable = false;
@@ -72,6 +77,8 @@ export class MainPlayerComponent implements OnInit {
   jumpToQuestion: any;
   totalVisitedQuestion = 0;
   nextContent: NextContent;
+  disabledHandle: any;
+  subscription: Subscription;
 
   constructor(public viewerService: ViewerService, private utilService: UtilService) { }
 
@@ -311,7 +318,7 @@ export class MainPlayerComponent implements OnInit {
     this.calculateScore();
     this.setDurationSpent();
     this.getSummaryObject();
-    if (this.parentConfig.requiresSubmit) {
+    if (this.parentConfig.requiresSubmit && !this.isDurationExpired) {
       this.loadScoreBoard = true;
     } else {
       this.endPageReached = true;
@@ -478,6 +485,45 @@ export class MainPlayerComponent implements OnInit {
 
   playNextContent(event) {
     this.viewerService.raiseHeartBeatEvent(event?.type, TelemetryType.interact, pageId.endPage, event?.identifier);
+  }
+
+  sideBarEvents(event: ISideBarEvent) {
+    if (event.type === 'OPEN_MENU' || event.type === 'CLOSE_MENU') {
+      this.handleSideBarAccessibility(event);
+    }
+    this.viewerService.raiseHeartBeatEvent(event.type, TelemetryType.interact, this.sectionPlayer.myCarousel.getCurrentSlideIndex() + 1);
+  }
+
+  handleSideBarAccessibility(event) {
+    const navBlock = document.querySelector('.navBlock') as HTMLInputElement;
+    const overlayInput = document.querySelector('#overlay-input') as HTMLElement;
+    const overlayButton = document.querySelector('#overlay-button') as HTMLElement;
+    const sideBarList = document.querySelector('#sidebar-list') as HTMLElement;
+
+    if (event.type === 'OPEN_MENU') {
+      const isMobile = this.playerConfig.config?.sideMenu?.showExit;
+      this.disabledHandle = isMobile ? maintain.hidden({ filter: [sideBarList, overlayButton, overlayInput] }) : maintain.tabFocus({ context: navBlock });
+      this.subscription = fromEvent(document, 'keydown').subscribe((e: KeyboardEvent) => {
+        if (e['key'] === 'Escape') {
+          const inputChecked = document.getElementById('overlay-input') as HTMLInputElement;
+          inputChecked.checked = false;
+          document.getElementById('playerSideMenu').style.visibility = 'hidden';
+          document.querySelector<HTMLElement>('.navBlock').style.marginLeft = '-100%';
+          this.viewerService.raiseHeartBeatEvent('CLOSE_MENU', TelemetryType.interact, this.sectionPlayer.myCarousel.getCurrentSlideIndex() + 1);
+          this.disabledHandle.disengage();
+          this.subscription.unsubscribe();
+          this.disabledHandle = null;
+          this.subscription = null;
+        }
+      });
+    } else if (event.type === 'CLOSE_MENU' && this.disabledHandle) {
+      this.disabledHandle.disengage();
+      this.disabledHandle = null;
+      if (this.subscription) {
+        this.subscription.unsubscribe();
+        this.subscription = null;
+      }
+    }
   }
 
   @HostListener('window:beforeunload')

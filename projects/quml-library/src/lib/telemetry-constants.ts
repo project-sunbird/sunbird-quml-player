@@ -21,6 +21,7 @@ export enum eventName {
     tryAgain = 'TRY_AGAIN',
     optionClicked = 'OPTION_CLICKED',
     scoreBoardSubmitClicked = 'SCORE_BOARD_SUBMIT_CLICKED',
+    scoreBoardReviewClicked = 'SCORE_BOARD_REVIEW_CLICKED',
     endPageExitClicked = 'EXIT',
     zoomClicked = 'ZOOM_CLICKED',
     zoomInClicked = 'ZOOM_IN_CLICKED',
@@ -29,6 +30,8 @@ export enum eventName {
     goToQuestion = 'GO_TO_QUESTION',
     nextContentPlay = 'NEXT_CONTENT_PLAY',
     deviceRotationClicked = 'DEVICE_ROTATION_CLICKED',
+    progressIndicatorPopupClosed = 'PROGRESS_INDICATOR_POPUP_CLOSED',
+    progressIndicatorPopupOpened = 'PROGRESS_INDICATOR_POPUP_OPENED',
 }
 
 export enum TelemetryType {

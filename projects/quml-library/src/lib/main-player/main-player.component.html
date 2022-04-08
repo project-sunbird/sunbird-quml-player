@@ -1,6 +1,11 @@
 <!-- Need to show loading here -->
 <sb-player-start-page *ngIf="isLoading" [title]="parentConfig?.contentName"></sb-player-start-page>
 
+<sb-player-side-menu-icon *ngIf="!endPageReached"></sb-player-side-menu-icon>
+<quml-header *ngIf="loadScoreBoard && parentConfig?.requiresSubmit && !endPageReached"
+  [disablePreviousNavigation]="true" [disableNext]="true" [attempts]="attempts" [loadScoreBoard]="true"></quml-header>
+<sb-player-sidebar [title]="parentConfig?.contentName" [config]="parentConfig?.sideMenuConfig">
+</sb-player-sidebar>
 
 <div *ngIf="!isLoading" class="main-container">
   <div class="main-container" [hidden]="!activeSection || loadScoreBoard || endPageReached">

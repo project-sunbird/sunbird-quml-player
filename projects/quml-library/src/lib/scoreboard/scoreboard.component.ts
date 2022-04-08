@@ -1,6 +1,8 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { fromEvent, Subscription } from 'rxjs';
 import { ISummary } from '../quml-library-interface';
+import { ViewerService } from '../services/viewer-service/viewer-service';
+import { eventName, pageId, TelemetryType } from '../telemetry-constants';
 
 @Component({
   selector: 'quml-scoreboard',
@@ -19,7 +21,7 @@ export class ScoreboardComponent implements OnInit, OnDestroy {
   @Output() scoreBoardLoaded = new EventEmitter<any>();
 
   subscription: Subscription;
-  constructor() { }
+  constructor(private viewerService: ViewerService) { }
 
   ngOnInit() {
     this.scoreBoardLoaded.emit({
@@ -36,6 +38,15 @@ export class ScoreboardComponent implements OnInit, OnDestroy {
 
   goToQuestion(index: number, identifier?: string) {
     this.emitQuestionNo.emit({ questionNo: index, identifier });
+  }
+
+  onReviewClicked() {
+    if (this.isSections) {
+      this.goToQuestion(1, this.scores[0].identifier);
+    } else {
+      this.goToQuestion(1);
+    }
+    this.viewerService.raiseHeartBeatEvent(eventName.scoreBoardReviewClicked, TelemetryType.interact, pageId.submitPage);
   }
 
   ngOnDestroy() {

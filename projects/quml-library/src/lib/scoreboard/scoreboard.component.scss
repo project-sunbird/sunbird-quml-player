@@ -13,10 +13,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-evenly;
+  // justify-content: space-evenly;
   width: 100%;
   height: 100%;
-  padding: 0 2.5rem;
+  padding: 3.5rem 2.5rem 0 2.5rem;
   @include respond-below(sm) {
     top: 0;
     height: calc(100% - 0px);
@@ -25,6 +25,7 @@
     font-weight: bold;
     text-align: center;
     line-height: normal;
+    height: 5rem;
   }
   &__title {
     color: var(--primary-color);
@@ -45,6 +46,11 @@
     overflow-y: auto;
     justify-content: center;
   }
+  &__btn-container {
+    display: flex;
+    height: 5rem;
+    align-items: center;
+  }
   &__index {
     font-size: calculateRem(10px);
     font-weight: 500;
@@ -54,7 +60,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0rem calculateRem(16px) calculateRem(32px);
+    margin: 0rem calculateRem(16px) calculateRem(16px);
     cursor: pointer;
     &.skipped {
       color: var(--white);
@@ -93,10 +99,10 @@
         color: var(--primary-color);
       }
     }
-    &.attempted{
-        color: var(--white) !important;
-        background: var(--primary-color);
-        border: 0.03125rem solid var(--primary-color);
+    &.attempted {
+      color: var(--white) !important;
+      background: var(--primary-color);
+      border: 0.03125rem solid var(--primary-color);
     }
   }
   @media screen and (orientation: landscape) {
@@ -109,11 +115,11 @@
 }
 .sections-score-card {
   width: 100%;
-  max-height: calc(100% - 12rem);
+  height: calc(100% - 10rem);
   overflow-y: auto;
-  @include respond-below(sm) {
-    max-height: calc(100% - 8.125rem);
-  }
+  // @include respond-below(sm) {
+  //   max-height: calc(100% - 8.125rem);
+  // }
   &__title {
     width: 100%;
     color: var(--quml-color-primary-contrast);
@@ -121,7 +127,7 @@
     font-weight: bold;
     text-align: center;
     // margin-top: calculateRem(8px);
-    margin-bottom: calculateRem(24px);
+    margin-bottom: calculateRem(16px);
   }
   &__points {
     display: flex;
@@ -142,10 +148,14 @@
     width: 100%;
     display: block;
     border-right: 0;
+    padding-bottom: 1.5rem;
+    position: sticky;
+    top: 0;
+    background: #fff;
     @media screen and (orientation: landscape) {
       width: 40%;
-      position: sticky;
-      top: 0;
+      // position: sticky;
+      // top: 0;
       border-right: 1px solid #979797;
     }
   }

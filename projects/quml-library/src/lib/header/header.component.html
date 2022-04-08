@@ -2,11 +2,11 @@
   <div class="quml-header__features pl-64">
     <div *ngIf="attempts?.max && attempts?.current" class="attempts sb-color-primary fnormal font-weight-bold">
       Attempt no {{attempts.current}}/{{attempts.max}}</div>
-    <img src="assets/question-mark-round.svg" alt="" height="20" width="20" (click)="showProgressIndicatorPopUp=true">
+    <img src="assets/question-mark-round.svg" alt="Progress Indicators" title="Progress Indicators" height="20" width="20" (click)="openProgressIndicatorPopup()">
   </div>
 
   <div class="quml-header__metadata">
-    <img src="assets/device-rotate.svg" alt="" height="20" width="20" *ngIf="showDeviceOrientation" (click)="toggleScreenRotate.emit()">
+    <img src="assets/device-rotate.svg" alt="Change Orientation" title="Change Orientation" height="20" width="20" *ngIf="showDeviceOrientation" (click)="toggleScreenRotate.emit()">
     <ng-container *ngIf="duration && showTimer">
       <div class="duration mr-16" title="{{minutes}}:{{seconds}}" *ngIf="!initializeTimer">
         <quml-durationtimer></quml-durationtimer>
@@ -42,7 +42,7 @@
 </div>
 
 <div class="quml-header__metadata quml-header__metadata--portrait" *ngIf="!loadScoreBoard && !endPageReached">
-  <div class="current-slide fnormal">{{currentSlideIndex}}/{{totalNoOfQuestions}}</div>
+  <div class="current-slide fnormal" *ngIf="currentSlideIndex">{{currentSlideIndex}}/{{totalNoOfQuestions}}</div>
   <div class="ml-16" *ngIf="currentSolutions && showFeedBack">
     <quml-ans (click)="showSolution.emit()" (keydown)="onAnswerKeyDown($event)"></quml-ans>
   </div>
@@ -57,4 +57,4 @@
 
 </div>
 
-<quml-progress-indicators *ngIf="showProgressIndicatorPopUp" (close)="showProgressIndicatorPopUp=false"></quml-progress-indicators>
+<quml-progress-indicators *ngIf="showProgressIndicatorPopUp" (close)="onProgressPopupClose()"></quml-progress-indicators>

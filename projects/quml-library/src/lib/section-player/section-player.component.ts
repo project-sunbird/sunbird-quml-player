@@ -2,15 +2,13 @@ import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, 
 import { errorCode, errorMessage, ErrorService } from '@project-sunbird/sunbird-player-sdk-v9';
 import * as _ from 'lodash-es';
 import { CarouselComponent } from 'ngx-bootstrap/carousel';
-import { fromEvent, Subject, Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { QumlPlayerConfig, IParentConfig, IAttempts } from '../quml-library-interface';
 import { QuestionCursor } from '../quml-question-cursor.service';
 import { ViewerService } from '../services/viewer-service/viewer-service';
 import { eventName, pageId, TelemetryType } from '../telemetry-constants';
 import { UtilService } from '../util-service';
-import maintain from 'ally.js/esm/maintain/_maintain';
-import { ISideBarEvent } from '@project-sunbird/sunbird-player-sdk-v9/sunbird-player-sdk.interface';
 
 @Component({
   selector: 'quml-section-player',
@@ -25,6 +23,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   @Input() mainProgressBar;
   @Input() sectionIndex = 0;
   @Input() parentConfig: IParentConfig;
+
   @Output() playerEvent = new EventEmitter<any>();
   @Output() sectionEnd = new EventEmitter<any>();
   @Output() showScoreBoard = new EventEmitter<any>();
@@ -570,47 +569,8 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     }
   }
 
-  sideBarEvents(event: ISideBarEvent) {
-    if (event.type === 'OPEN_MENU' || event.type === 'CLOSE_MENU') {
-      this.handleSideBarAccessibility(event);
-    }
-    this.viewerService.raiseHeartBeatEvent(event.type, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex() + 1);
-  }
-
   toggleScreenRotate(event?: KeyboardEvent | MouseEvent) {
     this.viewerService.raiseHeartBeatEvent(eventName.deviceRotationClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex() + 1);
-  }
-
-  handleSideBarAccessibility(event) {
-    const navBlock = document.querySelector('.navBlock') as HTMLInputElement;
-    const overlayInput = document.querySelector('#overlay-input') as HTMLElement;
-    const overlayButton = document.querySelector('#overlay-button') as HTMLElement;
-    const sideBarList = document.querySelector('#sidebar-list') as HTMLElement;
-
-    if (event.type === 'OPEN_MENU') {
-      const isMobile = this.sectionConfig.config?.sideMenu?.showExit;
-      this.disabledHandle = isMobile ? maintain.hidden({ filter: [sideBarList, overlayButton, overlayInput] }) : maintain.tabFocus({ context: navBlock });
-      this.subscription = fromEvent(document, 'keydown').subscribe((e: KeyboardEvent) => {
-        if (e['key'] === 'Escape') {
-          const inputChecked = document.getElementById('overlay-input') as HTMLInputElement;
-          inputChecked.checked = false;
-          document.getElementById('playerSideMenu').style.visibility = 'hidden';
-          document.querySelector<HTMLElement>('.navBlock').style.marginLeft = '-100%';
-          this.viewerService.raiseHeartBeatEvent('CLOSE_MENU', TelemetryType.interact, this.myCarousel.getCurrentSlideIndex() + 1);
-          this.disabledHandle.disengage();
-          this.subscription.unsubscribe();
-          this.disabledHandle = null;
-          this.subscription = null;
-        }
-      });
-    } else if (event.type === 'CLOSE_MENU' && this.disabledHandle) {
-      this.disabledHandle.disengage();
-      this.disabledHandle = null;
-      if (this.subscription) {
-        this.subscription.unsubscribe();
-        this.subscription = null;
-      }
-    }
   }
 
   validateSelectedOption(option, type?: string) {
