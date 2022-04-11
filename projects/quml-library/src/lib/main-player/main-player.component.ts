@@ -487,6 +487,10 @@ export class MainPlayerComponent implements OnInit {
     this.viewerService.raiseHeartBeatEvent(event?.type, TelemetryType.interact, pageId.endPage, event?.identifier);
   }
 
+  toggleScreenRotate(event?: KeyboardEvent | MouseEvent) {
+    this.viewerService.raiseHeartBeatEvent(eventName.deviceRotationClicked, TelemetryType.interact, this.sectionPlayer.myCarousel.getCurrentSlideIndex() + 1);
+  }
+
   sideBarEvents(event: ISideBarEvent) {
     if (event.type === 'OPEN_MENU' || event.type === 'CLOSE_MENU') {
       this.handleSideBarAccessibility(event);

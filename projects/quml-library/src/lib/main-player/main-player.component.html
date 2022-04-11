@@ -3,7 +3,8 @@
 
 <sb-player-side-menu-icon *ngIf="!endPageReached"></sb-player-side-menu-icon>
 <quml-header *ngIf="loadScoreBoard && parentConfig?.requiresSubmit && !endPageReached"
-  [disablePreviousNavigation]="true" [disableNext]="true" [attempts]="attempts" [loadScoreBoard]="true"></quml-header>
+  [disablePreviousNavigation]="true" [disableNext]="true" [attempts]="attempts" [loadScoreBoard]="true"
+  [showDeviceOrientation]="playerConfig?.config?.showDeviceOrientation" (toggleScreenRotate)="toggleScreenRotate()"></quml-header>
 <sb-player-sidebar [title]="parentConfig?.contentName" [config]="parentConfig?.sideMenuConfig">
 </sb-player-sidebar>
 
