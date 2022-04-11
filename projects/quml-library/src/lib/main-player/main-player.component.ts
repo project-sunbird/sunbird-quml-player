@@ -1,12 +1,15 @@
-import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { contentErrorMessage } from '@project-sunbird/sunbird-player-sdk-v9/lib/player-utils/interfaces/errorMessage';
 import { NextContent } from '@project-sunbird/sunbird-player-sdk-v9/sunbird-player-sdk.interface';
 import * as _ from 'lodash-es';
+import { SectionPlayerComponent } from '../section-player/section-player.component';
 import { IAttempts, IParentConfig, ISummary, QumlPlayerConfig } from './../quml-library-interface';
 import { ViewerService } from './../services/viewer-service/viewer-service';
 import { eventName, pageId, TelemetryType, MimeType } from './../telemetry-constants';
 import { UtilService } from './../util-service';
-
+import { ISideBarEvent } from '@project-sunbird/sunbird-player-sdk-v9/sunbird-player-sdk.interface';
+import { fromEvent, Subscription } from 'rxjs';
+import maintain from 'ally.js/esm/maintain/_maintain';
 @Component({
   selector: 'quml-main-player',
   templateUrl: './main-player.component.html',
@@ -18,18 +21,18 @@ export class MainPlayerComponent implements OnInit {
   @Output() playerEvent = new EventEmitter<any>();
   @Output() telemetryEvent = new EventEmitter<any>();
 
+  @ViewChild(SectionPlayerComponent) sectionPlayer!: SectionPlayerComponent;
+
   isLoading = false;
   isSectionsAvailable = false;
   isMultiLevelSection = false;
   sections: any[] = [];
-  isFirstSection = false;
   sectionIndex = 0;
   activeSection: any;
   contentError: contentErrorMessage;
   parentConfig: IParentConfig = {
     loadScoreBoard: false,
     requiresSubmit: false,
-    isFirstSection: false,
     isSectionsAvailable: false,
     isReplayed: false,
     identifier: '',
@@ -43,10 +46,11 @@ export class MainPlayerComponent implements OnInit {
       showShare: true,
       showDownload: false,
       showExit: false,
-    }
+    },
+    showFeedback: false
   };
 
-  showEndPage = true;
+  showEndPage: boolean;
   showFeedBack: boolean;
   endPageReached = false;
   isEndEventRaised = false;
@@ -73,6 +77,8 @@ export class MainPlayerComponent implements OnInit {
   jumpToQuestion: any;
   totalVisitedQuestion = 0;
   nextContent: NextContent;
+  disabledHandle: any;
+  subscription: Subscription;
 
   constructor(public viewerService: ViewerService, private utilService: UtilService) { }
 
@@ -134,7 +140,6 @@ export class MainPlayerComponent implements OnInit {
 
         this.setInitialScores();
         this.activeSection = _.cloneDeep(this.sections[0]);
-        this.isFirstSection = true;
         this.isLoading = false;
       }
     } else {
@@ -171,7 +176,6 @@ export class MainPlayerComponent implements OnInit {
       }
       this.activeSection = _.cloneDeep(this.playerConfig);
       this.isLoading = false;
-      this.isFirstSection = true;
       this.parentConfig.questionCount = this.totalNoOfQuestions;
     }
   }
@@ -183,7 +187,7 @@ export class MainPlayerComponent implements OnInit {
     this.parentConfig.instructions = this.playerConfig.metadata?.instructions?.default;
     this.nextContent = this.playerConfig.config?.nextContent;
     this.showEndPage = this.playerConfig.metadata?.showEndPage?.toLowerCase() !== 'no';
-    this.showFeedBack = this.playerConfig.metadata?.showFeedback?.toLowerCase() !== 'no';
+    this.parentConfig.showFeedback = this.showFeedBack = this.playerConfig.metadata?.showFeedback?.toLowerCase() === 'yes';
     this.parentConfig.sideMenuConfig = { ...this.parentConfig.sideMenuConfig, ...this.playerConfig.config.sideMenu };
     this.userName = this.playerConfig.context.userData.firstName + ' ' + this.playerConfig.context.userData.lastName;
 
@@ -237,12 +241,12 @@ export class MainPlayerComponent implements OnInit {
       const activeSectionIndex = this.getActiveSectionIndex();
       this.updateSectionScore(activeSectionIndex);
     }
+    this.getSummaryObject();
     this.loadScoreBoard = true;
   }
 
   onSectionEnd(event) {
     if (this.parentConfig.isSectionsAvailable) {
-      this.isFirstSection = false;
       const activeSectionIndex = this.getActiveSectionIndex();
       this.updateSectionScore(activeSectionIndex);
       this.setNextSection(event, activeSectionIndex);
@@ -313,11 +317,11 @@ export class MainPlayerComponent implements OnInit {
   prepareEnd(event) {
     this.calculateScore();
     this.setDurationSpent();
-    if (this.parentConfig.requiresSubmit) {
+    this.getSummaryObject();
+    if (this.parentConfig.requiresSubmit && !this.isDurationExpired) {
       this.loadScoreBoard = true;
     } else {
       this.endPageReached = true;
-      this.getSummaryObject();
       this.viewerService.raiseSummaryEvent(this.totalVisitedQuestion, this.endPageReached, this.finalScore, this.summary);
       this.raiseEndEvent(this.totalVisitedQuestion, this.endPageReached, this.finalScore);
       this.isSummaryEventRaised = true;
@@ -358,7 +362,7 @@ export class MainPlayerComponent implements OnInit {
       this.parentConfig.isReplayed = false;
       const element = document.querySelector('li.info-page') as HTMLElement;
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth'});
+        element.scrollIntoView({ behavior: 'smooth' });
       }
     }, 1000);
   }
@@ -481,6 +485,49 @@ export class MainPlayerComponent implements OnInit {
 
   playNextContent(event) {
     this.viewerService.raiseHeartBeatEvent(event?.type, TelemetryType.interact, pageId.endPage, event?.identifier);
+  }
+
+  toggleScreenRotate(event?: KeyboardEvent | MouseEvent) {
+    this.viewerService.raiseHeartBeatEvent(eventName.deviceRotationClicked, TelemetryType.interact, this.sectionPlayer.myCarousel.getCurrentSlideIndex() + 1);
+  }
+
+  sideBarEvents(event: ISideBarEvent) {
+    if (event.type === 'OPEN_MENU' || event.type === 'CLOSE_MENU') {
+      this.handleSideBarAccessibility(event);
+    }
+    this.viewerService.raiseHeartBeatEvent(event.type, TelemetryType.interact, this.sectionPlayer.myCarousel.getCurrentSlideIndex() + 1);
+  }
+
+  handleSideBarAccessibility(event) {
+    const navBlock = document.querySelector('.navBlock') as HTMLInputElement;
+    const overlayInput = document.querySelector('#overlay-input') as HTMLElement;
+    const overlayButton = document.querySelector('#overlay-button') as HTMLElement;
+    const sideBarList = document.querySelector('#sidebar-list') as HTMLElement;
+
+    if (event.type === 'OPEN_MENU') {
+      const isMobile = this.playerConfig.config?.sideMenu?.showExit;
+      this.disabledHandle = isMobile ? maintain.hidden({ filter: [sideBarList, overlayButton, overlayInput] }) : maintain.tabFocus({ context: navBlock });
+      this.subscription = fromEvent(document, 'keydown').subscribe((e: KeyboardEvent) => {
+        if (e['key'] === 'Escape') {
+          const inputChecked = document.getElementById('overlay-input') as HTMLInputElement;
+          inputChecked.checked = false;
+          document.getElementById('playerSideMenu').style.visibility = 'hidden';
+          document.querySelector<HTMLElement>('.navBlock').style.marginLeft = '-100%';
+          this.viewerService.raiseHeartBeatEvent('CLOSE_MENU', TelemetryType.interact, this.sectionPlayer.myCarousel.getCurrentSlideIndex() + 1);
+          this.disabledHandle.disengage();
+          this.subscription.unsubscribe();
+          this.disabledHandle = null;
+          this.subscription = null;
+        }
+      });
+    } else if (event.type === 'CLOSE_MENU' && this.disabledHandle) {
+      this.disabledHandle.disengage();
+      this.disabledHandle = null;
+      if (this.subscription) {
+        this.subscription.unsubscribe();
+        this.subscription = null;
+      }
+    }
   }
 
   @HostListener('window:beforeunload')
