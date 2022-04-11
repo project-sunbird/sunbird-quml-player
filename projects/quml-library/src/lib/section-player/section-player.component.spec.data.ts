@@ -590,7 +590,8 @@ export const mockSectionPlayerConfig = {
       showShare: true,
       showDownload: true,
       showExit: true
-    }
+    },
+    showFeedback: true
   },
   changes: {
     attempts: {

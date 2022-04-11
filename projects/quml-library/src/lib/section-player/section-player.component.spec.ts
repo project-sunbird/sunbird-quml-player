@@ -42,8 +42,7 @@ describe('SectionPlayerComponent', () => {
 
   const myCarousel = jasmine.createSpyObj("CarouselComponent", {
     "getCurrentSlideIndex": 1, "selectSlide": {}, "move": {}, isLast: false
-  }
-  );
+  });
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -389,16 +388,6 @@ describe('SectionPlayerComponent', () => {
     expect(component.progressBarClass[0].class).toBe('skipped');
   });
 
-  it('should handle sideBarEvents', () => {
-    spyOn(component, 'handleSideBarAccessibility');
-    spyOn(viewerService, 'raiseHeartBeatEvent');
-    component.myCarousel = myCarousel;
-    const event = { event: new KeyboardEvent('keydown', {}), type: 'CLOSE_MENU' }
-    component.sideBarEvents(event);
-    expect(component['handleSideBarAccessibility']).toHaveBeenCalled();
-    expect(viewerService['raiseHeartBeatEvent']).toHaveBeenCalled();
-  });
-
   it('should validate the selected option', () => {
     component.myCarousel = myCarousel;
     const option = {
@@ -440,6 +429,7 @@ describe('SectionPlayerComponent', () => {
       "getCurrentSlideIndex": 1, "move": {}, isLast: false
     });
     spyOn(component, 'nextSlide');
+    component.showAlert = true;
     component.correctFeedBackTimeOut('next');
     tick(4000);
     expect(component.showAlert).toBe(false);
@@ -451,6 +441,7 @@ describe('SectionPlayerComponent', () => {
       "getCurrentSlideIndex": 1, "move": {}, isLast: false
     });
     spyOn(component, 'prevSlide');
+    component.showAlert = true;
     component.correctFeedBackTimeOut('previous');
     tick(4000);
     expect(component.showAlert).toBe(false);
@@ -463,6 +454,7 @@ describe('SectionPlayerComponent', () => {
       "getCurrentSlideIndex": 1, "move": {}, isLast: false
     });
     spyOn(component, 'goToSlide');
+    component.showAlert = true;
     component.correctFeedBackTimeOut('jump');
     tick(4000);
     expect(component.showAlert).toBe(false);
@@ -475,6 +467,7 @@ describe('SectionPlayerComponent', () => {
       "getCurrentSlideIndex": 1, "move": {}, isLast: true
     });
     spyOn(component, 'emitSectionEnd');
+    component.showAlert = true;
     component.correctFeedBackTimeOut('');
     tick(4000);
     expect(component.showAlert).toBe(false);
@@ -677,9 +670,9 @@ describe('SectionPlayerComponent', () => {
 
   it('should clear the time interval', () => {
     component.intervalRef = setTimeout(() => { }, 0);
-    spyOn(window, 'clearInterval');
+    spyOn(window, 'clearTimeout');
     component.clearTimeInterval();
-    expect(clearInterval).toHaveBeenCalled();
+    expect(clearTimeout).toHaveBeenCalled();
   });
 
   it('should clean up the state before leaving the page', () => {

@@ -44,4 +44,17 @@ describe('UtilService', () => {
     let qType = service.getQuestionType(questions , 0);
     expect(qType).toBe('MCQ');
   })
+
+  it('should check if the array contains the progress classes', () => {
+    const service: UtilService = TestBed.get(UtilService);
+    let qType = service.canGo('correct');
+    expect(qType).toBe(true);
+  });
+
+  it('should scroll the page from parent element to child', () => {
+    const service: UtilService = TestBed.get(UtilService);
+    const parent = document.createElement('div');
+    service.scrollParentToChild(parent, document.createElement('div'));
+    expect(parent.scrollTop).toBeDefined();
+  });
 });

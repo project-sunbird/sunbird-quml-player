@@ -2,6 +2,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { SafeHtmlPipe } from '../pipes/safe-html/safe-html.pipe';
+import { ViewerService } from '../services/viewer-service/viewer-service';
 
 import { ScoreboardComponent } from './scoreboard.component';
 
@@ -9,9 +10,24 @@ describe('ScoreboardComponent', () => {
   let component: ScoreboardComponent;
   let fixture: ComponentFixture<ScoreboardComponent>;
 
+  class ViewerServiceMock {
+    initialize() { }
+    raiseStartEvent() { }
+    raiseHeartBeatEvent() { }
+    getQuestions() { }
+    updateSectionQuestions() { }
+    raiseExceptionLog() { }
+    getQuestion() { }
+    raiseResponseEvent() { }
+    getSectionQuestions() { }
+    raiseAssesEvent() { }
+  }
+
+
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ScoreboardComponent, SafeHtmlPipe],
+      providers: [{ provide: ViewerService, useClass: ViewerServiceMock },],
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
