@@ -14,6 +14,10 @@ describe('MainPlayerComponent', () => {
   let component: MainPlayerComponent;
   let fixture: ComponentFixture<MainPlayerComponent>;
 
+  const myCarousel = jasmine.createSpyObj("CarouselComponent", {
+    "getCurrentSlideIndex": 1, "selectSlide": {}, "move": {}, isLast: false
+  });
+
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [MainPlayerComponent],
@@ -63,7 +67,6 @@ describe('MainPlayerComponent', () => {
     component.initializeSections();
     expect(component['getMultilevelSection']).toHaveBeenCalled();
     expect(component.setInitialScores).toHaveBeenCalled();
-    expect(component.isFirstSection).toBe(true);
   });
 
   it('should set config for the question set', () => {
@@ -447,5 +450,17 @@ describe('MainPlayerComponent', () => {
     component.playerConfig = playerConfig;
     component.playerConfig.metadata = singleContent;
     component.initializeSections();
+  });
+
+  it('should handle sideBarEvents', () => {
+    const viewerService = TestBed.get(ViewerService);
+    spyOn(component, 'handleSideBarAccessibility');
+    spyOn(viewerService, 'raiseHeartBeatEvent');
+    component.sectionPlayer = {} as any;
+    component.sectionPlayer.myCarousel = myCarousel;
+    const event = { event: new KeyboardEvent('keydown', {}), type: 'CLOSE_MENU' }
+    component.sideBarEvents(event);
+    expect(component['handleSideBarAccessibility']).toHaveBeenCalled();
+    expect(viewerService['raiseHeartBeatEvent']).toHaveBeenCalled();
   });
 });

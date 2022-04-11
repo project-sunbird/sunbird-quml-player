@@ -1,14 +1,29 @@
 import { async, ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 import { HeaderComponent } from './header.component';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { ViewerService } from '../services/viewer-service/viewer-service';
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent;
   let fixture: ComponentFixture<HeaderComponent>;
 
+  class ViewerServiceMock {
+    initialize() { }
+    raiseStartEvent() { }
+    raiseHeartBeatEvent() { }
+    getQuestions() { }
+    updateSectionQuestions() { }
+    raiseExceptionLog() { }
+    getQuestion() { }
+    raiseResponseEvent() { }
+    getSectionQuestions() { }
+    raiseAssesEvent() { }
+  }
+
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [HeaderComponent],
+      providers: [{ provide: ViewerService, useClass: ViewerServiceMock }],
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
@@ -129,19 +144,6 @@ describe('HeaderComponent', () => {
     expect(component.prevSlideClicked.emit).toHaveBeenCalledWith({ event: 'previous clicked' });
   });
 
-  it('should open the side bar', () => {
-    spyOn(document, 'getElementById').and.returnValue(document.createElement('div'));
-    component.openNav();
-    expect(document.body.style.backgroundColor).toEqual('rgba(0, 0, 0, 0.4)');
-  });
-
-
-  it('should close the side bar', () => {
-    spyOn(document, 'getElementById').and.returnValue(document.createElement('div'));
-    component.closeNav();
-    expect(document.body.style.backgroundColor).toEqual('white');
-  });
-
   it('should emit the show solution event on answer keydown', () => {
     const event = new KeyboardEvent('keydown', { key: 'Enter' });
     spyOn(event, 'stopPropagation');
@@ -156,5 +158,25 @@ describe('HeaderComponent', () => {
     spyOn(window, 'clearInterval');
     component.ngOnDestroy();
     expect(window.clearInterval).toHaveBeenCalled();
+  });
+
+  it('should open the progress indicator popup', () => {
+    const viewerService = TestBed.get(ViewerService);
+    component.showProgressIndicatorPopUp = false;
+    component.currentSlideIndex = 1;
+    spyOn(viewerService, 'raiseHeartBeatEvent');
+    component.openProgressIndicatorPopup();
+    expect(component.showProgressIndicatorPopUp).toBeTruthy();
+    expect(viewerService.raiseHeartBeatEvent).toHaveBeenCalledWith('PROGRESS_INDICATOR_POPUP_OPENED', 'interact', 1);
+  });
+
+  it('should close the progress indicator popup', () => {
+    const viewerService = TestBed.get(ViewerService);
+    component.showProgressIndicatorPopUp = true;
+    component.currentSlideIndex = 1;
+    spyOn(viewerService, 'raiseHeartBeatEvent');
+    component.onProgressPopupClose();
+    expect(component.showProgressIndicatorPopUp).toBeFalsy();
+    expect(viewerService.raiseHeartBeatEvent).toHaveBeenCalledWith('PROGRESS_INDICATOR_POPUP_CLOSED', 'interact', 1);
   });
 });
