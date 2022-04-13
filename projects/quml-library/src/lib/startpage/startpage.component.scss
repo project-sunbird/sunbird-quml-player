@@ -1,101 +1,101 @@
 @import '../../../../../node_modules/@project-sunbird/sb-styles/assets/mixins/mixins';
+
+::ng-deep :root {
+    --quml-scoreboard-sub-title: #6D7278;
+    --quml-color-primary-contrast: #333;
+    --quml-zoom-btn-txt: #eee;
+  --quml-zoom-btn-hover: #f2f2f2;
+  }
+  
 .startpage {
-    margin-top: calculateRem(20px);
+    //margin-top: 1.5rem;
+
+    &__header {
+        color: var(--primary-color);
+        font-size: 1.125rem;
+        font-weight: bold;
+        margin: calculateRem(16px) 0;
+        line-height: normal;
+    }
+
+    &__content {
+        display: flex;
+        border-bottom: 0.0625rem solid var(--quml-zoom-btn-txt);
+        align-items: center;
+        line-height: normal;
+        margin-bottom: 1rem;
+        padding-bottom: 1.5rem;
+    }
+
+    &__metadata {
+        margin: 0 4rem 0.5rem 0;
+    }
+
+    &__md-heading {
+        color: var(--quml-scoreboard-sub-title);
+        font-size: 0.75rem;
+        line-height: normal;
+        margin-bottom: 0.5rem;
+    }
+
+    &__md-scores,
+    &__md-icon {
+        display: flex;
+        align-items: center;
+    }
+
+    &__md-desc {
+        color: var(--primary-color);
+        font-size: 1.125rem;
+        font-weight: bold;
+        margin-left: 0.5rem;
+    }
+
+    &__instr-title {
+        color: var(--quml-scoreboard-sub-title);
+        font-size: calculateRem(12px);
+        font-weight: bold;
+        letter-spacing: 0;
+        line-height: 18px;
+    }
+
+    &__instr-desc {
+        padding: 1rem 0;
+        color: var( --quml-color-primary-contrast);
+        font-size: calculateRem(12px);
+        letter-spacing: 0;
+        line-height: 17px;
+    }
 }
-.startpage .header {
-    color: var(--primary-color);
-    font-size: calculateRem(18px);
-    font-weight: bold;
-    letter-spacing: 0;
-    line-height: calculateRem(24px);
-    margin-bottom: calculateRem(16px);
-}
-.potrait-header {
-    display: none;
-}
-.landscape-header {
-    display: block;
-    color: var(--primary-color);
-    font-size: 18px;
-    margin-bottom: 1rem;
-}
-.startpage .border {
-    box-sizing: border-box;
-    height: 60vh;
-    width: calculateRem(1px);
-    border: calculateRem(1px) solid #6D7278;
-    opacity: 0.2;
-}
-.startpage .sub-header {
-    color: #6D7278;
-    font-size: calculateRem(13px);
-    font-weight: bold;
-    letter-spacing: 0;
-    line-height: calculateRem(18px);
-    margin-bottom: calculateRem(16px);
-}
-.startpage .startpage-guidelines {
-    color: #6D7278;
-    font-size: calculateRem(13px);
-    letter-spacing: 0;
-    line-height: calculateRem(18px);
-}
-.questions,
-.points,
-.score {
-    margin-bottom: calculateRem(16px);
-}
-.points {
-    margin: 0 calculateRem(64px) calculateRem(16px) 0;
-}
-.minutes {
-    margin-bottom: calculateRem(16px);
-}
-.startpage-guidelines p {
-    margin-bottom: calculateRem(14px);
-    font-size: calculateRem(13px);
-}
-.score-heading {
-    color: #6D7278;
-    font-size: calculateRem(13px);
-}
-.scores {
-    color: var(--primary-color);
-    font-size: calculateRem(18px);
-    font-weight: bold;
-    letter-spacing: 0;
-    line-height: calculateRem(24px);
-    text-align: center;
-}
-.icon {
-    padding-right: calculateRem(8px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.icon-section {
-    display: flex;
-    justify-items: center;
-}
-.question-scores {
-    display: flex;
-    border-bottom: 1px solid #eee;
-    align-items: center;
-}
-.startpage-instructions {
-    padding: 16px 0;
-    max-height: calc(100vh - 164px);
-    overflow-y: auto;
+
+::ng-deep {
+    .startpage__instr-desc {
+        ul {
+            list-style-type: disc;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+            margin-left: 0.5rem;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        th,
+        td {
+            border: 0.0625rem solid #ddd;
+            padding: 0.5rem;
+        }
+
+        tr:nth-child(even) {
+            background-color: var(--quml-zoom-btn-hover);
+        }
+    }
 }
 @media only screen and (max-width: 480px) {
-    .landscape-header {
-        display: none;
-    }
-    .potrait-header {
-        display: block;
-        color: var(--primary-color);
-        font-size: 18px;
-        font-weight: 700;
-        margin-top: calculateRem(16px);
+    .startpage__header{
+        margin-top: 1.5rem;
     }
 }

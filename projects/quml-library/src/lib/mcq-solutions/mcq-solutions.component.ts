@@ -1,22 +1,20 @@
-import { Component, Input, OnInit, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 
 @Component({
   selector: 'quml-mcq-solutions',
   templateUrl: './mcq-solutions.component.html',
   styleUrls: ['./mcq-solutions.component.scss']
 })
-export class McqSolutionsComponent implements OnInit {
-  @Output() close = new EventEmitter();
+export class McqSolutionsComponent  {
   @Input() question: any;
   @Input() options: any;
   @Input() solutions: any;
+  @Output() close = new EventEmitter();
+  @ViewChild('solutionVideoPlayer' , {static: true}) solutionVideoPlayer: ElementRef;
+  
   showVideoSolution: boolean;
-  @ViewChild('solutionVideoPlayer') solutionVideoPlayer: ElementRef;
+  previousActiveElement: HTMLElement;
 
-  constructor() { }
-
-  ngOnInit() {
-  }
 
   closeSolution() {
     if (this.solutionVideoPlayer) {

@@ -6,7 +6,7 @@
     right: 0;
     background: rgba(0, 0, 0, .4);
     top: 0;
-    padding: 16px;
+    padding: calculateRem(16px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -14,7 +14,7 @@
 }
 
 .quml-popup .quml-popup-icon {
-    font-size: 20px;
+    font-size: calculateRem(20px);
     right: 10%;
     position: absolute;
     cursor: pointer;
@@ -24,9 +24,9 @@
 }
 
 .quml-popup img {
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    box-shadow: 0 calculateRem(4px) calculateRem(8px) 0 rgba(0, 0, 0, 0.2);
     height: 90%;
-    border-radius: 8px;
+    border-radius: calculateRem(8px);
     position: absolute;
     z-index: 2;
 }

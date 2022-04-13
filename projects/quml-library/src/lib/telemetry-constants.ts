@@ -1,11 +1,15 @@
 export enum pageId  {
         startPage = 'START_PAGE',
         submitPage = 'SUBMIT_PAGE',
-        endPage = 'END_PAGE'
+        endPage = 'END_PAGE',
+        shortAnswer = 'SHORT_ANSWER'
 }
 
 
 export enum eventName {
+    pageScrolled = 'PAGE_SCROLLED',
+    viewHint = 'VIEW_HINT',
+    showAnswer = 'SHOW_ANSWER_CLICKED',
     nextClicked = 'NEXT_CLICKED',
     prevClicked = 'PREV_CLICKED',
     progressBar = 'PROGRESSBAR_CLICKED',
@@ -17,11 +21,15 @@ export enum eventName {
     tryAgain = 'TRY_AGAIN',
     optionClicked = 'OPTION_CLICKED',
     scoreBoardSubmitClicked = 'SCORE_BOARD_SUBMIT_CLICKED',
-    endPageExitClicked = 'EXIT'
-
+    endPageExitClicked = 'EXIT',
+    zoomClicked = 'ZOOM_CLICKED',
+    zoomInClicked = 'ZOOM_IN_CLICKED',
+    zoomOutClicked = 'ZOOM_OUT_CLICKED',
+    zoomCloseClicked = 'ZOOM_CLOSE_CLICKED',
+    goToQuestion = 'GO_TO_QUESTION'
 }
 
 export enum TelemetryType {
-    interact = 'Interact',
+    interact = 'interact',
     impression = 'impression',
 }

@@ -1,9 +1,10 @@
 @import '../../../../../node_modules/@project-sunbird/sb-styles/assets/mixins/mixins';
 .sa-title {
     color: var(--primary-color);
-    font-size: 12px;
+    font-size: 0.875rem;
     font-weight: 500;
-    margin-bottom: 16px;
+    margin: 16px 0;
+    clear: both;
 }
 
 .question-container{
@@ -11,26 +12,36 @@
 }
 
 .sa-round-btn {
-  border-radius: 16px;
-    background-color: var(--primary-color);
-    font-size: 11px;
-    border: none;
-    color: white;
-    padding: 8px;
-    outline: none;
+  // border-radius: 1rem;
+  //   background-color: var(--primary-color);
+  //   font-size: 0.875rem;
+  //   border: none;
+  //   color:var(--white);
+  //   padding: 0.5rem;
+  //   outline: none;
 }
 
 .sa-button-container{
     text-align: center;
-    margin-bottom: 16px;
-    margin-top: 16px;
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+    clear:both;
 }
 
 .option-container-blurred {
-  filter: blur(4px);
+  filter: blur(0.25rem);
+  pointer-events: none;
+  user-select: none;
+  clear:both;
 }
 
 .option-container-blurred-out {
-  filter: blur(0px);
+  filter: unset;
   transition: 0.4s;
+  user-select: text;
+  pointer-events: auto;
+}
+
+.solutions {
+  clear:both;
 }

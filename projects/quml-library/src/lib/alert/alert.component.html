@@ -1,28 +1,34 @@
 <div class="quml-alert">
-  <div class="quml-alert__overlay" (click)="closeAlert.emit({type:'close'})"></div>
+  <div class="quml-alert__overlay" (click)="close('close')" (keyup.enter)="close('close')"></div>
   <div class="quml-alert__container">
     <div class="quml-alert__body">
       <div class="quml-alert__image quml-alert__image--correct" *ngIf="alertType === 'correct'">
         <div class="quml-alert__icon-container">
-          <img class="quml-alert__icon" src="../assets/quml-correct.svg">
+          <img class="quml-alert__icon" src="assets/quml-correct.svg" alt="Correct Answer">
 
         </div>
         <div class="quml-alert__icon-empty"></div>
-        <img class="quml-alert__banner" src="../assets/banner-correct.svg">
+        <img class="quml-alert__banner" src="assets/banner-correct.svg" alt="" >
       </div>
       <div class="quml-alert__image quml-alert__image--wrong" *ngIf="alertType === 'wrong'">
         <div class="quml-alert__icon-container">
-          <img class="quml-alert__icon" src="../assets/quml-wrong.svg">
+          <img class="quml-alert__icon" src="assets/quml-wrong.svg" alt="Wrong Answer">
+        </div>
+        <div class="quml-alert__icon-empty"></div>
+        <img class="quml-alert__banner" src="assets/banner-wrong.svg" alt="">
+      </div>
+     
+      
+
+      <div class="quml-alert__solution-container">
+        <div class="quml-alert__try-again" *ngIf="alertType === 'wrong' || (alertType === 'correct' && showSolutionButton)">
+          <span tabindex="0" id="wrongButton" *ngIf="alertType === 'wrong'" (click)="close('tryAgain')" (keyup.enter)="close('tryAgain')"  aria-label="Try again">Try again</span>
+          <span tabindex="0" id="correctButton" *ngIf="alertType === 'correct' && showSolutionButton" (click)="viewSolution()" (keyup.enter)="viewSolution()"  aria-label="View Solution">View Solution</span>
         </div>
       </div>
-      <div class="quml-alert__icon-empty"></div>
-      <img class="quml-alert__banner" src="../assets/banner-wrong.svg">
-      <div class="quml-alert__try-again">
-        <span *ngIf="alertType === 'wrong'" (click)="closeAlert.emit({type:'tryAgain'})">Try again</span>
-        <span *ngIf="alertType === 'correct' && showSolutionButton" (click)="viewSolution()">View Solution</span>
-      </div>
-      <div class="quml-alert__view-hint quml-alert__view-hint--disabled">
-        <img class="view-hint-icon" src="../assets/view-hint.svg">
+
+      <div *ngIf="isHintAvailable" class="quml-alert__view-hint quml-alert__view-hint--disabled">
+        <img tabindex="0" id="hintButton"  class="view-hint-icon" (click)="viewHint()" (keyup.enter)="viewHint()" src="assets/view-hint.svg" alt="View Hint logo">
       </div>
     </div>
   </div>

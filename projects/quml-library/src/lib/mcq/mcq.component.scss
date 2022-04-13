@@ -1,123 +1,40 @@
+@import '../../../../../node_modules/@project-sunbird/sb-styles/assets/mixins/mixins';
 
- @import '../../../../../node_modules/@project-sunbird/sb-styles/assets/mixins/mixins';
-.quml-mcq{
-    padding: 0px;
-}
-img {
-  width: 100% !important;
-}
+.quml-mcq {
+  padding: 0px;
 
-  .quml-mcq .quml-mcq{
-    padding: 16px;
-    background-color: white;
-  }
-  .quml-mcq .columnBlock {
-    
+  .columnBlock {
     display: inline-block;
-    min-width: 200px;
-    padding: 5px;
-    min-height: 200px;
+    min-width: calculateRem(200px);
+    padding: calculateRem(4px);
+    min-height: calculateRem(200px);
     vertical-align: top;
   }
-  .quml-mcq .questionBlock {
-    max-width: 275px;
+
+  .questionBlock {
+    max-width: calculateRem(275px);
     width: 30%;
   }
-  .quml-mcq .optionBlock {
-    width: 62%;
-  }
 
-  
-  /* The container */
-  .quml-mcq .container {
-    display: block;
-    position: relative;
-    margin-bottom: 0.6em;
-    cursor: pointer;
-    font-size: 22px;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-  }
-  
-  
- /* layout 2 */
-  .quml-mcq .quml-mcq-img-option-container {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-gap: 1em;
-  }
-  .quml-mcq  .quml-mcq-img-option-card {
-     background-color: white;
-     padding: 2px;
-     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2);
-  }
-  .quml-mcq  .option-text{
-    padding: 8px;
-    text-align:center;
-  }
-  .quml-mcq .quml-mcq-img-option-container img {
-    height: 104.77px;
-    min-width: 100%;
-  }
-  .quml-mcq  .option-text {
-    font-size: 14px;
-    font-weight: 500;
-    color:#666666;
-  }
-  .quml-mcq .imageqa-wrapper {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-gap: 1em;
-  }
-  .imageqa-option-wrapper{
-    display: grid;
-    grid-template-columns: repeat(1, 1fr);
-    grid-gap: 1em;
-    padding: 24px;
-  }
+  .image-grid {
+    display: flex;
 
-  @media only screen and (max-width: 600px) {
-    .quml-mcq .imageqa-wrapper {
-      display: grid;
-      grid-template-columns: none;
-      grid-gap: 1em;
+    .quml-mcq--question {
+      flex-basis: 25%;
+    }
+
+    .quml-mcq--option {
+      flex: 1 1 75%;
     }
   }
-
-::ng-deep img.small-image {
-  width: 25%;
 }
 
-@media only screen and (max-width: 640px) {
-  ::ng-deep img.small-image {
-      width: 100% !important;
+
+::ng-deep .layoutImageGrid-mcq-horizontal {
+  .quml-mcq--option .qumlImageOption .wrapper {
+    grid-template-columns: repeat(4,1fr);
+    @media only screen and (min-width: 360px) and (max-width: 640px) {
+      grid-template-columns: repeat(2,1fr);
+    }
   }
-}
-
-@media only screen and ( max-width: 960px) {
-  ::ng-deep img.small-image {
-      width: 50% !important;
   }
-}
-
-::ng-deep img.medium-image {
-  width: 50%;
-}
-
-@media only screen and (max-width: 640px) {
-  ::ng-deep img.medium-image {
-      width: 100% !important;
-  }
-}
-
-@media only screen and ( max-width: 960px) {
-  ::ng-deep img.medium-image {
-      width: 100% !important;
-  }
-}
-
-  
-  
-  

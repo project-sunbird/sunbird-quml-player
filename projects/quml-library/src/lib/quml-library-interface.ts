@@ -1,5 +1,6 @@
 export interface Context {
     mode: string;
+    threshold?: number;
     authToken?: string;
     sid: string;
     did: string;
@@ -43,10 +44,26 @@ export interface ObjectRollup {
     l4?: string;
 }
 
+export interface Config {
+    traceId?: string;
+    sideMenu?: {
+        enable?: boolean;
+        showShare?: boolean;
+        showDownload?: boolean;
+        showReplay?: boolean;
+        showExit?: boolean;
+    };
+    progressBar: any[];
+    questions: any[];
+    lastQuestionId: string;
+    duration: number;
+}
+
 export interface QumlPlayerConfig {
     context: Context;
     metadata: any;
     data: any;
+    config: Config;
 }
 
 
@@ -59,10 +76,23 @@ export interface Question {
     interactionTypes: Array<string>;
     interactions: any;
     editorState: any;
-    status: string,
-    media: Array<any>,
+    status: string;
+    media: Array<any>;
     qType: string;
     mimeType: string;
     primaryCategory: string;
-    solutions:any;
+    solutions: any;
+}
+
+export interface IParentConfig {
+    loadScoreBoard: boolean;
+    requiresSubmit: boolean;
+    isFirstSection: boolean;
+    isSectionsAvailable: boolean;
+    isReplayed: boolean;
+    identifier: string;
+    contentName: string;
+    baseUrl: string;
+    instructions: any;
+    questionCount: number;
 }

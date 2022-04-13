@@ -1,42 +1,71 @@
 @import '../../../../../node_modules/@project-sunbird/sb-styles/assets/mixins/mixins';
+::ng-deep :root {
+  --quml-btn-border: #ccc;
+  --quml-color-gray: #666;
+  --quml-checkmark: #cdcdcd;
+  --quml-color-primary-shade: rgba(0, 0, 0, .1);
+  --quml-option-card-bg: #fff;
+  --quml-option-selected-checkmark:#ffff;
+}
+
  .quml-mcq-option-card {
    position: relative;
-   background-color: white;
-   padding: 5px;
-   border-radius: 5px;
-   border: 1px solid #CCCCCC;
-   padding: 16px;
-   box-shadow: 0 2px 14px 0 rgba(0,0,0,.1);
+   background-color:var(--quml-option-card-bg);
+   padding: 0.25rem;
+   border-radius: 0.25rem;
+   border: 0.0625rem solid var(--quml-btn-border);
+   padding: 1rem;
+   box-shadow: 0 0.125rem 0.75rem 0 var(--quml-color-primary-shade);
    display: flex;
    align-items: center;
    justify-content: space-between;
+   height: 100%;
+   gap: 0.5rem;
+  //  margin-bottom: 16px;
+
+  .option-image {
+    position: relative;
+    img {
+      min-width: 100%;
+      vertical-align: bottom;
+      width: 100% !important;
+    }
+  }
+
+  .option {
+    color: var(--quml-color-gray);
+    font-size: 0.75rem;
+    font-weight: bold;
+    flex: 1;
+  }
+  label {
+    margin-bottom: 0;
+  } 
+
  }
 
- .quml-mcq-option-card .option-image {
-   position: relative;
- }
 
  .zoom-in-icon {
   position: absolute;
-  right: 6px;
+  right: 0.5rem;
   bottom: 0px;
  }
 
- .quml-mcq-option-card .option-image img {
-   min-width: 100%;
-   vertical-align: bottom;
-   width: 100% !important;
- }
 
- .quml-mcq-option-card .option {
-   color: #666666;
-   font-size: 13px;
-   margin-top: 11px;
-   font-weight: bold;
- }
+::ng-deep {
+  .quml-mcq-option-card .option .image {
+    // margin: 0 1rem 1rem;
+  }
+  .quml-mcq-option-card .option img {
+    max-width: 100%;
+  }
+  .quml-mcq-option-card .option label {
+    margin-bottom: 0;
+  }
+}
 
  .selected-option-text {
-  color: #3769eb !important;
+  color:var(--primary-color) !important;
 }
 
  .icon-zommin {
@@ -47,49 +76,57 @@
  }
 
  .image-option-selected {
-   border: 2px solid #08539f;
+   border: 0.125rem solid var(--primary-color);
  }
 
- /* Create a custom radio button */
-.checkmark {
-  display: block;
-  height: 18px;
-  width: 18px;
-  border-radius: 50%;
-  border: 2px solid #cdcdcd;
-}
+  /* Create a custom radio button */
+  .checkmark {
+    display: block;
+    height: 1.25rem;
+    width: 1.25rem;
+    border-radius: 50%;
+    border: 0.125rem solid var(--quml-checkmark);
+  }
+  
+  /* Hide the browser's default radio button */
+  .container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+  }
+  
+  /* When the radio button is checked, add a blue background */
+  .container input:checked~.checkmark, .quml-option--selected .checkmark {
+    position: relative;
+    background-color: var(--quml-option-selected-checkmark);
+    border: 0.125rem solid var(--primary-color);
+  }
+  
+  /* Create the indicator (the dot/circle - hidden when not checked) */
+  input:checked~.checkmark:after, .quml-option--selected .checkmark:after {
+    content: "";
+    opacity: 1;
+  }
+  
+  /* Style the indicator (dot/circle) */
+  .container .checkmark:after, .quml-option--selected .container .checkmark:after {
+    margin: 0.125rem;
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    background: var(--primary-color);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: 0;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+  }
+  
+  .quml-option--selected .container .checkmark:after { 
+    opacity: 1;
+  }
 
-/* Hide the browser's default radio button */
-.container input {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-}
-
-/* When the radio button is checked, add a blue background */
-.container input:checked~.checkmark {
-  background-color: white;
-  border: 2px solid #024f9d;
-}
-
-/* Create the indicator (the dot/circle - hidden when not checked) */
-.checkmark:after {
-  content: "";
-  position: absolute;
-  display: none;
-}
-
-/* Show the indicator (dot/circle) when checked */
-.container input:checked~.checkmark:after {
-  display: block;
-}
-
-/* Style the indicator (dot/circle) */
-.container .checkmark:after {
-  display: none;
-  margin: 2px;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #024f9d;
-}
+  .quml-option--selected {
+    border: 0.125rem solid var(--primary-color);
+  }

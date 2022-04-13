@@ -1,42 +1,67 @@
 @import '../../../../../node_modules/@project-sunbird/sb-styles/assets/mixins/mixins';
-
+::ng-deep :root {
+    --quml-close-icon: #000;
+  }
 .solutions {
-    padding: 24px;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 1rem;
+    overflow: auto;
 }
 
 .solution-header {
-    color: #333333;
-    font-size: 14px;
+    color: var(--gray-800);
+    font-size: 0.875rem;
     font-weight: bold;
+    margin: 1rem 0;
+    clear:both;
 }
 
-.solution-options{
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-gap: 1em;
-}
-
-.close-icon{
+.close-icon {
     float: right;
+    cursor: pointer;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    padding: 0.25rem;
+    &:hover {
+        background: rgba(0,0,0,0.15);
+        quml-close svg polygon#Shape {
+            fill: var(--white);
+        }
+    }
+
+    quml-close {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        svg g polygon:first-child{
+            fill: var(--quml-close-icon);
+        }
+    }
 }
 
 .video-container {
     text-align: center;
-    margin: 8px auto;
-}
-
-.scoreboard-quml-btn {
-    color:var(--white);
-    font-size: 13px;
-    font-weight: 500;
-    text-align: center;
-    border: none;
-    padding: 8px 16px 8px 16px;
-    border-radius: 16px;
-    background-color: var(--primary-color);
-    box-shadow: inset 0 -1px 2px 0 rgba(0, 0, 0, .5);
+    margin: 0.5rem auto;
 }
 
 .scoreboard-button-container {
     text-align: center;
+    clear: both;
+    margin: 1rem 0;
 }
+
+.solution-options-container {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    .solution-options {
+        margin-bottom: 0.5rem;
+        &:last-child {
+            
+        }
+    }
+  }

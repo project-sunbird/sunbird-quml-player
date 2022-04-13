@@ -1,41 +1,63 @@
 <!-- Default Layout-->
-<div class="quml-mcq" *ngIf="layout=='DEFAULT'">
-    <quml-mcq-question [mcqQuestion]="mcqQuestion" [layout]="layout" (showPopup)="showPopup()"></quml-mcq-question>
-    <quml-mcq-option [mcqOptions]="options" [cardinality]="cardinality"  [solutions]="solutions"  [layout]="layout" (optionSelected)="getSelectedOptionAndResult($event)"
-        (showPopup)="showPopup()"></quml-mcq-option>
+<div class="quml-mcq layoutDefault" *ngIf="layout=='DEFAULT'">
+    <div class="quml-mcq--question mb-16">
+        <quml-mcq-question [mcqQuestion]="mcqQuestion" [layout]="layout" (showPopup)="showPopup()"></quml-mcq-question>
+    </div>
+    <div class="quml-mcq--option">
+        <quml-mcq-option [mcqOptions]="options" [replayed]="replayed" [cardinality]="cardinality"
+            [solutions]="solutions" [layout]="layout" (optionSelected)="getSelectedOptionAndResult($event)"
+            (showPopup)="showPopup()" [tryAgain]="tryAgain"></quml-mcq-option>
+    </div>
 </div>
 <!-- End of Default Layout-->
 <!--Image Grid Layout-->
-<div class="quml-mcq" *ngIf="layout=='IMAGEGRID'">
-    <quml-mcq-question [mcqQuestion]="mcqQuestion" [layout]="layout"></quml-mcq-question>
-    <quml-mcq-option [mcqOptions]="options" [cardinality]="cardinality" [layout]="layout" [solutions]="solutions" (optionSelected)="getSelectedOptionAndResult($event)">
-    </quml-mcq-option>
+<div class="quml-mcq layoutImageGrid-mcq-horizontal" *ngIf="layout=='IMAGEGRID'">
+    <div class="quml-mcq--question mb-16">
+        <quml-mcq-question [mcqQuestion]="mcqQuestion" [layout]="layout"></quml-mcq-question>
+    </div>
+    <div class="quml-mcq--option">
+        <quml-mcq-option [mcqOptions]="options" [replayed]="replayed" [cardinality]="cardinality" [layout]="layout"
+            [solutions]="solutions" (optionSelected)="getSelectedOptionAndResult($event)" [tryAgain]="tryAgain">
+        </quml-mcq-option>
+    </div>
 </div>
 <!--End of Grid Layout-->
 <!--Image Multi Grid Layout-->
-<div class="quml-mcq" *ngIf="layout==='MULTIIMAGEGRID'">
-    <div class="imageqa-wrapper">
-
-    <quml-mcq-question [mcqQuestion]="mcqQuestion" [layout]="layout"></quml-mcq-question>
-    <quml-mcq-option [mcqOptions]="options" [cardinality]="cardinality"  [solutions]="solutions" (optionSelected)="getSelectedOptionAndResult($event)" [layout]="layout"></quml-mcq-option>
+<div class="quml-mcq layoutMultiImageGrid" *ngIf="layout==='MULTIIMAGEGRID'">
+    <div class="imageqa-wrapper image-grid">
+        <div class="quml-mcq--question mb-16">
+            <quml-mcq-question [mcqQuestion]="mcqQuestion" [layout]="layout"></quml-mcq-question>
+        </div>
+        <div class="quml-mcq--option">
+            <quml-mcq-option [mcqOptions]="options" [replayed]="replayed" [cardinality]="cardinality"
+                [solutions]="solutions" (optionSelected)="getSelectedOptionAndResult($event)" [layout]="layout" [tryAgain]="tryAgain">
+            </quml-mcq-option>
+        </div>
     </div>
 </div>
 <!--End of Image Multi Grid Layout-->
 <!--Image QA Grid Layout-->
-<div class="quml-mcq" *ngIf="layout=='IMAGEQAGRID'">
+<div class="quml-mcq layoutImageQAGridMCQ-vSplit" *ngIf="layout=='IMAGEQAGRID'">
     <div class="imageqa-wrapper">
-        <quml-mcq-question [mcqQuestion]="mcqQuestion" [layout]="layout"></quml-mcq-question>
-        <quml-mcq-option [mcqOptions]="options" [cardinality]="cardinality" [solutions]="solutions"  (optionSelected)="getSelectedOptionAndResult($event)" [layout]="layout"></quml-mcq-option>
+        <div class="quml-mcq--question mb-16">
+            <quml-mcq-question [mcqQuestion]="mcqQuestion" [layout]="layout"></quml-mcq-question>
+        </div>
+        <div class="quml-mcq--option">
+            <quml-mcq-option [mcqOptions]="options" [replayed]="replayed" [cardinality]="cardinality"
+                [solutions]="solutions" (optionSelected)="getSelectedOptionAndResult($event)" [layout]="layout" [tryAgain]="tryAgain">
+            </quml-mcq-option>
+        </div>
     </div>
 </div>
 <!--End of Image QA Grid Layout-->
 <!--Image QOption Layout-->
-<div class="quml-mcq" *ngIf="layout=='IMAGEQOPTION'">
-    <div class="columnBlock questionBlock">
+<div class="quml-mcq layoutImageOption" *ngIf="layout=='IMAGEQOPTION'">
+    <div class="columnBlock questionBlock quml-mcq--question mb-16">
         <quml-mcq-question [mcqQuestion]="mcqQuestion" [layout]="layout"></quml-mcq-question>
     </div>
-    <div class="columnBlock">
-        <quml-mcq-option [mcqOptions]="options" [cardinality]="cardinality" [solutions]="solutions" [layout]="layout" (optionSelected)="getSelectedOptionAndResult($event)">
+    <div class="columnBlock quml-mcq--option">
+        <quml-mcq-option [mcqOptions]="options" [replayed]="replayed" [cardinality]="cardinality"
+            [solutions]="solutions" [layout]="layout" (optionSelected)="getSelectedOptionAndResult($event)" [tryAgain]="tryAgain">
         </quml-mcq-option>
     </div>
 </div>

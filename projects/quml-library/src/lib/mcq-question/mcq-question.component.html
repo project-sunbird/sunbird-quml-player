@@ -1,5 +1,5 @@
 <div [ngClass]="mcqQuestion.includes('img') ? 'quml-mcq-image-questions' : 'quml-mcq-questions'">
     <!-- <quml-audio></quml-audio> -->
-    <div class="quml-question" #question [innerHTML]="mcqQuestion">
+    <div class="quml-question" #question [innerHTML]="mcqQuestion | safeHtml">
     </div>
 </div>

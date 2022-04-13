@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input, OnChanges, OnDestroy } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, OnChanges, OnDestroy, AfterViewInit } from '@angular/core';
 
 
 @Component({
@@ -6,11 +6,11 @@ import { Component, OnInit, Output, EventEmitter, Input, OnChanges, OnDestroy } 
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
+export class HeaderComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
 
   @Input() questions?: any;
   @Input() duration?: any;
-  @Input() warningTime?: number;
+  @Input() warningTime?: string;
   @Input() disablePreviousNavigation: boolean;
   @Input() showTimer: boolean;
   @Input() totalNoOfQuestions: any;
@@ -18,13 +18,23 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
   @Input() active: boolean;
   @Input() initializeTimer: boolean;
   @Input() endPageReached: boolean;
+  @Input() loadScoreBoard: boolean;
+  @Input() replayed: boolean;
+  @Input() currentSolutions: any;
+  @Input() showFeedBack: boolean;
   @Output() nextSlideClicked = new EventEmitter<any>();
   @Output() prevSlideClicked = new EventEmitter<any>();
   @Output() durationEnds = new EventEmitter<any>();
+  @Output() showSolution = new EventEmitter<any>();
+  @Input() disableNext?: boolean;
+  @Input() startPageInstruction?: string;
+  @Input() showStartPage?: boolean;
+  @Input() attempts?: { max: number, current: number };
   minutes: number;
-  seconds: number;
+  seconds: string | number;
   private intervalRef?;
   showWarning = false;
+  isMobilePortrait = false;
 
   time: any;
   constructor() {
@@ -33,18 +43,29 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnInit() {
     if (this.duration && this.showTimer) {
-      const durationInSec = this.duration;
-      this.minutes = ~~(durationInSec / 60);
-      this.seconds = (durationInSec % 60);
+      this.minutes = Math.floor(this.duration / 60);
+      this.seconds = this.duration - this.minutes * 60 <  10 ? `0${this.duration - this.minutes * 60}`  :  this.duration - this.minutes * 60;
     }
   }
 
   ngOnChanges() {
     if (this.duration && this.showTimer && this.initializeTimer && !this.intervalRef) {
       this.timer();
-    } else if(this.duration === undefined && this.showTimer && this.initializeTimer && !this.intervalRef) {
-       this.showCountUp();
+    } else if (this.duration === 0 && this.showTimer && this.initializeTimer && !this.intervalRef) {
+      this.showCountUp();
     }
+    if (this.replayed && this.duration && this.showTimer) {
+      this.showWarning = false;
+      clearInterval(this.intervalRef)
+      this.timer();
+    } else if (this.replayed && this.duration === 0 && this.showTimer) {
+      clearInterval(this.intervalRef)
+      this.showCountUp();
+    }
+  }
+
+  ngAfterViewInit() {
+    this.isMobilePortrait = window.matchMedia("(max-width: 480px)").matches;;
   }
 
   ngOnDestroy() {
@@ -54,10 +75,15 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   nextSlide() {
+    if (!this.disableNext) {
       this.nextSlideClicked.emit({ type: 'next' });
+    }
   }
 
   prevSlide() {
+    if(!this.showStartPage && this.currentSlideIndex === 1) {
+      return
+    }
     if (!this.disablePreviousNavigation) {
       this.prevSlideClicked.emit({ event: 'previous clicked' });
     }
@@ -74,24 +100,27 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   timer() {
-    let durationInSec = this.duration;
-    this.intervalRef = setInterval(() => {
-      let min = ~~(durationInSec / 60);
-      let sec = (durationInSec % 60);
-      if (sec < 10) {
-        this.time = min + ':' + '0' + sec;
-      } else {
-        this.time = min + ':' + sec;
-      }
-      if (durationInSec === 0) {
-        this.durationEnds.emit(true);
-        return false;
-      }      
-      if (durationInSec <= this.warningTime) {
-        this.showWarning = true;
-      }
-      durationInSec--;
-    }, 1000);
+    if (this.duration > 0) {
+      let durationInSec = this.duration;
+      this.intervalRef = setInterval(() => {
+        let min = ~~(durationInSec / 60);
+        let sec = (durationInSec % 60);
+        if (sec < 10) {
+          this.time = min + ':' + '0' + sec;
+        } else {
+          this.time = min + ':' + sec;
+        }
+        if (durationInSec === 0) {
+          clearInterval(this.intervalRef);
+          this.durationEnds.emit(true);
+          return false;
+        }
+        if (parseInt(durationInSec) <= parseInt(this.warningTime)) {
+          this.showWarning = true;
+        }
+        durationInSec--;
+      }, 1000);
+    }
   }
 
   showCountUp() {
@@ -108,5 +137,12 @@ export class HeaderComponent implements OnInit, OnChanges, OnDestroy {
         this.time = min + ':' + sec++;
       }
     }, 1000);
+  }
+
+  onAnswerKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      event.stopPropagation();
+      this.showSolution.emit()
+    }
   }
 }

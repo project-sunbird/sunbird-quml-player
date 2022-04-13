@@ -1,0 +1,13 @@
+::ng-deep :root {
+  --quml-main-bg: #fff;
+}
+
+.main-container {
+  width: 100%;
+  height: 100%;
+  background: var(--quml-main-bg);
+}
+
+.endPage-container-height {
+  height: 100%;
+}

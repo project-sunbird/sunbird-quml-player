@@ -1,24 +1,47 @@
 <div class="scoreboard">
-  <div class="scoreboard-header">
-    Are you ready to submit?
-    <br>
-    <span class="scoreboard-title">
-       {{contentName}}
-    </span>
+  <div class="scoreboard__header">
+    <div class="scoreboard__title">
+      Are you ready to submit?
+    </div>
+    <div class="scoreboard__subtitle">
+      {{contentName}}
+    </div>
   </div>
-  <div class="scoreboard-scores" *ngIf="showFeedBack">
-    <div *ngFor="let score of scores; let i = index" (click)="goToQuestion(i+1)" [ngClass]="score.class">
+
+  <div class="scoreboard__points" *ngIf="!isSections && showFeedBack">
+    <div *ngFor="let score of scores; let i = index" class="scoreboard__index" (click)="goToQuestion(i+1)" tabindex="0" attr.aria-label="question number {{score.index}}"
+      [ngClass]="score.class">
       {{score.index}}
     </div>
   </div>
 
-  <div class="scoreboard-scores" *ngIf="!showFeedBack">
-    <div *ngFor="let score of scores; let i = index" (click)="goToQuestion(i+1)" [ngClass]="score.qType === 'MCQ' ? score.class : 'attempted'">
+  <div class="scoreboard__points" *ngIf="!isSections && !showFeedBack">
+    <div *ngFor="let score of scores; let i = index" class="scoreboard__index" (click)="goToQuestion(i+1)" tabindex="0" attr.aria-label="question number {{score.index}}"
+      [ngClass]="score.class === 'skipped' ? score.class : score.class === 'unattempted' ? score.class : 'attempted'">
       {{score.index}}
     </div>
   </div>
 
-  <div class="scoreboard-button-container">
-    <button type="submit" class="scoreboard-quml-btn" (click)="submitClicked.emit({type:'submit-clicked'})">submit</button>
+  <div class="sections-score-card" *ngIf="isSections">
+    <div *ngFor="let section of scores">
+      <div class="sections-score-card__title">{{section?.index}}</div>
+      <div class="sections-score-card__points" *ngIf="showFeedBack">
+        <div *ngFor="let score of section?.children; let i = index" class="scoreboard__index" tabindex="0" attr.aria-label="question number {{score.index}}"
+          (click)="goToQuestion(i+1, section.identifier)" [ngClass]="score.class">
+          {{score.index}}
+        </div>
+      </div>
+      <div class="sections-score-card__points" *ngIf="!showFeedBack">
+        <div *ngFor="let score of section?.children; let i = index" class="scoreboard__index" tabindex="0" attr.aria-label="question number {{score.index}}"
+          (click)="goToQuestion(i+1, section.identifier)" [ngClass]="score.class">
+          {{score.index}}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scoreboard__btn-container">
+    <button type="submit" class="sb-btn sb-btn-primary sb-btn-normal sb-btn-radius px-20"
+      (click)="submitClicked.emit({type:'submit-clicked'})">Submit</button>
   </div>
 </div>
