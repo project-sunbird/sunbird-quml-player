@@ -31,7 +31,7 @@ export class ProgressIndicatorsComponent implements OnInit {
     },
     {
       iconText: '1',
-      title: 'Unattempted',
+      title: 'Not viewed',
       class: ''
     },
     {
