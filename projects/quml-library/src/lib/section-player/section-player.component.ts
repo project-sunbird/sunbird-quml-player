@@ -69,7 +69,6 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   currentOptions: any;
   currentSolutions: any;
   showSolution: any;
-  optionSelectedObj: any;
   intervalRef: any;
   infoPopup: boolean;
   stopAutoNavigation: boolean;
@@ -133,7 +132,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
         const unCommonQuestions = _.xorBy(this.player.getRendererState().questions, res.questions, 'identifier');
         const questions = _.uniqBy(this.player.getRendererState().questions.concat(unCommonQuestions), 'identifier');
         this.player.setRendererState({ singleParam: { paramName: "questions", paramData: questions } });
-        this.sortQuestions();
+        this.player.sortQuestions();
         this.viewerService.updateSectionQuestions(this.sectionConfig.metadata.identifier, this.player.getRendererState().questions);
         this.cdRef.detectChanges();
         this.noOfTimesApiCalled++;
@@ -215,7 +214,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     this.player.setRendererState({ singleParam: { paramName: "progressBarClass", paramData: x } });
     const questions = this.viewerService.getSectionQuestions(this.sectionConfig.metadata.identifier);
     this.player.setRendererState({ singleParam: { paramName: "questions", paramData: questions } });
-    this.sortQuestions();
+    this.player.sortQuestions();
     this.viewerService.updateSectionQuestions(this.sectionConfig.metadata.identifier, questions);
     this.resetQuestionState();
     if (this.jumpToQuestion) {
@@ -246,29 +245,6 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     }, 100);
   }
 
-  sortQuestions() {
-    if (this.player.getRendererState().questions.length && this.player.getRendererState().questionIds.length) {
-      const ques = [];
-      this.player.getRendererState().questionIds.forEach((questionId) => {
-        const que = this.player.getRendererState().questions.find(question => question.identifier === questionId);
-        if (que) {
-          ques.push(que);
-        }
-      });
-      this.player.setRendererState({ singleParam: { paramName: "questions", paramData: ques } });
-    }
-  }
-
-  createSummaryObj() {
-    const classObj = _.groupBy(this.player.getRendererState().progressBarClass, 'class');
-    return {
-      skipped: classObj?.skipped?.length || 0,
-      correct: classObj?.correct?.length || 0,
-      wrong: classObj?.wrong?.length || 0,
-      partial: classObj?.partial?.length || 0
-    };
-  }
-
   nextSlide() {
     this.player.setRendererState({ singleParam: { paramName: 'currentQuestionsMedia', paramData: this.player.getRendererState().questions[this.currentSlideIndex]?.media } });
     this.getQuestion();
@@ -286,7 +262,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     }
 
     if (this.myCarousel.isLast(this.myCarousel.getCurrentSlideIndex()) || this.noOfQuestions === this.myCarousel.getCurrentSlideIndex()) {
-      this.calculateScore();
+      this.player.calculateSectionScore();
     }
 
     const { currentOptionSelected } = this.player.getRendererState();
@@ -299,7 +275,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     }
 
     if (this.player.getRendererState().questions[this.myCarousel.getCurrentSlideIndex()]) {
-      this.setSkippedClass(this.myCarousel.getCurrentSlideIndex());
+      this.player.setSkippedClass(this.myCarousel.getCurrentSlideIndex());
     }
     this.myCarousel.move(this.carouselConfig.NEXT);
     this.setImageZoom();
@@ -323,7 +299,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     this.player.setRendererState({ singleParam: { paramName: 'currentQuestionsMedia', paramData: this.player.getRendererState().questions[this.myCarousel.getCurrentSlideIndex() - 1]?.media } });
 
     this.setImageZoom();
-    this.setSkippedClass(this.myCarousel.getCurrentSlideIndex() - 1);
+    this.player.setSkippedClass(this.myCarousel.getCurrentSlideIndex() - 1);
   }
 
   getQuestion() {
@@ -346,7 +322,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   resetQuestionState() {
     this.active = false;
     this.showAlert = false;
-    this.optionSelectedObj = undefined;
+    this.player.setRendererState({ singleParam: { paramName: "selectedOption", paramData: undefined } });
     this.player.setRendererState({ singleParam: { paramName: "currentOptionSelected", paramData: undefined } });
     this.player.setRendererState({ singleParam: { paramName: "currentQuestion", paramData: undefined } });
     this.currentOptions = undefined;
@@ -370,15 +346,16 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
       return this.nextSlide();
     }
     if (event?.type === 'next') {
-      this.validateSelectedOption(this.optionSelectedObj, 'next');
+      this.validateSelectedOption(this.player.getRendererState().selectedOption, 'next');
     }
   }
 
   previousSlideClicked(event) {
     if (event.event === 'previous clicked') {
-      if (this.optionSelectedObj && this.showFeedBack) {
+      const selectedOption = this.player.getRendererState().selectedOption;
+      if (selectedOption && this.showFeedBack) {
         this.stopAutoNavigation = false;
-        this.validateSelectedOption(this.optionSelectedObj, 'previous');
+        this.validateSelectedOption(selectedOption, 'previous');
       } else {
         this.stopAutoNavigation = true;
         if (this.currentSlideIndex === 0 && this.parentConfig.isSectionsAvailable && this.getCurrentSectionIndex() > 0) {
@@ -407,9 +384,10 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     event.stopPropagation();
     this.active = false;
     this.player.getRendererState().jumpSlideIndex = index;
-    if (this.optionSelectedObj && this.showFeedBack) {
+    const selectedOption = this.player.getRendererState().selectedOption;
+    if (selectedOption && this.showFeedBack) {
       this.stopAutoNavigation = false;
-      this.validateSelectedOption(this.optionSelectedObj, 'jump');
+      this.validateSelectedOption(selectedOption, 'jump');
     } else {
       this.stopAutoNavigation = true;
       this.goToSlide(this.player.getRendererState().jumpSlideIndex);
@@ -430,9 +408,10 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
   onSectionEnter(event, identifier: string) {
     if (event.keyCode === 13) {
+      const selectedOption = this.player.getRendererState().selectedOption;
       event.stopPropagation();
-      if (this.optionSelectedObj) {
-        this.validateSelectedOption(this.optionSelectedObj, 'jump');
+      if (selectedOption) {
+        this.validateSelectedOption(selectedOption, 'jump');
       }
       this.jumpToSection(identifier);
     }
@@ -468,11 +447,11 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
     // This optionSelected comes empty whenever the try again is clicked on feedback popup
     if (_.isEmpty(optionSelected?.option)) {
-      this.optionSelectedObj = undefined;
+      this.player.setRendererState({ singleParam: { paramName: "selectedOption", paramData: undefined } });
       this.currentSolutions = undefined;
-      this.updateScoreBoard(currentIndex, 'skipped');
+      this.player.updateScoreBoard(this.showFeedBack, currentIndex, 'skipped');
     } else {
-      this.optionSelectedObj = optionSelected;
+      this.player.setRendererState({ singleParam: { paramName: "selectedOption", paramData: optionSelected } });
       this.currentSolutions = !_.isEmpty(optionSelected.solutions) ? optionSelected.solutions : undefined;
     }
     const media = this.player.getRendererState().questions[this.myCarousel.getCurrentSlideIndex() - 1].media;
@@ -491,7 +470,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
       });
     }
     if (!this.showFeedBack) {
-      this.validateSelectedOption(this.optionSelectedObj);
+      this.validateSelectedOption(this.player.getRendererState().selectedOption);
     }
   }
 
@@ -515,8 +494,8 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   emitSectionEnd(isDurationEnded: boolean = false, jumpToSection?: string) {
     console.log("getRendererState", this.player.getRendererState());
     const eventObj: any = {
-      summary: this.createSummaryObj(),
-      score: this.calculateScore(),
+      summary: this.player.getSectionSummary(),
+      score: this.player.calculateSectionScore(),
       slideIndex: this.myCarousel.getCurrentSlideIndex(),
       isDurationEnded,
     };
@@ -538,14 +517,6 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
       this.viewerService.raiseHeartBeatEvent(eventName.tryAgain, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
     }
     this.showAlert = false;
-  }
-
-  setSkippedClass(index) {
-    const progressBarClass = this.player.getRendererState().progressBarClass;
-    if (progressBarClass && _.get(this.player.getRendererState().progressBarClass[index], 'class') === 'unattempted') {
-      progressBarClass[index].class = 'skipped';
-      this.player.setRendererState({ singleParam: { paramName: "progressBarClass", paramData: progressBarClass } });
-    }
   }
 
   sideBarEvents(event: ISideBarEvent) {
@@ -589,12 +560,13 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
   validateSelectedOption(option, type?: string) {
     const selectedOptionValue = option?.option?.value;
+    const selectedOption = this.player.getRendererState().selectedOption;
     const currentIndex = this.myCarousel.getCurrentSlideIndex() - 1;
-    const isQuestionSkipAllowed = !this.optionSelectedObj &&
+    const isQuestionSkipAllowed = !selectedOption &&
       this.allowSkip && this.utilService.getQuestionType(this.player.getRendererState().questions, currentIndex) === 'MCQ';
     const isSubjectiveQuestion = this.utilService.getQuestionType(this.player.getRendererState().questions, currentIndex) === 'SA';
     const onStartPage = this.startPageInstruction && this.myCarousel.getCurrentSlideIndex() === 0;
-    const isActive = !this.optionSelectedObj && this.active;
+    const isActive = !selectedOption && this.active;
     const selectedQuestion = this.player.getRendererState().questions[currentIndex];
     const key = selectedQuestion.responseDeclaration ? this.utilService.getKeyValue(Object.keys(selectedQuestion.responseDeclaration)) : '';
     this.slideDuration = Math.round((new Date().getTime() - this.player.getRendererState().initialSlideDuration) / 1000);
@@ -620,11 +592,11 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
       edataItem.sectionId = this.sectionConfig.metadata.identifier;
     }
 
-    if (!this.optionSelectedObj && selectedQuestion.qType.toUpperCase() !== 'SA') {
+    if (!selectedOption && selectedQuestion.qType.toUpperCase() !== 'SA') {
       this.viewerService.raiseAssesEvent(edataItem, currentIndex + 1, 'No', 0, [], this.slideDuration);
     }
 
-    if (this.optionSelectedObj) {
+    if (selectedOption) {
       this.player.setRendererState({ singleParam: { paramName: "currentQuestion", paramData: selectedQuestion.body } });
       this.currentOptions = selectedQuestion.interactions[key].options;
 
@@ -633,17 +605,17 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
         this.showAlert = true;
         if (option.option?.value === correctOptionValue) {
-          const currentScore = this.getScore(currentIndex, key, true);
+          const currentScore = this.player.getScore(currentIndex, key, true);
           this.viewerService.raiseAssesEvent(edataItem, currentIndex + 1, 'Yes', currentScore, [option.option], this.slideDuration);
           this.player.setRendererState({ singleParam: { paramName: "alertType", paramData: 'correct' } });
           if (this.showFeedBack)
             this.correctFeedBackTimeOut(type);
-          this.updateScoreBoard(currentIndex, 'correct', undefined, currentScore);
+          this.player.updateScoreBoard(this.showFeedBack, currentIndex, 'correct', undefined, currentScore);
         } else {
-          const currentScore = this.getScore(currentIndex, key, false, option);
+          const currentScore = this.player.getScore(currentIndex, key, false, option);
           this.player.setRendererState({ singleParam: { paramName: "alertType", paramData: 'wrong' } });
           const classType = this.player.getRendererState().progressBarClass[currentIndex].class === 'partial' ? 'partial' : 'wrong';
-          this.updateScoreBoard(currentIndex, classType, selectedOptionValue, currentScore);
+          this.player.updateScoreBoard(this.showFeedBack, currentIndex, classType, selectedOptionValue, currentScore);
         }
       }
       if (option.cardinality === 'multiple') {
@@ -652,22 +624,23 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
         this.showAlert = true;
         if (currentScore === 0) {
           this.player.setRendererState({ singleParam: { paramName: "alertType", paramData: 'wrong' } });
-          this.updateScoreBoard((currentIndex + 1), 'wrong');
+          this.player.updateScoreBoard(this.showFeedBack, currentIndex + 1, 'wrong');
         } else {
-          this.updateScoreBoard(((currentIndex + 1)), 'correct', undefined, currentScore);
+          this.player.updateScoreBoard(this.showFeedBack, currentIndex + 1, 'correct', undefined, currentScore);
           if (this.showFeedBack)
             this.correctFeedBackTimeOut(type);
           this.player.setRendererState({ singleParam: { paramName: "alertType", paramData: 'correct' } });
         }
       }
-      this.optionSelectedObj = undefined;
+      // selectedOption = undefined;
+      this.player.setRendererState({ singleParam: { paramName: "selectedOption", paramData: undefined } });
     } else if ((isQuestionSkipAllowed) || isSubjectiveQuestion || onStartPage || isActive) {
       this.nextSlide();
-    } else if (this.startPageInstruction && !this.optionSelectedObj && !this.active && !this.allowSkip &&
+    } else if (this.startPageInstruction && !selectedOption && !this.active && !this.allowSkip &&
       this.myCarousel.getCurrentSlideIndex() > 0 && this.utilService.getQuestionType(this.player.getRendererState().questions, currentIndex) === 'MCQ'
       && this.utilService.canGo(this.player.getRendererState().progressBarClass[this.myCarousel.getCurrentSlideIndex()])) {
       this.infoPopupTimeOut();
-    } else if (!this.optionSelectedObj && !this.active && !this.allowSkip && this.myCarousel.getCurrentSlideIndex() >= 0
+    } else if (!selectedOption && !this.active && !this.allowSkip && this.myCarousel.getCurrentSlideIndex() >= 0
       && this.utilService.getQuestionType(this.player.getRendererState().questions, currentIndex) === 'MCQ'
       && this.utilService.canGo(this.player.getRendererState().progressBarClass[this.myCarousel.getCurrentSlideIndex()])) {
       this.infoPopupTimeOut();
@@ -702,7 +675,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     this.currentSlideIndex = index;
     this.showRootInstruction = false;
     if (index === 0) {
-      this.optionSelectedObj = undefined;
+      this.player.setRendererState({ singleParam: { paramName: "selectedOption", paramData: undefined } });
       this.myCarousel.selectSlide(0);
       this.active = this.currentSlideIndex === 0 && this.sectionIndex === 0 && this.showStartPage;
       this.showRootInstruction = true;
@@ -713,7 +686,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     }
 
     this.player.setRendererState({ singleParam: { paramName: 'currentQuestionsMedia', paramData: this.player.getRendererState().questions[this.currentSlideIndex - 1]?.media } });
-    this.setSkippedClass(this.currentSlideIndex - 1);
+    this.player.setSkippedClass(this.currentSlideIndex - 1);
     if (!this.player.getRendererState().initializeTimer) {
       this.player.setRendererState({ singleParam: { paramName: "initializeTimer", paramData: true } });
     }
@@ -835,53 +808,6 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
       this.viewerService.raiseHeartBeatEvent(eventName.pageScrolled, TelemetryType.impression, this.myCarousel.getCurrentSlideIndex() - 1);
     }
   }
-
-  getScore(currentIndex, key, isCorrectAnswer, selectedOption?) {
-    if (isCorrectAnswer) {
-      return this.player.getRendererState().questions[currentIndex].responseDeclaration[key].correctResponse.outcomes.SCORE ?
-        this.player.getRendererState().questions[currentIndex].responseDeclaration[key].correctResponse.outcomes.SCORE :
-        this.player.getRendererState().questions[currentIndex].responseDeclaration[key].maxScore || 1;
-    } else {
-      const selectedOptionValue = selectedOption.option.value;
-      const mapping = this.player.getRendererState().questions[currentIndex].responseDeclaration.mapping;
-      let score = 0;
-
-      if (mapping) {
-        mapping.forEach((val) => {
-          if (selectedOptionValue === val.response) {
-            score = val.outcomes.SCORE || 0;
-            if (val.outcomes.SCORE) {
-              const progressBarClass = this.player.getRendererState().progressBarClass;
-              progressBarClass[currentIndex].class = 'partial';
-              this.player.setRendererState({ singleParam: { paramName: "progressBarClass", paramData: progressBarClass } });
-            }
-          }
-        });
-      }
-      return score;
-    }
-  }
-
-  calculateScore() {
-    return this.player.getRendererState().progressBarClass.reduce((accumulator, element) => accumulator + element.score, 0);
-  }
-
-  updateScoreBoard(index, classToBeUpdated, optionValue?, score?) {
-    const progressBarClass = this.player.getRendererState().progressBarClass;
-    progressBarClass.forEach((ele) => {
-      if (ele.index - 1 === index) {
-        ele.class = classToBeUpdated;
-        ele.score = score ? score : 0;
-
-        if (!this.showFeedBack) {
-          ele.value = optionValue;
-        }
-      }
-    });
-    this.player.setRendererState({ singleParam: { paramName: "progressBarClass", paramData: progressBarClass } });
-  }
-
-  /* End of score methods  */
 
   /* Start of Image zoom related */
   setImageHeightWidthClass() {

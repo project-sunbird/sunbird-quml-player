@@ -11,6 +11,7 @@ export interface RendererState {
   currentQuestionsMedia?: any;
   jumpSlideIndex?: number;
   currentQuestion?: any;
+  selectedOption?: any;
   // isSectionsAvailable: boolean;
   // isMultiLevelSection: boolean;
   // sections: any;

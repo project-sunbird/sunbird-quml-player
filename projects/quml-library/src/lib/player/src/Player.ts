@@ -12,6 +12,7 @@ import { ScheduledEventEmitter } from "./interfaces/ScheduledEventEmitter";
 import { User } from "./interfaces/User";
 import { PlayerQuestionCursor } from "./question/PlayerQuestionCursor";
 import { QuestionIterator } from "./question/QuestionIterator";
+import * as _ from 'lodash-es';
 
 export class Player {
   user: User | null;
@@ -304,5 +305,68 @@ export class Player {
       });
       this.setRendererState({ singleParam: { paramName: "questions", paramData: ques } });
     }
+  }
+
+  getSectionSummary() {
+    const classObj = _.groupBy(this.getRendererState().progressBarClass, 'class');
+    return {
+      skipped: classObj?.skipped?.length || 0,
+      correct: classObj?.correct?.length || 0,
+      wrong: classObj?.wrong?.length || 0,
+      partial: classObj?.partial?.length || 0
+    };
+  }
+
+  getScore(currentIndex, key, isCorrectAnswer, selectedOption?) {
+    if (isCorrectAnswer) {
+      return this.getRendererState().questions[currentIndex].responseDeclaration[key].correctResponse.outcomes.SCORE ?
+        this.getRendererState().questions[currentIndex].responseDeclaration[key].correctResponse.outcomes.SCORE :
+        this.getRendererState().questions[currentIndex].responseDeclaration[key].maxScore || 1;
+    } else {
+      const selectedOptionValue = selectedOption.option.value;
+      const mapping = this.getRendererState().questions[currentIndex].responseDeclaration.mapping;
+      let score = 0;
+
+      if (mapping) {
+        mapping.forEach((val) => {
+          if (selectedOptionValue === val.response) {
+            score = val.outcomes.SCORE || 0;
+            if (val.outcomes.SCORE) {
+              const progressBarClass = this.getRendererState().progressBarClass;
+              progressBarClass[currentIndex].class = 'partial';
+              this.setRendererState({ singleParam: { paramName: "progressBarClass", paramData: progressBarClass } });
+            }
+          }
+        });
+      }
+      return score;
+    }
+  }
+
+  calculateSectionScore() {
+    return this.getRendererState().progressBarClass.reduce((accumulator, element) => accumulator + element.score, 0);
+  }
+
+  setSkippedClass(index) {
+    const progressBarClass = this.getRendererState().progressBarClass;
+    if (progressBarClass && _.get(progressBarClass[index], 'class') === 'unattempted') {
+      progressBarClass[index].class = 'skipped';
+      this.setRendererState({ singleParam: { paramName: "progressBarClass", paramData: progressBarClass } });
+    }
+  }
+
+  updateScoreBoard(showFeedback, index, classToBeUpdated, optionValue?, score?) {
+    const progressBarClass = this.getRendererState().progressBarClass;
+    progressBarClass.forEach((ele) => {
+      if (ele.index - 1 === index) {
+        ele.class = classToBeUpdated;
+        ele.score = score ? score : 0;
+
+        if (!showFeedback) {
+          ele.value = optionValue;
+        }
+      }
+    });
+    this.setRendererState({ singleParam: { paramName: "progressBarClass", paramData: progressBarClass } });
   }
 }
