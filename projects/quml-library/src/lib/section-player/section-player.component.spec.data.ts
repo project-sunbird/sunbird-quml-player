@@ -591,7 +591,8 @@ export const mockSectionPlayerConfig = {
       showDownload: true,
       showExit: true
     },
-    showFeedback: true
+    showFeedback: true,
+    showLegend: true,
   },
   changes: {
     attempts: {
