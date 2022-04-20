@@ -1,7 +1,7 @@
 <div class="quml-container" *ngIf="loadView" [hidden]="showZoomModal">
   <div [hidden]="showSolution" class="quml-landscape">
     <quml-header class="main-header" (durationEnds)="durationEnds()" [disablePreviousNavigation]="linearNavigation"
-      [duration]="timeLimit" [warningTime]="warningTime" [showTimer]="showTimer"
+      [duration]="timeLimit" [warningTime]="warningTime" [showTimer]="showTimer" [showLegend]="parentConfig?.showLegend"
       (nextSlideClicked)="nextSlideClicked($event)" (prevSlideClicked)="previousSlideClicked($event)"
       [currentSlideIndex]="currentSlideIndex" [totalNoOfQuestions]="noOfQuestions" [active]="active"
       [showFeedBack]="showFeedBack" [currentSolutions]="currentSolutions" (showSolution)="viewSolution()"
