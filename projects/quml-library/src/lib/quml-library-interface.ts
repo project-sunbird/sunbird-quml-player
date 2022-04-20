@@ -60,6 +60,7 @@ export interface Config {
     duration?: number;
     nextContent?: NextContent;
     showDeviceOrientation?: boolean;
+    showLegend?: boolean;
 }
 
 export interface QumlPlayerConfig {
@@ -106,6 +107,7 @@ export interface IParentConfig {
     questionCount: number;
     sideMenuConfig: ISideMenuConfig;
     showFeedback: boolean;
+    showLegend: boolean;
 }
 
 export interface ISummary {

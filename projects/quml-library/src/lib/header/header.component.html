@@ -2,7 +2,7 @@
   <div class="quml-header__features pl-64">
     <div *ngIf="attempts?.max && attempts?.current" class="attempts sb-color-primary fnormal font-weight-bold">
       Attempt no {{attempts.current}}/{{attempts.max}}</div>
-    <img src="assets/question-mark-round.svg" alt="Progress Indicators" title="Progress Indicators" height="20" width="20" (click)="openProgressIndicatorPopup()">
+    <img src="assets/question-mark-round.svg" *ngIf="showLegend" alt="Progress Indicators" title="Progress Indicators" height="20" width="20" (click)="openProgressIndicatorPopup()">
   </div>
 
   <div class="quml-header__metadata">

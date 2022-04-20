@@ -29,7 +29,7 @@ export class HeaderComponent implements OnInit, OnChanges, AfterViewInit, OnDest
   @Input() showStartPage?: boolean;
   @Input() attempts?: { max: number, current: number };
   @Input() showDeviceOrientation: boolean = false;
-
+  @Input() showLegend: boolean;
 
   @Output() nextSlideClicked = new EventEmitter<any>();
   @Output() prevSlideClicked = new EventEmitter<any>();
