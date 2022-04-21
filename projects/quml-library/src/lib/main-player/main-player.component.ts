@@ -186,7 +186,7 @@ export class MainPlayerComponent implements OnInit {
     this.parentConfig.identifier = this.playerConfig.metadata?.identifier;
     this.parentConfig.requiresSubmit = this.playerConfig.metadata?.requiresSubmit?.toLowerCase() !== 'no';
     this.parentConfig.instructions = this.playerConfig.metadata?.instructions?.default;
-    this.parentConfig.showLegend = this.playerConfig.config?.showLegend;
+    this.parentConfig.showLegend = this.playerConfig.config?.showLegend !== undefined ? this.playerConfig.config.showLegend : true;
     this.nextContent = this.playerConfig.config?.nextContent;
     this.showEndPage = this.playerConfig.metadata?.showEndPage?.toLowerCase() !== 'no';
     this.parentConfig.showFeedback = this.showFeedBack = this.playerConfig.metadata?.showFeedback?.toLowerCase() === 'yes';
