@@ -95,7 +95,6 @@ export interface ISideMenuConfig {
 export interface IParentConfig {
     loadScoreBoard: boolean;
     requiresSubmit: boolean;
-    isFirstSection: boolean;
     isSectionsAvailable: boolean;
     isReplayed: boolean;
     identifier: string;

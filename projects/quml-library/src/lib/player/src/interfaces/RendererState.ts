@@ -12,6 +12,12 @@ export interface RendererState {
   jumpSlideIndex?: number;
   currentQuestion?: any;
   selectedOption?: any;
+  sections?: any[];
+  mainProgressBar?: any[];
+  totalNoOfQuestions?: number;
+  sectionIndex?: number;
+  finalScore?: number;
+  outcomeLabel?: string;
   // isSectionsAvailable: boolean;
   // isMultiLevelSection: boolean;
   // sections: any;

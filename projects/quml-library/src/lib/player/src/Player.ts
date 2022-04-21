@@ -369,4 +369,84 @@ export class Player {
     });
     this.setRendererState({ singleParam: { paramName: "progressBarClass", paramData: progressBarClass } });
   }
+
+  getActiveSectionIndex() {
+    return this.getRendererState().sections.findIndex((sec) => sec.metadata?.identifier === this.getRendererState().activeSection.metadata?.identifier);
+  }
+
+  updateSectionScore(activeSectionIndex: number) {
+    const mainProgressBar = this.getRendererState().mainProgressBar;
+    mainProgressBar[activeSectionIndex].score = mainProgressBar[activeSectionIndex].children.reduce((accumulator, currentValue) => accumulator + currentValue.score, 0);
+    this.setRendererState({ singleParam: { paramName: "mainProgressBar", paramData: mainProgressBar } });
+  }
+
+  calculateScore() {
+    const finalScore = this.getRendererState().mainProgressBar.reduce((accumulator, currentValue) => accumulator + currentValue.score, 0);
+    this.setRendererState({ singleParam: { paramName: "finalScore", paramData: finalScore } });
+    this.generateOutComeLabel();
+  }
+
+  generateOutComeLabel() {
+    const totalScore = this.playerConfig.metadata.totalScore;
+    let outcomeLabel = this.getRendererState().finalScore.toString();
+    switch (_.get(this.playerConfig, "metadata.summaryType")) {
+      case "Complete": {
+        outcomeLabel = totalScore ? `${this.getRendererState().finalScore} / ${totalScore}` : outcomeLabel;
+        break;
+      }
+      case "Duration": {
+        outcomeLabel = "";
+        break;
+      }
+    }
+    this.setRendererState({ singleParam: { paramName: "outcomeLabel", paramData: outcomeLabel } });
+  }
+
+  getMultilevelSection(obj) {
+    let isMultiLevel;
+    obj.children.forEach((item) => {
+      if (item.children && !isMultiLevel) {
+        isMultiLevel = this.hasChildren(item.children);
+      }
+    });
+    return isMultiLevel;
+  }
+
+  private hasChildren(arr) {
+    return arr.some((item) => item.children);
+  }
+
+  setInitialScores(activeSectionIndex = 0) {
+    const alphabets = "abcdefghijklmnopqrstuvwxyz".split("");
+    const sections = this.getRendererState().sections;
+    let mainProgressBar = this.getRendererState().mainProgressBar;
+    sections.forEach((section, i) => {
+      mainProgressBar.push({
+        index: alphabets[i].toLocaleUpperCase(),
+        class: "unattempted",
+        value: undefined,
+        score: 0,
+        isActive: i === activeSectionIndex,
+        identifier: section.metadata?.identifier,
+      });
+      const children = [];
+      let totalQuestions = this.getRendererState().totalNoOfQuestions;
+      section.metadata.childNodes.forEach((child, index) => {
+        children.push({
+          index: index + 1,
+          class: "unattempted",
+          value: undefined,
+          score: 0,
+        });
+        totalQuestions++;
+      });
+      this.setRendererState({ singleParam: { paramName: "totalNoOfQuestions", paramData: totalQuestions } });
+      mainProgressBar[mainProgressBar.length - 1] = {
+        ..._.last(mainProgressBar),
+        children,
+      };
+    });
+    this.setRendererState({ singleParam: { paramName: "mainProgressBar", paramData: mainProgressBar } });
+  }
+
 }

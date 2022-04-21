@@ -5,7 +5,7 @@ import { IAttempts, IParentConfig, ISummary, QumlPlayerConfig } from './../quml-
 import { MimeType, TelemetryType, eventName, pageId } from './../telemetry-constants';
 
 import { NextContent } from '@project-sunbird/sunbird-player-sdk-v9/sunbird-player-sdk.interface';
-import {Player} from "../player/src/Player"
+import { Player } from "../player/src/Player"
 import { UtilService } from './../util-service';
 import { ViewerService } from './../services/viewer-service/viewer-service';
 import { contentErrorMessage } from '@project-sunbird/sunbird-player-sdk-v9/lib/player-utils/interfaces/errorMessage';
@@ -27,14 +27,10 @@ export class MainPlayerComponent implements OnInit {
   isLoading = false;
   isSectionsAvailable = false;
   isMultiLevelSection = false;
-  sections: any[] = [];
-  isFirstSection = false;
-  sectionIndex = 0;
   contentError: contentErrorMessage;
   parentConfig: IParentConfig = {
     loadScoreBoard: false,
     requiresSubmit: false,
-    isFirstSection: false,
     isSectionsAvailable: false,
     isReplayed: false,
     identifier: "",
@@ -58,7 +54,6 @@ export class MainPlayerComponent implements OnInit {
   showReplay = true;
 
   attempts: IAttempts;
-  mainProgressBar = [];
   loadScoreBoard = false;
   summary: ISummary = {
     correct: 0,
@@ -67,10 +62,8 @@ export class MainPlayerComponent implements OnInit {
     wrong: 0
   };
   isDurationExpired = false;
-  finalScore = 0;
   totalNoOfQuestions = 0;
   durationSpent: string;
-  outcomeLabel: string;
   totalScore: number;
   initialTime: number;
   userName: string;
@@ -111,9 +104,7 @@ export class MainPlayerComponent implements OnInit {
     this.parentConfig.isSectionsAvailable = this.isSectionsAvailable = childMimeType[0] === MimeType.questionSet;
     this.viewerService.sectionQuestions = [];
     if (this.isSectionsAvailable) {
-      this.isMultiLevelSection = this.getMultilevelSection(
-        this.playerConfig.metadata
-      );
+      this.isMultiLevelSection = this.player.getMultilevelSection(this.playerConfig.metadata);
 
       if (this.isMultiLevelSection) {
         this.contentError = {
@@ -122,7 +113,7 @@ export class MainPlayerComponent implements OnInit {
         };
       } else {
         let children = this.playerConfig.metadata.children;
-        this.sections = _.map(children, (child) => {
+        const sections = _.map(children, (child) => {
           let childNodes =
             child?.children?.map((item) => item.identifier) || [];
           const maxQuestions = child?.maxQuestions;
@@ -150,9 +141,11 @@ export class MainPlayerComponent implements OnInit {
           };
         });
 
-        this.setInitialScores();
-        this.player.setRendererState({ singleParam: { paramName: "activeSection", paramData: _.cloneDeep(this.sections[0]) } });
-        this.isFirstSection = true;
+        this.player.setRendererState({ singleParam: { paramName: "sections", paramData: sections } });
+
+        this.player.setInitialScores();
+        this.parentConfig.questionCount = this.player.getRendererState().totalNoOfQuestions;
+        this.player.setRendererState({ singleParam: { paramName: "activeSection", paramData: _.cloneDeep(sections[0]) } });
         this.isLoading = false;
       }
     } else {
@@ -175,20 +168,22 @@ export class MainPlayerComponent implements OnInit {
       ) {
         childNodes = _.shuffle(childNodes);
       }
+      let totalQuestions = this.player.getRendererState().totalNoOfQuestions;
       childNodes.forEach((element, index) => {
-        this.totalNoOfQuestions++;
-        this.mainProgressBar.push({
+        totalQuestions++;
+        const mainProgressBar = this.player.getRendererState().mainProgressBar;
+        mainProgressBar.push({
           index: index + 1,
           class: "unattempted",
           value: undefined,
           score: 0,
         });
+        this.player.setRendererState({ singleParam: { paramName: "mainProgressBar", paramData: mainProgressBar } });
       });
+      this.player.setRendererState({ singleParam: { paramName: "totalNoOfQuestions", paramData: totalQuestions } });
       this.playerConfig.metadata.childNodes = childNodes;
       if (this.playerConfig.config?.progressBar?.length) {
-        this.mainProgressBar = _.cloneDeep(
-          this.playerConfig.config.progressBar
-        );
+        this.player.setRendererState({ singleParam: { paramName: "mainProgressBar", paramData: _.cloneDeep(this.playerConfig.config.progressBar) } });
       }
       if (this.playerConfig.config?.questions?.length) {
         const questionsObj = this.playerConfig.config.questions.find(
@@ -203,12 +198,15 @@ export class MainPlayerComponent implements OnInit {
       }
       this.player.setRendererState({ singleParam: { paramName: "activeSection", paramData: _.cloneDeep(this.playerConfig) } });
       this.isLoading = false;
-      this.isFirstSection = true;
-      this.parentConfig.questionCount = this.totalNoOfQuestions;
+      this.parentConfig.questionCount = this.player.getRendererState().totalNoOfQuestions;
     }
   }
 
   setConfig() {
+    this.player.setRendererState({ singleParam: { paramName: "sections", paramData: [] } });
+    this.player.setRendererState({ singleParam: { paramName: "mainProgressBar", paramData: [] } });
+    this.player.setRendererState({ singleParam: { paramName: "totalNoOfQuestions", paramData: 0 } });
+    this.player.setRendererState({ singleParam: { paramName: "finalScore", paramData: 0 } });
     this.parentConfig.contentName = this.playerConfig.metadata?.name;
     this.parentConfig.identifier = this.playerConfig.metadata?.identifier;
     this.parentConfig.requiresSubmit = this.playerConfig.metadata?.requiresSubmit?.toLowerCase() !== 'no';
@@ -244,20 +242,6 @@ export class MainPlayerComponent implements OnInit {
     this.emitMaxAttemptEvents();
   }
 
-  private getMultilevelSection(obj) {
-    let isMultiLevel;
-    obj.children.forEach((item) => {
-      if (item.children && !isMultiLevel) {
-        isMultiLevel = this.hasChildren(item.children);
-      }
-    });
-    return isMultiLevel;
-  }
-
-  private hasChildren(arr) {
-    return arr.some((item) => item.children);
-  }
-
   emitMaxAttemptEvents() {
     if ((this.playerConfig.metadata?.maxAttempts - 1) === this.playerConfig.metadata?.currentAttempt) {
       this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(this.attempts?.current, false, true));
@@ -268,26 +252,18 @@ export class MainPlayerComponent implements OnInit {
     }
   }
 
-  getActiveSectionIndex() {
-    return this.sections.findIndex(
-      (sec) =>
-        sec.metadata?.identifier === this.player.getRendererState().activeSection.metadata?.identifier
-    );
-  }
-
   onShowScoreBoard(event) {
     if (this.parentConfig.isSectionsAvailable) {
-      const activeSectionIndex = this.getActiveSectionIndex();
-      this.updateSectionScore(activeSectionIndex);
+      const activeSectionIndex = this.player.getActiveSectionIndex();
+      this.player.updateSectionScore(activeSectionIndex);
     }
     this.loadScoreBoard = true;
   }
 
   onSectionEnd(event) {
     if (this.parentConfig.isSectionsAvailable) {
-      this.isFirstSection = false;
-      const activeSectionIndex = this.getActiveSectionIndex();
-      this.updateSectionScore(activeSectionIndex);
+      const activeSectionIndex = this.player.getActiveSectionIndex();
+      this.player.updateSectionScore(activeSectionIndex);
       this.setNextSection(event, activeSectionIndex);
     } else {
       this.prepareEnd(event);
@@ -299,9 +275,10 @@ export class MainPlayerComponent implements OnInit {
   }
 
   getSummaryObject() {
+    const mainProgressBar = this.player.getRendererState().mainProgressBar;
     const progressBar = this.isSectionsAvailable
-      ? _.flattenDeep(this.mainProgressBar.map((item) => item.children))
-      : this.mainProgressBar;
+      ? _.flattenDeep(mainProgressBar.map((item) => item.children))
+      : mainProgressBar;
     const classObj = _.groupBy(progressBar, "class");
     this.summary = {
       skipped: _.get(classObj, "skipped.length") || 0,
@@ -314,27 +291,19 @@ export class MainPlayerComponent implements OnInit {
       this.summary.wrong +
       this.summary.partial +
       this.summary.skipped;
-    this.viewerService.totalNumberOfQuestions = this.totalNoOfQuestions;
-  }
-
-  updateSectionScore(activeSectionIndex: number) {
-    this.mainProgressBar[activeSectionIndex].score = this.mainProgressBar[
-      activeSectionIndex
-    ].children.reduce(
-      (accumulator, currentValue) => accumulator + currentValue.score,
-      0
-    );
+    this.viewerService.totalNumberOfQuestions = this.player.getRendererState().totalNoOfQuestions;
   }
 
   setNextSection(event, activeSectionIndex: number) {
+    const sections = this.player.getRendererState().sections;
+    const mainProgressBar = this.player.getRendererState().mainProgressBar;
     this.summary = this.utilService.sumObjectsByKey(
       this.summary,
       event.summary
     );
     const isSectionFullyAttempted =
       event.summary.skipped === 0 &&
-      event.summary?.correct + event.summary?.wrong ===
-        this.mainProgressBar[activeSectionIndex]?.children?.length;
+      event.summary?.correct + event.summary?.wrong === mainProgressBar[activeSectionIndex]?.children?.length;
     const isSectionPartiallyAttempted = event.summary.skipped > 0;
 
     if (event.isDurationEnded) {
@@ -345,14 +314,14 @@ export class MainPlayerComponent implements OnInit {
 
     let nextSectionIndex = activeSectionIndex + 1;
     if (event.jumpToSection) {
-      const sectionIndex = this.sections.findIndex(
+      const sectionIndex = sections.findIndex(
         (sec) => sec.metadata?.identifier === event.jumpToSection
       );
       nextSectionIndex = sectionIndex > -1 ? sectionIndex : nextSectionIndex;
     }
 
-    this.sectionIndex = _.cloneDeep(nextSectionIndex);
-    this.mainProgressBar.forEach((item, index) => {
+    this.player.setRendererState({ singleParam: { paramName: 'sectionIndex', paramData: nextSectionIndex } });
+    mainProgressBar.forEach((item, index) => {
       item.isActive = index === nextSectionIndex;
 
       if (index === activeSectionIndex) {
@@ -363,15 +332,17 @@ export class MainPlayerComponent implements OnInit {
         }
       }
     });
-    if (nextSectionIndex < this.sections.length) {
-      this.player.setRendererState({ singleParam: { paramName: "activeSection", paramData: _.cloneDeep(this.sections[nextSectionIndex]) } });
+
+    this.player.setRendererState({ singleParam: { paramName: "mainProgressBar", paramData: mainProgressBar } });
+    if (nextSectionIndex < sections.length) {
+      this.player.setRendererState({ singleParam: { paramName: "activeSection", paramData: _.cloneDeep(sections[nextSectionIndex]) } });
     } else {
       this.prepareEnd(event);
     }
   }
 
   prepareEnd(event) {
-    this.calculateScore();
+    this.player.calculateScore();
     this.setDurationSpent();
     if (this.parentConfig.requiresSubmit) {
       this.loadScoreBoard = true;
@@ -381,13 +352,13 @@ export class MainPlayerComponent implements OnInit {
       this.viewerService.raiseSummaryEvent(
         this.totalVisitedQuestion,
         this.endPageReached,
-        this.finalScore,
+        this.player.getRendererState().finalScore,
         this.summary
       );
       this.raiseEndEvent(
         this.totalVisitedQuestion,
         this.endPageReached,
-        this.finalScore
+        this.player.getRendererState().finalScore
       );
       this.isSummaryEventRaised = true;
       this.isEndEventRaised = true;
@@ -401,13 +372,10 @@ export class MainPlayerComponent implements OnInit {
     this.isDurationExpired = false;
     this.isEndEventRaised = false;
     this.attempts.current = this.attempts.current + 1;
-    this.showReplay =
-      this.attempts?.max && this.attempts?.current >= this.attempts.max
-        ? false
-        : true;
-    this.totalNoOfQuestions = 0;
+    this.showReplay = this.attempts?.max && this.attempts?.current >= this.attempts.max ? false : true;
     this.totalVisitedQuestion = 0;
-    this.mainProgressBar = [];
+    this.player.setRendererState({ singleParam: { paramName: "totalNoOfQuestions", paramData: 0 } });
+    this.player.setRendererState({ singleParam: { paramName: "mainProgressBar", paramData: [] } });
     this.jumpToQuestion = undefined;
     this.summary = {
       correct: 0,
@@ -415,12 +383,12 @@ export class MainPlayerComponent implements OnInit {
       skipped: 0,
       wrong: 0,
     };
-    this.sections = [];
+    this.player.setRendererState({ singleParam: { paramName: "sections", paramData: [] } });
     this.initialTime = new Date().getTime();
     this.initializeSections();
     this.endPageReached = false;
     this.loadScoreBoard = false;
-    const activeSection = this.isSectionsAvailable ? _.cloneDeep(this.sections[0]) : this.playerConfig;
+    const activeSection = this.isSectionsAvailable ? _.cloneDeep(this.player.getRendererState().sections[0]) : this.playerConfig;
     this.player.setRendererState({ singleParam: { paramName: "activeSection", paramData: activeSection } });
     if (this.attempts?.max === this.attempts?.current) {
       this.playerEvent.emit(
@@ -442,71 +410,22 @@ export class MainPlayerComponent implements OnInit {
     }, 1000);
   }
 
-  setInitialScores(activeSectionIndex = 0) {
-    const alphabets = "abcdefghijklmnopqrstuvwxyz".split("");
-    this.sections.forEach((section, i) => {
-      this.mainProgressBar.push({
-        index: alphabets[i].toLocaleUpperCase(),
-        class: "unattempted",
-        value: undefined,
-        score: 0,
-        isActive: i === activeSectionIndex,
-        identifier: section.metadata?.identifier,
-      });
-      const children = [];
-      section.metadata.childNodes.forEach((child, index) => {
-        children.push({
-          index: index + 1,
-          class: "unattempted",
-          value: undefined,
-          score: 0,
-        });
-        this.totalNoOfQuestions++;
-      });
-      this.mainProgressBar[this.mainProgressBar.length - 1] = {
-        ..._.last(this.mainProgressBar),
-        children,
-      };
-
-      if (this.playerConfig.config?.questions?.length) {
-        const questionsObj = this.playerConfig.config.questions.find(item => item.id === section.metadata?.identifier);
-        if (questionsObj?.questions) {
-          this.viewerService.updateSectionQuestions(section.metadata.identifier, questionsObj.questions);
-        }
-      }
-    });
-    if (this.playerConfig.config?.progressBar?.length) {
-      this.mainProgressBar = _.cloneDeep(this.playerConfig.config.progressBar);
-      this.mainProgressBar[0].isActive = true;
-    }
-    this.parentConfig.questionCount = this.totalNoOfQuestions;
-  }
-
-  calculateScore() {
-    this.finalScore = this.mainProgressBar.reduce(
-      (accumulator, currentValue) => accumulator + currentValue.score,
-      0
-    );
-    this.generateOutComeLabel();
-    return this.finalScore;
-  }
-
   exitContent(event) {
-    this.calculateScore();
+    this.player.calculateScore();
     if (event?.type === 'EXIT') {
       this.viewerService.raiseHeartBeatEvent(eventName.endPageExitClicked, TelemetryType.interact, pageId.endPage);
       this.getSummaryObject();
       this.viewerService.raiseSummaryEvent(
         this.totalVisitedQuestion,
         this.endPageReached,
-        this.finalScore,
+        this.player.getRendererState().finalScore,
         this.summary
       );
       this.isSummaryEventRaised = true;
       this.raiseEndEvent(
         this.totalVisitedQuestion,
         this.endPageReached,
-        this.finalScore
+        this.player.getRendererState().finalScore
       );
     }
   }
@@ -516,7 +435,7 @@ export class MainPlayerComponent implements OnInit {
       return;
     }
     this.isEndEventRaised = true;
-    this.viewerService.metaData.progressBar = this.mainProgressBar;
+    this.viewerService.metaData.progressBar = this.player.getRendererState().mainProgressBar;
     this.viewerService.raiseEndEvent(currentQuestionIndex, endPageSeen, score);
 
     if (_.get(this.attempts, "current") >= _.get(this.attempts, "max")) {
@@ -540,7 +459,7 @@ export class MainPlayerComponent implements OnInit {
 
   onScoreBoardLoaded(event) {
     if (event?.scoreBoardLoaded) {
-      this.calculateScore();
+      this.player.calculateScore();
     }
   }
 
@@ -556,18 +475,18 @@ export class MainPlayerComponent implements OnInit {
     this.viewerService.raiseSummaryEvent(
       this.totalVisitedQuestion,
       this.endPageReached,
-      this.finalScore,
+      this.player.getRendererState().finalScore,
       this.summary
     );
     this.raiseEndEvent(
       this.totalVisitedQuestion,
       this.endPageReached,
-      this.finalScore
+      this.player.getRendererState().finalScore
     );
     const data = {
       totalVisitedQuestion: this.totalVisitedQuestion,
       endPageReached: this.endPageReached,
-      finalScore: this.finalScore
+      finalScore: this.player.getRendererState().finalScore
     }
     const event = new Event(EventType.TELEMETRY, data, '', 0);
     this.player.sendTelemetryEvent(event);
@@ -575,31 +494,17 @@ export class MainPlayerComponent implements OnInit {
     this.isSummaryEventRaised = true;
   }
 
-  generateOutComeLabel() {
-    this.outcomeLabel = this.finalScore.toString();
-    switch (_.get(this.playerConfig, "metadata.summaryType")) {
-      case "Complete": {
-        this.outcomeLabel = this.totalScore
-          ? `${this.finalScore} / ${this.totalScore}`
-          : this.outcomeLabel;
-        break;
-      }
-      case "Duration": {
-        this.outcomeLabel = "";
-        break;
-      }
-    }
-  }
-
   goToQuestion(event) {
     if (this.parentConfig.isSectionsAvailable && event.identifier) {
-      const sectionIndex = this.sections.findIndex(
+      const sections = this.player.getRendererState().sections;
+      const sectionIndex = sections.findIndex(
         (sec) => sec.metadata?.identifier === event.identifier
       );
-      this.player.setRendererState({ singleParam: { paramName: "activeSection", paramData: _.cloneDeep(this.sections[sectionIndex]) } });
-      this.mainProgressBar.forEach((item, index) => {
+      this.player.setRendererState({ singleParam: { paramName: "activeSection", paramData: _.cloneDeep(sections[sectionIndex]) } });
+      const mainProgressBar = this.player.getRendererState().mainProgressBar.forEach((item, index) => {
         item.isActive = index === sectionIndex;
       });
+      this.player.setRendererState({ singleParam: { paramName: "mainProgressBar", paramData: mainProgressBar } });
     }
     this.jumpToQuestion = event;
     this.loadScoreBoard = false;
@@ -611,20 +516,20 @@ export class MainPlayerComponent implements OnInit {
 
   @HostListener('window:beforeunload')
   ngOnDestroy() {
-    this.calculateScore();
+    this.player.calculateScore();
     this.getSummaryObject();
     if (this.isSummaryEventRaised === false) {
       this.viewerService.raiseSummaryEvent(
         this.totalVisitedQuestion,
         this.endPageReached,
-        this.finalScore,
+        this.player.getRendererState().finalScore,
         this.summary
       );
     }
     this.raiseEndEvent(
       this.totalVisitedQuestion,
       this.endPageReached,
-      this.finalScore
+      this.player.getRendererState().finalScore
     );
   }
 }
