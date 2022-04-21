@@ -390,17 +390,7 @@ export class MainPlayerComponent implements OnInit {
         ..._.last(this.mainProgressBar), children
       };
 
-      if (this.playerConfig.config?.questions?.length) {
-        const questionsObj = this.playerConfig.config.questions.find(item => item.id === section.metadata?.identifier);
-        if (questionsObj?.questions) {
-          this.viewerService.updateSectionQuestions(section.metadata.identifier, questionsObj.questions);
-        }
-      }
     });
-    if (this.playerConfig.config?.progressBar?.length) {
-      this.mainProgressBar = _.cloneDeep(this.playerConfig.config.progressBar);
-      this.mainProgressBar[0].isActive = true;
-    }
     this.parentConfig.questionCount = this.totalNoOfQuestions;
   }
 
