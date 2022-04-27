@@ -45,5 +45,16 @@ export interface ObjectRollup {
 }
 
 export interface TelemetryPacket {
-  
+
+}
+
+export enum TelemetryType {
+  START = "START",
+  INTERACT = "INTERACT",
+  IMPRESSION = "IMPRESSION",
+  ASSESS = "ASSESS",
+  RESPONSE = "RESPONSE",
+  ERROR = "ERROR",
+  SUMMARY = "SUMMARY",
+  END = "END",
 }

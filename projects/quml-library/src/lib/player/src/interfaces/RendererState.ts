@@ -18,7 +18,8 @@ export interface RendererState {
   sectionIndex?: number;
   finalScore?: number;
   outcomeLabel?: string;
-  // isSectionsAvailable: boolean;
+  isSectionsAvailable?: boolean;
+  currentSlideIndex?: number;
   // isMultiLevelSection: boolean;
   // sections: any;
   // isFirstSection: boolean;

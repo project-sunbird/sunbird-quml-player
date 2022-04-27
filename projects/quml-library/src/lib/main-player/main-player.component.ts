@@ -11,6 +11,7 @@ import { ViewerService } from './../services/viewer-service/viewer-service';
 import { contentErrorMessage } from '@project-sunbird/sunbird-player-sdk-v9/lib/player-utils/interfaces/errorMessage';
 import { PlayerService } from '../services/player.service';
 import { Event, EventType } from '../player/src/interfaces/Event';
+import { TelemetryService } from '../player/src/TelemetryService';
 
 @Component({
   selector: "quml-main-player",
@@ -25,7 +26,6 @@ export class MainPlayerComponent implements OnInit {
   playerConfig: QumlPlayerConfig;
 
   isLoading = false;
-  isSectionsAvailable = false;
   isMultiLevelSection = false;
   contentError: contentErrorMessage;
   parentConfig: IParentConfig = {
@@ -70,6 +70,7 @@ export class MainPlayerComponent implements OnInit {
   jumpToQuestion: any;
   totalVisitedQuestion = 0;
   nextContent: NextContent;
+  telemetryService: TelemetryService;
 
   constructor(
     public viewerService: ViewerService,
@@ -85,6 +86,7 @@ export class MainPlayerComponent implements OnInit {
 
   ngOnInit(): void {
     this.player = this.playerService.getPlayerInstance();
+    this.telemetryService = TelemetryService.getInstance(this.player);
     this.playerConfig = this.player.getPlayerConfig();
     if (typeof this.playerConfig === "string") {
       try {
@@ -101,9 +103,10 @@ export class MainPlayerComponent implements OnInit {
 
   initializeSections() {
     const childMimeType = _.map(this.playerConfig.metadata.children, 'mimeType');
-    this.parentConfig.isSectionsAvailable = this.isSectionsAvailable = childMimeType[0] === MimeType.questionSet;
+    this.parentConfig.isSectionsAvailable = childMimeType[0] === MimeType.questionSet;
+    this.player.setRendererState({ singleParam: { paramName: "isSectionsAvailable", paramData: this.parentConfig.isSectionsAvailable } });
     this.viewerService.sectionQuestions = [];
-    if (this.isSectionsAvailable) {
+    if (this.parentConfig.isSectionsAvailable) {
       this.isMultiLevelSection = this.player.getMultilevelSection(this.playerConfig.metadata);
 
       if (this.isMultiLevelSection) {
@@ -276,7 +279,7 @@ export class MainPlayerComponent implements OnInit {
 
   getSummaryObject() {
     const mainProgressBar = this.player.getRendererState().mainProgressBar;
-    const progressBar = this.isSectionsAvailable
+    const progressBar = this.parentConfig.isSectionsAvailable
       ? _.flattenDeep(mainProgressBar.map((item) => item.children))
       : mainProgressBar;
     const classObj = _.groupBy(progressBar, "class");
@@ -349,11 +352,18 @@ export class MainPlayerComponent implements OnInit {
     } else {
       this.endPageReached = true;
       this.getSummaryObject();
-      this.viewerService.raiseSummaryEvent(
+      // this.viewerService.raiseSummaryEvent(
+      //   this.totalVisitedQuestion,
+      //   this.endPageReached,
+      //   this.player.getRendererState().finalScore,
+      //   this.summary
+      // );
+      this.telemetryService.emitSummaryEvent(
         this.totalVisitedQuestion,
         this.endPageReached,
         this.player.getRendererState().finalScore,
-        this.summary
+        this.summary,
+        this.totalNoOfQuestions
       );
       this.raiseEndEvent(
         this.totalVisitedQuestion,
@@ -388,7 +398,7 @@ export class MainPlayerComponent implements OnInit {
     this.initializeSections();
     this.endPageReached = false;
     this.loadScoreBoard = false;
-    const activeSection = this.isSectionsAvailable ? _.cloneDeep(this.player.getRendererState().sections[0]) : this.playerConfig;
+    const activeSection = this.parentConfig.isSectionsAvailable ? _.cloneDeep(this.player.getRendererState().sections[0]) : this.playerConfig;
     this.player.setRendererState({ singleParam: { paramName: "activeSection", paramData: activeSection } });
     if (this.attempts?.max === this.attempts?.current) {
       this.playerEvent.emit(
@@ -399,7 +409,8 @@ export class MainPlayerComponent implements OnInit {
         )
       );
     }
-    this.viewerService.raiseHeartBeatEvent(eventName.replayClicked, TelemetryType.interact, pageId.endPage);
+    // this.viewerService.raiseHeartBeatEvent(eventName.replayClicked, TelemetryType.interact, pageId.endPage);
+    this.telemetryService.emitHeartBeatEvent(eventName.replayClicked, TelemetryType.interact, pageId.endPage);
 
     setTimeout(() => {
       this.parentConfig.isReplayed = false;
@@ -413,13 +424,21 @@ export class MainPlayerComponent implements OnInit {
   exitContent(event) {
     this.player.calculateScore();
     if (event?.type === 'EXIT') {
-      this.viewerService.raiseHeartBeatEvent(eventName.endPageExitClicked, TelemetryType.interact, pageId.endPage);
+      // this.viewerService.raiseHeartBeatEvent(eventName.endPageExitClicked, TelemetryType.interact, pageId.endPage);
+      this.telemetryService.emitHeartBeatEvent(eventName.endPageExitClicked, TelemetryType.interact, pageId.endPage);
       this.getSummaryObject();
-      this.viewerService.raiseSummaryEvent(
+      // this.viewerService.raiseSummaryEvent(
+      //   this.totalVisitedQuestion,
+      //   this.endPageReached,
+      //   this.player.getRendererState().finalScore,
+      //   this.summary
+      // );
+      this.telemetryService.emitSummaryEvent(
         this.totalVisitedQuestion,
         this.endPageReached,
         this.player.getRendererState().finalScore,
-        this.summary
+        this.summary,
+        this.totalNoOfQuestions
       );
       this.isSummaryEventRaised = true;
       this.raiseEndEvent(
@@ -436,7 +455,8 @@ export class MainPlayerComponent implements OnInit {
     }
     this.isEndEventRaised = true;
     this.viewerService.metaData.progressBar = this.player.getRendererState().mainProgressBar;
-    this.viewerService.raiseEndEvent(currentQuestionIndex, endPageSeen, score);
+    // this.viewerService.raiseEndEvent(currentQuestionIndex, endPageSeen, score);
+    this.telemetryService.emitEndEvent(currentQuestionIndex, endPageSeen, score, this.totalNoOfQuestions);
 
     if (_.get(this.attempts, "current") >= _.get(this.attempts, "max")) {
       this.playerEvent.emit(
@@ -467,17 +487,25 @@ export class MainPlayerComponent implements OnInit {
     this.endPageReached = true;
     this.getSummaryObject();
     this.setDurationSpent();
-    this.viewerService.raiseHeartBeatEvent(
+    // this.viewerService.raiseHeartBeatEvent(
+    //   eventName.scoreBoardSubmitClicked,
+    //   TelemetryType.interact,
+    //   pageId.submitPage
+    // );
+    this.telemetryService.emitHeartBeatEvent(
       eventName.scoreBoardSubmitClicked,
       TelemetryType.interact,
       pageId.submitPage
     );
-    this.viewerService.raiseSummaryEvent(
-      this.totalVisitedQuestion,
-      this.endPageReached,
-      this.player.getRendererState().finalScore,
-      this.summary
-    );
+    // this.viewerService.raiseSummaryEvent(
+    //   this.totalVisitedQuestion,
+    //   this.endPageReached,
+    //   this.player.getRendererState().finalScore,
+    //   this.summary
+    // );
+    this.telemetryService.emitSummaryEvent(this.totalVisitedQuestion, this.endPageReached, this.player.getRendererState().finalScore,
+      this.summary, this.totalNoOfQuestions);
+
     this.raiseEndEvent(
       this.totalVisitedQuestion,
       this.endPageReached,
@@ -511,7 +539,8 @@ export class MainPlayerComponent implements OnInit {
   }
 
   playNextContent(event) {
-    this.viewerService.raiseHeartBeatEvent(event?.type, TelemetryType.interact, pageId.endPage, event?.identifier);
+    // this.viewerService.raiseHeartBeatEvent(event?.type, TelemetryType.interact, pageId.endPage, event?.identifier);
+    this.telemetryService.emitHeartBeatEvent(event?.type, TelemetryType.interact, pageId.endPage, event?.identifier);
   }
 
   @HostListener('window:beforeunload')
@@ -519,12 +548,15 @@ export class MainPlayerComponent implements OnInit {
     this.player.calculateScore();
     this.getSummaryObject();
     if (this.isSummaryEventRaised === false) {
-      this.viewerService.raiseSummaryEvent(
-        this.totalVisitedQuestion,
-        this.endPageReached,
-        this.player.getRendererState().finalScore,
-        this.summary
-      );
+      // this.viewerService.raiseSummaryEvent(
+      //   this.totalVisitedQuestion,
+      //   this.endPageReached,
+      //   this.player.getRendererState().finalScore,
+      //   this.summary
+      // );
+      this.telemetryService.emitSummaryEvent(this.totalVisitedQuestion, this.endPageReached, this.player.getRendererState().finalScore,
+        this.summary, this.totalNoOfQuestions
+      )
     }
     this.raiseEndEvent(
       this.totalVisitedQuestion,

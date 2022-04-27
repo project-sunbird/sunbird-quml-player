@@ -15,6 +15,7 @@ import { ViewerService } from '../services/viewer-service/viewer-service';
 import maintain from 'ally.js/esm/maintain/_maintain';
 import { takeUntil } from 'rxjs/operators';
 import { PlayerService } from '../services/player.service';
+import { TelemetryService } from '../player/src/TelemetryService';
 
 @Component({
   selector: 'quml-section-player',
@@ -81,6 +82,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   disabledHandle: any;
   subscription: Subscription;
   player: Player;
+  telemetryService: TelemetryService;
   constructor(
     public viewerService: ViewerService,
     public utilService: UtilService,
@@ -90,6 +92,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     private playerService: PlayerService
   ) {
     this.player = this.playerService.getPlayerInstance();
+    this.telemetryService = TelemetryService.getInstance(this.player);
   }
 
   ngOnChanges(changes): void {
@@ -98,8 +101,10 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.viewerService.raiseStartEvent(0);
-    this.viewerService.raiseHeartBeatEvent(eventName.startPageLoaded, 'impression', 0);
+    // this.viewerService.raiseStartEvent(0);
+    // this.viewerService.raiseHeartBeatEvent(eventName.startPageLoaded, 'impression', 0);
+    this.telemetryService.emitStartEvent(0);
+    this.telemetryService.emitHeartBeatEvent(eventName.startPageLoaded, 'impression', 0);
   }
 
   private subscribeToEvents(): void {
@@ -116,10 +121,14 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
         if (res?.error) {
           const { traceId } = this.sectionConfig?.config;
           if (navigator.onLine && this.viewerService.isAvailableLocally) {
-            this.viewerService.raiseExceptionLog(errorCode.contentLoadFails, errorMessage.contentLoadFails,
+            // this.viewerService.raiseExceptionLog(errorCode.contentLoadFails, errorMessage.contentLoadFails,
+            //   new Error(errorMessage.contentLoadFails), traceId);
+            this.telemetryService.emitErrorEvent(errorCode.contentLoadFails, errorMessage.contentLoadFails,
               new Error(errorMessage.contentLoadFails), traceId);
           } else {
-            this.viewerService.raiseExceptionLog(errorCode.internetConnectivity, errorMessage.internetConnectivity,
+            // this.viewerService.raiseExceptionLog(errorCode.internetConnectivity, errorMessage.internetConnectivity,
+            //   new Error(errorMessage.internetConnectivity), traceId);
+            this.telemetryService.emitErrorEvent(errorCode.internetConnectivity, errorMessage.internetConnectivity,
               new Error(errorMessage.internetConnectivity), traceId);
           }
           this.showContentError = true;
@@ -170,8 +179,10 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
     if (this.parentConfig.isReplayed) {
       this.player.setRendererState({ singleParam: { paramName: "initializeTimer", paramData: true } });
-      this.viewerService.raiseStartEvent(0);
-      this.viewerService.raiseHeartBeatEvent(eventName.startPageLoaded, 'impression', 0);
+      // this.viewerService.raiseStartEvent(0);
+      // this.viewerService.raiseHeartBeatEvent(eventName.startPageLoaded, 'impression', 0);
+      this.telemetryService.emitStartEvent(0);
+      this.telemetryService.emitHeartBeatEvent(eventName.startPageLoaded, 'impression', 0);
       this.disableNext = false;
       this.currentSlideIndex = 0;
       this.myCarousel.selectSlide(0);
@@ -248,8 +259,10 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   nextSlide() {
     this.player.setRendererState({ singleParam: { paramName: 'currentQuestionsMedia', paramData: this.player.getRendererState().questions[this.currentSlideIndex]?.media } });
     this.getQuestion();
-    this.viewerService.raiseHeartBeatEvent(eventName.nextClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex() + 1);
-    this.viewerService.raiseHeartBeatEvent(eventName.nextClicked, TelemetryType.impression, this.myCarousel.getCurrentSlideIndex() + 1);
+    // this.viewerService.raiseHeartBeatEvent(eventName.nextClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex() + 1);
+    // this.viewerService.raiseHeartBeatEvent(eventName.nextClicked, TelemetryType.impression, this.myCarousel.getCurrentSlideIndex() + 1);
+    this.telemetryService.emitHeartBeatEvent(eventName.nextClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex() + 1);
+    this.telemetryService.emitHeartBeatEvent(eventName.nextClicked, TelemetryType.impression, this.myCarousel.getCurrentSlideIndex() + 1);
 
     if (this.currentSlideIndex !== this.player.getRendererState().questions.length) {
       this.currentSlideIndex = this.currentSlideIndex + 1;
@@ -271,7 +284,8 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
       const option = currentOptionSelected && currentOptionSelected['option'] ? currentOptionSelected['option'] : undefined;
       const identifier = this.player.getRendererState().questions[this.myCarousel.getCurrentSlideIndex() - 1].identifier;
       const qType = this.player.getRendererState().questions[this.myCarousel.getCurrentSlideIndex() - 1].qType;
-      this.viewerService.raiseResponseEvent(identifier, qType, option);
+      // this.viewerService.raiseResponseEvent(identifier, qType, option);
+      this.telemetryService.emitResponseEvent(identifier, qType, option);
     }
 
     if (this.player.getRendererState().questions[this.myCarousel.getCurrentSlideIndex()]) {
@@ -286,7 +300,8 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   prevSlide() {
     this.disableNext = false;
     this.currentSolutions = undefined;
-    this.viewerService.raiseHeartBeatEvent(eventName.prevClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex() - 1);
+    // this.viewerService.raiseHeartBeatEvent(eventName.prevClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex() - 1);
+    this.telemetryService.emitHeartBeatEvent(eventName.prevClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex() - 1);
     this.showAlert = false;
 
     if (this.currentSlideIndex !== this.player.getRendererState().questions.length) {
@@ -331,6 +346,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
   activeSlideChange(event) {
     this.player.setRendererState({ singleParam: { paramName: "initialSlideDuration", paramData: new Date().getTime() } });
+    this.player.setRendererState({ singleParam: { paramName: "currentSlideIndex", paramData: event } });
     const element = document.querySelector('li.progressBar-border');
     if (element && !this.parentConfig.isReplayed) {
       element.scrollIntoView({ behavior: 'smooth' });
@@ -443,7 +459,8 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     this.active = true;
     this.player.setRendererState({ singleParam: { paramName: "currentOptionSelected", paramData: optionSelected } });
     const currentIndex = this.myCarousel.getCurrentSlideIndex() - 1;
-    this.viewerService.raiseHeartBeatEvent(eventName.optionClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
+    // this.viewerService.raiseHeartBeatEvent(eventName.optionClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
+    this.telemetryService.emitHeartBeatEvent(eventName.optionClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
 
     // This optionSelected comes empty whenever the try again is clicked on feedback popup
     if (_.isEmpty(optionSelected?.option)) {
@@ -485,7 +502,9 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
       const checkContentCompatible = this.errorService.checkContentCompatibility(compatibilityLevel);
 
       if (!checkContentCompatible.isCompitable) {
-        this.viewerService.raiseExceptionLog(errorCode.contentCompatibility, errorMessage.contentCompatibility,
+        // this.viewerService.raiseExceptionLog(errorCode.contentCompatibility, errorMessage.contentCompatibility,
+        //   checkContentCompatible.error, this.sectionConfig?.config?.traceId);
+        this.telemetryService.emitErrorEvent(errorCode.contentCompatibility, errorMessage.contentCompatibility,
           checkContentCompatible.error, this.sectionConfig?.config?.traceId);
       }
     }
@@ -508,13 +527,15 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
   closeAlertBox(event) {
     if (event?.type === 'close') {
-      this.viewerService.raiseHeartBeatEvent(eventName.closedFeedBack, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
+      // this.viewerService.raiseHeartBeatEvent(eventName.closedFeedBack, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
+      this.telemetryService.emitHeartBeatEvent(eventName.closedFeedBack, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
     } else if (event?.type === 'tryAgain') {
       this.tryAgainClicked = true;
       setTimeout(() => {
         this.tryAgainClicked = false;
       }, 2000);
-      this.viewerService.raiseHeartBeatEvent(eventName.tryAgain, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
+      // this.viewerService.raiseHeartBeatEvent(eventName.tryAgain, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
+      this.telemetryService.emitHeartBeatEvent(eventName.tryAgain, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
     }
     this.showAlert = false;
   }
@@ -523,7 +544,8 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     if (event.type === 'OPEN_MENU' || event.type === 'CLOSE_MENU') {
       this.handleSideBarAccessibility(event);
     }
-    this.viewerService.raiseHeartBeatEvent(event.type, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex() + 1);
+    // this.viewerService.raiseHeartBeatEvent(event.type, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex() + 1);
+    this.telemetryService.emitHeartBeatEvent(event.type, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex() + 1);
   }
 
   handleSideBarAccessibility(event) {
@@ -541,7 +563,8 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
           inputChecked.checked = false;
           document.getElementById('playerSideMenu').style.visibility = 'hidden';
           document.querySelector<HTMLElement>('.navBlock').style.marginLeft = '-100%';
-          this.viewerService.raiseHeartBeatEvent('CLOSE_MENU', TelemetryType.interact, this.myCarousel.getCurrentSlideIndex() + 1);
+          // this.viewerService.raiseHeartBeatEvent('CLOSE_MENU', TelemetryType.interact, this.myCarousel.getCurrentSlideIndex() + 1);
+          this.telemetryService.emitHeartBeatEvent('CLOSE_MENU', TelemetryType.interact, this.myCarousel.getCurrentSlideIndex() + 1);
           this.disabledHandle.disengage();
           this.subscription.unsubscribe();
           this.disabledHandle = null;
@@ -593,7 +616,8 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     }
 
     if (!selectedOption && selectedQuestion.qType.toUpperCase() !== 'SA') {
-      this.viewerService.raiseAssesEvent(edataItem, currentIndex + 1, 'No', 0, [], this.slideDuration);
+      // this.viewerService.raiseAssesEvent(edataItem, currentIndex + 1, 'No', 0, [], this.slideDuration);
+      this.telemetryService.emitAssesEvent(edataItem, currentIndex + 1, 'No', 0, [], this.slideDuration);
     }
 
     if (selectedOption) {
@@ -606,7 +630,8 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
         this.showAlert = true;
         if (option.option?.value === correctOptionValue) {
           const currentScore = this.player.getScore(currentIndex, key, true);
-          this.viewerService.raiseAssesEvent(edataItem, currentIndex + 1, 'Yes', currentScore, [option.option], this.slideDuration);
+          // this.viewerService.raiseAssesEvent(edataItem, currentIndex + 1, 'Yes', currentScore, [option.option], this.slideDuration);
+          this.telemetryService.emitAssesEvent(edataItem, currentIndex + 1, 'Yes', currentScore, [option.option], this.slideDuration);
           this.player.setRendererState({ singleParam: { paramName: "alertType", paramData: 'correct' } });
           if (this.showFeedBack)
             this.correctFeedBackTimeOut(type);
@@ -670,7 +695,8 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   }
 
   goToSlide(index) {
-    this.viewerService.raiseHeartBeatEvent(eventName.goToQuestion, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
+    // this.viewerService.raiseHeartBeatEvent(eventName.goToQuestion, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
+    this.telemetryService.emitHeartBeatEvent(eventName.goToQuestion, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
     this.disableNext = false;
     this.currentSlideIndex = index;
     this.showRootInstruction = false;
@@ -739,8 +765,10 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
   getSolutions() {
     this.showAlert = false;
-    this.viewerService.raiseHeartBeatEvent(eventName.showAnswer, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
-    this.viewerService.raiseHeartBeatEvent(eventName.showAnswer, TelemetryType.impression, this.myCarousel.getCurrentSlideIndex());
+    // this.viewerService.raiseHeartBeatEvent(eventName.showAnswer, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
+    // this.viewerService.raiseHeartBeatEvent(eventName.showAnswer, TelemetryType.impression, this.myCarousel.getCurrentSlideIndex());
+    this.telemetryService.emitHeartBeatEvent(eventName.showAnswer, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
+    this.telemetryService.emitHeartBeatEvent(eventName.showAnswer, TelemetryType.impression, this.myCarousel.getCurrentSlideIndex());
     const currentIndex = this.myCarousel.getCurrentSlideIndex() - 1;
     this.player.setRendererState({ singleParam: { paramName: "currentQuestion", paramData: this.player.getRendererState().questions[currentIndex].body } });
     this.currentOptions = this.player.getRendererState().questions[currentIndex].interactions.response1.options;
@@ -758,7 +786,8 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   }
 
   viewSolution() {
-    this.viewerService.raiseHeartBeatEvent(eventName.viewSolutionClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
+    // this.viewerService.raiseHeartBeatEvent(eventName.viewSolutionClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
+    this.telemetryService.emitHeartBeatEvent(eventName.viewSolutionClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
     this.showSolution = true;
     this.showAlert = false;
     this.player.setRendererState({ singleParam: { paramName: 'currentQuestionsMedia', paramData: this.player.getRendererState().questions[this.myCarousel.getCurrentSlideIndex() - 1]?.media } });
@@ -771,14 +800,16 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
   closeSolution() {
     this.setImageZoom();
-    this.viewerService.raiseHeartBeatEvent(eventName.solutionClosed, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
+    // this.viewerService.raiseHeartBeatEvent(eventName.solutionClosed, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
+    this.telemetryService.emitHeartBeatEvent(eventName.solutionClosed, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
     this.showSolution = false;
     this.myCarousel.selectSlide(this.currentSlideIndex);
     this.focusOnNextButton();
   }
 
   viewHint() {
-    this.viewerService.raiseHeartBeatEvent(eventName.viewHint, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
+    // this.viewerService.raiseHeartBeatEvent(eventName.viewHint, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
+    this.telemetryService.emitHeartBeatEvent(eventName.viewHint, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
   }
 
   onAnswerKeyDown(event: KeyboardEvent) {
@@ -804,8 +835,10 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
           this.viewerService.updateSectionQuestions(this.sectionConfig.metadata.identifier, questions);
         }
       }
-      this.viewerService.raiseHeartBeatEvent(eventName.showAnswer, TelemetryType.interact, pageId.shortAnswer);
-      this.viewerService.raiseHeartBeatEvent(eventName.pageScrolled, TelemetryType.impression, this.myCarousel.getCurrentSlideIndex() - 1);
+      // this.viewerService.raiseHeartBeatEvent(eventName.showAnswer, TelemetryType.interact, pageId.shortAnswer);
+      // this.viewerService.raiseHeartBeatEvent(eventName.pageScrolled, TelemetryType.impression, this.myCarousel.getCurrentSlideIndex() - 1);
+      this.telemetryService.emitHeartBeatEvent(eventName.showAnswer, TelemetryType.interact, pageId.shortAnswer);
+      this.telemetryService.emitHeartBeatEvent(eventName.pageScrolled, TelemetryType.impression, this.myCarousel.getCurrentSlideIndex() - 1);
     }
   }
 
@@ -844,7 +877,8 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
       const divElement = document.createElement('div');
       divElement.setAttribute('class', 'magnify-icon');
       divElement.onclick = (event) => {
-        this.viewerService.raiseHeartBeatEvent(eventName.zoomClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
+        // this.viewerService.raiseHeartBeatEvent(eventName.zoomClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
+        this.telemetryService.emitHeartBeatEvent(eventName.zoomClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
         this.zoomImgSrc = image['src'];
         this.showZoomModal = true;
         const zoomImage = document.getElementById('imageModal');
@@ -863,14 +897,16 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
   // Method Name changed
   zoomIn() {
-    this.viewerService.raiseHeartBeatEvent(eventName.zoomInClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
+    // this.viewerService.raiseHeartBeatEvent(eventName.zoomInClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
+    this.telemetryService.emitHeartBeatEvent(eventName.zoomInClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
     this.imageZoomCount = this.imageZoomCount + 10;
     this.setImageModalHeightWidth();
   }
 
   // Method Name changed
   zoomOut() {
-    this.viewerService.raiseHeartBeatEvent(eventName.zoomOutClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
+    // this.viewerService.raiseHeartBeatEvent(eventName.zoomOutClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
+    this.telemetryService.emitHeartBeatEvent(eventName.zoomOutClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
     if (this.imageZoomCount > 100) {
       this.imageZoomCount = this.imageZoomCount - 10;
       this.setImageModalHeightWidth();
@@ -883,7 +919,8 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   }
 
   closeZoom() {
-    this.viewerService.raiseHeartBeatEvent(eventName.zoomCloseClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
+    // this.viewerService.raiseHeartBeatEvent(eventName.zoomCloseClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
+    this.telemetryService.emitHeartBeatEvent(eventName.zoomCloseClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
     document.getElementById('imageModal').removeAttribute('style');
     this.showZoomModal = false;
   }

@@ -1,5 +1,5 @@
 export enum EventType {
-  TELEMETRY= 'TELEMETRY',
+  TELEMETRY = 'TELEMETRY',
   ERROR = 'ERROR',
   PERSISTANCE = 'PERSISTANCE',
   MAX_ATTEMPT_EXCEEDED = 'MAX_ATTEMPT_EXCEEDED',
@@ -11,7 +11,8 @@ export enum EventType {
   PLAYER_CRASHED = 'PLAYER_CRASHED',
   INTERNET_CONNECTION_ERROR = 'INTERNET_CONNECTION_ERROR',
   PLAYER_EXIT = 'PLAYER_EXIT',
-  CONTENT_ERROR = 'CONTENT_ERROR'
+  CONTENT_ERROR = 'CONTENT_ERROR',
+  HEARTBEAT = 'HEARTBEAT',
 }
 
 export class Event {
@@ -24,7 +25,7 @@ export class Event {
     this.shouldEmitAfterInMs = shouldEmitAfterInMs;
   }
 
-  toString(): string{
+  toString(): string {
     return `Event: CreateAt - ${this.createdAt}; shouldEmitAfterInMs: ${this.shouldEmitAfterInMs}; Type: ${this.type}; Data: ${JSON.stringify(this.data)};`
   }
 

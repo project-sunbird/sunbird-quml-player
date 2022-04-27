@@ -89,20 +89,9 @@ export class QumlLibraryService {
     );
   }
 
-  public response(identifier, version, type, option) {
-    const responseEvent = {
-      target: {
-        id: identifier,
-        ver: version,
-        type: type
-      },
-      type: 'CHOOSE',
-      values: [{
-        option
-      }]
-    };
+  public response(responseEdata) {
     CsTelemetryModule.instance.telemetryService.raiseResponseTelemetry(
-      responseEvent,
+      responseEdata,
       this.getEventOptions()
     );
   }

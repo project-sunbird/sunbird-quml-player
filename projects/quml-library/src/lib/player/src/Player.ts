@@ -291,6 +291,11 @@ export class Player {
     const event = new Event(EventType.CONTENT_ERROR, {}, '', 0);
   }
 
+  emitHearBeatEvent(eventData: any) {
+    const event = new Event(EventType.HEARTBEAT, eventData, '', 0);
+    this.emit(event);
+  }
+
 
   // Utility Methods
 
