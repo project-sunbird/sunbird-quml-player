@@ -14,7 +14,7 @@
     "build-lib-link": "npm run build-lib && npm run link-player",
     "test-lib": "ng test quml-library",
     "test-lib-coverage": "ng test quml-library --code-coverage=true",
-    "test-lib-ci": "ng test quml-library --browsers=ChromeHeadless --watch=false --code-coverage",
+    "test-lib-ci": "ng test quml-library --watch=false --code-coverage --sourceMap=false",
     "mybuild": "npm run build",
     "serve": "node scripts/copyAssets.js && npm link ./dist/quml-library && ng serve --vendor-source-map",
     "build-web-component": "npm run build-lib-link && ng build quml-player-wc --output-hashing none && node ./build-wc.js"
