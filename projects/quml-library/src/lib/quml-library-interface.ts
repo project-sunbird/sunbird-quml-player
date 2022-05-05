@@ -1,3 +1,4 @@
+import { NextContent } from '@project-sunbird/sunbird-player-sdk-v9/sunbird-player-sdk.interface';
 export interface Context {
     mode: string;
     threshold?: number;
@@ -53,16 +54,17 @@ export interface Config {
         showReplay?: boolean;
         showExit?: boolean;
     };
-    progressBar: any[];
-    questions: any[];
-    lastQuestionId: string;
-    duration: number;
+    progressBar?: any[];
+    questions?: any[];
+    lastQuestionId?: string;
+    duration?: number;
+    nextContent?: NextContent;
 }
 
 export interface QumlPlayerConfig {
     context: Context;
     metadata: any;
-    data: any;
+    data?: any;
     config: Config;
 }
 
@@ -84,6 +86,12 @@ export interface Question {
     solutions: any;
 }
 
+export interface ISideMenuConfig {
+    enable: boolean;
+    showShare: boolean;
+    showDownload: boolean;
+    showExit: boolean;
+}
 export interface IParentConfig {
     loadScoreBoard: boolean;
     requiresSubmit: boolean;
@@ -93,6 +101,20 @@ export interface IParentConfig {
     identifier: string;
     contentName: string;
     baseUrl: string;
+    isAvailableLocally: boolean;
     instructions: any;
     questionCount: number;
+    sideMenuConfig: ISideMenuConfig;
+}
+
+export interface ISummary {
+    correct: number;
+    partial: number;
+    skipped: number;
+    wrong: number;
+}
+
+export interface IAttempts {
+    max: number;
+    current: number;
 }

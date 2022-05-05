@@ -1,9 +1,9 @@
-<div class="quml-mcq-option-card" (click)="optionClicked(mcqOption)" tabindex="0" (keydown)="onEnter($event, mcqOption)"
+<div class="quml-mcq-option-card" (click)="optionClicked($event, mcqOption)" tabindex="0" (keydown)="onEnter($event, mcqOption)"
   [ngClass]="mcqOption?.selected ? 'quml-mcq-option-card quml-option--selected' : 'quml-mcq-option-card'">
   <div class="option" *ngIf="mcqOption"
-    [innerHTML]="mcqOption.label | safeHtml"></div>
+    [innerHTML]="mcqOption?.label | safeHtml"></div>
     <label class="container">
-      <input type="radio" name="radio" role="radio" [checked]="mcqOption.selected" >
+      <input type="radio" name="radio" role="radio" [checked]="mcqOption?.selected" >
       <span class="checkmark"></span>
   </label>
 </div>

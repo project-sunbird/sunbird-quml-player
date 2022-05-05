@@ -1,10 +1,11 @@
 import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { contentErrorMessage } from '@project-sunbird/sunbird-player-sdk-v9/lib/player-utils/interfaces/errorMessage';
+import { NextContent } from '@project-sunbird/sunbird-player-sdk-v9/sunbird-player-sdk.interface';
 import * as _ from 'lodash-es';
-import { QumlPlayerConfig, IParentConfig } from '../quml-library-interface';
-import { ViewerService } from '../services/viewer-service/viewer-service';
-import { eventName, pageId, TelemetryType } from '../telemetry-constants';
-import { UtilService } from '../util-service';
+import { IAttempts, IParentConfig, ISummary, QumlPlayerConfig } from './../quml-library-interface';
+import { ViewerService } from './../services/viewer-service/viewer-service';
+import { eventName, pageId, TelemetryType, MimeType } from './../telemetry-constants';
+import { UtilService } from './../util-service';
 
 @Component({
   selector: 'quml-main-player',
@@ -34,8 +35,15 @@ export class MainPlayerComponent implements OnInit {
     identifier: '',
     contentName: '',
     baseUrl: '',
+    isAvailableLocally: false,
     instructions: {},
     questionCount: 0,
+    sideMenuConfig: {
+      enable: true,
+      showShare: true,
+      showDownload: false,
+      showExit: false,
+    }
   };
 
   showEndPage = true;
@@ -45,10 +53,10 @@ export class MainPlayerComponent implements OnInit {
   isSummaryEventRaised = false;
   showReplay = true;
 
-  attempts: { max: number, current: number };
+  attempts: IAttempts;
   mainProgressBar = [];
   loadScoreBoard = false;
-  summary: {
+  summary: ISummary = {
     correct: 0,
     partial: 0,
     skipped: 0,
@@ -61,16 +69,10 @@ export class MainPlayerComponent implements OnInit {
   outcomeLabel: string;
   totalScore: number;
   initialTime: number;
-  sideMenuConfig = {
-    enable: true,
-    showShare: true,
-    showDownload: true,
-    showReplay: false,
-    showExit: true,
-  };
   userName: string;
   jumpToQuestion: any;
   totalVisitedQuestion = 0;
+  nextContent: NextContent;
 
   constructor(public viewerService: ViewerService, private utilService: UtilService) { }
 
@@ -91,11 +93,11 @@ export class MainPlayerComponent implements OnInit {
     this.setConfig();
     this.initializeSections();
   }
-  
+
 
   initializeSections() {
     const childMimeType = _.map(this.playerConfig.metadata.children, 'mimeType');
-    this.parentConfig.isSectionsAvailable = this.isSectionsAvailable = childMimeType[0] === 'application/vnd.sunbird.questionset';
+    this.parentConfig.isSectionsAvailable = this.isSectionsAvailable = childMimeType[0] === MimeType.questionSet;
     this.viewerService.sectionQuestions = [];
     if (this.isSectionsAvailable) {
       this.isMultiLevelSection = this.getMultilevelSection(this.playerConfig.metadata);
@@ -179,17 +181,19 @@ export class MainPlayerComponent implements OnInit {
     this.parentConfig.identifier = this.playerConfig.metadata?.identifier;
     this.parentConfig.requiresSubmit = this.playerConfig.metadata?.requiresSubmit?.toLowerCase() !== 'no';
     this.parentConfig.instructions = this.playerConfig.metadata?.instructions?.default;
+    this.nextContent = this.playerConfig.config?.nextContent;
     this.showEndPage = this.playerConfig.metadata?.showEndPage?.toLowerCase() !== 'no';
     this.showFeedBack = this.playerConfig.metadata?.showFeedback?.toLowerCase() !== 'no';
-    this.sideMenuConfig = { ...this.sideMenuConfig, ...this.playerConfig.config.sideMenu };
+    this.parentConfig.sideMenuConfig = { ...this.parentConfig.sideMenuConfig, ...this.playerConfig.config.sideMenu };
     this.userName = this.playerConfig.context.userData.firstName + ' ' + this.playerConfig.context.userData.lastName;
 
     if (this.playerConfig.metadata.isAvailableLocally && this.playerConfig.metadata.basePath) {
       this.parentConfig.baseUrl = this.playerConfig.metadata.basePath;
+      this.parentConfig.isAvailableLocally = true;
     }
 
     this.attempts = {
-      max: this.playerConfig.metadata?.maxAttempt,
+      max: this.playerConfig.metadata?.maxAttempts,
       current: this.playerConfig.metadata?.currentAttempt ? this.playerConfig.metadata.currentAttempt + 1 : 1
     };
     this.totalScore = this.playerConfig.metadata.maxScore;
@@ -217,9 +221,9 @@ export class MainPlayerComponent implements OnInit {
   }
 
   emitMaxAttemptEvents() {
-    if ((this.playerConfig.metadata?.maxAttempt - 1) === this.playerConfig.metadata?.currentAttempt) {
+    if ((this.playerConfig.metadata?.maxAttempts - 1) === this.playerConfig.metadata?.currentAttempt) {
       this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(this.attempts?.current, false, true));
-    } else if (this.playerConfig.metadata?.currentAttempt >= this.playerConfig.metadata?.maxAttempt) {
+    } else if (this.playerConfig.metadata?.currentAttempt >= this.playerConfig.metadata?.maxAttempts) {
       this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(this.attempts?.current, true, false));
     }
   }
@@ -318,7 +322,6 @@ export class MainPlayerComponent implements OnInit {
       this.raiseEndEvent(this.totalVisitedQuestion, this.endPageReached, this.finalScore);
       this.isSummaryEventRaised = true;
       this.isEndEventRaised = true;
-
     }
   }
 
@@ -349,11 +352,15 @@ export class MainPlayerComponent implements OnInit {
     if (this.attempts?.max === this.attempts?.current) {
       this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(_.get(this.attempts, 'current'), false, true));
     }
-    this.viewerService.raiseHeartBeatEvent(eventName.replayClicked, TelemetryType.interact, 1);
+    this.viewerService.raiseHeartBeatEvent(eventName.replayClicked, TelemetryType.interact, pageId.endPage);
 
     setTimeout(() => {
       this.parentConfig.isReplayed = false;
-    }, 200);
+      const element = document.querySelector('li.info-page') as HTMLElement;
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth'});
+      }
+    }, 1000);
   }
 
   setInitialScores(activeSectionIndex = 0) {
@@ -377,12 +384,12 @@ export class MainPlayerComponent implements OnInit {
         ..._.last(this.mainProgressBar), children
       };
 
-    if (this.playerConfig.config?.questions?.length) {
-      const questionsObj = this.playerConfig.config.questions.find(item => item.id === section.metadata?.identifier);
-      if (questionsObj?.questions) {
-        this.viewerService.updateSectionQuestions(section.metadata.identifier, questionsObj.questions);
+      if (this.playerConfig.config?.questions?.length) {
+        const questionsObj = this.playerConfig.config.questions.find(item => item.id === section.metadata?.identifier);
+        if (questionsObj?.questions) {
+          this.viewerService.updateSectionQuestions(section.metadata.identifier, questionsObj.questions);
+        }
       }
-    }
     });
     if (this.playerConfig.config?.progressBar?.length) {
       this.mainProgressBar = _.cloneDeep(this.playerConfig.config.progressBar);
@@ -400,7 +407,7 @@ export class MainPlayerComponent implements OnInit {
   exitContent(event) {
     this.calculateScore();
     if (event?.type === 'EXIT') {
-      this.viewerService.raiseHeartBeatEvent(eventName.endPageExitClicked, TelemetryType.interact, 'endPage');
+      this.viewerService.raiseHeartBeatEvent(eventName.endPageExitClicked, TelemetryType.interact, pageId.endPage);
       this.getSummaryObject();
       this.viewerService.raiseSummaryEvent(this.totalVisitedQuestion, this.endPageReached, this.finalScore, this.summary);
       this.isSummaryEventRaised = true;
@@ -472,6 +479,10 @@ export class MainPlayerComponent implements OnInit {
     this.loadScoreBoard = false;
   }
 
+  playNextContent(event) {
+    this.viewerService.raiseHeartBeatEvent(event?.type, TelemetryType.interact, pageId.endPage, event?.identifier);
+  }
+
   @HostListener('window:beforeunload')
   ngOnDestroy() {
     this.calculateScore();
@@ -482,16 +493,3 @@ export class MainPlayerComponent implements OnInit {
     this.raiseEndEvent(this.totalVisitedQuestion, this.endPageReached, this.finalScore);
   }
 }
-
-/*
- * Should Take care of the following
- *  - handle end page
- *  - handle scoreboard
- *  - handle max Attempts
- *  - handle telemetry initialization
- *  - handle telemetry events - endpage / scoreboard / maxattempts
- *  - handle Jump to question or section
- *  - handle summary event
- *  - handle next/previous button on start and end of the section
- * -  handle raising all the outputs back to the client
-*/

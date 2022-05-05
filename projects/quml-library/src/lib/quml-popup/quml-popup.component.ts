@@ -6,7 +6,7 @@ import { Component, OnInit, Input, Output, EventEmitter, AfterViewInit } from '@
   styleUrls: ['./quml-popup.component.scss']
 })
 export class QumlPopupComponent implements OnInit, AfterViewInit {
-  @Input() image = 'https://via.placeholder.com/65';
+  @Input() image;
   @Input() htmlTag: any;
   @Output() popUpClose = new EventEmitter();
   constructor() { }
@@ -15,7 +15,10 @@ export class QumlPopupComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    document.getElementById('htmlTag').getElementsByTagName('img')[0].style.width = '70%';
+    const htmlTagElement = document.getElementById('htmlTag');
+    if (htmlTagElement) {
+      htmlTagElement.getElementsByTagName('img')[0].style.width = '70%';
+    }
   }
 
   closePopup() {
