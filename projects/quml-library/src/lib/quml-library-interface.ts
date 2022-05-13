@@ -108,6 +108,7 @@ export interface IParentConfig {
     sideMenuConfig: ISideMenuConfig;
     showFeedback: boolean;
     showLegend: boolean;
+    metadata?: any;
 }
 
 export interface ISummary {
