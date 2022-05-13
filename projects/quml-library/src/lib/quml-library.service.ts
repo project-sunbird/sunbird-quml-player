@@ -68,7 +68,7 @@ export class QumlLibraryService {
     this.telemetryObject = {
       id: parentConfig.identifier,
       type: 'Content',
-      ver: config.metadata.pkgVersion ? config.metadata.pkgVersion.toString() : '',
+      ver: parentConfig?.metadata?.pkgVersion ? parentConfig.metadata.pkgVersion.toString() : '',
       rollup: this.context.objectRollup || {}
     };
   }
