@@ -12,7 +12,7 @@
 
     <div class="landscape-mode">
       <div class="lanscape-mode-left">
-        <div class="current-slide" *ngIf="!showRootInstruction">
+        <div class="current-slide" *ngIf="currentSlideIndex !== 0">
           {{myCarousel.getCurrentSlideIndex()}}/{{noOfQuestions}}
         </div>
         <div *ngIf="currentSolutions && showUserSolution">
