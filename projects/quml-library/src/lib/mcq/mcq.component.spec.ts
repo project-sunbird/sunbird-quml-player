@@ -175,6 +175,26 @@ describe('McqComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should set layout to IMAGEGRID', () => {
+    component.question.templateId = 'mcq-horizontal';
+    component.ngOnInit();
+    expect(component.layout).toBe('IMAGEGRID');
+  });
+  it('should set layout to IMAGEQAGRID', () => {
+    component.question.templateId = 'mcq-vertical-split';
+    component.ngOnInit();
+    expect(component.layout).toBe('IMAGEQAGRID');
+  });
+  it('should set layout to MULTIIMAGEGRID', () => {
+    component.question.templateId = 'mcq-grid-split';
+    component.ngOnInit();
+    expect(component.layout).toBe('MULTIIMAGEGRID');
+  });
+  it('should not set any layout', () => {
+    component.question.templateId = 'mcq';
+    component.ngOnInit();
+    expect(component.layout).toBeUndefined;
+  });
   it('should return a element on view init', () => {
     spyOn(document, 'getElementsByClassName').and.returnValue([document.createElement('div')]);
     component.ngAfterViewInit();
@@ -206,5 +226,28 @@ describe('McqComponent', () => {
     component.showQumlPopup = true;
     component.closePopUp();
     component.showQumlPopup = false;
+  });
+  it('should not set solutions', () => {
+    component.question.solutions = undefined;
+    component.ngOnInit();
+    expect(component.solutions).toEqual([]);
+  });
+
+  it('should call replaceLatexText', () => {
+    component.identifier = 'do_123';
+    const element = document.createElement('div');
+    const mathElement = document.createElement('div');
+    mathElement.classList.add('mathText');
+    element.appendChild(mathElement);
+    spyOn(document, 'getElementById').and.returnValue(element);
+    spyOn(document, 'getElementsByClassName').and.returnValue([element]);
+    // @ts-ignore
+    window.katex = {
+      render: () => { }
+    }
+    spyOn((window as any).katex, 'render');
+    component.replaceLatexText();
+    expect(document.getElementById).toHaveBeenCalled();
+    expect((window as any).katex.render).toHaveBeenCalled();
   });
 });

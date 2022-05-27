@@ -37,8 +37,8 @@ export const mockSectionPlayerConfig = {
               "SCORE": 1
             }
           },
-          "mapping": []
-        }
+        },
+        "mapping": [{ response: 0, outcomes: { SCORE: 1} }]
       },
       "language": [
         "English"

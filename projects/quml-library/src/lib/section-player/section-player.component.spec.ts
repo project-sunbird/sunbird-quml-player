@@ -72,6 +72,11 @@ describe('SectionPlayerComponent', () => {
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    spyOn(component, 'ngOnDestroy').and.callFake(() => { });
+    fixture.destroy();
+  });
+
   it('should create', () => {
     expect(component).toBeTruthy();
   });
@@ -608,6 +613,18 @@ describe('SectionPlayerComponent', () => {
     expect(response).toEqual(1);
   });
 
+  it('should return a score for a question - wrong answer', () => {
+    component.questions = mockSectionQuestions;
+    component.progressBarClass = mockSectionProgressBar.children;
+    const response = component.getScore(0, 'response1', false, {
+      option: {
+        "answer": false,
+        "value": 0
+      }
+    });
+    expect(response).toEqual(1);
+  });
+
   it('should calculate the score', () => {
     component.progressBarClass = mockSectionProgressBar.children;
     const score = component.calculateScore();
@@ -677,13 +694,30 @@ describe('SectionPlayerComponent', () => {
 
   it('should clean up the state before leaving the page', () => {
     const errorService = TestBed.get(ErrorService);
-    component.subscription = of(1, 2, 3).subscribe();
     spyOn(component['destroy$'], 'next');
     spyOn(errorService.getInternetConnectivityError, 'unsubscribe');
-    spyOn(component.subscription, 'unsubscribe');
     component.ngOnDestroy();
     expect(component['destroy$'].next).toHaveBeenCalledWith(true);
     expect(errorService.getInternetConnectivityError.unsubscribe).toHaveBeenCalled();
-    expect(component.subscription.unsubscribe).toHaveBeenCalled();
+  });
+
+  it('should change the height and width of the image modal', () => {
+    component.imageModal = new ElementRef({ nativeElement: jasmine.createSpyObj('nativeElement', ['style', 'height', 'width']) });
+    component.imageModal.nativeElement.style = {
+      height: '100%',
+      width: '100%'
+    }
+    component.imageZoomCount = 20;
+    component.setImageModalHeightWidth();
+    expect(component.imageModal.nativeElement.style.height).toBe('20%');
+    expect(component.imageModal.nativeElement.style.width).toBe('20%');
+  });
+
+
+  it('should call toggleScreenRotate', () => {
+    spyOn(viewerService, 'raiseHeartBeatEvent');
+    component.myCarousel = myCarousel;
+    component.toggleScreenRotate();
+    expect(viewerService.raiseHeartBeatEvent).toHaveBeenCalledWith('DEVICE_ROTATION_CLICKED', 'interact', 2);
   });
 });

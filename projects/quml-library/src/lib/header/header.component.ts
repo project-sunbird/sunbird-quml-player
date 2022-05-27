@@ -98,6 +98,7 @@ export class HeaderComponent implements OnInit, OnChanges, AfterViewInit, OnDest
   }
 
   timer() {
+    /* istanbul ignore else */
     if (this.duration > 0) {
       let durationInSec = this.duration;
       this.intervalRef = setInterval(() => {
@@ -113,6 +114,7 @@ export class HeaderComponent implements OnInit, OnChanges, AfterViewInit, OnDest
           this.durationEnds.emit(true);
           return false;
         }
+        /* istanbul ignore else */
         if (parseInt(durationInSec) <= parseInt(this.warningTime)) {
           this.showWarning = true;
         }
@@ -138,6 +140,7 @@ export class HeaderComponent implements OnInit, OnChanges, AfterViewInit, OnDest
   }
 
   onAnswerKeyDown(event: KeyboardEvent) {
+    /* istanbul ignore else */
     if (event.key === 'Enter') {
       event.stopPropagation();
       this.showSolution.emit()

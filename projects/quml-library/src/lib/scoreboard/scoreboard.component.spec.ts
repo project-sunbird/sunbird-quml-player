@@ -65,4 +65,26 @@ describe('ScoreboardComponent', () => {
     component.ngOnDestroy();
     expect(component.subscription.unsubscribe).toHaveBeenCalled();
   });
+
+  it('should call onReviewClicked for section Level questions', () => {
+    const viewerService = TestBed.get(ViewerService);
+    component.isSections = true;
+    component.scores = [{ identifier: 'do_123' }, { identifier: 'do_456' }];
+    spyOn(component, 'goToQuestion');
+    spyOn(viewerService, 'raiseHeartBeatEvent');
+    component.onReviewClicked();
+    expect(component.goToQuestion).toHaveBeenCalled();
+    expect(viewerService.raiseHeartBeatEvent).toHaveBeenCalledWith('SCORE_BOARD_REVIEW_CLICKED', 'interact', 'SUBMIT_PAGE');
+  });
+
+  it('should call onReviewClicked', () => {
+    const viewerService = TestBed.get(ViewerService);
+    component.isSections = false;
+    component.scores = [{ identifier: 'do_123' }, { identifier: 'do_456' }];
+    spyOn(component, 'goToQuestion');
+    spyOn(viewerService, 'raiseHeartBeatEvent');
+    component.onReviewClicked();
+    expect(component.goToQuestion).toHaveBeenCalledWith(1);
+    expect(viewerService.raiseHeartBeatEvent).toHaveBeenCalledWith('SCORE_BOARD_REVIEW_CLICKED', 'interact', 'SUBMIT_PAGE');
+  });
 });

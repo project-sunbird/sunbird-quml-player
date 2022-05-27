@@ -8,7 +8,8 @@ export const responseDeclaration = {
             outcomes: {
                 SCORE: 1
             }
-        }
+        },
+        mapping: []
     }
 }
 

@@ -153,4 +153,28 @@ describe('QumlLibraryService', () => {
   });
 
 
+  it('should call end event', () => {
+    const service = TestBed.get(QumlLibraryService);
+    spyOn(service, 'getEventOptions');
+    service.end(1200, 2, 5, 3, true, 1);
+    expect(service.getEventOptions).toHaveBeenCalled();
+  });
+
+  it('should call getEventOptions', () => {
+    const service = TestBed.get(QumlLibraryService);
+    service.telemetryObject = mockQumlLibraryServiceData.telemetryObject;
+    service.channel = mockQumlLibraryServiceData.channel;
+    service.pdata = mockQumlLibraryServiceData.pdata;
+    service.sid = mockQumlLibraryServiceData.sid;
+    service.uid = mockQumlLibraryServiceData.uid;
+    service.context = mockQumlLibraryServiceData.context;
+    service.playSessionId = mockQumlLibraryServiceData.playSessionId;
+    service.contentSessionId = mockQumlLibraryServiceData.contentSessionId;
+    service.rollup = mockQumlLibraryServiceData.rollup;
+    service.isSectionsAvailable = true;
+    service.config = mockQumlLibraryServiceData.config;
+    const options = service.getEventOptions();
+    expect(options.object).toEqual(service.telemetryObject);
+  });
+
 });

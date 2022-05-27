@@ -29,6 +29,7 @@ export class ScoreboardComponent implements OnInit, OnDestroy {
     });
 
     this.subscription = fromEvent(document, 'keydown').subscribe((e: KeyboardEvent) => {
+      /* istanbul ignore else */
       if (e['key'] === 'Enter') {
         e.stopPropagation();
         (document.activeElement  as HTMLElement).click();
