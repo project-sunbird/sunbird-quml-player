@@ -38,7 +38,7 @@ export const mockSectionPlayerConfig = {
             }
           },
         },
-        "mapping": [{ response: 0, outcomes: { SCORE: 1} }]
+        "mapping": [{ response: 0, outcomes: { SCORE: 1 } }]
       },
       "language": [
         "English"
@@ -116,7 +116,16 @@ export const mockSectionPlayerConfig = {
       "medium": [
         "English"
       ],
-      "media": [],
+      "media": [
+        {
+          "id": "do_113143853080248320171",
+          "src": "https://dockstorage.blob.core.windows.net/sunbird-content-dock/content/assets/do_113143853080248320171/13mb.mp4",
+          "type": "video",
+          "assetId": "do_113143853080248320171",
+          "name": "13mb",
+          "thumbnail": "https://dockstorage.blob.core.windows.net/sunbird-content-dock/content/do_113143853080248320171/artifact/1604474270424.thumb.png"
+        }
+      ],
       "createdOn": "2022-02-28T07:51:56.918+0000",
       "interactions": {
         "response1": {
@@ -342,6 +351,7 @@ export const mockSectionPlayerConfig = {
       }
     },
     "metadata": {
+      "maxQuestions": 2,
       "lastStatusChangedOn": "2022-02-28T07:56:09.702+0000",
       "parent": "do_213484313936035840138",
       "children": [

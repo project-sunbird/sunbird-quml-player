@@ -129,7 +129,7 @@ describe('HeaderComponent', () => {
     expect(viewerService.raiseHeartBeatEvent).toHaveBeenCalledWith('PROGRESS_INDICATOR_POPUP_CLOSED', 'interact', 1);
   });
 
-  xit('should update the time', fakeAsync(() => {
+  it('should update the time', fakeAsync(() => {
     component.showCountUp();
     tick(11000);
     expect(component.time).toEqual('0:10');
@@ -137,7 +137,7 @@ describe('HeaderComponent', () => {
     flush();
   }));
 
-  xit('should update the time for few minutes', fakeAsync(() => {
+  it('should update the time for few minutes', fakeAsync(() => {
     component.showCountUp();
     tick(90000);
     expect(component.time).toEqual('1:30');
@@ -145,7 +145,7 @@ describe('HeaderComponent', () => {
     flush();
   }));
 
-  xit('should decrease the timer', fakeAsync(() => {
+  it('should decrease the timer', fakeAsync(() => {
     component.duration = 12000;
     component.timer();
     tick(10000);
@@ -154,7 +154,7 @@ describe('HeaderComponent', () => {
     flush();
   }));
 
-  xit('should decrease the timer until full consumption', fakeAsync(() => {
+  it('should decrease the timer until full consumption', fakeAsync(() => {
     component.duration = 120;
     spyOn(window, 'clearInterval');
     spyOn(component.durationEnds, 'emit');

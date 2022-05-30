@@ -96,6 +96,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   ) { }
 
   ngOnChanges(changes: SimpleChanges): void {
+    /* istanbul ignore else */
     if (changes && Object.values(changes)[0].firstChange) {
       this.subscribeToEvents();
     }
@@ -108,7 +109,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   }
 
   private subscribeToEvents(): void {
-    this.viewerService.qumlPlayerEvent.asObservable()
+    this.viewerService.qumlPlayerEvent
       .pipe(takeUntil(this.destroy$))
       .subscribe((res) => {
         this.playerEvent.emit(res);
@@ -189,6 +190,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
       setTimeout(() => {
         const menuBtn = document.querySelector('#overlay-button') as HTMLElement;
+        /* istanbul ignore else */
         if (menuBtn) {
           menuBtn.focus();
         }
@@ -255,6 +257,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   removeAttribute() {
     setTimeout(() => {
       const firstSlide = document.querySelector('.carousel.slide') as HTMLElement;
+      /* istanbul ignore else */
       if (firstSlide) {
         firstSlide.removeAttribute("tabindex");
       }
@@ -262,10 +265,12 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   }
 
   sortQuestions() {
+    /* istanbul ignore else */
     if (this.questions.length && this.questionIds.length) {
       const ques = [];
       this.questionIds.forEach((questionId) => {
         const que = this.questions.find(question => question.identifier === questionId);
+        /* istanbul ignore else */
         if (que) {
           ques.push(que);
         }
@@ -290,15 +295,17 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     this.viewerService.raiseHeartBeatEvent(eventName.nextClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex() + 1);
     this.viewerService.raiseHeartBeatEvent(eventName.nextClicked, TelemetryType.impression, this.myCarousel.getCurrentSlideIndex() + 1);
 
+    /* istanbul ignore else */
     if (this.currentSlideIndex !== this.questions.length) {
       this.currentSlideIndex = this.currentSlideIndex + 1;
     }
 
-
+    /* istanbul ignore else */
     if (this.myCarousel.isLast(this.myCarousel.getCurrentSlideIndex()) || this.noOfQuestions === this.myCarousel.getCurrentSlideIndex()) {
       this.calculateScore();
     }
 
+    /* istanbul ignore else */
     if (this.myCarousel.getCurrentSlideIndex() > 0 &&
       this.questions[this.myCarousel.getCurrentSlideIndex() - 1].qType === 'MCQ' && this.currentOptionSelected) {
       const option = this.currentOptionSelected && this.currentOptionSelected['option'] ? this.currentOptionSelected['option'] : undefined;
@@ -307,10 +314,12 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
       this.viewerService.raiseResponseEvent(identifier, qType, option);
     }
 
+    /* istanbul ignore else */
     if (this.questions[this.myCarousel.getCurrentSlideIndex()]) {
       this.setSkippedClass(this.myCarousel.getCurrentSlideIndex());
     }
 
+    /* istanbul ignore else */
     if (this.myCarousel.getCurrentSlideIndex() === this.noOfQuestions) {
       this.clearTimeInterval();
       this.emitSectionEnd();
@@ -378,6 +387,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     const questionElement = document.querySelector('li.progressBar-border') as HTMLElement;
     const progressBarContainer = document.querySelector(".lanscape-mode-right") as HTMLElement;
 
+    /* istanbul ignore else */
     if (progressBarContainer && questionElement && !this.parentConfig.isReplayed) {
       this.utilService.scrollParentToChild(progressBarContainer, questionElement);
     }
@@ -421,6 +431,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   }
 
   goToSlideClicked(event, index) {
+    /* istanbul ignore else */
     if (!this.progressBarClass?.length) {
       /* istanbul ignore else */
       if (index === 0) {
@@ -442,6 +453,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   }
 
   onEnter(event, index) {
+    /* istanbul ignore else */
     if (event.keyCode === 13) {
       event.stopPropagation();
       this.goToSlideClicked(event, index);
@@ -454,8 +466,10 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   }
 
   onSectionEnter(event, identifier: string) {
+    /* istanbul ignore else */
     if (event.keyCode === 13) {
       event.stopPropagation();
+      /* istanbul ignore else */
       if (this.optionSelectedObj) {
         this.validateSelectedOption(this.optionSelectedObj, 'jump');
       }
@@ -470,6 +484,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
   onScoreBoardEnter(event: KeyboardEvent) {
     event.stopPropagation();
+    /* istanbul ignore else */
     if (event.key === 'Enter') {
       this.onScoreBoardClicked();
     }
@@ -478,6 +493,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   focusOnNextButton() {
     setTimeout(() => {
       const nextBtn = document.querySelector('.quml-navigation__next') as HTMLElement;
+      /* istanbul ignore else */
       if (nextBtn) {
         nextBtn.focus();
       }
@@ -485,6 +501,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   }
 
   getOptionSelected(optionSelected) {
+    /* istanbul ignore else */
     if (JSON.stringify(this.currentOptionSelected) === JSON.stringify(optionSelected)) {
       return; // Same option selected
     }
@@ -508,8 +525,10 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
     if (this.currentSolutions) {
       this.currentSolutions.forEach((ele, index) => {
+        /* istanbul ignore else */
         if (ele.type === 'video') {
           this.media.forEach((e) => {
+            /* istanbul ignore else */
             if (e.id === this.currentSolutions[index].value) {
               this.currentSolutions[index].type = 'video';
               this.currentSolutions[index].src = e.src;
@@ -519,6 +538,8 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
         }
       });
     }
+
+    /* istanbul ignore else */
     if (!this.showFeedBack) {
       this.validateSelectedOption(this.optionSelectedObj);
     }
@@ -531,9 +552,11 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   }
 
   private checkCompatibilityLevel(compatibilityLevel) {
+    /* istanbul ignore else */
     if (compatibilityLevel) {
       const checkContentCompatible = this.errorService.checkContentCompatibility(compatibilityLevel);
 
+      /* istanbul ignore else */
       if (!checkContentCompatible.isCompitable) {
         this.viewerService.raiseExceptionLog(errorCode.contentCompatibility, errorMessage.contentCompatibility,
           checkContentCompatible.error, this.sectionConfig?.config?.traceId);
@@ -608,10 +631,12 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
       'params': getParams()
     };
 
+    /* istanbul ignore else */
     if (edataItem && this.parentConfig.isSectionsAvailable) {
       edataItem.sectionId = this.sectionConfig.metadata.identifier;
     }
 
+    /* istanbul ignore else */
     if (!this.optionSelectedObj && !this.isAssessEventRaised && selectedQuestion.qType.toUpperCase() !== 'SA') {
       this.isAssessEventRaised = true;
       this.viewerService.raiseAssesEvent(edataItem, currentIndex + 1, 'No', 0, [], this.slideDuration);
