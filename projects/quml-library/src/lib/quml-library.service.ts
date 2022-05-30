@@ -36,6 +36,7 @@ export class QumlLibraryService {
     this.config = config;
     this.isSectionsAvailable = parentConfig?.isSectionsAvailable;
 
+    /* istanbul ignore else */
     if (!CsTelemetryModule.instance.isInitialised) {
       const telemetryConfig = {
         pdata: this.context.pdata,
@@ -190,6 +191,8 @@ export class QumlLibraryService {
         rollup: this.rollup || {}
       }
     };
+
+    /* istanbul ignore else */
     if (this.isSectionsAvailable) {
       options.context.cdata.push({ id: this.config.metadata.identifier, type: 'SectionId' });
     }

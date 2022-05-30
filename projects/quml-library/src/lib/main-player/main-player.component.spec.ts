@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 import { SunbirdPlayerSdkModule } from '@project-sunbird/sunbird-player-sdk-v9';
 import { QuestionCursor } from './../quml-question-cursor.service';
 import { QumlLibraryService } from '../quml-library.service';
@@ -9,6 +9,7 @@ import { MainPlayerComponent } from './main-player.component';
 import { ViewerService } from '../services/viewer-service/viewer-service';
 import { fakeMainProgressBar, fakeSections, playerConfig, singleContent } from './main-player.component.spec.data';
 import { UtilService } from '../util-service';
+import { of } from 'rxjs';
 
 describe('MainPlayerComponent', () => {
   let component: MainPlayerComponent;
@@ -36,6 +37,11 @@ describe('MainPlayerComponent', () => {
     component = fixture.componentInstance;
     component.playerConfig = playerConfig;
     fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    spyOn(component, 'ngOnDestroy').and.callFake(() => { });
+    fixture.destroy();
   });
 
   it('should create', () => {
@@ -273,7 +279,7 @@ describe('MainPlayerComponent', () => {
     component.totalNoOfQuestions = 0;
     component.mainProgressBar = [];
     component.sections = fakeSections;
-    component.setInitialScores();
+    component.setInitialScores(0);
     expect(component.totalNoOfQuestions).toEqual(4);
     expect(component.mainProgressBar.length).toBe(2);
   });
@@ -417,10 +423,12 @@ describe('MainPlayerComponent', () => {
       wrong: 0
     };
     component.isSummaryEventRaised = false;
+    component.subscription = of(1, 2, 3).subscribe();
     spyOn(component, 'calculateScore');
     spyOn<any>(component, 'getSummaryObject');
     spyOn(viewerService, 'raiseSummaryEvent').and.returnValue({});
     spyOn(component, 'raiseEndEvent');
+    spyOn(component.subscription, 'unsubscribe');
     component.ngOnDestroy();
     expect(component.calculateScore).toHaveBeenCalled();
     expect(component.getSummaryObject).toHaveBeenCalled();
@@ -431,13 +439,13 @@ describe('MainPlayerComponent', () => {
       wrong: 0
     });
     expect(component.raiseEndEvent).toHaveBeenCalledWith(4, true, 4);
+    expect(component.subscription.unsubscribe).toHaveBeenCalled();
   });
 
   it('should show error if the the mutltilevel sections are present', () => {
     component.playerConfig = playerConfig;
     component.playerConfig.metadata.children[0].children[0].children = [];
     component.initializeSections();
-    console.log('isMultiLevelSection', component.isMultiLevelSection);
     expect(component.isMultiLevelSection).toBe(true);
     expect(component.contentError).toEqual({
       messageHeader: 'Unable to load content',
@@ -463,4 +471,34 @@ describe('MainPlayerComponent', () => {
     expect(component['handleSideBarAccessibility']).toHaveBeenCalled();
     expect(viewerService['raiseHeartBeatEvent']).toHaveBeenCalled();
   });
+
+  it('should call toggleScreenRotate', () => {
+    const viewerService = TestBed.get(ViewerService);
+    spyOn(viewerService, 'raiseHeartBeatEvent');
+    component.sectionPlayer = {} as any;
+    component.sectionPlayer.myCarousel = myCarousel;
+    component.toggleScreenRotate();
+    expect(viewerService.raiseHeartBeatEvent).toHaveBeenCalledWith('DEVICE_ROTATION_CLICKED', 'interact', 2);
+  });
+
+  it('should handle close the menu with Accessibility', () => {
+    component.playerConfig = playerConfig;
+    component.disabledHandle = {
+      disengage: () => { }
+    };
+    component.subscription = of(1, 2, 3).subscribe();
+    component.handleSideBarAccessibility({ type: 'CLOSE_MENU' });
+    expect(component.disabledHandle).toBeNull();
+    expect(component.subscription).toBeNull();
+  });
+
+  it('should call calculateScore', () => {
+    component.mainProgressBar = fakeMainProgressBar;
+    spyOn(component, 'generateOutComeLabel');
+    const score = component.calculateScore();
+    expect(component.generateOutComeLabel).toHaveBeenCalled();
+    expect(score).toEqual(2);
+  });
+
+
 });

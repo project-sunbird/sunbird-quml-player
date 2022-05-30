@@ -41,6 +41,7 @@ describe('McqImageOptionComponent', () => {
     spyOn(component.imgOptionSelected, 'emit');
     component.solutions = [{ value: "<h2> this  is a solution </h2>" }];
     const event = new MouseEvent('click');
+    event.stopImmediatePropagation = () => { };
     component.optionClicked(event, { name: 'option 1' });
     expect(component.imgOptionSelected.emit).toHaveBeenCalled();
   });

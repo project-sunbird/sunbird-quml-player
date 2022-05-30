@@ -75,7 +75,8 @@ describe('McqOptionComponent', () => {
   });
 
   it('should emit the event for the selected option for multiple cardinality', () => {
-    const event = new MouseEvent('click');
+    let event = new MouseEvent('click');
+    event.stopImmediatePropagation = () => {};
     const mcqOptions = [{
       "label": "<p>Rahul Gandhi</p>",
       "value": 1
