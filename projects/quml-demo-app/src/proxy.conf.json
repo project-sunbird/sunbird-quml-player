@@ -1,0 +1,14 @@
+{
+  "/api/*": {
+    "target": "https://staging.sunbirded.org",
+    "secure": false,
+    "logLevel": "debug",
+    "changeOrigin": true
+  },
+  "/learner/*": {
+    "target": "https://staging.sunbirded.org",
+    "secure": false,
+    "logLevel": "debug",
+    "changeOrigin": true
+  }
+}
