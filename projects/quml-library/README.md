@@ -19,7 +19,7 @@ These are the peerDependencies of the library, need to be installed in order to 
     npm install ngx-bootstrap@6.0.0 --save
 
 
-Note: *As QuML library is build with angular version 9, we are using **bootstrap@4.6.1** and **ngx-bootstrap@6.0.0** which are the compatible versions.  
+Note: *As QuML library is build with angular version 9, we are using **bootstrap@4.6.1** and **ngx-bootstrap@6.0.0** which are the compatible versions.Use Node.js version 12 and Angular version 10.
 For more reference Check compatibility document for ng-bootstrap [here](https://valor-software.com/ngx-bootstrap/#/documentation#compatibility)*  
 
 ## :label: Step 2: Add CSS
@@ -176,6 +176,7 @@ Follow below-mentioned steps to use it in plain javascript project:
 
 # :bookmark_tabs: QuML Player Contribution Guide  
 ## Repo Setup  
+  - Install Node 12.x and Angular 10
   - Clone the Repo with desired release-branch - https://github.com/project-sunbird/sunbird-quml-player
   - Add the your baseUrl in the *environment.ts* and *proxy.conf.json* files
   - If there any changes in API endpoints, update the *app.constant.ts* file
