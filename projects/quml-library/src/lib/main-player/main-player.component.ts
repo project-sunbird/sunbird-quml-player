@@ -152,14 +152,15 @@ export class MainPlayerComponent implements OnInit {
         childNodes = this.playerConfig.metadata.childNodes;
       }
 
+      /* istanbul ignore else */
+      if (this.playerConfig.metadata?.shuffle && !this.playerConfig.config?.progressBar?.length) {
+        childNodes = _.shuffle(childNodes);
+      }
+      
       const maxQuestions = this.playerConfig.metadata.maxQuestions;
       /* istanbul ignore else */
       if (maxQuestions) {
         childNodes = childNodes.slice(0, maxQuestions);
-      }
-      /* istanbul ignore else */
-      if (this.playerConfig.metadata?.shuffle && !this.playerConfig.config?.progressBar?.length) {
-        childNodes = _.shuffle(childNodes);
       }
       childNodes.forEach((element, index) => {
         this.totalNoOfQuestions++;
