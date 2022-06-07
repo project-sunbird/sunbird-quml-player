@@ -20,7 +20,7 @@ export class AppComponent implements OnInit {
   }
 
   initializePlayer(metadata) {
-    let qumlConfigMetadata: any = localStorage.getItem('config') || '{}';
+    let qumlConfigMetadata: any = localStorage.getItem(`config_${this.contentId}`) || '{}';
     let config;
     if (qumlConfigMetadata) {
       qumlConfigMetadata = JSON.parse(qumlConfigMetadata);
@@ -40,7 +40,7 @@ export class AppComponent implements OnInit {
     // Store the metaData locally
     if (event.eid === 'END') {
       let qumlMetaDataConfig = event.metaData;
-      localStorage.setItem('config', JSON.stringify(qumlMetaDataConfig));
+      localStorage.setItem(`config_${this.contentId}`, JSON.stringify(qumlMetaDataConfig));
       this.playerConfig.config = { ...samplePlayerConfig.config, ...qumlMetaDataConfig };;
     }
   }
