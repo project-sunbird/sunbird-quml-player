@@ -10,5 +10,11 @@
     "secure": false,
     "logLevel": "debug",
     "changeOrigin": true
+  },
+  "/assets/*": {
+    "target": "https://staging.sunbirded.org",
+    "secure": false,
+    "logLevel": "debug",
+    "changeOrigin": true
   }
 }

@@ -10,6 +10,8 @@ import { ViewerService } from '../services/viewer-service/viewer-service';
 import { eventName, pageId, TelemetryType } from '../telemetry-constants';
 import { UtilService } from '../util-service';
 
+const DEFAULT_SCORE: number = 1;
+
 @Component({
   selector: 'quml-section-player',
   templateUrl: './section-player.component.html',
@@ -87,6 +89,8 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   initialSlideDuration: number;
   disabledHandle: any;
   isAssessEventRaised = false;
+  isShuffleQuestions = false;
+  isSingleQuestion = false;
   constructor(
     public viewerService: ViewerService,
     public utilService: UtilService,
@@ -173,6 +177,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     }
     this.threshold = this.sectionConfig.context?.threshold || 3;
     this.questionIds = _.cloneDeep(this.sectionConfig.metadata.childNodes);
+    this.isSingleQuestion = this.questionIds.length === 1;
 
     /* istanbul ignore else */
     if (this.parentConfig.isReplayed) {
@@ -197,12 +202,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
       }, 200);
     }
 
-    const maxQuestions = this.sectionConfig.metadata.maxQuestions;
-    /* istanbul ignore else */
-    if (maxQuestions) {
-      this.questionIds = this.questionIds.slice(0, maxQuestions);
-    }
-
+    this.isShuffleQuestions = this.sectionConfig.metadata.shuffle;
     this.noOfQuestions = this.questionIds.length;
     this.viewerService.initialize(this.sectionConfig, this.threshold, this.questionIds, this.parentConfig);
     this.checkCompatibilityLevel(this.sectionConfig.metadata.compatibilityLevel);
@@ -422,6 +422,14 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
         }
         this.prevSlide();
       }
+    }
+  }
+
+  updateScoreForShuffledQuestion() {
+    const currentIndex = this.myCarousel.getCurrentSlideIndex() - 1;
+
+    if (this.isShuffleQuestions && !this.isSingleQuestion) {
+      this.updateScoreBoard(currentIndex, 'correct', undefined, DEFAULT_SCORE);
     }
   }
 
@@ -855,6 +863,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
       this.focusOnNextButton();
       this.active = true;
       this.progressBarClass[this.myCarousel.getCurrentSlideIndex() - 1].class = 'correct';
+      this.updateScoreForShuffledQuestion();
       /* istanbul ignore else */
       if (question) {
         const index = this.questions.findIndex(que => que.identifier === question.identifier);
@@ -872,6 +881,9 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   getScore(currentIndex, key, isCorrectAnswer, selectedOption?) {
     /* istanbul ignore else */
     if (isCorrectAnswer) {
+      if (this.isShuffleQuestions && !this.isSingleQuestion) {
+        return DEFAULT_SCORE;
+      }
       return this.questions[currentIndex].responseDeclaration[key].correctResponse.outcomes.SCORE ?
         this.questions[currentIndex].responseDeclaration[key].correctResponse.outcomes.SCORE :
         this.questions[currentIndex].responseDeclaration[key].maxScore || 1;

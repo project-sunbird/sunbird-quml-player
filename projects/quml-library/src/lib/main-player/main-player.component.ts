@@ -105,7 +105,7 @@ export class MainPlayerComponent implements OnInit {
   initializeSections() {
     const childMimeType = _.map(this.playerConfig.metadata.children, 'mimeType');
     this.parentConfig.isSectionsAvailable = this.isSectionsAvailable = childMimeType[0] === MimeType.questionSet;
-    this.parentConfig.metadata = {...this.playerConfig.metadata};
+    this.parentConfig.metadata = { ...this.playerConfig.metadata };
     this.viewerService.sectionQuestions = [];
     if (this.isSectionsAvailable) {
       this.isMultiLevelSection = this.getMultilevelSection(this.playerConfig.metadata);
@@ -120,9 +120,7 @@ export class MainPlayerComponent implements OnInit {
         this.sections = _.map(children, (child) => {
           let childNodes = child?.children?.map(item => item.identifier) || [];
           const maxQuestions = child?.maxQuestions;
-          if (child?.shuffle && !this.playerConfig.config?.progressBar?.length) {
-            childNodes = _.shuffle(childNodes);
-          }
+          childNodes = child?.shuffle ? _.shuffle(childNodes) : childNodes;
 
           if (maxQuestions) {
             childNodes = childNodes.slice(0, maxQuestions);
@@ -152,11 +150,7 @@ export class MainPlayerComponent implements OnInit {
         childNodes = this.playerConfig.metadata.childNodes;
       }
 
-      /* istanbul ignore else */
-      if (this.playerConfig.metadata?.shuffle && !this.playerConfig.config?.progressBar?.length) {
-        childNodes = _.shuffle(childNodes);
-      }
-      
+      childNodes = this.playerConfig.metadata?.shuffle ? _.shuffle(childNodes) : childNodes;
       const maxQuestions = this.playerConfig.metadata.maxQuestions;
       /* istanbul ignore else */
       if (maxQuestions) {
@@ -170,13 +164,16 @@ export class MainPlayerComponent implements OnInit {
         });
       });
       this.playerConfig.metadata.childNodes = childNodes;
-      if (this.playerConfig.config?.progressBar?.length) {
-        this.mainProgressBar = _.cloneDeep(this.playerConfig.config.progressBar);
-      }
-      if (this.playerConfig.config?.questions?.length) {
-        const questionsObj = this.playerConfig.config.questions.find(item => item.id === this.playerConfig.metadata.identifier);
-        if (questionsObj?.questions) {
-          this.viewerService.updateSectionQuestions(this.playerConfig.metadata.identifier, questionsObj.questions);
+
+      if (!this.playerConfig.metadata?.shuffle) {
+        if (this.playerConfig.config?.progressBar?.length) {
+          this.mainProgressBar = _.cloneDeep(this.playerConfig.config.progressBar);
+        }
+        if (this.playerConfig.config?.questions?.length) {
+          const questionsObj = this.playerConfig.config.questions.find(item => item.id === this.playerConfig.metadata.identifier);
+          if (questionsObj?.questions) {
+            this.viewerService.updateSectionQuestions(this.playerConfig.metadata.identifier, questionsObj.questions);
+          }
         }
       }
       this.activeSection = _.cloneDeep(this.playerConfig);
