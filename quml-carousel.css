@@ -235,3 +235,12 @@
     color: #fff;
     text-align: center;
   }
+  .sb-custom-qumlkta .image{
+    margin: 0 !important;
+  }
+  .sb-custom-quml p{
+    text-align: left !important;
+  }
+  .sb-custom-quml .scoreboard-button-container{
+    text-align: left !important;
+  }
