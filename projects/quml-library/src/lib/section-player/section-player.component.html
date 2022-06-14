@@ -123,7 +123,7 @@
     [showSolutionButton]="showUserSolution" (showSolution)="viewSolution()" (showHint)="viewHint()"
     (closeAlert)="closeAlertBox($event)"></quml-alert>
 
-  <quml-mcq-solutions *ngIf="showSolution" [question]="currentQuestion" [options]="currentOptions"
+  <quml-mcq-solutions class="sb-custom-quml" *ngIf="showSolution" [question]="currentQuestion" [options]="currentOptions"
     [solutions]="currentSolutions" (close)="closeSolution()"></quml-mcq-solutions>
 </div>
 
