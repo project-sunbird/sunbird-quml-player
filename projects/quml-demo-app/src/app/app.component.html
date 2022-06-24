@@ -1,2 +1,2 @@
-<quml-main-player (playerEvent)="getPlayerEvents($event)" (telemetryEvent)="getTelemetryEvents($event)">
-</quml-main-player>
+<quml-main-player *ngIf="playerConfig" (playerEvent)="getPlayerEvents($event)"
+  (telemetryEvent)="getTelemetryEvents($event)"></quml-main-player>

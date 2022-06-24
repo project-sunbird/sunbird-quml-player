@@ -59,6 +59,8 @@ export interface Config {
     lastQuestionId?: string;
     duration?: number;
     nextContent?: NextContent;
+    showDeviceOrientation?: boolean;
+    showLegend?: boolean;
 }
 
 export interface QumlPlayerConfig {
@@ -100,9 +102,13 @@ export interface IParentConfig {
     identifier: string;
     contentName: string;
     baseUrl: string;
+    isAvailableLocally: boolean;
     instructions: any;
     questionCount: number;
     sideMenuConfig: ISideMenuConfig;
+    showFeedback: boolean;
+    showLegend: boolean;
+    metadata?: any;
 }
 
 export interface ISummary {

@@ -8,40 +8,42 @@
     </div>
   </div>
 
-  <div class="scoreboard__points" *ngIf="!isSections && showFeedBack">
-    <div *ngFor="let score of scores; let i = index" class="scoreboard__index" (click)="goToQuestion(i+1)" tabindex="0" attr.aria-label="question number {{score.index}}"
-      [ngClass]="score.class">
-      {{score.index}}
+  <div class="sections-score-card">
+    <div class="sections-score-count-info">
+      <div class="mb-15">Total Questions: {{totalNoOfQuestions}}</div>
+      <div class="mb-15">Questions Answered: {{summary?.correct + summary?.wrong}}</div>
+      <div class="mb-15">Questions Skipped: {{summary?.skipped}}</div>
+      <div class="mb-15">Questions not Viewed: {{totalNoOfQuestions - (summary?.correct + summary?.wrong + summary?.skipped)}}</div>
     </div>
-  </div>
 
-  <div class="scoreboard__points" *ngIf="!isSections && !showFeedBack">
-    <div *ngFor="let score of scores; let i = index" class="scoreboard__index" (click)="goToQuestion(i+1)" tabindex="0" attr.aria-label="question number {{score.index}}"
-      [ngClass]="score.class === 'skipped' ? score.class : score.class === 'unattempted' ? score.class : 'attempted'">
-      {{score.index}}
-    </div>
-  </div>
-
-  <div class="sections-score-card" *ngIf="isSections">
-    <div *ngFor="let section of scores">
-      <div class="sections-score-card__title">{{section?.index}}</div>
-      <div class="sections-score-card__points" *ngIf="showFeedBack">
-        <div *ngFor="let score of section?.children; let i = index" class="scoreboard__index" tabindex="0" attr.aria-label="question number {{score.index}}"
-          (click)="goToQuestion(i+1, section.identifier)" [ngClass]="score.class">
+    <div class="sections-score-count-sections">
+      <div class="scoreboard__points" *ngIf="!isSections">
+        <div *ngFor="let score of scores; let i = index" class="scoreboard__index" (click)="goToQuestion(i+1)"
+          tabindex="0" attr.aria-label="question number {{score.index}}"
+          [ngClass]="showFeedBack ? score.class : (score.class === 'skipped' ? score.class : (score.class === 'unattempted' ? score.class : 'attempted'))">
           {{score.index}}
         </div>
       </div>
-      <div class="sections-score-card__points" *ngIf="!showFeedBack">
-        <div *ngFor="let score of section?.children; let i = index" class="scoreboard__index" tabindex="0" attr.aria-label="question number {{score.index}}"
-          (click)="goToQuestion(i+1, section.identifier)" [ngClass]="score.class">
-          {{score.index}}
+
+      <div *ngIf="isSections">
+        <div *ngFor="let section of scores" class="sections-score-counts">
+          <div class="sections-score-card__title">Section {{section?.index}}</div>
+          <div class="sections-score-card__points">
+            <div *ngFor="let score of section?.children; let i = index" class="scoreboard__index" tabindex="0"
+              attr.aria-label="question number {{score.index}}" (click)="goToQuestion(i+1, section.identifier)"
+              [ngClass]="score.showFeedback ? score.class : (score.class === 'skipped' ? score.class : (score.class === 'unattempted' ? score.class : 'attempted'))">
+              {{score.index}}
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
   <div class="scoreboard__btn-container">
-    <button type="submit" class="sb-btn sb-btn-primary sb-btn-normal sb-btn-radius px-20"
+    <button type="submit" class="sb-btn sb-btn-outline-primary sb-btn-normal sb-btn-radius px-20 mx-8"
+      (click)="onReviewClicked()">Review</button>
+    <button type="submit" class="sb-btn sb-btn-primary sb-btn-normal sb-btn-radius px-20 mx-8"
       (click)="submitClicked.emit({type:'submit-clicked'})">Submit</button>
   </div>
 </div>

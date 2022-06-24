@@ -60,11 +60,12 @@ export class ViewerService {
     this.qumlPlayerStartTime = this.qumlPlayerLastPageTime = new Date().getTime();
     this.currentQuestionIndex = 1;
     this.contentName = config.metadata.name;
-    this.isAvailableLocally = config.metadata.isAvailableLocally;
+    this.isAvailableLocally = parentConfig.isAvailableLocally;
     this.isSectionsAvailable = parentConfig?.isSectionsAvailable;
     this.src = config.metadata.artifactUrl || '';
     this.questionSetId = config.metadata.identifier;
 
+    /* istanbul ignore else */
     if (config.context.userData) {
       this.userName = config.context.userData.firstName + ' ' + config.context.userData.lastName;
     }
@@ -97,7 +98,6 @@ export class ViewerService {
       }
     });
   }
-
 
   raiseTelemetryEvent(event: any) {
     switch (event.eid) {
@@ -154,14 +154,16 @@ export class ViewerService {
   }
 
   getQuestion() {
-    let indentiferForQuestion = this.identifiers.splice(0, this.threshold);
-    this.questionCursor.getQuestion(indentiferForQuestion).subscribe((question) => {
-      this.qumlQuestionEvent.emit(question);
-    }, (error) => {
-      this.qumlQuestionEvent.emit({
-        error: error
-      })
-    })
+    if (this.identifiers.length) {
+      let questionIdentifier = this.identifiers.splice(0, this.threshold);
+      this.questionCursor.getQuestion(questionIdentifier[0]).subscribe((question) => {
+        this.qumlQuestionEvent.emit(question);
+      }, (error) => {
+        this.qumlQuestionEvent.emit({
+          error: error
+        });
+      });
+    }
   }
 
   generateMaxAttemptEvents(currentattempt: number, maxLimitExceeded: boolean, isLastAttempt: boolean) {

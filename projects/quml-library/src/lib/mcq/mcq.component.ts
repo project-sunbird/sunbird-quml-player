@@ -12,10 +12,10 @@ declare var katex: any;
 
 })
 export class McqComponent implements OnInit, AfterViewInit {
-  @Input() public question?: any;
+  @Input() question?: any;
   @Input() identifier: any;
-  @Input() public layout?: string;
-  @Input() replayed : boolean;
+  @Input() layout?: string;
+  @Input() replayed: boolean;
   @Input() tryAgain?: boolean;
   @Output() componentLoaded = new EventEmitter<any>();
   @Output() answerChanged = new EventEmitter<any>();
@@ -29,29 +29,35 @@ export class McqComponent implements OnInit, AfterViewInit {
   solutions: Array<[]>;
   cardinality: string;
 
-
-
   constructor(
-    public domSanitizer: DomSanitizer , 
+    public domSanitizer: DomSanitizer,
     public utilService: UtilService) {
   }
 
-  async ngOnInit() {
-
+  ngOnInit() {
     if (this.question?.solutions) {
       this.solutions = this.question.solutions;
     }
-    let  key:any = this.utilService.getKeyValue(Object.keys(this.question.responseDeclaration));
+    let key: any = this.utilService.getKeyValue(Object.keys(this.question.responseDeclaration));
     this.cardinality = this.question.responseDeclaration[key]['cardinality'];
-    if (this.question.templateId === "mcq-vertical") {
-      this.layout = 'DEFAULT';
-    } else if (this.question.templateId === "mcq-horizontal") {
-      this.layout = 'IMAGEGRID';
-    } else if (this.question.templateId === "mcq-vertical-split") {
-      this.layout = 'IMAGEQAGRID';
-    } else if (this.question.templateId === "mcq-grid-split") {
-      this.layout = 'MULTIIMAGEGRID';
+
+    switch(this.question.templateId) {
+      case "mcq-vertical": 
+        this.layout = 'DEFAULT';
+        break;
+      case "mcq-horizontal": 
+        this.layout = 'IMAGEGRID';
+        break;
+      case "mcq-vertical-split":
+        this.layout = 'IMAGEQAGRID';
+        break;
+      case "mcq-grid-split":
+        this.layout = 'MULTIIMAGEGRID';
+        break;
+      default:
+        console.error("Invalid templateId");
     }
+
     this.renderLatex();
     this.mcqQuestion = this.domSanitizer.sanitize(SecurityContext.HTML,
       this.domSanitizer.bypassSecurityTrustHtml(this.question.body));
@@ -75,23 +81,18 @@ export class McqComponent implements OnInit, AfterViewInit {
       const option = this.options[j];
       const optionValue = option.value.body;
       const optionHtml = this.domSanitizer.sanitize(SecurityContext.HTML, this.domSanitizer.bypassSecurityTrustHtml(optionValue));
-      const selected = false;
       const optionToBePushed: any = {};
       optionToBePushed.index = j;
       optionToBePushed.optionHtml = optionHtml;
-      optionToBePushed.selected = selected;
+      optionToBePushed.selected = false;
       optionToBePushed.url = imageUrl;
       this.mcqOptions.push(optionToBePushed);
     }
   }
 
   renderLatex() {
-    const _instance = this;
-    setTimeout(function () {
-      _instance.replaceLatexText();
-      const images = document.getElementsByTagName('img');
-      if (images != null && images.length > 0) {
-      }
+    setTimeout(() => {
+      this.replaceLatexText();
     }, 100);
   }
 
@@ -118,5 +119,4 @@ export class McqComponent implements OnInit, AfterViewInit {
   closePopUp() {
     this.showQumlPopup = false;
   }
-
 }

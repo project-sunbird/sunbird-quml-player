@@ -40,7 +40,9 @@ describe('McqImageOptionComponent', () => {
   it('should emit event on click', () => {
     spyOn(component.imgOptionSelected, 'emit');
     component.solutions = [{ value: "<h2> this  is a solution </h2>" }];
-    component.optionClicked({});
+    const event = new MouseEvent('click');
+    event.stopImmediatePropagation = () => { };
+    component.optionClicked(event, { name: 'option 1' });
     expect(component.imgOptionSelected.emit).toHaveBeenCalled();
   });
 
@@ -57,7 +59,7 @@ describe('McqImageOptionComponent', () => {
     spyOn(component, 'optionClicked');
     component.onEnter(ev, mcqOption);
     expect(ev.stopPropagation).toHaveBeenCalled();
-    expect(component.optionClicked).toHaveBeenCalledWith(mcqOption);
+    expect(component.optionClicked).toHaveBeenCalledWith(ev, mcqOption);
   });
 
   it('should open the popup', () => {

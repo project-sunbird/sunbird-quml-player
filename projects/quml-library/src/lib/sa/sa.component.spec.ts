@@ -51,7 +51,7 @@ describe('SaComponent', () => {
     "se_gradeLevels": [
       "Class 4"
     ],
-    "showSolutions": "No",
+    "showSolutions": "Yes",
     "identifier": "do_21348431719053721619",
     "audience": [
       "Teacher"
@@ -59,7 +59,11 @@ describe('SaComponent', () => {
     "visibility": "Parent",
     "showTimer": "No",
     "author": "Vivek",
-    "solutions": [],
+    "solutions": [{
+      type: 'image',
+      value: 'do_123456789',
+      src: 'images/logo.png'
+    }],
     "qType": "SA",
     "languageCode": [
       "en"
@@ -76,7 +80,11 @@ describe('SaComponent', () => {
     "medium": [
       "English"
     ],
-    "media": [],
+    "media": [{
+      id: 'do_123456789',
+      baseUrl: 'http://staging.sunbirded.org/',
+      thumbnail: 'http://staging.sunbirded.org/images/do_1232/thumbnail.png',
+    }],
     "createdOn": "2022-02-28T07:53:33.298+0000",
     "interactions": {
       "validation": {
@@ -128,6 +136,15 @@ describe('SaComponent', () => {
     expect(component.answer).toEqual('<p><span style=\"background-color:rgb(255,255,255);color:rgb(77,81,86);\">In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before the final copy is available</span></p>');
   });
 
+  it('should initialize the component with proper data for local database', () => {
+    component.questions = questions;
+    component.baseUrl = 'http://localhost:3000/';
+    component.ngOnInit();
+    expect(component.question).toEqual('<p>What is lorem ipsum?</p>');
+    expect(component.answer).toEqual('<p><span style=\"background-color:rgb(255,255,255);color:rgb(77,81,86);\">In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before the final copy is available</span></p>');
+  });
+
+
   it('should toggle the answer based on changes, for replayed content', () => {
     component.replayed = true;
     component.ngOnChanges();
@@ -164,6 +181,18 @@ describe('SaComponent', () => {
   it('should handle Accessibility, on view init', () => {
     spyOn(component, 'handleKeyboardAccessibility');
     component.ngAfterViewInit();
+    expect(component.handleKeyboardAccessibility).toHaveBeenCalled();
+  });
+
+  it('should handle keyboard accessibility', () => {
+    const optionBody = document.createElement('div');
+    const anchor = document.createElement('a');
+    optionBody.classList.add('option-body');
+    optionBody.style.height = '100px';
+    optionBody.appendChild(anchor);
+    document.getElementsByClassName = jasmine.createSpy('getElementsByClassName').and.returnValue([optionBody]);
+    spyOn(component, 'handleKeyboardAccessibility');
+    component.handleKeyboardAccessibility();
     expect(component.handleKeyboardAccessibility).toHaveBeenCalled();
   });
 });

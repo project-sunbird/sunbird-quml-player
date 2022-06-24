@@ -14,6 +14,7 @@
     "build-lib-link": "npm run build-lib && npm run link-player",
     "test-lib": "ng test quml-library",
     "test-lib-coverage": "ng test quml-library --code-coverage=true",
+    "test-lib-ci": "ng test quml-library --watch=false --code-coverage --sourceMap=false",
     "mybuild": "npm run build",
     "serve": "node scripts/copyAssets.js && npm link ./dist/quml-library && ng serve --vendor-source-map",
     "build-web-component": "npm run build-lib-link && ng build quml-player-wc --output-hashing none && node ./build-wc.js"
@@ -30,8 +31,7 @@
     "@angular/platform-browser-dynamic": "^9.1.12",
     "@angular/router": "^9.1.12",
     "@project-sunbird/client-services": "4.0.1",
-    "@project-sunbird/sb-styles": "0.0.7",
-    "@project-sunbird/sunbird-quml-player-v9": "^4.7.2",
+    "@project-sunbird/sb-styles": "0.0.9",
     "@project-sunbird/telemetry-sdk": "0.0.26",
     "bootstrap": "4.1.1",
     "core-js": "^2.5.4",

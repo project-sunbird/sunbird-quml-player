@@ -10,4 +10,3 @@ export * from './lib/player/src/Player';
 export * from './lib/player/src/question/PlayerQuestionCursor';
 export * from './lib/services/player.service';
 export * from './lib/player/src/interfaces';
-

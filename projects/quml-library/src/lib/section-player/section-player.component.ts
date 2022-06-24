@@ -1,21 +1,23 @@
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { errorCode, errorMessage, ErrorService } from '@project-sunbird/sunbird-player-sdk-v9';
 import * as _ from 'lodash-es';
 
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Output, ViewChild } from '@angular/core';
-import { ErrorService, errorCode, errorMessage } from '@project-sunbird/sunbird-player-sdk-v9';
+import { fromEvent, Subject, Subscription } from 'rxjs';
 import { IAttempts, IParentConfig, QumlPlayerConfig } from '../quml-library-interface';
-import { Subject, Subscription, fromEvent } from 'rxjs';
-import { TelemetryType, eventName, pageId } from '../telemetry-constants';
+import { eventName, pageId, TelemetryType } from '../telemetry-constants';
 
-import { CarouselComponent } from 'ngx-bootstrap/carousel';
 import { ISideBarEvent } from '@project-sunbird/sunbird-player-sdk-v9/sunbird-player-sdk.interface';
-import { Player } from '../player/src/Player';
-import { QuestionCursor } from '../quml-question-cursor.service';
-import { UtilService } from '../util-service';
-import { ViewerService } from '../services/viewer-service/viewer-service';
 import maintain from 'ally.js/esm/maintain/_maintain';
+import { CarouselComponent } from 'ngx-bootstrap/carousel';
 import { takeUntil } from 'rxjs/operators';
-import { PlayerService } from '../services/player.service';
+import { Player } from '../player/src/Player';
 import { TelemetryService } from '../player/src/TelemetryService';
+import { QuestionCursor } from '../quml-question-cursor.service';
+import { PlayerService } from '../services/player.service';
+import { ViewerService } from '../services/viewer-service/viewer-service';
+import { UtilService } from '../util-service';
+
+const DEFAULT_SCORE: number = 1;
 
 @Component({
   selector: 'quml-section-player',
@@ -30,11 +32,9 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   @Input() mainProgressBar;
   @Input() sectionIndex = 0;
   @Input() parentConfig: IParentConfig;
+
   @Output() playerEvent = new EventEmitter<any>();
-  @Output() telemetryEvent = new EventEmitter<any>();
   @Output() sectionEnd = new EventEmitter<any>();
-  @Output() score = new EventEmitter<any>();
-  @Output() summary = new EventEmitter<any>();
   @Output() showScoreBoard = new EventEmitter<any>();
 
   @ViewChild('myCarousel', { static: false }) myCarousel: CarouselComponent;
@@ -83,6 +83,9 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   subscription: Subscription;
   player: Player;
   telemetryService: TelemetryService;
+  isAssessEventRaised = false;
+  isShuffleQuestions = false;
+  isSingleQuestion = false;
   constructor(
     public viewerService: ViewerService,
     public utilService: UtilService,
@@ -95,8 +98,11 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     this.telemetryService = TelemetryService.getInstance(this.player);
   }
 
-  ngOnChanges(changes): void {
-    this.subscribeToEvents();
+  ngOnChanges(changes: SimpleChanges): void {
+    /* istanbul ignore else */
+    if (changes && Object.values(changes)[0].firstChange) {
+      this.subscribeToEvents();
+    }
     this.setConfig();
   }
 
@@ -108,7 +114,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   }
 
   private subscribeToEvents(): void {
-    this.viewerService.qumlPlayerEvent.asObservable()
+    this.viewerService.qumlPlayerEvent
       .pipe(takeUntil(this.destroy$))
       .subscribe((res) => {
         this.playerEvent.emit(res);
@@ -171,12 +177,15 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     this.currentSlideIndex = 0;
     this.active = this.currentSlideIndex === 0 && this.sectionIndex === 0 && this.showStartPage;
 
+    /* istanbul ignore else */
     if (this.myCarousel) {
       this.myCarousel.selectSlide(this.currentSlideIndex);
     }
     this.threshold = this.sectionConfig.context?.threshold || 3;
     this.player.setRendererState({ singleParam: { paramName: "questionIds", paramData: _.cloneDeep(this.sectionConfig.metadata.childNodes) } });
+    this.isSingleQuestion = this.player.getRendererState().questionIds.length === 1;
 
+    /* istanbul ignore else */
     if (this.parentConfig.isReplayed) {
       this.player.setRendererState({ singleParam: { paramName: "initializeTimer", paramData: true } });
       // this.viewerService.raiseStartEvent(0);
@@ -194,17 +203,14 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
       setTimeout(() => {
         const menuBtn = document.querySelector('#overlay-button') as HTMLElement;
+        /* istanbul ignore else */
         if (menuBtn) {
           menuBtn.focus();
         }
       }, 200);
     }
 
-    const maxQuestions = this.sectionConfig.metadata.maxQuestions;
-    if (maxQuestions) {
-      this.player.setRendererState({ singleParam: { paramName: "questionIds", paramData: this.player.getRendererState().questionIds.slice(0, maxQuestions) } });
-    }
-
+    this.isShuffleQuestions = this.sectionConfig.metadata.shuffle;
     this.noOfQuestions = this.player.getRendererState().questionIds.length;
     this.viewerService.initialize(this.sectionConfig, this.threshold, this.player.getRendererState().questionIds, this.parentConfig);
     this.checkCompatibilityLevel(this.sectionConfig.metadata.compatibilityLevel);
@@ -212,7 +218,13 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     this.timeLimit = this.sectionConfig.metadata?.timeLimits?.maxTime || 0;
     this.warningTime = this.sectionConfig.metadata?.timeLimits?.warningTime || 0;
     this.showTimer = this.sectionConfig.metadata?.showTimer?.toLowerCase() !== 'no';
-    this.showFeedBack = this.sectionConfig.metadata?.showFeedback?.toLowerCase() !== 'no';
+
+    if (this.sectionConfig.metadata?.showFeedback) {
+      this.showFeedBack = this.sectionConfig.metadata?.showFeedback?.toLowerCase() !== 'no'; // prioritize the section level config
+    } else {
+      this.showFeedBack = this.parentConfig.showFeedback; // Fallback to parent config
+    }
+
     this.showUserSolution = this.sectionConfig.metadata?.showSolutions?.toLowerCase() !== 'no';
     this.startPageInstruction = this.sectionConfig.metadata?.instructions?.default || this.parentConfig.instructions;
     this.linearNavigation = this.sectionConfig.metadata.navigationMode === 'non-linear' ? false : true;
@@ -220,8 +232,11 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     this.points = this.sectionConfig.metadata?.points;
     this.allowSkip = this.sectionConfig.metadata?.allowSkip?.toLowerCase() !== 'no';
     this.showStartPage = this.sectionConfig.metadata?.showStartPage?.toLowerCase() !== 'no';
-    const x = this.parentConfig.isSectionsAvailable ? this.mainProgressBar.find(item => item.isActive)?.children :
-      this.mainProgressBar
+    const x = this.parentConfig.isSectionsAvailable ? this.mainProgressBar.find(item => item.isActive)?.children : this.mainProgressBar;
+    if (x) {
+      x.forEach(item => item.showFeedback = this.showFeedBack);
+    }
+
     this.player.setRendererState({ singleParam: { paramName: "progressBarClass", paramData: x } });
     const questions = this.viewerService.getSectionQuestions(this.sectionConfig.metadata.identifier);
     this.player.setRendererState({ singleParam: { paramName: "questions", paramData: questions } });
@@ -250,6 +265,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   removeAttribute() {
     setTimeout(() => {
       const firstSlide = document.querySelector('.carousel.slide') as HTMLElement;
+      /* istanbul ignore else */
       if (firstSlide) {
         firstSlide.removeAttribute("tabindex");
       }
@@ -264,21 +280,18 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     this.telemetryService.emitHeartBeatEvent(eventName.nextClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex() + 1);
     this.telemetryService.emitHeartBeatEvent(eventName.nextClicked, TelemetryType.impression, this.myCarousel.getCurrentSlideIndex() + 1);
 
+    /* istanbul ignore else */
     if (this.currentSlideIndex !== this.player.getRendererState().questions.length) {
       this.currentSlideIndex = this.currentSlideIndex + 1;
     }
 
-
-    if (this.myCarousel.getCurrentSlideIndex() === this.noOfQuestions) {
-      this.emitSectionEnd();
-      return;
-    }
-
+    /* istanbul ignore else */
     if (this.myCarousel.isLast(this.myCarousel.getCurrentSlideIndex()) || this.noOfQuestions === this.myCarousel.getCurrentSlideIndex()) {
       this.player.calculateSectionScore();
     }
 
     const { currentOptionSelected } = this.player.getRendererState();
+    /* istanbul ignore else */
     if (this.myCarousel.getCurrentSlideIndex() > 0 &&
       this.player.getRendererState().questions[this.myCarousel.getCurrentSlideIndex() - 1].qType === 'MCQ' && currentOptionSelected) {
       const option = currentOptionSelected && currentOptionSelected['option'] ? currentOptionSelected['option'] : undefined;
@@ -290,6 +303,13 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
     if (this.player.getRendererState().questions[this.myCarousel.getCurrentSlideIndex()]) {
       this.player.setSkippedClass(this.myCarousel.getCurrentSlideIndex());
+    }
+
+    /* istanbul ignore else */
+    if (this.myCarousel.getCurrentSlideIndex() === this.noOfQuestions) {
+      this.clearTimeInterval();
+      this.emitSectionEnd();
+      return;
     }
     this.myCarousel.move(this.carouselConfig.NEXT);
     this.setImageZoom();
@@ -346,10 +366,14 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
   activeSlideChange(event) {
     this.player.setRendererState({ singleParam: { paramName: "initialSlideDuration", paramData: new Date().getTime() } });
-    this.player.setRendererState({ singleParam: { paramName: "currentSlideIndex", paramData: event } });
-    const element = document.querySelector('li.progressBar-border');
-    if (element && !this.parentConfig.isReplayed) {
-      element.scrollIntoView({ behavior: 'smooth' });
+    this.isAssessEventRaised = false;
+    // this.player.setRendererState({ singleParam: { paramName: "currentSlideIndex", paramData: event } });
+    const questionElement = document.querySelector('li.progressBar-border') as HTMLElement;
+    const progressBarContainer = document.querySelector(".lanscape-mode-right") as HTMLElement;
+
+    /* istanbul ignore else */
+    if (progressBarContainer && questionElement && !this.parentConfig.isReplayed) {
+      this.utilService.scrollParentToChild(progressBarContainer, questionElement);
     }
   }
 
@@ -361,12 +385,14 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     if (this.myCarousel.getCurrentSlideIndex() === 0) {
       return this.nextSlide();
     }
+    /* istanbul ignore else */
     if (event?.type === 'next') {
       this.validateSelectedOption(this.player.getRendererState().selectedOption, 'next');
     }
   }
 
   previousSlideClicked(event) {
+    /* istanbul ignore else */
     if (event.event === 'previous clicked') {
       const selectedOption = this.player.getRendererState().selectedOption;
       if (selectedOption && this.showFeedBack) {
@@ -384,13 +410,21 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     }
   }
 
+  updateScoreForShuffledQuestion() {
+    const currentIndex = this.myCarousel.getCurrentSlideIndex() - 1;
+
+    if (this.isShuffleQuestions && !this.isSingleQuestion) {
+      this.player.updateScoreBoard(currentIndex, 'correct', undefined, DEFAULT_SCORE);
+    }
+  }
+
   getCurrentSectionIndex(): number {
     const currentSectionId = this.sectionConfig.metadata.identifier;
     return this.mainProgressBar.findIndex(section => section.identifier === currentSectionId);
   }
 
   goToSlideClicked(event, index) {
-    if (!this.player.getRendererState().progressBarClass) {
+    if (!this.player.getRendererState().progressBarClass?.length) {
       if (index === 0) {
         this.player.setRendererState({ singleParam: { paramName: 'jumpSlideIndex', paramData: 0 } });
         this.goToSlide(this.player.getRendererState().jumpSlideIndex);
@@ -411,6 +445,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   }
 
   onEnter(event, index) {
+    /* istanbul ignore else */
     if (event.keyCode === 13) {
       event.stopPropagation();
       this.goToSlideClicked(event, index);
@@ -423,6 +458,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   }
 
   onSectionEnter(event, identifier: string) {
+    /* istanbul ignore else */
     if (event.keyCode === 13) {
       const selectedOption = this.player.getRendererState().selectedOption;
       event.stopPropagation();
@@ -440,6 +476,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
   onScoreBoardEnter(event: KeyboardEvent) {
     event.stopPropagation();
+    /* istanbul ignore else */
     if (event.key === 'Enter') {
       this.onScoreBoardClicked();
     }
@@ -448,6 +485,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   focusOnNextButton() {
     setTimeout(() => {
       const nextBtn = document.querySelector('.quml-navigation__next') as HTMLElement;
+      /* istanbul ignore else */
       if (nextBtn) {
         nextBtn.focus();
       }
@@ -455,6 +493,10 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   }
 
   getOptionSelected(optionSelected) {
+    /* istanbul ignore else */
+    if (JSON.stringify(this.player.getRendererState().selectedOption) === JSON.stringify(optionSelected)) {
+      return; // Same option selected
+    }
     this.focusOnNextButton();
     this.active = true;
     this.player.setRendererState({ singleParam: { paramName: "currentOptionSelected", paramData: optionSelected } });
@@ -469,12 +511,14 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
       this.player.updateScoreBoard(this.showFeedBack, currentIndex, 'skipped');
     } else {
       this.player.setRendererState({ singleParam: { paramName: "selectedOption", paramData: optionSelected } });
+      this.isAssessEventRaised = false;
       this.currentSolutions = !_.isEmpty(optionSelected.solutions) ? optionSelected.solutions : undefined;
     }
     const media = this.player.getRendererState().questions[this.myCarousel.getCurrentSlideIndex() - 1].media;
 
     if (this.currentSolutions) {
       this.currentSolutions.forEach((ele, index) => {
+        /* istanbul ignore else */
         if (ele.type === 'video') {
           media.forEach((e) => {
             if (e.id === this.currentSolutions[index].value) {
@@ -486,6 +530,8 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
         }
       });
     }
+
+    /* istanbul ignore else */
     if (!this.showFeedBack) {
       this.validateSelectedOption(this.player.getRendererState().selectedOption);
     }
@@ -498,9 +544,11 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   }
 
   private checkCompatibilityLevel(compatibilityLevel) {
+    /* istanbul ignore else */
     if (compatibilityLevel) {
       const checkContentCompatible = this.errorService.checkContentCompatibility(compatibilityLevel);
 
+      /* istanbul ignore else */
       if (!checkContentCompatible.isCompitable) {
         // this.viewerService.raiseExceptionLog(errorCode.contentCompatibility, errorMessage.contentCompatibility,
         //   checkContentCompatible.error, this.sectionConfig?.config?.traceId);
@@ -540,45 +588,8 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     this.showAlert = false;
   }
 
-  sideBarEvents(event: ISideBarEvent) {
-    if (event.type === 'OPEN_MENU' || event.type === 'CLOSE_MENU') {
-      this.handleSideBarAccessibility(event);
-    }
-    // this.viewerService.raiseHeartBeatEvent(event.type, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex() + 1);
-    this.telemetryService.emitHeartBeatEvent(event.type, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex() + 1);
-  }
-
-  handleSideBarAccessibility(event) {
-    const navBlock = document.querySelector('.navBlock') as HTMLInputElement;
-    const overlayInput = document.querySelector('#overlay-input') as HTMLElement;
-    const overlayButton = document.querySelector('#overlay-button') as HTMLElement;
-    const sideBarList = document.querySelector('#sidebar-list') as HTMLElement;
-
-    if (event.type === 'OPEN_MENU') {
-      const isMobile = this.sectionConfig.config?.sideMenu?.showExit;
-      this.disabledHandle = isMobile ? maintain.hidden({ filter: [sideBarList, overlayButton, overlayInput] }) : maintain.tabFocus({ context: navBlock });
-      this.subscription = fromEvent(document, 'keydown').subscribe((e: KeyboardEvent) => {
-        if (e['key'] === 'Escape') {
-          const inputChecked = document.getElementById('overlay-input') as HTMLInputElement;
-          inputChecked.checked = false;
-          document.getElementById('playerSideMenu').style.visibility = 'hidden';
-          document.querySelector<HTMLElement>('.navBlock').style.marginLeft = '-100%';
-          // this.viewerService.raiseHeartBeatEvent('CLOSE_MENU', TelemetryType.interact, this.myCarousel.getCurrentSlideIndex() + 1);
-          this.telemetryService.emitHeartBeatEvent('CLOSE_MENU', TelemetryType.interact, this.myCarousel.getCurrentSlideIndex() + 1);
-          this.disabledHandle.disengage();
-          this.subscription.unsubscribe();
-          this.disabledHandle = null;
-          this.subscription = null;
-        }
-      });
-    } else if (event.type === 'CLOSE_MENU' && this.disabledHandle) {
-      this.disabledHandle.disengage();
-      this.disabledHandle = null;
-      if (this.subscription) {
-        this.subscription.unsubscribe();
-        this.subscription = null;
-      }
-    }
+  toggleScreenRotate(event?: KeyboardEvent | MouseEvent) {
+    this.telemetryService.emitHeartBeatEvent(eventName.deviceRotationClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex() + 1);
   }
 
   validateSelectedOption(option, type?: string) {
@@ -611,12 +622,14 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
       'params': getParams()
     };
 
+    /* istanbul ignore else */
     if (edataItem && this.parentConfig.isSectionsAvailable) {
       edataItem.sectionId = this.sectionConfig.metadata.identifier;
     }
 
-    if (!selectedOption && selectedQuestion.qType.toUpperCase() !== 'SA') {
+    if (!selectedOption && !this.isAssessEventRaised && selectedQuestion.qType.toUpperCase() !== 'SA') {
       // this.viewerService.raiseAssesEvent(edataItem, currentIndex + 1, 'No', 0, [], this.slideDuration);
+      this.isAssessEventRaised = true;
       this.telemetryService.emitAssesEvent(edataItem, currentIndex + 1, 'No', 0, [], this.slideDuration);
     }
 
@@ -631,7 +644,10 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
         if (option.option?.value === correctOptionValue) {
           const currentScore = this.player.getScore(currentIndex, key, true);
           // this.viewerService.raiseAssesEvent(edataItem, currentIndex + 1, 'Yes', currentScore, [option.option], this.slideDuration);
-          this.telemetryService.emitAssesEvent(edataItem, currentIndex + 1, 'Yes', currentScore, [option.option], this.slideDuration);
+          if (!this.isAssessEventRaised) {
+            this.isAssessEventRaised = true;
+            this.telemetryService.emitAssesEvent(edataItem, currentIndex + 1, 'Yes', currentScore, [option.option], this.slideDuration);
+          }
           this.player.setRendererState({ singleParam: { paramName: "alertType", paramData: 'correct' } });
           if (this.showFeedBack)
             this.correctFeedBackTimeOut(type);
@@ -641,6 +657,12 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
           this.player.setRendererState({ singleParam: { paramName: "alertType", paramData: 'wrong' } });
           const classType = this.player.getRendererState().progressBarClass[currentIndex].class === 'partial' ? 'partial' : 'wrong';
           this.player.updateScoreBoard(this.showFeedBack, currentIndex, classType, selectedOptionValue, currentScore);
+
+          /* istanbul ignore else */
+          if (!this.isAssessEventRaised) {
+            this.isAssessEventRaised = true;
+            this.telemetryService.emitAssesEvent(edataItem, currentIndex + 1, 'No', 0, [option.option], this.slideDuration);
+          }
         }
       }
       if (option.cardinality === 'multiple') {
@@ -681,15 +703,17 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
   correctFeedBackTimeOut(type?: string) {
     this.intervalRef = setTimeout(() => {
-      this.showAlert = false;
-      if (!this.myCarousel.isLast(this.myCarousel.getCurrentSlideIndex()) && type === 'next') {
-        this.nextSlide();
-      } else if (type === 'previous' && !this.stopAutoNavigation) {
-        this.prevSlide();
-      } else if (type === 'jump' && !this.stopAutoNavigation) {
-        this.goToSlide(this.player.getRendererState().jumpSlideIndex);
-      } else if (this.myCarousel.isLast(this.myCarousel.getCurrentSlideIndex())) {
-        this.emitSectionEnd();
+      if (this.showAlert) {
+        this.showAlert = false;
+        if (!this.myCarousel.isLast(this.myCarousel.getCurrentSlideIndex()) && type === 'next') {
+          this.nextSlide();
+        } else if (type === 'previous' && !this.stopAutoNavigation) {
+          this.prevSlide();
+        } else if (type === 'jump' && !this.stopAutoNavigation) {
+          this.goToSlide(this.player.getRendererState().jumpSlideIndex);
+        } else if (this.myCarousel.isLast(this.myCarousel.getCurrentSlideIndex())) {
+          this.emitSectionEnd();
+        }
       }
     }, 4000);
   }
@@ -705,6 +729,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
       this.myCarousel.selectSlide(0);
       this.active = this.currentSlideIndex === 0 && this.sectionIndex === 0 && this.showStartPage;
       this.showRootInstruction = true;
+      /* istanbul ignore else */
       if (!this.sectionConfig.metadata?.children?.length) {
         this.disableNext = true;
       }
@@ -713,6 +738,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
     this.player.setRendererState({ singleParam: { paramName: 'currentQuestionsMedia', paramData: this.player.getRendererState().questions[this.currentSlideIndex - 1]?.media } });
     this.player.setSkippedClass(this.currentSlideIndex - 1);
+    /* istanbul ignore else */
     if (!this.player.getRendererState().initializeTimer) {
       this.player.setRendererState({ singleParam: { paramName: "initializeTimer", paramData: true } });
     }
@@ -779,6 +805,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     setTimeout(() => {
       this.setImageHeightWidthClass();
     }, 100);
+    /* istanbul ignore else */
     if (this.currentSolutions) {
       this.showSolution = true;
     }
@@ -813,6 +840,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   }
 
   onAnswerKeyDown(event: KeyboardEvent) {
+    /* istanbul ignore else */
     if (event.key === 'Enter') {
       event.stopPropagation();
       this.getSolutions();
@@ -820,12 +848,14 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   }
 
   showAnswerClicked(event, question?) {
+    /* istanbul ignore else */
     if (event?.showAnswer) {
       this.focusOnNextButton();
       this.active = true;
       const progressBarClass = this.player.getRendererState().progressBarClass;
       progressBarClass[this.myCarousel.getCurrentSlideIndex() - 1].class = 'correct';
       this.player.setRendererState({ singleParam: { paramName: "progressBarClass", paramData: progressBarClass } });
+      this.updateScoreForShuffledQuestion();
 
       if (question) {
         const index = this.player.getRendererState().questions.findIndex(que => que.identifier === question.identifier);
@@ -865,9 +895,11 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
       image.setAttribute('id', imageId);
       _.forEach(this.player.getRendererState().currentQuestionsMedia, (val) => {
         if (imageId === val.id) {
-          if (this.sectionConfig.metadata.isAvailableLocally && this.parentConfig.baseUrl) {
+          if (this.parentConfig.isAvailableLocally && this.parentConfig.baseUrl) {
+            let baseUrl = this.parentConfig.baseUrl;
+            baseUrl = `${baseUrl.substring(0, baseUrl.lastIndexOf('/'))}/${this.sectionConfig.metadata.identifier}`;
             if (currentQuestionId) {
-              image['src'] = `${this.parentConfig.baseUrl}/${currentQuestionId}/${val.src}`;
+              image['src'] = `${baseUrl}/${currentQuestionId}/${val.src}`;
             }
           } else if (val.baseUrl) {
             image['src'] = val.baseUrl + val.src;
@@ -895,7 +927,6 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     });
   }
 
-  // Method Name changed
   zoomIn() {
     // this.viewerService.raiseHeartBeatEvent(eventName.zoomInClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
     this.telemetryService.emitHeartBeatEvent(eventName.zoomInClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
@@ -903,10 +934,10 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     this.setImageModalHeightWidth();
   }
 
-  // Method Name changed
   zoomOut() {
     // this.viewerService.raiseHeartBeatEvent(eventName.zoomOutClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
     this.telemetryService.emitHeartBeatEvent(eventName.zoomOutClicked, TelemetryType.interact, this.myCarousel.getCurrentSlideIndex());
+    /* istanbul ignore else */
     if (this.imageZoomCount > 100) {
       this.imageZoomCount = this.imageZoomCount - 10;
       this.setImageModalHeightWidth();
@@ -928,7 +959,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
   clearTimeInterval() {
     if (this.intervalRef) {
-      clearInterval(this.intervalRef);
+      clearTimeout(this.intervalRef);
     }
   }
 
@@ -937,8 +968,5 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
     this.errorService.getInternetConnectivityError.unsubscribe();
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
   }
 }

@@ -34,6 +34,7 @@ export class AlertComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscription = fromEvent(document, 'keydown').subscribe((e: KeyboardEvent) => {
       if (e['key'] === 'Tab') {
         const nextBtn = document.querySelector('.quml-navigation__previous') as HTMLElement;
+        /* istanbul ignore else */
         if (nextBtn) {
           this.close('close');
           nextBtn.focus();
@@ -45,19 +46,16 @@ export class AlertComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    const alertBody = document.querySelector('.quml-alert__body');
-
     setTimeout(() => {
       const wrongButton = document.querySelector('#wrongButton') as HTMLElement;
       const correctButton = document.querySelector('#correctButton') as HTMLElement;
-      const hintButton = document.querySelector('#hintButton') as HTMLElement;
 
-      if (this.alertType === 'wrong') {
+      if (this.alertType === 'wrong' && wrongButton) {
         wrongButton.focus();
-      } else if (this.alertType === 'correct' && this.showSolutionButton) {
+      } else if (this.alertType === 'correct' && this.showSolutionButton && correctButton) {
         correctButton.focus();
       }
-    }, 100);
+    }, 200);
   }
 
   viewHint() {
@@ -77,10 +75,12 @@ export class AlertComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    /* istanbul ignore else */
     if (this.previousActiveElement && !this.isFocusSet) {
       this.previousActiveElement.focus();
     }
 
+    /* istanbul ignore else */
     if (this.subscription) {
       this.subscription.unsubscribe();
     }

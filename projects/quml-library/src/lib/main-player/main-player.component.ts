@@ -1,18 +1,22 @@
 import * as _ from 'lodash-es';
 
-import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
-import { IAttempts, IParentConfig, ISummary, QumlPlayerConfig } from './../quml-library-interface';
-import { MimeType, TelemetryType, eventName, pageId } from './../telemetry-constants';
-
-import { NextContent } from '@project-sunbird/sunbird-player-sdk-v9/sunbird-player-sdk.interface';
-import { Player } from "../player/src/Player"
-import { UtilService } from './../util-service';
-import { ViewerService } from './../services/viewer-service/viewer-service';
+import { Component, EventEmitter, HostListener, OnInit, Output, ViewChild } from '@angular/core';
 import { contentErrorMessage } from '@project-sunbird/sunbird-player-sdk-v9/lib/player-utils/interfaces/errorMessage';
-import { PlayerService } from '../services/player.service';
-import { Event, EventType } from '../player/src/interfaces/Event';
-import { TelemetryService } from '../player/src/TelemetryService';
+import { NextContent } from '@project-sunbird/sunbird-player-sdk-v9/sunbird-player-sdk.interface';
+import { SectionPlayerComponent } from '../section-player/section-player.component';
+import { IAttempts, IParentConfig, ISummary, QumlPlayerConfig } from './../quml-library-interface';
+import { eventName, MimeType, pageId, TelemetryType } from './../telemetry-constants';
 
+import { Event, EventType } from '../player/src/interfaces/Event';
+import { Player } from "../player/src/Player";
+import { TelemetryService } from '../player/src/TelemetryService';
+import { PlayerService } from '../services/player.service';
+import { ViewerService } from './../services/viewer-service/viewer-service';
+import { UtilService } from './../util-service';
+
+import { ISideBarEvent } from '@project-sunbird/sunbird-player-sdk-v9/sunbird-player-sdk.interface';
+import maintain from 'ally.js/esm/maintain/_maintain';
+import { fromEvent, Subscription } from 'rxjs';
 @Component({
   selector: "quml-main-player",
   templateUrl: "./main-player.component.html",
@@ -24,6 +28,7 @@ export class MainPlayerComponent implements OnInit {
 
   player: Player;
   playerConfig: QumlPlayerConfig;
+  @ViewChild(SectionPlayerComponent) sectionPlayer!: SectionPlayerComponent;
 
   isLoading = false;
   isMultiLevelSection = false;
@@ -33,9 +38,10 @@ export class MainPlayerComponent implements OnInit {
     requiresSubmit: false,
     isSectionsAvailable: false,
     isReplayed: false,
-    identifier: "",
-    contentName: "",
-    baseUrl: "",
+    identifier: '',
+    contentName: '',
+    baseUrl: '',
+    isAvailableLocally: false,
     instructions: {},
     questionCount: 0,
     sideMenuConfig: {
@@ -43,10 +49,12 @@ export class MainPlayerComponent implements OnInit {
       showShare: true,
       showDownload: false,
       showExit: false,
-    }
+    },
+    showFeedback: false,
+    showLegend: true
   };
 
-  showEndPage = true;
+  showEndPage: boolean;
   showFeedBack: boolean;
   endPageReached = false;
   isEndEventRaised = false;
@@ -71,6 +79,8 @@ export class MainPlayerComponent implements OnInit {
   totalVisitedQuestion = 0;
   nextContent: NextContent;
   telemetryService: TelemetryService;
+  disabledHandle: any;
+  subscription: Subscription;
 
   constructor(
     public viewerService: ViewerService,
@@ -105,6 +115,7 @@ export class MainPlayerComponent implements OnInit {
     const childMimeType = _.map(this.playerConfig.metadata.children, 'mimeType');
     this.parentConfig.isSectionsAvailable = childMimeType[0] === MimeType.questionSet;
     this.player.setRendererState({ singleParam: { paramName: "isSectionsAvailable", paramData: this.parentConfig.isSectionsAvailable } });
+    this.parentConfig.metadata = { ...this.playerConfig.metadata };
     this.viewerService.sectionQuestions = [];
     if (this.parentConfig.isSectionsAvailable) {
       this.isMultiLevelSection = this.player.getMultilevelSection(this.playerConfig.metadata);
@@ -120,12 +131,7 @@ export class MainPlayerComponent implements OnInit {
           let childNodes =
             child?.children?.map((item) => item.identifier) || [];
           const maxQuestions = child?.maxQuestions;
-          if (
-            child?.shuffle &&
-            !this.playerConfig.config?.progressBar?.length
-          ) {
-            childNodes = _.shuffle(childNodes);
-          }
+          childNodes = child?.shuffle ? _.shuffle(childNodes) : childNodes;
 
           if (maxQuestions) {
             childNodes = childNodes.slice(0, maxQuestions);
@@ -161,15 +167,11 @@ export class MainPlayerComponent implements OnInit {
         childNodes = this.playerConfig.metadata.childNodes;
       }
 
+      childNodes = this.playerConfig.metadata?.shuffle ? _.shuffle(childNodes) : childNodes;
       const maxQuestions = this.playerConfig.metadata.maxQuestions;
+      /* istanbul ignore else */
       if (maxQuestions) {
         childNodes = childNodes.slice(0, maxQuestions);
-      }
-      if (
-        this.playerConfig.metadata?.shuffle &&
-        !this.playerConfig.config?.progressBar?.length
-      ) {
-        childNodes = _.shuffle(childNodes);
       }
       let totalQuestions = this.player.getRendererState().totalNoOfQuestions;
       childNodes.forEach((element, index) => {
@@ -185,18 +187,20 @@ export class MainPlayerComponent implements OnInit {
       });
       this.player.setRendererState({ singleParam: { paramName: "totalNoOfQuestions", paramData: totalQuestions } });
       this.playerConfig.metadata.childNodes = childNodes;
-      if (this.playerConfig.config?.progressBar?.length) {
-        this.player.setRendererState({ singleParam: { paramName: "mainProgressBar", paramData: _.cloneDeep(this.playerConfig.config.progressBar) } });
-      }
-      if (this.playerConfig.config?.questions?.length) {
-        const questionsObj = this.playerConfig.config.questions.find(
-          (item) => item.id === this.playerConfig.metadata.identifier
-        );
-        if (questionsObj?.questions) {
-          this.viewerService.updateSectionQuestions(
-            this.playerConfig.metadata.identifier,
-            questionsObj.questions
+      if (!this.playerConfig.metadata?.shuffle) {
+        if (this.playerConfig.config?.progressBar?.length) {
+          this.player.setRendererState({ singleParam: { paramName: "mainProgressBar", paramData: _.cloneDeep(this.playerConfig.config.progressBar) } });
+        }
+        if (this.playerConfig.config?.questions?.length) {
+          const questionsObj = this.playerConfig.config.questions.find(
+            (item) => item.id === this.playerConfig.metadata.identifier
           );
+          if (questionsObj?.questions) {
+            this.viewerService.updateSectionQuestions(
+              this.playerConfig.metadata.identifier,
+              questionsObj.questions
+            );
+          }
         }
       }
       this.player.setRendererState({ singleParam: { paramName: "activeSection", paramData: _.cloneDeep(this.playerConfig) } });
@@ -214,9 +218,10 @@ export class MainPlayerComponent implements OnInit {
     this.parentConfig.identifier = this.playerConfig.metadata?.identifier;
     this.parentConfig.requiresSubmit = this.playerConfig.metadata?.requiresSubmit?.toLowerCase() !== 'no';
     this.parentConfig.instructions = this.playerConfig.metadata?.instructions?.default;
+    this.parentConfig.showLegend = this.playerConfig.config?.showLegend !== undefined ? this.playerConfig.config.showLegend : true;
     this.nextContent = this.playerConfig.config?.nextContent;
     this.showEndPage = this.playerConfig.metadata?.showEndPage?.toLowerCase() !== 'no';
-    this.showFeedBack = this.playerConfig.metadata?.showFeedback?.toLowerCase() !== 'no';
+    this.parentConfig.showFeedback = this.showFeedBack = this.playerConfig.metadata?.showFeedback?.toLowerCase() === 'yes';
     this.parentConfig.sideMenuConfig = { ...this.parentConfig.sideMenuConfig, ...this.playerConfig.config.sideMenu };
     this.userName = this.playerConfig.context.userData.firstName + ' ' + this.playerConfig.context.userData.lastName;
 
@@ -225,6 +230,7 @@ export class MainPlayerComponent implements OnInit {
       this.playerConfig.metadata.basePath
     ) {
       this.parentConfig.baseUrl = this.playerConfig.metadata.basePath;
+      this.parentConfig.isAvailableLocally = true;
     }
 
     this.attempts = {
@@ -256,10 +262,12 @@ export class MainPlayerComponent implements OnInit {
   }
 
   onShowScoreBoard(event) {
+    /* istanbul ignore else */
     if (this.parentConfig.isSectionsAvailable) {
       const activeSectionIndex = this.player.getActiveSectionIndex();
       this.player.updateSectionScore(activeSectionIndex);
     }
+    this.getSummaryObject();
     this.loadScoreBoard = true;
   }
 
@@ -316,6 +324,7 @@ export class MainPlayerComponent implements OnInit {
     }
 
     let nextSectionIndex = activeSectionIndex + 1;
+    /* istanbul ignore else */
     if (event.jumpToSection) {
       const sectionIndex = sections.findIndex(
         (sec) => sec.metadata?.identifier === event.jumpToSection
@@ -347,11 +356,11 @@ export class MainPlayerComponent implements OnInit {
   prepareEnd(event) {
     this.player.calculateScore();
     this.setDurationSpent();
-    if (this.parentConfig.requiresSubmit) {
+    this.getSummaryObject();
+    if (this.parentConfig.requiresSubmit && !this.isDurationExpired) {
       this.loadScoreBoard = true;
     } else {
       this.endPageReached = true;
-      this.getSummaryObject();
       // this.viewerService.raiseSummaryEvent(
       //   this.totalVisitedQuestion,
       //   this.endPageReached,
@@ -415,6 +424,7 @@ export class MainPlayerComponent implements OnInit {
     setTimeout(() => {
       this.parentConfig.isReplayed = false;
       const element = document.querySelector('li.info-page') as HTMLElement;
+      /* istanbul ignore else */
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
       }
@@ -423,6 +433,7 @@ export class MainPlayerComponent implements OnInit {
 
   exitContent(event) {
     this.player.calculateScore();
+    /* istanbul ignore else */
     if (event?.type === 'EXIT') {
       // this.viewerService.raiseHeartBeatEvent(eventName.endPageExitClicked, TelemetryType.interact, pageId.endPage);
       this.telemetryService.emitHeartBeatEvent(eventName.endPageExitClicked, TelemetryType.interact, pageId.endPage);
@@ -458,21 +469,16 @@ export class MainPlayerComponent implements OnInit {
     // this.viewerService.raiseEndEvent(currentQuestionIndex, endPageSeen, score);
     this.telemetryService.emitEndEvent(currentQuestionIndex, endPageSeen, score, this.totalNoOfQuestions);
 
-    if (_.get(this.attempts, "current") >= _.get(this.attempts, "max")) {
-      this.playerEvent.emit(
-        this.viewerService.generateMaxAttemptEvents(
-          _.get(this.attempts, "current"),
-          true,
-          false
-        )
-      );
+    /* istanbul ignore else */
+    if (_.get(this.attempts, 'current') >= _.get(this.attempts, 'max')) {
+      this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(_.get(this.attempts, 'current'), true, false));
     }
   }
 
   setDurationSpent() {
-    if (this.playerConfig.metadata?.summaryType !== "Score") {
-      this.viewerService.metaData.duration =
-        new Date().getTime() - this.initialTime;
+    /* istanbul ignore else */
+    if (this.playerConfig.metadata?.summaryType !== 'Score') {
+      this.viewerService.metaData.duration = new Date().getTime() - this.initialTime;
       this.durationSpent = this.utilService.getTimeSpentText(this.initialTime);
     }
   }
@@ -523,6 +529,7 @@ export class MainPlayerComponent implements OnInit {
   }
 
   goToQuestion(event) {
+    /* istanbul ignore else */
     if (this.parentConfig.isSectionsAvailable && event.identifier) {
       const sections = this.player.getRendererState().sections;
       const sectionIndex = sections.findIndex(
@@ -543,10 +550,58 @@ export class MainPlayerComponent implements OnInit {
     this.telemetryService.emitHeartBeatEvent(event?.type, TelemetryType.interact, pageId.endPage, event?.identifier);
   }
 
+  toggleScreenRotate(event?: KeyboardEvent | MouseEvent) {
+    this.telemetryService.emitHeartBeatEvent(eventName.deviceRotationClicked, TelemetryType.interact, this.sectionPlayer.myCarousel.getCurrentSlideIndex() + 1);
+  }
+
+  sideBarEvents(event: ISideBarEvent) {
+    /* istanbul ignore else */
+    if (event.type === 'OPEN_MENU' || event.type === 'CLOSE_MENU') {
+      this.handleSideBarAccessibility(event);
+    }
+    this.telemetryService.emitHeartBeatEvent(event.type, TelemetryType.interact, this.sectionPlayer.myCarousel.getCurrentSlideIndex() + 1);
+  }
+
+  handleSideBarAccessibility(event) {
+    const navBlock = document.querySelector('.navBlock') as HTMLInputElement;
+    const overlayInput = document.querySelector('#overlay-input') as HTMLElement;
+    const overlayButton = document.querySelector('#overlay-button') as HTMLElement;
+    const sideBarList = document.querySelector('#sidebar-list') as HTMLElement;
+
+    if (event.type === 'OPEN_MENU') {
+      const isMobile = this.playerConfig.config?.sideMenu?.showExit;
+      this.disabledHandle = isMobile ? maintain.hidden({ filter: [sideBarList, overlayButton, overlayInput] }) : maintain.tabFocus({ context: navBlock });
+      this.subscription = fromEvent(document, 'keydown').subscribe((e: KeyboardEvent) => {
+        console.log("===========", e.key);
+        /* istanbul ignore else */
+        if (e['key'] === 'Escape') {
+          const inputChecked = document.getElementById('overlay-input') as HTMLInputElement;
+          inputChecked.checked = false;
+          document.getElementById('playerSideMenu').style.visibility = 'hidden';
+          document.querySelector<HTMLElement>('.navBlock').style.marginLeft = '-100%';
+          this.telemetryService.emitHeartBeatEvent('CLOSE_MENU', TelemetryType.interact, this.sectionPlayer.myCarousel.getCurrentSlideIndex() + 1);
+          this.disabledHandle.disengage();
+          this.subscription.unsubscribe();
+          this.disabledHandle = null;
+          this.subscription = null;
+        }
+      });
+    } else if (event.type === 'CLOSE_MENU' && this.disabledHandle) {
+      this.disabledHandle.disengage();
+      this.disabledHandle = null;
+      /* istanbul ignore else */
+      if (this.subscription) {
+        this.subscription.unsubscribe();
+        this.subscription = null;
+      }
+    }
+  }
+
   @HostListener('window:beforeunload')
   ngOnDestroy() {
     this.player.calculateScore();
     this.getSummaryObject();
+    /* istanbul ignore else */
     if (this.isSummaryEventRaised === false) {
       // this.viewerService.raiseSummaryEvent(
       //   this.totalVisitedQuestion,
@@ -557,6 +612,10 @@ export class MainPlayerComponent implements OnInit {
       this.telemetryService.emitSummaryEvent(this.totalVisitedQuestion, this.endPageReached, this.player.getRendererState().finalScore,
         this.summary, this.totalNoOfQuestions
       )
+    }
+    /* istanbul ignore else */
+    if (this.subscription) {
+      this.subscription.unsubscribe();
     }
     this.raiseEndEvent(
       this.totalVisitedQuestion,
