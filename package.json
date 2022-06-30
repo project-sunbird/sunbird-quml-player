@@ -21,16 +21,16 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "^9.1.12",
-    "@angular/common": "^9.1.12",
-    "@angular/compiler": "^9.1.12",
-    "@angular/core": "^9.1.12",
+    "@angular/animations": "^10.2.5",
+    "@angular/common": "^10.2.5",
+    "@angular/compiler": "^10.2.5",
+    "@angular/core": "^10.2.5",
     "@angular/elements": "^12.2.4",
-    "@angular/forms": "^9.1.12",
-    "@angular/platform-browser": "^9.1.12",
-    "@angular/platform-browser-dynamic": "^9.1.12",
-    "@angular/router": "^9.1.12",
-    "@project-sunbird/client-services": "4.0.1",
+    "@angular/forms": "^10.2.5",
+    "@angular/platform-browser": "^10.2.5",
+    "@angular/platform-browser-dynamic": "^10.2.5",
+    "@angular/router": "^10.2.5",
+    "@project-sunbird/client-services": "4.9.1",
     "@project-sunbird/sb-styles": "0.0.9",
     "@project-sunbird/telemetry-sdk": "0.0.26",
     "bootstrap": "4.1.1",
@@ -40,7 +40,7 @@
     "katex": "^0.11.1",
     "lodash-es": "^4.17.21",
     "ngx-bootstrap": "^5.6.2",
-    "rxjs": "~6.3.3",
+    "rxjs": "~6.6.7",
     "tslib": "^1.9.0",
     "uuid": "^3.4.0",
     "zone.js": "~0.10.3"
@@ -49,8 +49,8 @@
     "@angular-devkit/build-angular": "~0.901.15",
     "@angular-devkit/build-ng-packagr": "~0.901.15",
     "@angular/cli": "^10.2.4",
-    "@angular/compiler-cli": "^9.1.12",
-    "@angular/language-service": "^9.1.12",
+    "@angular/compiler-cli": "^10.2.5",
+    "@angular/language-service": "^10.2.5",
     "@types/jasmine": "~2.8.8",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "~8.9.4",
@@ -70,6 +70,6 @@
     "tsickle": "^0.37.1",
     "tslib": "^1.9.0",
     "tslint": "~5.11.0",
-    "typescript": "~3.7.3"
+    "typescript": "~4.0.8"
   }
 }

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ElementRef, EventEmitter, NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
-import { ErrorService, SunbirdPlayerSdkModule } from '@project-sunbird/sunbird-player-sdk-v9';
+import { waitForAsync, ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
+import { ErrorService } from '@project-sunbird/sunbird-player-sdk-v9';
 import { CarouselComponent } from 'ngx-bootstrap/carousel';
 import { of } from 'rxjs';
 import { fakeMainProgressBar } from '../main-player/main-player.component.spec.data';
@@ -46,7 +46,7 @@ describe('SectionPlayerComponent', () => {
     "getCurrentSlideIndex": 1, "selectSlide": {}, "move": {}, isLast: false
   });
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [SectionPlayerComponent, CarouselComponent],
       imports: [
