@@ -52,19 +52,20 @@ export class UtilService {
     }
 
     getQuestionType(questions, currentIndex) {
-            let index = currentIndex - 1 === -1 ? 0 : currentIndex-1;
-            return questions[index]['qType'];
-        
+        let index = currentIndex - 1 === -1 ? 0 : currentIndex - 1;
+        return questions[index]['qType'];
+
     }
 
-    canGo(progressBarClass){
-    let attemptedParams = ['correct', 'wrong', 'attempted'];
-     return attemptedParams.includes(progressBarClass);
+    canGo(progressBarClass) {
+        let attemptedParams = ['correct', 'wrong', 'attempted'];
+        return attemptedParams.includes(progressBarClass);
     }
 
     sumObjectsByKey(...objects) {
         return objects.reduce((accumulator, currentValue) => {
             for (const key in currentValue) {
+                /* istanbul ignore else */
                 if (currentValue.hasOwnProperty(key)) {
                     accumulator[key] = (accumulator[key] || 0) + currentValue[key];
                 }
@@ -72,4 +73,17 @@ export class UtilService {
             return accumulator;
         }, {});
     }
+
+    scrollParentToChild(parent: HTMLElement, child: HTMLElement) {
+        const isMobilePortrait = window.matchMedia("(max-width: 480px)").matches;
+        const parentRect = parent.getBoundingClientRect();
+        const childRect = child.getBoundingClientRect();
+
+        if (isMobilePortrait) {
+            parent.scrollLeft = childRect.left + parent.scrollLeft - parentRect.left;
+        } else {
+            parent.scrollTop = (childRect.top + parent.scrollTop) - parentRect.top;
+        }
+    }
+
 }

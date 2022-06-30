@@ -36,6 +36,7 @@ export class QumlLibraryService {
     this.config = config;
     this.isSectionsAvailable = parentConfig?.isSectionsAvailable;
 
+    /* istanbul ignore else */
     if (!CsTelemetryModule.instance.isInitialised) {
       const telemetryConfig = {
         pdata: this.context.pdata,
@@ -68,7 +69,7 @@ export class QumlLibraryService {
     this.telemetryObject = {
       id: parentConfig.identifier,
       type: 'Content',
-      ver: config.metadata.pkgVersion ? config.metadata.pkgVersion.toString() : '',
+      ver: parentConfig?.metadata?.pkgVersion ? parentConfig.metadata.pkgVersion.toString() : '',
       rollup: this.context.objectRollup || {}
     };
   }
@@ -89,20 +90,9 @@ export class QumlLibraryService {
     );
   }
 
-  public response(identifier, version, type, option) {
-    const responseEvent = {
-      target: {
-        id: identifier,
-        ver: version,
-        type: type
-      },
-      type: 'CHOOSE',
-      values: [{
-        option
-      }]
-    };
+  public response(responseEdata) {
     CsTelemetryModule.instance.telemetryService.raiseResponseTelemetry(
-      responseEvent,
+      responseEdata,
       this.getEventOptions()
     );
   }
@@ -190,6 +180,8 @@ export class QumlLibraryService {
         rollup: this.rollup || {}
       }
     };
+
+    /* istanbul ignore else */
     if (this.isSectionsAvailable) {
       options.context.cdata.push({ id: this.config.metadata.identifier, type: 'SectionId' });
     }

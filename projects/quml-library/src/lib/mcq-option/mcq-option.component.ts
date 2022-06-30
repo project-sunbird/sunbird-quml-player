@@ -24,11 +24,13 @@ export class McqOptionComponent implements OnChanges {
   ) { }
 
   ngOnChanges() {
+    /* istanbul ignore else */
     if (this.replayed) {
       this.mcqOptions.forEach((ele) => {
         ele.selected = false;
       })
     }
+    /* istanbul ignore else */
     if (this.tryAgain) {
       this.unselectOption();
     }
@@ -50,6 +52,10 @@ export class McqOptionComponent implements OnChanges {
   }
 
   onOptionSelect(event: MouseEvent | KeyboardEvent, mcqOption, index?: number) {
+    /* istanbul ignore else */
+    if (event.hasOwnProperty('stopImmediatePropagation')) {
+      event.stopImmediatePropagation();
+    }
     if (this.cardinality === Cardinality.single) {
       if (index !== undefined) {
         this.mcqOptions.forEach((ele) => ele.selected = false);
@@ -87,6 +93,7 @@ export class McqOptionComponent implements OnChanges {
   }
 
   onEnter(event: KeyboardEvent, mcqOption, index: number) {
+    /* istanbul ignore else */
     if (event.key === 'Enter') {
       event.stopPropagation();
       this.onOptionSelect(event, mcqOption, index);

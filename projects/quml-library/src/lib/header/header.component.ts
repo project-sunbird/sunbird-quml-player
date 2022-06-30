@@ -1,4 +1,8 @@
-import { Component, OnInit, Output, EventEmitter, Input, OnChanges, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, OnChanges, OnDestroy, AfterViewInit, HostListener } from '@angular/core';
+import { Player } from '../../public_api';
+import { TelemetryService } from '../player/src/TelemetryService';
+import { eventName, TelemetryType } from '../telemetry-constants';
+import { PlayerService } from '../services/player.service';
 
 
 @Component({
@@ -13,8 +17,8 @@ export class HeaderComponent implements OnInit, OnChanges, AfterViewInit, OnDest
   @Input() warningTime?: string;
   @Input() disablePreviousNavigation: boolean;
   @Input() showTimer: boolean;
-  @Input() totalNoOfQuestions: any;
-  @Input() currentSlideIndex: any;
+  @Input() totalNoOfQuestions: number;
+  @Input() currentSlideIndex: number;
   @Input() active: boolean;
   @Input() initializeTimer: boolean;
   @Input() endPageReached: boolean;
@@ -22,29 +26,37 @@ export class HeaderComponent implements OnInit, OnChanges, AfterViewInit, OnDest
   @Input() replayed: boolean;
   @Input() currentSolutions: any;
   @Input() showFeedBack: boolean;
-  @Output() nextSlideClicked = new EventEmitter<any>();
-  @Output() prevSlideClicked = new EventEmitter<any>();
-  @Output() durationEnds = new EventEmitter<any>();
-  @Output() showSolution = new EventEmitter<any>();
   @Input() disableNext?: boolean;
   @Input() startPageInstruction?: string;
   @Input() showStartPage?: boolean;
   @Input() attempts?: { max: number, current: number };
+  @Input() showDeviceOrientation: boolean = false;
+  @Input() showLegend: boolean;
+
+  @Output() nextSlideClicked = new EventEmitter<any>();
+  @Output() prevSlideClicked = new EventEmitter<any>();
+  @Output() durationEnds = new EventEmitter<any>();
+  @Output() showSolution = new EventEmitter<any>();
+  @Output() toggleScreenRotate = new EventEmitter<any>();
+
   minutes: number;
   seconds: string | number;
   private intervalRef?;
   showWarning = false;
   isMobilePortrait = false;
-
   time: any;
-  constructor() {
+  showProgressIndicatorPopUp = false;
+  player: Player;
+  telemetryService: TelemetryService;
+  constructor(private playerService: PlayerService) {
+    this.player = this.playerService.getPlayerInstance();
+    this.telemetryService = TelemetryService.getInstance(this.player);
   }
-
 
   ngOnInit() {
     if (this.duration && this.showTimer) {
       this.minutes = Math.floor(this.duration / 60);
-      this.seconds = this.duration - this.minutes * 60 <  10 ? `0${this.duration - this.minutes * 60}`  :  this.duration - this.minutes * 60;
+      this.seconds = this.duration - this.minutes * 60 < 10 ? `0${this.duration - this.minutes * 60}` : this.duration - this.minutes * 60;
     }
   }
 
@@ -65,7 +77,7 @@ export class HeaderComponent implements OnInit, OnChanges, AfterViewInit, OnDest
   }
 
   ngAfterViewInit() {
-    this.isMobilePortrait = window.matchMedia("(max-width: 480px)").matches;;
+    this.isMobilePortrait = window.matchMedia("(max-width: 480px)").matches;
   }
 
   ngOnDestroy() {
@@ -81,7 +93,7 @@ export class HeaderComponent implements OnInit, OnChanges, AfterViewInit, OnDest
   }
 
   prevSlide() {
-    if(!this.showStartPage && this.currentSlideIndex === 1) {
+    if (!this.showStartPage && this.currentSlideIndex === 1) {
       return
     }
     if (!this.disablePreviousNavigation) {
@@ -89,17 +101,8 @@ export class HeaderComponent implements OnInit, OnChanges, AfterViewInit, OnDest
     }
   }
 
-  openNav() {
-    document.getElementById('mySidenav').style.width = '100%';
-    document.body.style.backgroundColor = 'rgba(0,0,0,0.4)';
-  }
-
-  closeNav() {
-    document.getElementById('mySidenav').style.width = '0';
-    document.body.style.backgroundColor = 'white';
-  }
-
   timer() {
+    /* istanbul ignore else */
     if (this.duration > 0) {
       let durationInSec = this.duration;
       this.intervalRef = setInterval(() => {
@@ -115,6 +118,7 @@ export class HeaderComponent implements OnInit, OnChanges, AfterViewInit, OnDest
           this.durationEnds.emit(true);
           return false;
         }
+        /* istanbul ignore else */
         if (parseInt(durationInSec) <= parseInt(this.warningTime)) {
           this.showWarning = true;
         }
@@ -140,9 +144,24 @@ export class HeaderComponent implements OnInit, OnChanges, AfterViewInit, OnDest
   }
 
   onAnswerKeyDown(event: KeyboardEvent) {
+    /* istanbul ignore else */
     if (event.key === 'Enter') {
       event.stopPropagation();
       this.showSolution.emit()
     }
+  }
+
+  openProgressIndicatorPopup() {
+    this.showProgressIndicatorPopUp = true;
+    this.telemetryService.emitHeartBeatEvent(eventName.progressIndicatorPopupOpened, TelemetryType.interact, this.currentSlideIndex);
+  }
+
+  @HostListener('document:keydown.escape', ['$event']) onKeydownHandler(event: KeyboardEvent) {
+    this.onProgressPopupClose();
+  }
+
+  onProgressPopupClose() {
+    this.showProgressIndicatorPopUp = false;
+    this.telemetryService.emitHeartBeatEvent(eventName.progressIndicatorPopupClosed, TelemetryType.interact, this.currentSlideIndex);
   }
 }

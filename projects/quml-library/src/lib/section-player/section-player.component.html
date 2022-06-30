@@ -1,21 +1,18 @@
 <div class="quml-container" *ngIf="loadView" [hidden]="showZoomModal">
   <div [hidden]="showSolution" class="quml-landscape">
-    <sb-player-side-menu-icon class="notVisible" *ngIf="parentConfig?.sideMenuConfig?.enable" (sidebarMenuEvent)="sideBarEvents($event)"></sb-player-side-menu-icon>
     <quml-header class="main-header" (durationEnds)="durationEnds()" [disablePreviousNavigation]="linearNavigation"
-      [duration]="timeLimit" [warningTime]="warningTime" [showTimer]="showTimer"
+      [duration]="timeLimit" [warningTime]="warningTime" [showTimer]="showTimer" [showLegend]="parentConfig?.showLegend"
       (nextSlideClicked)="nextSlideClicked($event)" (prevSlideClicked)="previousSlideClicked($event)"
       [currentSlideIndex]="currentSlideIndex" [totalNoOfQuestions]="noOfQuestions" [active]="active"
       [showFeedBack]="showFeedBack" [currentSolutions]="currentSolutions" (showSolution)="viewSolution()"
-      [initializeTimer]="initializeTimer" [replayed]="parentConfig?.isReplayed" [disableNext]="disableNext"
-      [startPageInstruction]="startPageInstruction" [attempts]="attempts" [showStartPage]="showStartPage">
+      [initializeTimer]="player.getRendererState().initializeTimer" [replayed]="parentConfig?.isReplayed" [disableNext]="disableNext"
+      [startPageInstruction]="startPageInstruction" [attempts]="attempts" [showStartPage]="showStartPage"
+      [showDeviceOrientation]="sectionConfig?.config?.showDeviceOrientation" (toggleScreenRotate)="toggleScreenRotate()">
     </quml-header>
 
-    <sb-player-sidebar [title]="parentConfig?.contentName" (sidebarEvent)="sideBarEvents($event)"
-      [config]="parentConfig?.sideMenuConfig">
-    </sb-player-sidebar>
     <div class="landscape-mode">
       <div class="lanscape-mode-left">
-        <div class="current-slide" *ngIf="!showRootInstruction">
+        <div class="current-slide" *ngIf="currentSlideIndex !== 0">
           {{myCarousel.getCurrentSlideIndex()}}/{{noOfQuestions}}
         </div>
         <div *ngIf="currentSolutions && showUserSolution">
@@ -23,14 +20,17 @@
         </div>
       </div>
       <div class="landscape-content">
-        <carousel class="landscape-center" [interval]="0" [showIndicators]="false" [noWrap]="true" #myCarousel (activeSlideChange)="activeSlideChange($event)">
+        <carousel class="landscape-center" [interval]="0" [showIndicators]="false" [noWrap]="true" #myCarousel
+          (activeSlideChange)="activeSlideChange($event)">
           <slide>
-            <quml-startpage [instructions]="showRootInstruction ? parentConfig?.instructions : sectionConfig.metadata?.instructions?.default"  [points]="points"
-              [time]="showRootInstruction ? timeLimit : null" [showTimer]="showTimer" [totalNoOfQuestions]="showRootInstruction ? parentConfig?.questionCount : noOfQuestions"
+            <quml-startpage
+              [instructions]="showRootInstruction ? parentConfig?.instructions : sectionConfig.metadata?.instructions?.default"
+              [points]="points" [time]="showRootInstruction ? timeLimit : null" [showTimer]="showTimer"
+              [totalNoOfQuestions]="showRootInstruction ? parentConfig?.questionCount : noOfQuestions"
               [contentName]="showRootInstruction ? parentConfig?.contentName : parentConfig?.isSectionsAvailable ? sectionConfig?.metadata?.name : parentConfig?.contentName">
             </quml-startpage>
           </slide>
-          <slide *ngFor="let question of questions; let i= index" #questionSlide>
+          <slide *ngFor="let question of player.getRendererState().questions; let i= index" #questionSlide>
             <div [id]="question.identifier">
               <div *ngIf="question?.primaryCategory.toLowerCase() === 'multiple choice question'">
                 <quml-mcq [question]='question' [replayed]="parentConfig?.isReplayed"
@@ -50,15 +50,18 @@
         <ul>
           <ng-container>
             <li class="showFeedBack-progressBar info-page hover-effect" tabindex="0"
-            [ngClass]="(currentSlideIndex === 0) ? 'att-color progressBar-border': 'att-color' "
-            (keydown)="onEnter($event, 0)" (click)="goToSlideClicked($event, 0)">i
+              [ngClass]="(currentSlideIndex === 0) ? 'att-color progressBar-border': 'att-color' "
+              (keydown)="onEnter($event, 0)" (click)="goToSlideClicked($event, 0)">i
             </li>
             <li>
               <ul *ngIf="parentConfig?.isSectionsAvailable" class="scoreboard-sections">
-                <li class="section relative" *ngFor="let section of mainProgressBar; let i=index;" attr.aria-label="section {{section?.index}}"
-                  (click)="jumpToSection(section?.identifier)" (keydown)="onSectionEnter($event, section?.identifier)"
+                <li class="section relative" *ngFor="let section of mainProgressBar; let i=index;"
+                  attr.aria-label="section {{section?.index}}" (click)="jumpToSection(section?.identifier)"
+                  (keydown)="onSectionEnter($event, section?.identifier)"
                   [ngClass]="{'attempted' : section.class === 'attempted', 'partial': section.class === 'partial'}">
-                  <label for="list-item-{{i}}" class="progressBar-border" [ngClass] = "{'active' : section?.isActive && !showRootInstruction && section.class !== 'attempted'}" tabindex="0">{{section?.index}}</label>
+                  <label for="list-item-{{i}}" class="progressBar-border"
+                    [ngClass]="{'active' : section?.isActive && !showRootInstruction && section.class !== 'attempted'}"
+                    tabindex="0">{{section?.index}}</label>
                   <ul *ngIf="section?.isActive && showFeedBack">
                     <li *ngFor="let question of player.getRendererState().progressBarClass; let j=index" tabindex="0" attr.aria-label="question number {{question?.index}}"
                       (click)="goToSlideClicked($event, question?.index)" (keydown)="onEnter($event, question?.index)" class="showFeedBack-progressBar"
@@ -107,11 +110,11 @@
     </div>
   </div>
 
-  <quml-alert *ngIf="showAlert && showFeedBack" [alertType]="alertType" [isHintAvailable]="showHints"
+  <quml-alert *ngIf="showAlert && showFeedBack" [alertType]="player.getRendererState().alertType" [isHintAvailable]="showHints"
     [showSolutionButton]="showUserSolution" (showSolution)="viewSolution()" (showHint)="viewHint()"
     (closeAlert)="closeAlertBox($event)"></quml-alert>
 
-  <quml-mcq-solutions *ngIf="showSolution" [question]="currentQuestion" [options]="currentOptions"
+  <quml-mcq-solutions *ngIf="showSolution" [question]="player.getRendererState().currentQuestion" [options]="currentOptions"
     [solutions]="currentSolutions" (close)="closeSolution()"></quml-mcq-solutions>
 </div>
 

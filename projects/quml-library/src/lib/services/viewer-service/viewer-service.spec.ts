@@ -4,11 +4,23 @@ import { mockData } from './viewer-service.data';
 import { QumlLibraryService } from '../../quml-library.service';
 import { UtilService } from '../../util-service';
 import { QuestionCursor } from '../../quml-question-cursor.service';
+import { of, throwError } from 'rxjs';
 
 describe('ViewerService', () => {
+  class MockQuestionCursor {
+    getQuestions(identifiers: string[], parentId?: string) { };
+    getQuestion(identifier: string) { };
+    getQuestionSet(identifier: string) { };
+    getAllQuestionSet(identifiers: string[]) { };
+  }
+
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [ViewerService, UtilService, QumlLibraryService, QuestionCursor],
+      providers: [
+        ViewerService,
+        UtilService,
+        QumlLibraryService,
+        { provide: QuestionCursor, useClass: MockQuestionCursor }],
     });
   });
 
@@ -43,16 +55,48 @@ describe('ViewerService', () => {
   it('should raise interact event', () => {
     const service = TestBed.get(ViewerService);
     const qumlLibraryService = TestBed.get(QumlLibraryService);
+    service.isSectionsAvailable = true;
     spyOn(qumlLibraryService, 'interact');
     service.raiseHeartBeatEvent('type', 'interact', 1);
     expect(qumlLibraryService.interact).toHaveBeenCalled();
+  });
+
+  it('should raise next content play event', () => {
+    const service = TestBed.get(ViewerService);
+    const qumlLibraryService = TestBed.get(QumlLibraryService);
+    spyOn(service.qumlPlayerEvent, 'emit');
+    spyOn(qumlLibraryService, 'interact');
+    service.raiseHeartBeatEvent('NEXT_CONTENT_PLAY', 'interact', 1, 'do_123');
+    expect(service.qumlPlayerEvent.emit).toHaveBeenCalled();
+    expect(qumlLibraryService.interact).toHaveBeenCalled();
+  });
+
+  it('should raise impression Event', () => {
+    const service = TestBed.get(ViewerService);
+    const qumlLibraryService = TestBed.get(QumlLibraryService);
+    spyOn(service.qumlPlayerEvent, 'emit');
+    spyOn(qumlLibraryService, 'impression');
+    service.raiseHeartBeatEvent('NEXT_CONTENT_PLAY', 'impression', 1, 'do_123');
+    expect(service.qumlPlayerEvent.emit).toHaveBeenCalled();
+    expect(qumlLibraryService.impression).toHaveBeenCalled();
+  });
+
+  it('should not raise any event if not provided', () => {
+    const service = TestBed.get(ViewerService);
+    const qumlLibraryService = TestBed.get(QumlLibraryService);
+    spyOn(service.qumlPlayerEvent, 'emit');
+    spyOn(qumlLibraryService, 'impression');
+    spyOn(qumlLibraryService, 'interact');
+    service.raiseHeartBeatEvent('', '', 1, 'do_123');
+    expect(service.qumlPlayerEvent.emit).toHaveBeenCalled();
+    expect(qumlLibraryService.impression).not.toHaveBeenCalled();
+    expect(qumlLibraryService.interact).not.toHaveBeenCalled();
   });
 
   it('should call getSectionQuestions', () => {
     const viewerService = TestBed.get(ViewerService);
     viewerService.sectionQuestions = mockData.mockSectionQuestions;
     const res = viewerService.getSectionQuestions('do_21348431528472576011');
-    console.log(res);
     expect(res).toBeDefined();
   });
 
@@ -148,4 +192,59 @@ describe('ViewerService', () => {
     expect(viewerService.qumlPlayerEvent.emit).toHaveBeenCalled();
     expect(qumlLibraryService.summary).toHaveBeenCalled();
   });
+
+  it('should call getQuestion and return the question response', () => {
+    const service = TestBed.get(ViewerService);
+    const qumlLibraryService = TestBed.get(QumlLibraryService);
+    service.identifiers = ['do_123', 'do_124'];
+    spyOn(service.questionCursor, 'getQuestion').and.returnValue(of([{ id: 'do_123' }, { id: 'do_124' }]));
+    spyOn(service.qumlQuestionEvent, 'emit');
+    service.getQuestion();
+    expect(service.qumlQuestionEvent.emit).toHaveBeenCalled();
+    expect(service.questionCursor.getQuestion).toHaveBeenCalled();
+  });
+
+  it('should call getQuestion and return the error', () => {
+    const service = TestBed.get(ViewerService);
+    const qumlLibraryService = TestBed.get(QumlLibraryService);
+    service.identifiers = ['do_123', 'do_124'];
+    spyOn(service.questionCursor, 'getQuestion').and.returnValue(throwError('Error'));
+    spyOn(service.qumlQuestionEvent, 'emit');
+    service.getQuestion();
+    expect(service.qumlQuestionEvent.emit).toHaveBeenCalled();
+    expect(service.questionCursor.getQuestion).toHaveBeenCalled();
+  });
+
+  it('should call getQuestion and should not return anything if identifiers are not present', () => {
+    const service = TestBed.get(ViewerService);
+    const qumlLibraryService = TestBed.get(QumlLibraryService);
+    service.identifiers = [];
+    spyOn(service.questionCursor, 'getQuestion');
+    service.getQuestion();
+    expect(service.questionCursor.getQuestion).not.toHaveBeenCalled();
+  });
+
+  it('should call getQuestions', () => {
+    const service = TestBed.get(ViewerService);
+    service.parentIdentifier = 'do_555';
+    service.identifiers = ['do_123', 'do_124'];
+    spyOn(service.questionCursor, 'getQuestions').and.returnValue(of([{ id: 'do_123' }]));
+    spyOn(service.qumlQuestionEvent, 'emit');
+    service.getQuestions(0, 1)
+    expect(service.questionCursor.getQuestions).toHaveBeenCalled();
+    expect(service.qumlQuestionEvent.emit).toHaveBeenCalled();
+  });
+
+  it('should emit error if error received', () => {
+    const service = TestBed.get(ViewerService);
+    service.parentIdentifier = 'do_555';
+    service.identifiers = ['do_123', 'do_124'];
+    service.threshold = 3;
+    spyOn(service.questionCursor, 'getQuestions').and.returnValue(throwError('Error'));
+    spyOn(service.qumlQuestionEvent, 'emit');
+    service.getQuestions()
+    expect(service.questionCursor.getQuestions).toHaveBeenCalled();
+    expect(service.qumlQuestionEvent.emit).toHaveBeenCalled();
+  });
+
 });

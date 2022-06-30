@@ -1,7 +1,25 @@
 export interface RendererState {
+  questions?: any[];
   progressBarClass?: any;
   activeSection?: any;
-  // isSectionsAvailable: boolean;
+  currentOptionSelected?: any;
+  initializeTimer?: boolean;
+  alertType?: string;
+  initialTime?: number;
+  initialSlideDuration?: number;
+  questionIds?: string[];
+  currentQuestionsMedia?: any;
+  jumpSlideIndex?: number;
+  currentQuestion?: any;
+  selectedOption?: any;
+  sections?: any[];
+  mainProgressBar?: any[];
+  totalNoOfQuestions?: number;
+  sectionIndex?: number;
+  finalScore?: number;
+  outcomeLabel?: string;
+  isSectionsAvailable?: boolean;
+  currentSlideIndex?: number;
   // isMultiLevelSection: boolean;
   // sections: any;
   // isFirstSection: boolean;
@@ -36,3 +54,11 @@ export interface RendererState {
   // jumpToQuestion: any;
   // totalVisitedQuestion: number;
 }
+
+// interface Section {
+//   id: string,
+//   data: SectionData;
+// }
+// export interface SectionData {
+//   progressBarClass?: any;
+// }

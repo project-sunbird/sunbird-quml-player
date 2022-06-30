@@ -1,6 +1,6 @@
 import { Observable } from "rxjs";
 import { Question } from "../interfaces/PlayerConfig";
-export declare abstract class QuestionCursor {
+export abstract class PlayerQuestionCursor {
   abstract getQuestions(
     identifiers: string[],
     parentId?: string

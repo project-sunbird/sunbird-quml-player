@@ -4,15 +4,20 @@ import { fakeMainProgressBar, fakeSections, playerConfig, singleContent } from '
 import { CommonModule } from '@angular/common';
 import { MainPlayerComponent } from './main-player.component';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { SunbirdPlayerSdkModule } from '@project-sunbird/sunbird-player-sdk-v9';
 import { QuestionCursor } from './../quml-question-cursor.service';
 import { QumlLibraryService } from '../quml-library.service';
-import { SunbirdPlayerSdkModule } from '@project-sunbird/sunbird-player-sdk-v9';
 import { UtilService } from '../util-service';
 import { ViewerService } from '../services/viewer-service/viewer-service';
+import { of } from 'rxjs';
 
 fdescribe('MainPlayerComponent', () => {
   let component: MainPlayerComponent;
   let fixture: ComponentFixture<MainPlayerComponent>;
+
+  const myCarousel = jasmine.createSpyObj("CarouselComponent", {
+    "getCurrentSlideIndex": 1, "selectSlide": {}, "move": {}, isLast: false
+  });
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -32,6 +37,11 @@ fdescribe('MainPlayerComponent', () => {
     component = fixture.componentInstance;
     component.playerConfig = playerConfig;
     fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    spyOn(component, 'ngOnDestroy').and.callFake(() => { });
+    fixture.destroy();
   });
 
   it('should create', () => {
@@ -63,7 +73,6 @@ fdescribe('MainPlayerComponent', () => {
     component.initializeSections();
     expect(component['getMultilevelSection']).toHaveBeenCalled();
     expect(component.setInitialScores).toHaveBeenCalled();
-    expect(component.isFirstSection).toBe(true);
   });
 
   it('should set config for the question set', () => {
@@ -270,7 +279,7 @@ fdescribe('MainPlayerComponent', () => {
     component.totalNoOfQuestions = 0;
     component.mainProgressBar = [];
     component.sections = fakeSections;
-    component.setInitialScores();
+    component.setInitialScores(0);
     expect(component.totalNoOfQuestions).toEqual(4);
     expect(component.mainProgressBar.length).toBe(2);
   });
@@ -414,10 +423,12 @@ fdescribe('MainPlayerComponent', () => {
       wrong: 0
     };
     component.isSummaryEventRaised = false;
+    component.subscription = of(1, 2, 3).subscribe();
     spyOn(component, 'calculateScore');
     spyOn<any>(component, 'getSummaryObject');
     spyOn(viewerService, 'raiseSummaryEvent').and.returnValue({});
     spyOn(component, 'raiseEndEvent');
+    spyOn(component.subscription, 'unsubscribe');
     component.ngOnDestroy();
     expect(component.calculateScore).toHaveBeenCalled();
     expect(component.getSummaryObject).toHaveBeenCalled();
@@ -428,13 +439,13 @@ fdescribe('MainPlayerComponent', () => {
       wrong: 0
     });
     expect(component.raiseEndEvent).toHaveBeenCalledWith(4, true, 4);
+    expect(component.subscription.unsubscribe).toHaveBeenCalled();
   });
 
   it('should show error if the the mutltilevel sections are present', () => {
     component.playerConfig = playerConfig;
     component.playerConfig.metadata.children[0].children[0].children = [];
     component.initializeSections();
-    console.log('isMultiLevelSection', component.isMultiLevelSection);
     expect(component.isMultiLevelSection).toBe(true);
     expect(component.contentError).toEqual({
       messageHeader: 'Unable to load content',
@@ -448,4 +459,46 @@ fdescribe('MainPlayerComponent', () => {
     component.playerConfig.metadata = singleContent;
     component.initializeSections();
   });
+
+  it('should handle sideBarEvents', () => {
+    const viewerService = TestBed.get(ViewerService);
+    spyOn(component, 'handleSideBarAccessibility');
+    spyOn(viewerService, 'raiseHeartBeatEvent');
+    component.sectionPlayer = {} as any;
+    component.sectionPlayer.myCarousel = myCarousel;
+    const event = { event: new KeyboardEvent('keydown', {}), type: 'CLOSE_MENU' }
+    component.sideBarEvents(event);
+    expect(component['handleSideBarAccessibility']).toHaveBeenCalled();
+    expect(viewerService['raiseHeartBeatEvent']).toHaveBeenCalled();
+  });
+
+  it('should call toggleScreenRotate', () => {
+    const viewerService = TestBed.get(ViewerService);
+    spyOn(viewerService, 'raiseHeartBeatEvent');
+    component.sectionPlayer = {} as any;
+    component.sectionPlayer.myCarousel = myCarousel;
+    component.toggleScreenRotate();
+    expect(viewerService.raiseHeartBeatEvent).toHaveBeenCalledWith('DEVICE_ROTATION_CLICKED', 'interact', 2);
+  });
+
+  it('should handle close the menu with Accessibility', () => {
+    component.playerConfig = playerConfig;
+    component.disabledHandle = {
+      disengage: () => { }
+    };
+    component.subscription = of(1, 2, 3).subscribe();
+    component.handleSideBarAccessibility({ type: 'CLOSE_MENU' });
+    expect(component.disabledHandle).toBeNull();
+    expect(component.subscription).toBeNull();
+  });
+
+  it('should call calculateScore', () => {
+    component.mainProgressBar = fakeMainProgressBar;
+    spyOn(component, 'generateOutComeLabel');
+    const score = component.calculateScore();
+    expect(component.generateOutComeLabel).toHaveBeenCalled();
+    expect(score).toEqual(2);
+  });
+
+
 });

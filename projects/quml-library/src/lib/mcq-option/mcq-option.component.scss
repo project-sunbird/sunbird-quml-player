@@ -54,12 +54,6 @@
 .quml-option--selected {
   border: 0.125rem solid var(--primary-color);
 }
-.quml-option--correct {
-  border: 0.125rem solid var(--quml-color-success);
-}
-.quml-option--wrong {
-  border: 0.125rem solid var(--quml-color-danger);
-}
 
 .quml-option-card .option {
   color: var(--quml-color-gray);
@@ -124,30 +118,6 @@ input:checked~.checkmark:after, .quml-option--selected .checkmark:after {
 
 .quml-option--selected .container .checkmark:after { 
   opacity: 1;
-}
-
-.quml-option--correct .container input:checked ~ .checkmark {
-  border-color: var(--quml-color-success);
-  background-color: var(--quml-color-success);
-  &:after {
-    content: '\2714';
-    color: var(--quml-option-selected-checkmark-icon);
-  }
-}
-.quml-option--wrong .container input:checked ~ .checkmark {
-  border-color: var(--quml-color-danger);
-  &:after {
-    content: '\2716';
-    color: var(--quml-color-danger);
-  }
-}
-.quml-option--wrong, .quml-option--correct {
-  .container input:checked ~ .checkmark:after {
-    width: auto;
-    height: auto;
-    background-color: transparent;
-    font-size: 0.75rem;
-  }
 }
 
 img {

@@ -1,31 +1,41 @@
 <!-- Need to show loading here -->
 <sb-player-start-page *ngIf="isLoading" [title]="parentConfig?.contentName"></sb-player-start-page>
 
+<sb-player-side-menu-icon *ngIf="parentConfig?.sideMenuConfig?.enable && !endPageReached"></sb-player-side-menu-icon>
+<quml-header *ngIf="loadScoreBoard && parentConfig?.requiresSubmit && !endPageReached" [showLegend]="parentConfig?.showLegend"
+  [disablePreviousNavigation]="true" [disableNext]="true" [attempts]="attempts" [loadScoreBoard]="true"
+  [showDeviceOrientation]="playerConfig?.config?.showDeviceOrientation" (toggleScreenRotate)="toggleScreenRotate()"></quml-header>
+<sb-player-sidebar [title]="parentConfig?.contentName" [config]="parentConfig?.sideMenuConfig">
+</sb-player-sidebar>
 
 <div *ngIf="!isLoading" class="main-container">
-  <div class="main-container" [hidden]="!activeSection || loadScoreBoard || endPageReached">
-    <quml-section-player [sectionConfig]="activeSection" (sectionEnd)="onSectionEnd($event)" [attempts]="attempts" [player]="player"
-      [isFirstSection]="isFirstSection" [mainProgressBar]="mainProgressBar" [parentConfig]="parentConfig" [sectionIndex]="sectionIndex"
-      [jumpToQuestion]="jumpToQuestion" (showScoreBoard)="onShowScoreBoard($event)" (playerEvent)="onPlayerEvent($event)">
+  <div class="main-container" [hidden]="!player.getRendererState().activeSection || loadScoreBoard || endPageReached">
+    <quml-section-player [sectionConfig]="player.getRendererState().activeSection" (sectionEnd)="onSectionEnd($event)"
+      [attempts]="attempts" [mainProgressBar]="player.getRendererState().mainProgressBar" [parentConfig]="parentConfig"
+      [sectionIndex]="player.getRendererState().sectionIndex" [jumpToQuestion]="jumpToQuestion" (showScoreBoard)="onShowScoreBoard($event)"
+      (playerEvent)="onPlayerEvent($event)">
     </quml-section-player>
   </div>
 
   <!-- Show scoreboard -->
   <quml-scoreboard *ngIf="loadScoreBoard && parentConfig?.requiresSubmit && !endPageReached"
     (scoreBoardLoaded)="onScoreBoardLoaded($event)" (submitClicked)="onScoreBoardSubmitted()"
-    [contentName]="parentConfig.contentName" [scores]="mainProgressBar" [totalNoOfQuestions]="totalNoOfQuestions"
-    [showFeedBack]="showFeedBack" (emitQuestionNo)="goToQuestion($event)" [isSections]="parentConfig?.isSectionsAvailable">
+    [contentName]="parentConfig.contentName" [scores]="player.getRendererState().mainProgressBar" [totalNoOfQuestions]="player.getRendererState().totalNoOfQuestions"
+    [showFeedBack]="showFeedBack" (emitQuestionNo)="goToQuestion($event)"
+    [isSections]="parentConfig?.isSectionsAvailable" [summary]="summary">
   </quml-scoreboard>
 
   <!-- Show player end page -->
   <div class="endPage-container" *ngIf="endPageReached" [ngClass]="endPageReached ? 'endPage-container-height': ''">
     <sb-player-end-page *ngIf="endPageReached && showEndPage" [contentName]="parentConfig.contentName"
-      [outcome]="outcomeLabel" [outcomeLabel]="'Score: '" [userName]="userName" [timeSpentLabel]="durationSpent"
-      (replayContent)="replayContent()" (exitContent)="exitContent($event)" [showExit]="parentConfig?.sideMenuConfig.showExit"
-      [showReplay]="showReplay" [nextContent]="nextContent" (playNextContent)="playNextContent($event)">
+      [outcome]="player.getRendererState().outcomeLabel" [outcomeLabel]="'Score: '" [userName]="userName" [timeSpentLabel]="durationSpent"
+      (replayContent)="replayContent()" (exitContent)="exitContent($event)"
+      [showExit]="parentConfig?.sideMenuConfig.showExit" [showReplay]="showReplay" [nextContent]="nextContent"
+      (playNextContent)="playNextContent($event)">
 
       <span class="sb-color-primary mt-8 fnormal font-weight-bold d-block"
-        *ngIf="attempts?.max && attempts?.current && attempts.max !== attempts.current">Attempt no {{attempts.current}}/{{attempts.max}}
+        *ngIf="attempts?.max && attempts?.current && attempts.max !== attempts.current">Attempt no
+        {{attempts.current}}/{{attempts.max}}
       </span>
 
       <span class="attempts sb-color-primary mt-8 fnormal font-weight-bold d-block"
@@ -33,7 +43,6 @@
       </span>
     </sb-player-end-page>
   </div>
-
 
   <!-- Show content error -->
   <div *ngIf="isMultiLevelSection">
