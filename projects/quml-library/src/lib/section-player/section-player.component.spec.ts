@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { ElementRef, NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ElementRef, EventEmitter, NO_ERRORS_SCHEMA } from '@angular/core';
+import { async, ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 import { ErrorService, SunbirdPlayerSdkModule } from '@project-sunbird/sunbird-player-sdk-v9';
 import { CarouselComponent } from 'ngx-bootstrap/carousel';
 import { of } from 'rxjs';
@@ -10,13 +10,14 @@ import { ViewerService } from '../services/viewer-service/viewer-service';
 import { UtilService } from '../util-service';
 import { QuestionCursor } from './../quml-question-cursor.service';
 import { SectionPlayerComponent } from './section-player.component';
-import { mockParentConfig, mockSectionConfig, mockSectionProgressBar, mockSectionQuestions } from './section-player.component.spec.data';
+import { mockSectionPlayerConfig } from './section-player.component.spec.data';
+
 
 describe('SectionPlayerComponent', () => {
   let component: SectionPlayerComponent;
   let fixture: ComponentFixture<SectionPlayerComponent>;
   let viewerService, utilService, errorService;
-
+  const { changes, mockParentConfig, mockSectionConfig, mockSectionProgressBar, mockSectionQuestions } = mockSectionPlayerConfig;
   class ViewerServiceMock {
     initialize() { }
     raiseStartEvent() { }
@@ -27,6 +28,9 @@ describe('SectionPlayerComponent', () => {
     getQuestion() { }
     raiseResponseEvent() { }
     getSectionQuestions() { }
+    raiseAssesEvent() { }
+    qumlPlayerEvent = new EventEmitter<any>();
+    qumlQuestionEvent = new EventEmitter<any>();
   }
 
   class ElementRefMock {
@@ -39,15 +43,13 @@ describe('SectionPlayerComponent', () => {
   }
 
   const myCarousel = jasmine.createSpyObj("CarouselComponent", {
-    "getCurrentSlideIndex": 1, "selectSlide": {}, "move": {}
-  }
-  );
+    "getCurrentSlideIndex": 1, "selectSlide": {}, "move": {}, isLast: false
+  });
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [SectionPlayerComponent, CarouselComponent],
       imports: [
-        SunbirdPlayerSdkModule,
         CommonModule
       ],
       providers: [
@@ -72,6 +74,11 @@ describe('SectionPlayerComponent', () => {
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    spyOn(component, 'ngOnDestroy').and.callFake(() => { });
+    fixture.destroy();
+  });
+
   it('should create', () => {
     expect(component).toBeTruthy();
   });
@@ -79,12 +86,24 @@ describe('SectionPlayerComponent', () => {
   it('should subscribe to events and set config on every changes', () => {
     spyOn<any>(component, 'subscribeToEvents');
     spyOn<any>(component, 'setConfig');
-    component.ngOnChanges({});
+    component.ngOnChanges(changes);
     expect(component['subscribeToEvents']).toHaveBeenCalled();
     expect(component['setConfig']).toHaveBeenCalled();
   });
 
-  it('should set all the configuration for the section', () => {
+  xit('should subscribeToEvents', () => {
+    spyOn(viewerService, 'qumlPlayerEvent').and.returnValue(of({}));
+    spyOn(component.playerEvent, 'emit');
+    spyOn(viewerService, 'qumlQuestionEvent').and.returnValue(of({}))
+    component['subscribeToEvents']();
+    expect(viewerService.qumlPlayerEvent).toHaveBeenCalled();
+    expect(component.playerEvent.emit).toHaveBeenCalled();
+    expect(viewerService.qumlQuestionEvent).toHaveBeenCalled();
+  });
+
+  it('should set all the configuration for the section', fakeAsync(() => {
+    const element = document.createElement('div');
+    element.setAttribute('id', 'overlay-button');
     component.sectionIndex = 0;
     component.showStartPage = true;
     component.sectionConfig = mockSectionConfig;
@@ -101,7 +120,9 @@ describe('SectionPlayerComponent', () => {
     spyOn(component, 'sortQuestions');
     spyOn(viewerService, 'updateSectionQuestions');
     spyOn(component, 'resetQuestionState');
+    spyOn(document, 'querySelector').and.returnValue(element);
     component['setConfig']();
+    tick(200);
     expect(viewerService.raiseStartEvent).toHaveBeenCalled();
     expect(viewerService.raiseHeartBeatEvent).toHaveBeenCalled();
     expect(component.setImageZoom).toHaveBeenCalled();
@@ -112,7 +133,8 @@ describe('SectionPlayerComponent', () => {
     expect(component.sortQuestions).toHaveBeenCalled();
     expect(viewerService.updateSectionQuestions).toHaveBeenCalled();
     expect(component.resetQuestionState).toHaveBeenCalled();
-  });
+    flush();
+  }));
 
   it('should remove the attribute from the html element', fakeAsync(() => {
     const element = document.createElement('div');
@@ -274,12 +296,42 @@ describe('SectionPlayerComponent', () => {
     expect(index).toBe(0);
   });
 
-  it('should jump to slide clicked', () => {
-    component.progressBarClass = []
+  it('should jump to slide clicked, to instruction page', () => {
+    component.progressBarClass = [];
     spyOn(component, 'goToSlide');
     component.goToSlideClicked({}, 0);
     expect(component.jumpSlideIndex).toBe(0);
     expect(component.goToSlide).toHaveBeenCalled();
+  });
+
+  it('should jump to slide clicked with feedback ON', () => {
+    const event = {
+      keyCode: 13,
+      stopPropagation: () => { },
+    }
+    component.progressBarClass = fakeMainProgressBar;
+    component.optionSelectedObj = { value: 1 };
+    component.showFeedBack = true;
+    spyOn(component, 'validateSelectedOption');
+    component.goToSlideClicked(event, 2);
+    expect(component.jumpSlideIndex).toBe(2);
+    expect(component.stopAutoNavigation).toBe(false);
+    expect(component.validateSelectedOption).toHaveBeenCalled();
+  });
+
+  it('should jump to slide clicked with feedback OFF', () => {
+    const event = {
+      keyCode: 13,
+      stopPropagation: () => { },
+    }
+    component.progressBarClass = fakeMainProgressBar;
+    component.optionSelectedObj = { value: 1 };
+    component.showFeedBack = false;
+    spyOn(component, 'goToSlide');
+    component.goToSlideClicked(event, 2);
+    expect(component.jumpSlideIndex).toBe(2);
+    expect(component.stopAutoNavigation).toBe(true);
+    expect(component.goToSlide).toHaveBeenCalledWith(2);
   });
 
   it('should keypress Enter', () => {
@@ -287,6 +339,7 @@ describe('SectionPlayerComponent', () => {
       keyCode: 13,
       stopPropagation: () => { },
     }
+    component.progressBarClass = fakeMainProgressBar;
     spyOn(event, 'stopPropagation');
     spyOn(component, 'goToSlideClicked');
     component.onEnter(event, 2);
@@ -300,10 +353,13 @@ describe('SectionPlayerComponent', () => {
       stopPropagation: () => { },
     }
     spyOn<any>(event, 'stopPropagation');
+    spyOn(component, 'validateSelectedOption');
     component.myCarousel = myCarousel;
     component.sectionConfig = mockSectionConfig;
+    component.optionSelectedObj = { value: 1 };
     component.onSectionEnter(event, 'do_1234343');
     expect(event['stopPropagation']).toHaveBeenCalled();
+    expect(component.validateSelectedOption).toHaveBeenCalledWith({ value: 1 }, 'jump');
   });
 
   it('should emit the scoreboard event', () => {
@@ -333,6 +389,47 @@ describe('SectionPlayerComponent', () => {
     tick(100);
     expect(ele.focus).toHaveBeenCalled();
   }));
+
+  it('should return current selected object and selected object are same', () => {
+    spyOn(component, 'focusOnNextButton');
+    component.currentOptionSelected = { value: 1 };
+    component.getOptionSelected({ value: 1 });
+    expect(component.focusOnNextButton).not.toHaveBeenCalled();
+  });
+
+  it('should mark the question as skipped if not selected the option', () => {
+    component.currentOptionSelected = { value: 1 };
+    component.myCarousel = myCarousel;
+    component.questions = mockSectionQuestions;
+    component.parentConfig = mockParentConfig;
+    component.showFeedBack = false;
+    spyOn(component, 'focusOnNextButton');
+    spyOn(viewerService, 'raiseHeartBeatEvent');
+    spyOn(component, 'validateSelectedOption');
+    component.getOptionSelected({ value: 2 });
+    expect(component.focusOnNextButton).toHaveBeenCalled();
+    expect(component.active).toBe(true);
+    expect(component.currentOptionSelected).toEqual({ value: 2 });
+    expect(viewerService.raiseHeartBeatEvent).toHaveBeenCalledWith('OPTION_CLICKED', 'interact', 1);
+    expect(component.validateSelectedOption).toHaveBeenCalledWith(undefined);
+  });
+
+  it('should mark it as selected option', () => {
+    component.currentOptionSelected = { option: { value: 1 } };
+    component.myCarousel = myCarousel;
+    component.questions = mockSectionQuestions;
+    component.parentConfig = mockParentConfig;
+    component.showFeedBack = false;
+    spyOn(component, 'focusOnNextButton');
+    spyOn(viewerService, 'raiseHeartBeatEvent');
+    spyOn(component, 'validateSelectedOption');
+    component.getOptionSelected({ option: { value: 2 }, solutions: [{ type: 'video', value: 'do_113143853080248320171' }] });
+    expect(component.focusOnNextButton).toHaveBeenCalled();
+    expect(component.active).toBe(true);
+    // expect(component.currentOptionSelected).toEqual({ option: { value: 2 } });
+    expect(viewerService.raiseHeartBeatEvent).toHaveBeenCalledWith('OPTION_CLICKED', 'interact', 1);
+    expect(component.validateSelectedOption).toHaveBeenCalled()
+  });
 
   it('should handle the duration end', () => {
     spyOn(component, 'emitSectionEnd');
@@ -388,16 +485,6 @@ describe('SectionPlayerComponent', () => {
     expect(component.progressBarClass[0].class).toBe('skipped');
   });
 
-  it('should handle sideBarEvents', () => {
-    spyOn(component, 'handleSideBarAccessibility');
-    spyOn(viewerService, 'raiseHeartBeatEvent');
-    component.myCarousel = myCarousel;
-    const event = { event: new KeyboardEvent('keydown', {}), type: 'CLOSE_MENU' }
-    component.sideBarEvents(event);
-    expect(component['handleSideBarAccessibility']).toHaveBeenCalled();
-    expect(viewerService['raiseHeartBeatEvent']).toHaveBeenCalled();
-  });
-
   it('should validate the selected option', () => {
     component.myCarousel = myCarousel;
     const option = {
@@ -425,7 +512,6 @@ describe('SectionPlayerComponent', () => {
     component.sectionConfig = mockSectionConfig;
     component.progressBarClass = mockSectionProgressBar.children;
     component.validateSelectedOption(option, "next");
-
   });
 
   it('should hide the popup once the time is over', fakeAsync(() => {
@@ -440,6 +526,7 @@ describe('SectionPlayerComponent', () => {
       "getCurrentSlideIndex": 1, "move": {}, isLast: false
     });
     spyOn(component, 'nextSlide');
+    component.showAlert = true;
     component.correctFeedBackTimeOut('next');
     tick(4000);
     expect(component.showAlert).toBe(false);
@@ -451,6 +538,7 @@ describe('SectionPlayerComponent', () => {
       "getCurrentSlideIndex": 1, "move": {}, isLast: false
     });
     spyOn(component, 'prevSlide');
+    component.showAlert = true;
     component.correctFeedBackTimeOut('previous');
     tick(4000);
     expect(component.showAlert).toBe(false);
@@ -463,6 +551,7 @@ describe('SectionPlayerComponent', () => {
       "getCurrentSlideIndex": 1, "move": {}, isLast: false
     });
     spyOn(component, 'goToSlide');
+    component.showAlert = true;
     component.correctFeedBackTimeOut('jump');
     tick(4000);
     expect(component.showAlert).toBe(false);
@@ -475,6 +564,7 @@ describe('SectionPlayerComponent', () => {
       "getCurrentSlideIndex": 1, "move": {}, isLast: true
     });
     spyOn(component, 'emitSectionEnd');
+    component.showAlert = true;
     component.correctFeedBackTimeOut('');
     tick(4000);
     expect(component.showAlert).toBe(false);
@@ -615,6 +705,18 @@ describe('SectionPlayerComponent', () => {
     expect(response).toEqual(1);
   });
 
+  it('should return a score for a question - wrong answer', () => {
+    component.questions = mockSectionQuestions;
+    component.progressBarClass = mockSectionProgressBar.children;
+    const response = component.getScore(0, 'response1', false, {
+      option: {
+        "answer": false,
+        "value": 0
+      }
+    });
+    expect(response).toEqual(1);
+  });
+
   it('should calculate the score', () => {
     component.progressBarClass = mockSectionProgressBar.children;
     const score = component.calculateScore();
@@ -677,20 +779,66 @@ describe('SectionPlayerComponent', () => {
 
   it('should clear the time interval', () => {
     component.intervalRef = setTimeout(() => { }, 0);
-    spyOn(window, 'clearInterval');
+    spyOn(window, 'clearTimeout');
     component.clearTimeInterval();
-    expect(clearInterval).toHaveBeenCalled();
+    expect(clearTimeout).toHaveBeenCalled();
   });
 
   it('should clean up the state before leaving the page', () => {
     const errorService = TestBed.get(ErrorService);
-    component.subscription = of(1, 2, 3).subscribe();
     spyOn(component['destroy$'], 'next');
     spyOn(errorService.getInternetConnectivityError, 'unsubscribe');
-    spyOn(component.subscription, 'unsubscribe');
     component.ngOnDestroy();
     expect(component['destroy$'].next).toHaveBeenCalledWith(true);
     expect(errorService.getInternetConnectivityError.unsubscribe).toHaveBeenCalled();
-    expect(component.subscription.unsubscribe).toHaveBeenCalled();
+  });
+
+  it('should change the height and width of the image modal', () => {
+    component.imageModal = new ElementRef({ nativeElement: jasmine.createSpyObj('nativeElement', ['style', 'height', 'width']) });
+    component.imageModal.nativeElement.style = {
+      height: '100%',
+      width: '100%'
+    }
+    component.imageZoomCount = 20;
+    component.setImageModalHeightWidth();
+    expect(component.imageModal.nativeElement.style.height).toBe('20%');
+    expect(component.imageModal.nativeElement.style.width).toBe('20%');
+  });
+
+
+  it('should call toggleScreenRotate', () => {
+    spyOn(viewerService, 'raiseHeartBeatEvent');
+    component.myCarousel = myCarousel;
+    component.toggleScreenRotate();
+    expect(viewerService.raiseHeartBeatEvent).toHaveBeenCalledWith('DEVICE_ROTATION_CLICKED', 'interact', 2);
+  });
+
+  it('should reset the height and width of the image for portrait mode', () => {
+    const element = document.createElement('div');
+    element.dataset.assetVariable = 'true';
+    Object.defineProperty(element, 'clientHeight', { configurable: true, value: 100 });
+    spyOn(document, 'querySelectorAll').and.returnValue([element]);
+    component.setImageHeightWidthClass();
+    expect(document.querySelectorAll).toHaveBeenCalled();
+    expect(element.classList.contains('portrait'))
+  });
+
+  it('should reset the height and width of the image for landscape mode', () => {
+    const element = document.createElement('div');
+    element.dataset.assetVariable = 'true';
+    Object.defineProperty(element, 'clientWidth', { configurable: true, value: 100 });
+    spyOn(document, 'querySelectorAll').and.returnValue([element]);
+    component.setImageHeightWidthClass();
+    expect(document.querySelectorAll).toHaveBeenCalled();
+    expect(element.classList.contains('landscape'))
+  });
+
+  it('should reset the height and width of the image for neutral mode', () => {
+    const element = document.createElement('div');
+    element.dataset.assetVariable = 'true';
+    spyOn(document, 'querySelectorAll').and.returnValue([element]);
+    component.setImageHeightWidthClass();
+    expect(document.querySelectorAll).toHaveBeenCalled();
+    expect(element.classList.contains('neutral'))
   });
 });

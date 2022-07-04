@@ -1,12 +1,15 @@
-import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { contentErrorMessage } from '@project-sunbird/sunbird-player-sdk-v9/lib/player-utils/interfaces/errorMessage';
 import { NextContent } from '@project-sunbird/sunbird-player-sdk-v9/sunbird-player-sdk.interface';
 import * as _ from 'lodash-es';
+import { SectionPlayerComponent } from '../section-player/section-player.component';
 import { IAttempts, IParentConfig, ISummary, QumlPlayerConfig } from './../quml-library-interface';
 import { ViewerService } from './../services/viewer-service/viewer-service';
 import { eventName, pageId, TelemetryType, MimeType } from './../telemetry-constants';
 import { UtilService } from './../util-service';
-
+import { ISideBarEvent } from '@project-sunbird/sunbird-player-sdk-v9/sunbird-player-sdk.interface';
+import { fromEvent, Subscription } from 'rxjs';
+import maintain from 'ally.js/esm/maintain/_maintain';
 @Component({
   selector: 'quml-main-player',
   templateUrl: './main-player.component.html',
@@ -18,18 +21,18 @@ export class MainPlayerComponent implements OnInit {
   @Output() playerEvent = new EventEmitter<any>();
   @Output() telemetryEvent = new EventEmitter<any>();
 
+  @ViewChild(SectionPlayerComponent) sectionPlayer!: SectionPlayerComponent;
+
   isLoading = false;
   isSectionsAvailable = false;
   isMultiLevelSection = false;
   sections: any[] = [];
-  isFirstSection = false;
   sectionIndex = 0;
   activeSection: any;
   contentError: contentErrorMessage;
   parentConfig: IParentConfig = {
     loadScoreBoard: false,
     requiresSubmit: false,
-    isFirstSection: false,
     isSectionsAvailable: false,
     isReplayed: false,
     identifier: '',
@@ -43,10 +46,12 @@ export class MainPlayerComponent implements OnInit {
       showShare: true,
       showDownload: false,
       showExit: false,
-    }
+    },
+    showFeedback: false,
+    showLegend: true
   };
 
-  showEndPage = true;
+  showEndPage: boolean;
   showFeedBack: boolean;
   endPageReached = false;
   isEndEventRaised = false;
@@ -73,6 +78,8 @@ export class MainPlayerComponent implements OnInit {
   jumpToQuestion: any;
   totalVisitedQuestion = 0;
   nextContent: NextContent;
+  disabledHandle: any;
+  subscription: Subscription;
 
   constructor(public viewerService: ViewerService, private utilService: UtilService) { }
 
@@ -98,6 +105,7 @@ export class MainPlayerComponent implements OnInit {
   initializeSections() {
     const childMimeType = _.map(this.playerConfig.metadata.children, 'mimeType');
     this.parentConfig.isSectionsAvailable = this.isSectionsAvailable = childMimeType[0] === MimeType.questionSet;
+    this.parentConfig.metadata = { ...this.playerConfig.metadata };
     this.viewerService.sectionQuestions = [];
     if (this.isSectionsAvailable) {
       this.isMultiLevelSection = this.getMultilevelSection(this.playerConfig.metadata);
@@ -112,9 +120,7 @@ export class MainPlayerComponent implements OnInit {
         this.sections = _.map(children, (child) => {
           let childNodes = child?.children?.map(item => item.identifier) || [];
           const maxQuestions = child?.maxQuestions;
-          if (child?.shuffle && !this.playerConfig.config?.progressBar?.length) {
-            childNodes = _.shuffle(childNodes);
-          }
+          childNodes = child?.shuffle ? _.shuffle(childNodes) : childNodes;
 
           if (maxQuestions) {
             childNodes = childNodes.slice(0, maxQuestions);
@@ -134,7 +140,6 @@ export class MainPlayerComponent implements OnInit {
 
         this.setInitialScores();
         this.activeSection = _.cloneDeep(this.sections[0]);
-        this.isFirstSection = true;
         this.isLoading = false;
       }
     } else {
@@ -145,12 +150,11 @@ export class MainPlayerComponent implements OnInit {
         childNodes = this.playerConfig.metadata.childNodes;
       }
 
+      childNodes = this.playerConfig.metadata?.shuffle ? _.shuffle(childNodes) : childNodes;
       const maxQuestions = this.playerConfig.metadata.maxQuestions;
+      /* istanbul ignore else */
       if (maxQuestions) {
         childNodes = childNodes.slice(0, maxQuestions);
-      }
-      if (this.playerConfig.metadata?.shuffle && !this.playerConfig.config?.progressBar?.length) {
-        childNodes = _.shuffle(childNodes);
       }
       childNodes.forEach((element, index) => {
         this.totalNoOfQuestions++;
@@ -160,18 +164,20 @@ export class MainPlayerComponent implements OnInit {
         });
       });
       this.playerConfig.metadata.childNodes = childNodes;
-      if (this.playerConfig.config?.progressBar?.length) {
-        this.mainProgressBar = _.cloneDeep(this.playerConfig.config.progressBar);
-      }
-      if (this.playerConfig.config?.questions?.length) {
-        const questionsObj = this.playerConfig.config.questions.find(item => item.id === this.playerConfig.metadata.identifier);
-        if (questionsObj?.questions) {
-          this.viewerService.updateSectionQuestions(this.playerConfig.metadata.identifier, questionsObj.questions);
+
+      if (!this.playerConfig.metadata?.shuffle) {
+        if (this.playerConfig.config?.progressBar?.length) {
+          this.mainProgressBar = _.cloneDeep(this.playerConfig.config.progressBar);
+        }
+        if (this.playerConfig.config?.questions?.length) {
+          const questionsObj = this.playerConfig.config.questions.find(item => item.id === this.playerConfig.metadata.identifier);
+          if (questionsObj?.questions) {
+            this.viewerService.updateSectionQuestions(this.playerConfig.metadata.identifier, questionsObj.questions);
+          }
         }
       }
       this.activeSection = _.cloneDeep(this.playerConfig);
       this.isLoading = false;
-      this.isFirstSection = true;
       this.parentConfig.questionCount = this.totalNoOfQuestions;
     }
   }
@@ -181,9 +187,10 @@ export class MainPlayerComponent implements OnInit {
     this.parentConfig.identifier = this.playerConfig.metadata?.identifier;
     this.parentConfig.requiresSubmit = this.playerConfig.metadata?.requiresSubmit?.toLowerCase() !== 'no';
     this.parentConfig.instructions = this.playerConfig.metadata?.instructions?.default;
+    this.parentConfig.showLegend = this.playerConfig.config?.showLegend !== undefined ? this.playerConfig.config.showLegend : true;
     this.nextContent = this.playerConfig.config?.nextContent;
     this.showEndPage = this.playerConfig.metadata?.showEndPage?.toLowerCase() !== 'no';
-    this.showFeedBack = this.playerConfig.metadata?.showFeedback?.toLowerCase() !== 'no';
+    this.parentConfig.showFeedback = this.showFeedBack = this.playerConfig.metadata?.showFeedback?.toLowerCase() === 'yes';
     this.parentConfig.sideMenuConfig = { ...this.parentConfig.sideMenuConfig, ...this.playerConfig.config.sideMenu };
     this.userName = this.playerConfig.context.userData.firstName + ' ' + this.playerConfig.context.userData.lastName;
 
@@ -233,16 +240,17 @@ export class MainPlayerComponent implements OnInit {
   }
 
   onShowScoreBoard(event) {
+    /* istanbul ignore else */
     if (this.parentConfig.isSectionsAvailable) {
       const activeSectionIndex = this.getActiveSectionIndex();
       this.updateSectionScore(activeSectionIndex);
     }
+    this.getSummaryObject();
     this.loadScoreBoard = true;
   }
 
   onSectionEnd(event) {
     if (this.parentConfig.isSectionsAvailable) {
-      this.isFirstSection = false;
       const activeSectionIndex = this.getActiveSectionIndex();
       this.updateSectionScore(activeSectionIndex);
       this.setNextSection(event, activeSectionIndex);
@@ -286,6 +294,7 @@ export class MainPlayerComponent implements OnInit {
     }
 
     let nextSectionIndex = activeSectionIndex + 1;
+    /* istanbul ignore else */
     if (event.jumpToSection) {
       const sectionIndex = this.sections.findIndex(sec => sec.metadata?.identifier === event.jumpToSection);
       nextSectionIndex = sectionIndex > -1 ? sectionIndex : nextSectionIndex;
@@ -313,11 +322,11 @@ export class MainPlayerComponent implements OnInit {
   prepareEnd(event) {
     this.calculateScore();
     this.setDurationSpent();
-    if (this.parentConfig.requiresSubmit) {
+    this.getSummaryObject();
+    if (this.parentConfig.requiresSubmit && !this.isDurationExpired) {
       this.loadScoreBoard = true;
     } else {
       this.endPageReached = true;
-      this.getSummaryObject();
       this.viewerService.raiseSummaryEvent(this.totalVisitedQuestion, this.endPageReached, this.finalScore, this.summary);
       this.raiseEndEvent(this.totalVisitedQuestion, this.endPageReached, this.finalScore);
       this.isSummaryEventRaised = true;
@@ -349,6 +358,7 @@ export class MainPlayerComponent implements OnInit {
     this.endPageReached = false;
     this.loadScoreBoard = false;
     this.activeSection = this.isSectionsAvailable ? _.cloneDeep(this.sections[0]) : this.playerConfig;
+    /* istanbul ignore else */
     if (this.attempts?.max === this.attempts?.current) {
       this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(_.get(this.attempts, 'current'), false, true));
     }
@@ -357,8 +367,9 @@ export class MainPlayerComponent implements OnInit {
     setTimeout(() => {
       this.parentConfig.isReplayed = false;
       const element = document.querySelector('li.info-page') as HTMLElement;
+      /* istanbul ignore else */
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth'});
+        element.scrollIntoView({ behavior: 'smooth' });
       }
     }, 1000);
   }
@@ -384,17 +395,7 @@ export class MainPlayerComponent implements OnInit {
         ..._.last(this.mainProgressBar), children
       };
 
-      if (this.playerConfig.config?.questions?.length) {
-        const questionsObj = this.playerConfig.config.questions.find(item => item.id === section.metadata?.identifier);
-        if (questionsObj?.questions) {
-          this.viewerService.updateSectionQuestions(section.metadata.identifier, questionsObj.questions);
-        }
-      }
     });
-    if (this.playerConfig.config?.progressBar?.length) {
-      this.mainProgressBar = _.cloneDeep(this.playerConfig.config.progressBar);
-      this.mainProgressBar[0].isActive = true;
-    }
     this.parentConfig.questionCount = this.totalNoOfQuestions;
   }
 
@@ -406,6 +407,7 @@ export class MainPlayerComponent implements OnInit {
 
   exitContent(event) {
     this.calculateScore();
+    /* istanbul ignore else */
     if (event?.type === 'EXIT') {
       this.viewerService.raiseHeartBeatEvent(eventName.endPageExitClicked, TelemetryType.interact, pageId.endPage);
       this.getSummaryObject();
@@ -424,12 +426,14 @@ export class MainPlayerComponent implements OnInit {
     this.viewerService.metaData.progressBar = this.mainProgressBar;
     this.viewerService.raiseEndEvent(currentQuestionIndex, endPageSeen, score);
 
+    /* istanbul ignore else */
     if (_.get(this.attempts, 'current') >= _.get(this.attempts, 'max')) {
       this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(_.get(this.attempts, 'current'), true, false));
     }
   }
 
   setDurationSpent() {
+    /* istanbul ignore else */
     if (this.playerConfig.metadata?.summaryType !== 'Score') {
       this.viewerService.metaData.duration = new Date().getTime() - this.initialTime;
       this.durationSpent = this.utilService.getTimeSpentText(this.initialTime);
@@ -468,6 +472,7 @@ export class MainPlayerComponent implements OnInit {
   }
 
   goToQuestion(event) {
+    /* istanbul ignore else */
     if (this.parentConfig.isSectionsAvailable && event.identifier) {
       const sectionIndex = this.sections.findIndex(sec => sec.metadata?.identifier === event.identifier);
       this.activeSection = _.cloneDeep(this.sections[sectionIndex]);
@@ -483,12 +488,64 @@ export class MainPlayerComponent implements OnInit {
     this.viewerService.raiseHeartBeatEvent(event?.type, TelemetryType.interact, pageId.endPage, event?.identifier);
   }
 
+  toggleScreenRotate(event?: KeyboardEvent | MouseEvent) {
+    this.viewerService.raiseHeartBeatEvent(eventName.deviceRotationClicked, TelemetryType.interact, this.sectionPlayer.myCarousel.getCurrentSlideIndex() + 1);
+  }
+
+  sideBarEvents(event: ISideBarEvent) {
+    /* istanbul ignore else */
+    if (event.type === 'OPEN_MENU' || event.type === 'CLOSE_MENU') {
+      this.handleSideBarAccessibility(event);
+    }
+    this.viewerService.raiseHeartBeatEvent(event.type, TelemetryType.interact, this.sectionPlayer.myCarousel.getCurrentSlideIndex() + 1);
+  }
+
+  handleSideBarAccessibility(event) {
+    const navBlock = document.querySelector('.navBlock') as HTMLInputElement;
+    const overlayInput = document.querySelector('#overlay-input') as HTMLElement;
+    const overlayButton = document.querySelector('#overlay-button') as HTMLElement;
+    const sideBarList = document.querySelector('#sidebar-list') as HTMLElement;
+
+    if (event.type === 'OPEN_MENU') {
+      const isMobile = this.playerConfig.config?.sideMenu?.showExit;
+      this.disabledHandle = isMobile ? maintain.hidden({ filter: [sideBarList, overlayButton, overlayInput] }) : maintain.tabFocus({ context: navBlock });
+      this.subscription = fromEvent(document, 'keydown').subscribe((e: KeyboardEvent) => {
+        console.log("===========", e.key);
+        /* istanbul ignore else */
+        if (e['key'] === 'Escape') {
+          const inputChecked = document.getElementById('overlay-input') as HTMLInputElement;
+          inputChecked.checked = false;
+          document.getElementById('playerSideMenu').style.visibility = 'hidden';
+          document.querySelector<HTMLElement>('.navBlock').style.marginLeft = '-100%';
+          this.viewerService.raiseHeartBeatEvent('CLOSE_MENU', TelemetryType.interact, this.sectionPlayer.myCarousel.getCurrentSlideIndex() + 1);
+          this.disabledHandle.disengage();
+          this.subscription.unsubscribe();
+          this.disabledHandle = null;
+          this.subscription = null;
+        }
+      });
+    } else if (event.type === 'CLOSE_MENU' && this.disabledHandle) {
+      this.disabledHandle.disengage();
+      this.disabledHandle = null;
+      /* istanbul ignore else */
+      if (this.subscription) {
+        this.subscription.unsubscribe();
+        this.subscription = null;
+      }
+    }
+  }
+
   @HostListener('window:beforeunload')
   ngOnDestroy() {
     this.calculateScore();
     this.getSummaryObject();
+    /* istanbul ignore else */
     if (this.isSummaryEventRaised === false) {
       this.viewerService.raiseSummaryEvent(this.totalVisitedQuestion, this.endPageReached, this.finalScore, this.summary);
+    }
+    /* istanbul ignore else */
+    if (this.subscription) {
+      this.subscription.unsubscribe();
     }
     this.raiseEndEvent(this.totalVisitedQuestion, this.endPageReached, this.finalScore);
   }

@@ -65,6 +65,7 @@ export class UtilService {
     sumObjectsByKey(...objects) {
         return objects.reduce((accumulator, currentValue) => {
             for (const key in currentValue) {
+                /* istanbul ignore else */
                 if (currentValue.hasOwnProperty(key)) {
                     accumulator[key] = (accumulator[key] || 0) + currentValue[key];
                 }

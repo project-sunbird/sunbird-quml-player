@@ -19,6 +19,7 @@ export class McqImageOptionComponent {
   }
 
   optionClicked(event, mcqOption) {
+    /* istanbul ignore else */
     if (event.hasOwnProperty('stopImmediatePropagation')) {
       event.stopImmediatePropagation();
     }
@@ -31,6 +32,7 @@ export class McqImageOptionComponent {
   }
 
   onEnter(event: KeyboardEvent, mcqOption) {
+    /* istanbul ignore else */
     if (event.key === 'Enter') {
       event.stopPropagation();
       this.optionClicked(event, mcqOption);

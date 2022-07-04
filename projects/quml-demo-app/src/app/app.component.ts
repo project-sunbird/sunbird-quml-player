@@ -1,31 +1,48 @@
-import { Component } from '@angular/core';
-import { playerConfig1 } from './quml-library-data';
+import { Component, OnInit } from '@angular/core';
+import { samplePlayerConfig } from './quml-library-data';
+import { DataService } from './services/data.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
-  title = 'quml-demo-app';
-  qumlMetaDataConfig = {};
-  // qumlMetaDataConfig: any = JSON.parse(localStorage.getItem('config')) || {};  // to Get locally saved metaData
-  config = { ...playerConfig1.config, ...this.qumlMetaDataConfig };
-  QumlPlayerConfig = { ...playerConfig1, config: {...this.config, nextContent: { name: 'Roti aur Kutta', identifier: 'do_231234332232' }}};
+export class AppComponent implements OnInit {
+  contentId = 'do_213484313936035840138';
+  playerConfig: any;
+
+  constructor(private dataService: DataService) { }
+
+  ngOnInit() {
+    this.dataService.getQuestionSet(this.contentId).subscribe(res => {
+      this.initializePlayer(res);
+    });
+  }
+
+  initializePlayer(metadata) {
+    let qumlConfigMetadata: any = localStorage.getItem(`config_${this.contentId}`) || '{}';
+    let config;
+    if (qumlConfigMetadata) {
+      qumlConfigMetadata = JSON.parse(qumlConfigMetadata);
+      config = { ...samplePlayerConfig.config, ...qumlConfigMetadata };
+    }
+    this.playerConfig = {
+      context: samplePlayerConfig.context,
+      config: config ? config : samplePlayerConfig.config,
+      metadata,
+      data: {}
+    };
+  }
 
   getPlayerEvents(event) {
     console.log('get player events', JSON.stringify(event));
 
     // Store the metaData locally
-    /* if (event.eid === 'END') {
-      this.qumlMetaDataConfig = event?.metaData || {};
-      localStorage.setItem('config', JSON.stringify(this.qumlMetaDataConfig));
-      this.config = {
-        ...data1,
-        ...this.qumlMetaDataConfig,
-      };
-      this.QumlPlayerConfig.config = this.config;
-    } */
+    if (event.eid === 'END') {
+      let qumlMetaDataConfig = event.metaData;
+      localStorage.setItem(`config_${this.contentId}`, JSON.stringify(qumlMetaDataConfig));
+      this.playerConfig.config = { ...samplePlayerConfig.config, ...qumlMetaDataConfig };;
+    }
   }
 
   getTelemetryEvents(event) {

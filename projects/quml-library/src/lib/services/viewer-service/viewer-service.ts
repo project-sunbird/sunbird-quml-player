@@ -56,6 +56,7 @@ export class ViewerService {
     this.src = config.metadata.artifactUrl || '';
     this.questionSetId = config.metadata.identifier;
 
+    /* istanbul ignore else */
     if (config.context.userData) {
       this.userName = config.context.userData.firstName + ' ' + config.context.userData.lastName;
     }

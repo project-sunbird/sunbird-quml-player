@@ -2,6 +2,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { SafeHtmlPipe } from '../pipes/safe-html/safe-html.pipe';
+import { ViewerService } from '../services/viewer-service/viewer-service';
 
 import { ScoreboardComponent } from './scoreboard.component';
 
@@ -9,9 +10,24 @@ describe('ScoreboardComponent', () => {
   let component: ScoreboardComponent;
   let fixture: ComponentFixture<ScoreboardComponent>;
 
+  class ViewerServiceMock {
+    initialize() { }
+    raiseStartEvent() { }
+    raiseHeartBeatEvent() { }
+    getQuestions() { }
+    updateSectionQuestions() { }
+    raiseExceptionLog() { }
+    getQuestion() { }
+    raiseResponseEvent() { }
+    getSectionQuestions() { }
+    raiseAssesEvent() { }
+  }
+
+
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ScoreboardComponent, SafeHtmlPipe],
+      providers: [{ provide: ViewerService, useClass: ViewerServiceMock },],
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
@@ -48,5 +64,27 @@ describe('ScoreboardComponent', () => {
     spyOn(component.subscription, 'unsubscribe');
     component.ngOnDestroy();
     expect(component.subscription.unsubscribe).toHaveBeenCalled();
+  });
+
+  it('should call onReviewClicked for section Level questions', () => {
+    const viewerService = TestBed.get(ViewerService);
+    component.isSections = true;
+    component.scores = [{ identifier: 'do_123' }, { identifier: 'do_456' }];
+    spyOn(component, 'goToQuestion');
+    spyOn(viewerService, 'raiseHeartBeatEvent');
+    component.onReviewClicked();
+    expect(component.goToQuestion).toHaveBeenCalled();
+    expect(viewerService.raiseHeartBeatEvent).toHaveBeenCalledWith('SCORE_BOARD_REVIEW_CLICKED', 'interact', 'SUBMIT_PAGE');
+  });
+
+  it('should call onReviewClicked', () => {
+    const viewerService = TestBed.get(ViewerService);
+    component.isSections = false;
+    component.scores = [{ identifier: 'do_123' }, { identifier: 'do_456' }];
+    spyOn(component, 'goToQuestion');
+    spyOn(viewerService, 'raiseHeartBeatEvent');
+    component.onReviewClicked();
+    expect(component.goToQuestion).toHaveBeenCalledWith(1);
+    expect(viewerService.raiseHeartBeatEvent).toHaveBeenCalledWith('SCORE_BOARD_REVIEW_CLICKED', 'interact', 'SUBMIT_PAGE');
   });
 });
