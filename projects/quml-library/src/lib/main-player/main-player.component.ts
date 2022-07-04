@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 
-import { Component, EventEmitter, HostListener, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { contentErrorMessage } from '@project-sunbird/sunbird-player-sdk-v9/lib/player-utils/interfaces/errorMessage';
 import { NextContent } from '@project-sunbird/sunbird-player-sdk-v9/sunbird-player-sdk.interface';
 import { SectionPlayerComponent } from '../section-player/section-player.component';
@@ -17,17 +17,18 @@ import { UtilService } from './../util-service';
 import { ISideBarEvent } from '@project-sunbird/sunbird-player-sdk-v9/sunbird-player-sdk.interface';
 import maintain from 'ally.js/esm/maintain/_maintain';
 import { fromEvent, Subscription } from 'rxjs';
+import { QuestionCursor } from '../quml-question-cursor.service';
 @Component({
   selector: "quml-main-player",
   templateUrl: "./main-player.component.html",
   styleUrls: ["./main-player.component.scss"],
 })
 export class MainPlayerComponent implements OnInit {
+  @Input() playerConfig: QumlPlayerConfig;
   @Output() playerEvent = new EventEmitter<any>();
   @Output() telemetryEvent = new EventEmitter<any>();
 
   player: Player;
-  playerConfig: QumlPlayerConfig;
   @ViewChild(SectionPlayerComponent) sectionPlayer!: SectionPlayerComponent;
 
   isLoading = false;
@@ -85,9 +86,9 @@ export class MainPlayerComponent implements OnInit {
   constructor(
     public viewerService: ViewerService,
     private utilService: UtilService,
-    private playerService: PlayerService
-  ) {
-  }
+    private playerService: PlayerService,
+    private questionCursorImplementationService: QuestionCursor
+  ) { }
 
   @HostListener("document:TelemetryEvent", ["$event"])
   onTelemetryEvent(event) {
@@ -97,7 +98,15 @@ export class MainPlayerComponent implements OnInit {
   ngOnInit(): void {
     this.player = this.playerService.getPlayerInstance();
     this.telemetryService = TelemetryService.getInstance(this.player);
-    this.playerConfig = this.player.getPlayerConfig();
+
+    if (this.playerConfig) {
+      this.player.questionCursorImplementationService = this.questionCursorImplementationService;
+      this.player.setPlayerConfig(this.playerConfig);
+      this.playerConfig = this.player.getPlayerConfig();
+    } else {
+      this.playerConfig = this.player.getPlayerConfig();
+    }
+
     if (typeof this.playerConfig === "string") {
       try {
         this.playerConfig = JSON.parse(this.playerConfig);

@@ -33,9 +33,11 @@ export class AppComponent implements OnInit {
       metadata,
       data: {}
     };
-    const player: Player = this.playerService.getPlayerInstance()
-    player.questionCursorImplementationService = this.questionCursorImplementationService;
-    player.setPlayerConfig(this.playerConfig); 
+
+    /* Feed the data to the player by creating player instance when Angular's input is not being used */
+    // const player: Player = this.playerService.getPlayerInstance()
+    // player.questionCursorImplementationService = this.questionCursorImplementationService;
+    // player.setPlayerConfig(this.playerConfig);
   }
 
   getPlayerEvents(event) {
