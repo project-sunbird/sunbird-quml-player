@@ -1,6 +1,8 @@
 import { Component, OnInit, Output, EventEmitter, Input, OnChanges, OnDestroy, AfterViewInit, HostListener } from '@angular/core';
-import { ViewerService } from '../services/viewer-service/viewer-service';
+import { Player } from '../../public_api';
+import { TelemetryService } from '../player/src/TelemetryService';
 import { eventName, TelemetryType } from '../telemetry-constants';
+import { PlayerService } from '../services/player.service';
 
 
 @Component({
@@ -37,7 +39,6 @@ export class HeaderComponent implements OnInit, OnChanges, AfterViewInit, OnDest
   @Output() showSolution = new EventEmitter<any>();
   @Output() toggleScreenRotate = new EventEmitter<any>();
 
-
   minutes: number;
   seconds: string | number;
   private intervalRef?;
@@ -45,9 +46,12 @@ export class HeaderComponent implements OnInit, OnChanges, AfterViewInit, OnDest
   isMobilePortrait = false;
   time: any;
   showProgressIndicatorPopUp = false;
-  constructor(private viewerService: ViewerService) {
+  player: Player;
+  telemetryService: TelemetryService;
+  constructor(private playerService: PlayerService) {
+    this.player = this.playerService.getPlayerInstance();
+    this.telemetryService = TelemetryService.getInstance(this.player);
   }
-
 
   ngOnInit() {
     if (this.duration && this.showTimer) {
@@ -149,7 +153,7 @@ export class HeaderComponent implements OnInit, OnChanges, AfterViewInit, OnDest
 
   openProgressIndicatorPopup() {
     this.showProgressIndicatorPopUp = true;
-    this.viewerService.raiseHeartBeatEvent(eventName.progressIndicatorPopupOpened, TelemetryType.interact, this.currentSlideIndex);
+    this.telemetryService.emitHeartBeatEvent(eventName.progressIndicatorPopupOpened, TelemetryType.interact, this.currentSlideIndex);
   }
 
   @HostListener('document:keydown.escape', ['$event']) onKeydownHandler(event: KeyboardEvent) {
@@ -158,6 +162,6 @@ export class HeaderComponent implements OnInit, OnChanges, AfterViewInit, OnDest
 
   onProgressPopupClose() {
     this.showProgressIndicatorPopUp = false;
-    this.viewerService.raiseHeartBeatEvent(eventName.progressIndicatorPopupClosed, TelemetryType.interact, this.currentSlideIndex);
+    this.telemetryService.emitHeartBeatEvent(eventName.progressIndicatorPopupClosed, TelemetryType.interact, this.currentSlideIndex);
   }
 }

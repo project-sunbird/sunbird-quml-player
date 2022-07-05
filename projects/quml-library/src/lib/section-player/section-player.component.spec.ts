@@ -13,7 +13,7 @@ import { SectionPlayerComponent } from './section-player.component';
 import { mockSectionPlayerConfig } from './section-player.component.spec.data';
 
 
-describe('SectionPlayerComponent', () => {
+fdescribe('SectionPlayerComponent', () => {
   let component: SectionPlayerComponent;
   let fixture: ComponentFixture<SectionPlayerComponent>;
   let viewerService, utilService, errorService;

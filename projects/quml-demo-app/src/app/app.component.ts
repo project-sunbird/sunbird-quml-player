@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { samplePlayerConfig } from './quml-library-data';
 import { DataService } from './services/data.service';
+import { QuestionCursor, PlayerService, Player, QumlPlayerConfig } from '@project-sunbird/sunbird-quml-player-v9';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +12,7 @@ export class AppComponent implements OnInit {
   contentId = 'do_213484313936035840138';
   playerConfig: any;
 
-  constructor(private dataService: DataService) { }
+  constructor(private dataService: DataService, public playerService: PlayerService, private questionCursorImplementationService: QuestionCursor) { }
 
   ngOnInit() {
     this.dataService.getQuestionSet(this.contentId).subscribe(res => {
@@ -32,6 +33,11 @@ export class AppComponent implements OnInit {
       metadata,
       data: {}
     };
+
+    /* Feed the data to the player by creating player instance when Angular's input is not being used */
+    // const player: Player = this.playerService.getPlayerInstance()
+    // player.questionCursorImplementationService = this.questionCursorImplementationService;
+    // player.setPlayerConfig(this.playerConfig);
   }
 
   getPlayerEvents(event) {
