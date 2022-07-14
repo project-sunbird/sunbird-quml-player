@@ -14,6 +14,7 @@ export class McqOptionComponent implements OnChanges {
   @Input() solutions: any;
   @Input() layout: any;
   @Input() cardinality: string;
+  @Input() optionShuffle?: boolean;
   @Output() showPopup = new EventEmitter();
   @Output() optionSelected = new EventEmitter<any>();
   selectedOption = [];
@@ -26,7 +27,7 @@ export class McqOptionComponent implements OnChanges {
 
   ngOnChanges() {
     /* istanbul ignore else */
-    this.mcqOptions = _.shuffle(this.mcqOptions);
+    this.mcqOptions = this.optionShuffle ? _.shuffle(this.mcqOptions) : this.mcqOptions;
 
     if (this.replayed) {
       this.mcqOptions.forEach((ele) => {
