@@ -61,6 +61,7 @@ export interface Config {
     nextContent?: NextContent;
     showDeviceOrientation?: boolean;
     showLegend?: boolean;
+    shuffle_options?: boolean;
 }
 
 export interface QumlPlayerConfig {

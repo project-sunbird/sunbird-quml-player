@@ -29,7 +29,7 @@
             <quml-mcq-question [mcqQuestion]="mcqQuestion" [layout]="layout"></quml-mcq-question>
         </div>
         <div class="quml-mcq--option">
-            <quml-mcq-option [mcqOptions]="options" [replayed]="replayed" [cardinality]="cardinality"
+            <quml-mcq-option [shuffle_options]="shuffle_options" [mcqOptions]="options" [replayed]="replayed" [cardinality]="cardinality"
                 [solutions]="solutions" (optionSelected)="getSelectedOptionAndResult($event)" [layout]="layout" [tryAgain]="tryAgain">
             </quml-mcq-option>
         </div>
