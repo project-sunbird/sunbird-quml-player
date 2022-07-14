@@ -5,7 +5,7 @@
     </div>
     <div class="quml-mcq--option">
         <quml-mcq-option [mcqOptions]="options" [replayed]="replayed" [cardinality]="cardinality"
-            [solutions]="solutions" [layout]="layout" (optionSelected)="getSelectedOptionAndResult($event)"
+            [solutions]="solutions" [layout]="layout" [optionShuffle]="optionShuffle" (optionSelected)="getSelectedOptionAndResult($event)"
             (showPopup)="showPopup()" [tryAgain]="tryAgain"></quml-mcq-option>
     </div>
 </div>

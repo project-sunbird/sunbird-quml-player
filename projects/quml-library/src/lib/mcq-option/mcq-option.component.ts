@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { Cardinality } from '../telemetry-constants';
 import { UtilService } from '../util-service';
+import * as _ from "lodash-es";
 
 @Component({
   selector: 'quml-mcq-option',
@@ -13,6 +14,7 @@ export class McqOptionComponent implements OnChanges {
   @Input() solutions: any;
   @Input() layout: any;
   @Input() cardinality: string;
+  @Input() optionShuffle?: boolean;
   @Output() showPopup = new EventEmitter();
   @Output() optionSelected = new EventEmitter<any>();
   selectedOption = [];
@@ -25,6 +27,8 @@ export class McqOptionComponent implements OnChanges {
 
   ngOnChanges() {
     /* istanbul ignore else */
+    this.mcqOptions = this.optionShuffle ? _.shuffle(this.mcqOptions) : this.mcqOptions;
+
     if (this.replayed) {
       this.mcqOptions.forEach((ele) => {
         ele.selected = false;
