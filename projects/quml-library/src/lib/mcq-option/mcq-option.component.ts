@@ -10,7 +10,7 @@ import * as _ from 'lodash-es';
 })
 export class McqOptionComponent implements OnChanges {
 
-  @Input() shuffle_options: boolean
+  @Input() shuffleOptions: boolean
   @Input() mcqOptions: any;
   @Input() solutions: any;
   @Input() layout: any;
@@ -28,7 +28,7 @@ export class McqOptionComponent implements OnChanges {
   ngOnChanges() {
     /* istanbul ignore else */
     
-    this.mcqOptions =  this.shuffle_options ? _.shuffle(this.mcqOptions)  :   this.mcqOptions;
+    this.mcqOptions =  this.shuffleOptions ? _.shuffle(this.mcqOptions)  :   this.mcqOptions;
     //this.mcqOptions= _.shuffle(this.mcqOptions);
     
     if (this.replayed) {

@@ -12,7 +12,7 @@ declare var katex: any;
 
 })
 export class McqComponent implements OnInit, AfterViewInit {
-  @Input() shuffle_options?: boolean;
+  @Input() shuffleOptions?: boolean;
   @Input() question?: any;
   @Input() identifier: any;
   @Input() layout?: string;
