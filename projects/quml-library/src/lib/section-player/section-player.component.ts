@@ -687,9 +687,9 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
         this.showAlert = true;
         if (currentScore === 0) {
           this.alertType = 'wrong';
-          this.updateScoreBoard((currentIndex + 1), 'wrong');
+          this.updateScoreBoard(currentIndex, 'wrong');
         } else {
-          this.updateScoreBoard(((currentIndex + 1)), 'correct', undefined, currentScore);
+          this.updateScoreBoard(currentIndex, 'correct', undefined, currentScore);
           if (this.showFeedBack)
             this.correctFeedBackTimeOut(type);
           this.alertType = 'correct';
