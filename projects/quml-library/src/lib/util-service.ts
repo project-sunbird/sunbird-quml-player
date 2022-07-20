@@ -37,7 +37,7 @@ export class UtilService {
         let key: any = this.getKeyValue(Object.keys(responseDeclaration));
         const selectedOptionValue = options.map(option => option.value);
         let score = responseDeclaration[key].correctResponse.outcomes.score ? responseDeclaration[key].correctResponse.outcomes.score : responseDeclaration.maxScore;
-        let correctValues = responseDeclaration[key].correctResponse.value;
+        let correctValues = responseDeclaration[key].correctResponse.value.map((ele) => Number(ele));
         let mapping = responseDeclaration[key]['mapping'];
         if (_.isEqual(correctValues, selectedOptionValue)) {
             return score;
