@@ -510,7 +510,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
   getOptionSelected(optionSelected) {
     /* istanbul ignore else */
-    if (JSON.stringify(this.currentOptionSelected) === JSON.stringify(optionSelected)) {
+    if (optionSelected.cardinality  === "single" && JSON.stringify(this.currentOptionSelected) === JSON.stringify(optionSelected)) {
       return; // Same option selected
     }
     this.focusOnNextButton();
