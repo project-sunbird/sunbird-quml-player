@@ -39,9 +39,9 @@ export class UtilService {
         let score = responseDeclaration[key].correctResponse.outcomes.SCORE ? responseDeclaration[key].correctResponse.outcomes.SCORE : responseDeclaration.maxScore;
         let correctValues = responseDeclaration[key].correctResponse.value.map((ele) => Number(ele));
         let mapping = responseDeclaration[key]['mapping'];
-        if (_.isEqual(correctValues, selectedOptionValue)) {                                               
+        if (_.isEqual(correctValues.sort(), selectedOptionValue.sort())) {                                               
             return score;
-        } else if (!_.isEqual(correctValues, selectedOptionValue)) {
+        } else if (!_.isEqual(correctValues.sort(), selectedOptionValue.sort())) {
             return selectedOptionValue.reduce((sum, index) => { sum += (mapping[index] ? mapping[index].outcomes.score : 0); return sum; }, 0);
         }
     }
