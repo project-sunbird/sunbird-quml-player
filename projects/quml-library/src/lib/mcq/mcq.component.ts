@@ -17,7 +17,6 @@ export class McqComponent implements OnInit, AfterViewInit {
   @Input() layout?: string;
   @Input() replayed: boolean;
   @Input() tryAgain?: boolean;
-  @Input() optionShuffle?: boolean;
   @Output() componentLoaded = new EventEmitter<any>();
   @Output() answerChanged = new EventEmitter<any>();
   @Output() optionSelected = new EventEmitter<number>();
