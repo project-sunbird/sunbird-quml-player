@@ -390,7 +390,7 @@ describe('SectionPlayerComponent', () => {
     expect(ele.focus).toHaveBeenCalled();
   }));
 
-  it('should return current selected object and selected object are same', () => {
+  it('should return null if currectly selected option and previously selected option are same when cardinality is single', () => {
     spyOn(component, 'focusOnNextButton');
     component.currentOptionSelected = { value: 1, cardinality: "single" };
     component.myCarousel = myCarousel;
