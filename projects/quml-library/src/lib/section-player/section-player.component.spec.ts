@@ -392,9 +392,9 @@ describe('SectionPlayerComponent', () => {
 
   it('should return current selected object and selected object are same', () => {
     spyOn(component, 'focusOnNextButton');
-    component.currentOptionSelected = { value: 1 };
+    component.currentOptionSelected = { value: 1, cardinality: "single" };
     component.myCarousel = myCarousel;
-    component.getOptionSelected({ value: 1 });
+    component.getOptionSelected({ value: 1, cardinality: "single" });
     expect(component.focusOnNextButton).not.toHaveBeenCalled();
   });
 
