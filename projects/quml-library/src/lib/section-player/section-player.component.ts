@@ -539,8 +539,22 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
             /* istanbul ignore else */
             if (e.id === this.currentSolutions[index].value) {
               this.currentSolutions[index].type = 'video';
-              this.currentSolutions[index].src = e.src;
-              this.currentSolutions[index].thumbnail = e.thumbnail;
+              const slideIndex = this.myCarousel.getCurrentSlideIndex() - 1
+              const currentQuestionId = this.questions[slideIndex]?.identifier;
+              if (this.parentConfig.isAvailableLocally && this.parentConfig.baseUrl) {
+                let baseUrl = this.parentConfig.baseUrl;
+                baseUrl = `${baseUrl.substring(0, baseUrl.lastIndexOf('/'))}/${this.sectionConfig.metadata.identifier}`;
+                if (currentQuestionId) {
+                  this.currentSolutions[index].src = `${baseUrl}/${currentQuestionId}/${e.src}`;
+                  this.currentSolutions[index].thumbnail = `${baseUrl}/${currentQuestionId}/${e.thumbnail}`;
+                }
+              } else if (e.baseUrl) {
+                this.currentSolutions[index].src = `${e.baseUrl}${e.src}`;
+                this.currentSolutions[index].thumbnail = `${e.baseUrl}${e.thumbnail}`;
+              } else {
+                this.currentSolutions[index].src = e.src;
+                this.currentSolutions[index].thumbnail = e.thumbnail;
+              }
             }
           });
         }
