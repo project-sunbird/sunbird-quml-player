@@ -91,6 +91,8 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   isAssessEventRaised = false;
   isShuffleQuestions = false;
   isSingleQuestion = false;
+  shuffleOptions: boolean;
+
   constructor(
     public viewerService: ViewerService,
     public utilService: UtilService,
@@ -202,6 +204,8 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
       }, 200);
     }
 
+    
+    this.shuffleOptions=this.sectionConfig.config?.shuffleOptions;
     this.isShuffleQuestions = this.sectionConfig.metadata.shuffle;
     this.noOfQuestions = this.questionIds.length;
     this.viewerService.initialize(this.sectionConfig, this.threshold, this.questionIds, this.parentConfig);
