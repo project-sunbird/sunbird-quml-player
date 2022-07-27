@@ -10,6 +10,10 @@
   "whitelistedNonPeerDependencies": [
     "ally.js",
     "carousel",
-    "@project-sunbird/sunbird-player-sdk-v9"
+    "@project-sunbird/sunbird-player-sdk-v9",
+    "@project-sunbird/sb-styles",
+    "project-sunbird/sunbird-quml-player-v9",
+    "bootstrap",
+    "jquery"
   ]
 }

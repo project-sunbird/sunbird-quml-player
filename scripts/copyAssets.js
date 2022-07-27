@@ -11,3 +11,4 @@ fs.copy(src, dest, function (err) {
     }
     console.info('Copied assets folder');
 });
+

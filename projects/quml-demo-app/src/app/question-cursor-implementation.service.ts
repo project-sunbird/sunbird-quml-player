@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { QuestionCursor } from '@project-sunbird/sunbird-quml-player-v9';
 import { Observable, of, throwError as observableThrowError } from 'rxjs';
@@ -33,23 +33,26 @@ export class QuestionCursorImplementationService implements QuestionCursor {
         return this.post(option).pipe(map((data) => data.result));
     }
 
-    getQuestionSet(identifier: string): Observable<any> {
-        return of({})
-    }
+  getQuestionSet(identifier: string): Observable<any> {
+    return of({});
+  }
 
-    private post(requestParam): Observable<any> {
-        const httpOptions = {
-            headers: { 'Content-Type': 'application/json' }
-        };
-        return this.http.post(requestParam.url, requestParam.data, httpOptions).pipe(
-            mergeMap((data: any) => {
-                if (data.responseCode !== 'OK') {
-                    return observableThrowError(data);
-                }
-                return of(data);
-            }));
-    }
-    getAllQuestionSet(identifiers: string[]) {
-        return of({});
-    }
+  private post(requestParam): Observable<any> {
+    const httpOptions = {
+      headers: { "Content-Type": "application/json" },
+    };
+    return this.http
+      .post(requestParam.url, requestParam.data, httpOptions)
+      .pipe(
+        mergeMap((data: any) => {
+          if (data.responseCode !== "OK") {
+            return observableThrowError(data);
+          }
+          return of(data);
+        })
+      );
+  }
+  getAllQuestionSet(identifiers: string[]) {
+    return of({});
+  }
 }

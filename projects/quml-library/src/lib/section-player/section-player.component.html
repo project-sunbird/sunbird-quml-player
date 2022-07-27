@@ -5,7 +5,7 @@
       (nextSlideClicked)="nextSlideClicked($event)" (prevSlideClicked)="previousSlideClicked($event)"
       [currentSlideIndex]="currentSlideIndex" [totalNoOfQuestions]="noOfQuestions" [active]="active"
       [showFeedBack]="showFeedBack" [currentSolutions]="currentSolutions" (showSolution)="viewSolution()"
-      [initializeTimer]="initializeTimer" [replayed]="parentConfig?.isReplayed" [disableNext]="disableNext"
+      [initializeTimer]="player.getRendererState().initializeTimer" [replayed]="parentConfig?.isReplayed" [disableNext]="disableNext"
       [startPageInstruction]="startPageInstruction" [attempts]="attempts" [showStartPage]="showStartPage"
       [showDeviceOrientation]="sectionConfig?.config?.showDeviceOrientation" (toggleScreenRotate)="toggleScreenRotate()">
     </quml-header>
@@ -30,7 +30,7 @@
               [contentName]="showRootInstruction ? parentConfig?.contentName : parentConfig?.isSectionsAvailable ? sectionConfig?.metadata?.name : parentConfig?.contentName">
             </quml-startpage>
           </slide>
-          <slide *ngFor="let question of questions; let i= index" #questionSlide>
+          <slide *ngFor="let question of player.getRendererState().questions; let i= index" #questionSlide>
             <div [id]="question.identifier">
               <div *ngIf="question?.primaryCategory.toLowerCase() === 'multiple choice question'">
                 <quml-mcq [shuffleOptions]='shuffleOptions' [question]='question' [replayed]="parentConfig?.isReplayed"
@@ -63,19 +63,15 @@
                     [ngClass]="{'active' : section?.isActive && !showRootInstruction && section.class !== 'attempted'}"
                     tabindex="0">{{section?.index}}</label>
                   <ul *ngIf="section?.isActive && showFeedBack">
-                    <li *ngFor="let question of progressBarClass; let j=index" tabindex="0"
-                      attr.aria-label="question number {{question?.index}}"
-                      (click)="goToSlideClicked($event, question?.index)" (keydown)="onEnter($event, question?.index)"
-                      class="showFeedBack-progressBar"
+                    <li *ngFor="let question of player.getRendererState().progressBarClass; let j=index" tabindex="0" attr.aria-label="question number {{question?.index}}"
+                      (click)="goToSlideClicked($event, question?.index)" (keydown)="onEnter($event, question?.index)" class="showFeedBack-progressBar"
                       [ngClass]="(j+1) === myCarousel.getCurrentSlideIndex() ? (question.class === 'skipped' ? 'progressBar-border' : 'progressBar-border ' + question.class) : question.class">
                       {{question?.index}}
                     </li>
                   </ul>
                   <ul class="nonFeedback" *ngIf="section?.isActive && !showFeedBack">
-                    <li *ngFor="let question of progressBarClass; let j=index" tabindex="0"
-                      attr.aria-label="question number {{question?.index}}"
-                      (click)="goToSlideClicked($event, question?.index)" (keydown)="onEnter($event, question?.index)"
-                      class="showFeedBack-progressBar"
+                    <li *ngFor="let question of player.getRendererState().progressBarClass; let j=index" tabindex="0" attr.aria-label="question number {{question?.index}}"
+                      (click)="goToSlideClicked($event, question?.index)" (keydown)="onEnter($event, question?.index)" class="showFeedBack-progressBar"
                       [ngClass]="(j+1) === myCarousel.getCurrentSlideIndex() ? (question.class === 'skipped' ? 'progressBar-border' : 'att-color progressBar-border') : question.class === 'skipped' ? question.class: question.class === 'unattempted' ? '' : 'att-color'">
                       {{question?.index}}
                     </li>
@@ -83,30 +79,25 @@
                 </li>
               </ul>
             </li>
-            <li>
-              <ul class="singleContent" *ngIf="!parentConfig?.isSectionsAvailable && showFeedBack">
-                <li *ngFor="let question of progressBarClass; let j=index" tabindex="0"
-                  attr.aria-label="question number {{question?.index}}"
-                  (click)="goToSlideClicked($event, question?.index)" (keydown)="onEnter($event, question?.index)"
-                  class="showFeedBack-progressBar hover-effect"
-                  [ngClass]="(j+1) === myCarousel.getCurrentSlideIndex() ? (question.class === 'skipped' ? 'progressBar-border' : 'progressBar-border ' + question.class) : question.class">
-                  {{question?.index}}
-                </li>
-              </ul>
-            </li>
-            <li>
-              <ul class="singleContent nonFeedback" *ngIf="!parentConfig?.isSectionsAvailable && !showFeedBack">
-                <li *ngFor="let question of progressBarClass; let j=index" tabindex="0"
-                  attr.aria-label="question number {{question?.index}}"
-                  (click)="goToSlideClicked($event, question?.index)" (keydown)="onEnter($event, question?.index)"
-                  class="showFeedBack-progressBar hover-effect"
-                  [ngClass]="(j+1) === myCarousel.getCurrentSlideIndex() ? (question.class === 'skipped' ? 'progressBar-border' : 'att-color progressBar-border') : question.class === 'skipped' ? question.class: question.class === 'unattempted' ? '' : 'att-color'">
-                  {{question?.index}}
-                </li>
-              </ul>
-            </li>
-            <li class="requiresSubmit cursor-pointer showFeedBack-progressBar hover-effect" tabindex="0"
-              aria-label="scoreboard" *ngIf="parentConfig.requiresSubmit && progressBarClass?.length"
+           <li>
+            <ul class="singleContent" *ngIf="!parentConfig?.isSectionsAvailable && showFeedBack">
+              <li *ngFor="let question of player.getRendererState().progressBarClass; let j=index" tabindex="0" attr.aria-label="question number {{question?.index}}"
+                (click)="goToSlideClicked($event, question?.index)" (keydown)="onEnter($event, question?.index)" class="showFeedBack-progressBar hover-effect"
+                [ngClass]="(j+1) === myCarousel.getCurrentSlideIndex() ? (question.class === 'skipped' ? 'progressBar-border' : 'progressBar-border ' + question.class) : question.class">
+                {{question?.index}}
+              </li>
+            </ul>
+           </li>
+          <li>
+            <ul class="singleContent nonFeedback" *ngIf="!parentConfig?.isSectionsAvailable && !showFeedBack">
+              <li *ngFor="let question of player.getRendererState().progressBarClass; let j=index" tabindex="0" attr.aria-label="question number {{question?.index}}"
+                (click)="goToSlideClicked($event, question?.index)" (keydown)="onEnter($event, question?.index)" class="showFeedBack-progressBar hover-effect"
+                [ngClass]="(j+1) === myCarousel.getCurrentSlideIndex() ? (question.class === 'skipped' ? 'progressBar-border' : 'att-color progressBar-border') : question.class === 'skipped' ? question.class: question.class === 'unattempted' ? '' : 'att-color'">
+                {{question?.index}}
+              </li>
+            </ul>
+          </li>
+            <li class="requiresSubmit cursor-pointer showFeedBack-progressBar hover-effect" tabindex="0" aria-label="scoreboard" *ngIf="parentConfig.requiresSubmit && player.getRendererState().progressBarClass?.length"
               (click)="disableNext = true; onScoreBoardClicked()" (keydown)="onScoreBoardEnter($event)">
               <img src="./assets/flag_inactive.svg" alt="Flag logo: Show scoreboard">
             </li>
@@ -119,11 +110,11 @@
     </div>
   </div>
 
-  <quml-alert *ngIf="showAlert && showFeedBack" [alertType]="alertType" [isHintAvailable]="showHints"
+  <quml-alert *ngIf="showAlert && showFeedBack" [alertType]="player.getRendererState().alertType" [isHintAvailable]="showHints"
     [showSolutionButton]="showUserSolution" (showSolution)="viewSolution()" (showHint)="viewHint()"
     (closeAlert)="closeAlertBox($event)"></quml-alert>
 
-  <quml-mcq-solutions *ngIf="showSolution" [question]="currentQuestion" [options]="currentOptions"
+  <quml-mcq-solutions *ngIf="showSolution" [question]="player.getRendererState().currentQuestion" [options]="currentOptions"
     [solutions]="currentSolutions" (close)="closeSolution()"></quml-mcq-solutions>
 </div>
 

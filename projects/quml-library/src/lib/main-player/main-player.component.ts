@@ -1,34 +1,37 @@
-import { Component, EventEmitter, HostListener, Input, OnInit, Output, ViewChild } from '@angular/core';
+import * as _ from 'lodash-es';
+
+import { Component, EventEmitter, HostListener, OnInit, Output, ViewChild } from '@angular/core';
 import { contentErrorMessage } from '@project-sunbird/sunbird-player-sdk-v9/lib/player-utils/interfaces/errorMessage';
 import { NextContent } from '@project-sunbird/sunbird-player-sdk-v9/sunbird-player-sdk.interface';
-import * as _ from 'lodash-es';
 import { SectionPlayerComponent } from '../section-player/section-player.component';
 import { IAttempts, IParentConfig, ISummary, QumlPlayerConfig } from './../quml-library-interface';
+import { eventName, MimeType, pageId, TelemetryType } from './../telemetry-constants';
+
+import { Event, EventType } from '../player/src/interfaces/Event';
+import { Player } from "../player/src/Player";
+import { TelemetryService } from '../player/src/TelemetryService';
+import { PlayerService } from '../services/player.service';
 import { ViewerService } from './../services/viewer-service/viewer-service';
-import { eventName, pageId, TelemetryType, MimeType } from './../telemetry-constants';
 import { UtilService } from './../util-service';
+
 import { ISideBarEvent } from '@project-sunbird/sunbird-player-sdk-v9/sunbird-player-sdk.interface';
-import { fromEvent, Subscription } from 'rxjs';
 import maintain from 'ally.js/esm/maintain/_maintain';
+import { fromEvent, Subscription } from 'rxjs';
 @Component({
-  selector: 'quml-main-player',
-  templateUrl: './main-player.component.html',
-  styleUrls: ['./main-player.component.scss']
+  selector: "quml-main-player",
+  templateUrl: "./main-player.component.html",
+  styleUrls: ["./main-player.component.scss"],
 })
 export class MainPlayerComponent implements OnInit {
-
-  @Input() playerConfig: QumlPlayerConfig;
   @Output() playerEvent = new EventEmitter<any>();
   @Output() telemetryEvent = new EventEmitter<any>();
 
+  player: Player;
+  playerConfig: QumlPlayerConfig;
   @ViewChild(SectionPlayerComponent) sectionPlayer!: SectionPlayerComponent;
 
   isLoading = false;
-  isSectionsAvailable = false;
   isMultiLevelSection = false;
-  sections: any[] = [];
-  sectionIndex = 0;
-  activeSection: any;
   contentError: contentErrorMessage;
   parentConfig: IParentConfig = {
     loadScoreBoard: false,
@@ -59,7 +62,6 @@ export class MainPlayerComponent implements OnInit {
   showReplay = true;
 
   attempts: IAttempts;
-  mainProgressBar = [];
   loadScoreBoard = false;
   summary: ISummary = {
     correct: 0,
@@ -68,32 +70,39 @@ export class MainPlayerComponent implements OnInit {
     wrong: 0
   };
   isDurationExpired = false;
-  finalScore = 0;
   totalNoOfQuestions = 0;
   durationSpent: string;
-  outcomeLabel: string;
   totalScore: number;
   initialTime: number;
   userName: string;
   jumpToQuestion: any;
   totalVisitedQuestion = 0;
   nextContent: NextContent;
+  telemetryService: TelemetryService;
   disabledHandle: any;
   subscription: Subscription;
 
-  constructor(public viewerService: ViewerService, private utilService: UtilService) { }
+  constructor(
+    public viewerService: ViewerService,
+    private utilService: UtilService,
+    private playerService: PlayerService
+  ) {
+  }
 
-  @HostListener('document:TelemetryEvent', ['$event'])
+  @HostListener("document:TelemetryEvent", ["$event"])
   onTelemetryEvent(event) {
     this.telemetryEvent.emit(event.detail);
   }
 
   ngOnInit(): void {
-    if (typeof this.playerConfig === 'string') {
+    this.player = this.playerService.getPlayerInstance();
+    this.telemetryService = TelemetryService.getInstance(this.player);
+    this.playerConfig = this.player.getPlayerConfig();
+    if (typeof this.playerConfig === "string") {
       try {
         this.playerConfig = JSON.parse(this.playerConfig);
       } catch (error) {
-        console.error('Invalid playerConfig: ', error);
+        console.error("Invalid playerConfig: ", error);
       }
     }
     this.isLoading = true;
@@ -104,21 +113,23 @@ export class MainPlayerComponent implements OnInit {
 
   initializeSections() {
     const childMimeType = _.map(this.playerConfig.metadata.children, 'mimeType');
-    this.parentConfig.isSectionsAvailable = this.isSectionsAvailable = childMimeType[0] === MimeType.questionSet;
+    this.parentConfig.isSectionsAvailable = childMimeType[0] === MimeType.questionSet;
+    this.player.setRendererState({ singleParam: { paramName: "isSectionsAvailable", paramData: this.parentConfig.isSectionsAvailable } });
     this.parentConfig.metadata = { ...this.playerConfig.metadata };
     this.viewerService.sectionQuestions = [];
-    if (this.isSectionsAvailable) {
-      this.isMultiLevelSection = this.getMultilevelSection(this.playerConfig.metadata);
+    if (this.parentConfig.isSectionsAvailable) {
+      this.isMultiLevelSection = this.player.getMultilevelSection(this.playerConfig.metadata);
 
       if (this.isMultiLevelSection) {
         this.contentError = {
-          messageHeader: 'Unable to load content',
-          messageTitle: 'Multi level sections are not supported as of now'
+          messageHeader: "Unable to load content",
+          messageTitle: "Multi level sections are not supported as of now",
         };
       } else {
         let children = this.playerConfig.metadata.children;
-        this.sections = _.map(children, (child) => {
-          let childNodes = child?.children?.map(item => item.identifier) || [];
+        const sections = _.map(children, (child) => {
+          let childNodes =
+            child?.children?.map((item) => item.identifier) || [];
           const maxQuestions = child?.maxQuestions;
           childNodes = child?.shuffle ? _.shuffle(childNodes) : childNodes;
 
@@ -130,22 +141,28 @@ export class MainPlayerComponent implements OnInit {
             child = {
               ...child,
               timeLimits: this.playerConfig.metadata.timeLimits,
-              showTimer: this.playerConfig.metadata.showTimer
+              showTimer: this.playerConfig.metadata.showTimer,
             };
           }
           return {
-            ...this.playerConfig, metadata: { ...child, childNodes },
+            ...this.playerConfig,
+            metadata: { ...child, childNodes },
           };
         });
 
-        this.setInitialScores();
-        this.activeSection = _.cloneDeep(this.sections[0]);
+        this.player.setRendererState({ singleParam: { paramName: "sections", paramData: sections } });
+
+        this.player.setInitialScores();
+        this.parentConfig.questionCount = this.player.getRendererState().totalNoOfQuestions;
+        this.player.setRendererState({ singleParam: { paramName: "activeSection", paramData: _.cloneDeep(sections[0]) } });
         this.isLoading = false;
       }
     } else {
       let childNodes = [];
       if (this.playerConfig.metadata?.children?.length) {
-        childNodes = this.playerConfig.metadata.children.map(item => item.identifier);
+        childNodes = this.playerConfig.metadata.children.map(
+          (item) => item.identifier
+        );
       } else {
         childNodes = this.playerConfig.metadata.childNodes;
       }
@@ -156,33 +173,47 @@ export class MainPlayerComponent implements OnInit {
       if (maxQuestions) {
         childNodes = childNodes.slice(0, maxQuestions);
       }
+      let totalQuestions = this.player.getRendererState().totalNoOfQuestions;
       childNodes.forEach((element, index) => {
-        this.totalNoOfQuestions++;
-        this.mainProgressBar.push({
-          index: (index + 1), class: 'unattempted', value: undefined,
+        totalQuestions++;
+        const mainProgressBar = this.player.getRendererState().mainProgressBar;
+        mainProgressBar.push({
+          index: index + 1,
+          class: "unattempted",
+          value: undefined,
           score: 0,
         });
+        this.player.setRendererState({ singleParam: { paramName: "mainProgressBar", paramData: mainProgressBar } });
       });
+      this.player.setRendererState({ singleParam: { paramName: "totalNoOfQuestions", paramData: totalQuestions } });
       this.playerConfig.metadata.childNodes = childNodes;
-
       if (!this.playerConfig.metadata?.shuffle) {
         if (this.playerConfig.config?.progressBar?.length) {
-          this.mainProgressBar = _.cloneDeep(this.playerConfig.config.progressBar);
+          this.player.setRendererState({ singleParam: { paramName: "mainProgressBar", paramData: _.cloneDeep(this.playerConfig.config.progressBar) } });
         }
         if (this.playerConfig.config?.questions?.length) {
-          const questionsObj = this.playerConfig.config.questions.find(item => item.id === this.playerConfig.metadata.identifier);
+          const questionsObj = this.playerConfig.config.questions.find(
+            (item) => item.id === this.playerConfig.metadata.identifier
+          );
           if (questionsObj?.questions) {
-            this.viewerService.updateSectionQuestions(this.playerConfig.metadata.identifier, questionsObj.questions);
+            this.viewerService.updateSectionQuestions(
+              this.playerConfig.metadata.identifier,
+              questionsObj.questions
+            );
           }
         }
       }
-      this.activeSection = _.cloneDeep(this.playerConfig);
+      this.player.setRendererState({ singleParam: { paramName: "activeSection", paramData: _.cloneDeep(this.playerConfig) } });
       this.isLoading = false;
-      this.parentConfig.questionCount = this.totalNoOfQuestions;
+      this.parentConfig.questionCount = this.player.getRendererState().totalNoOfQuestions;
     }
   }
 
   setConfig() {
+    this.player.setRendererState({ singleParam: { paramName: "sections", paramData: [] } });
+    this.player.setRendererState({ singleParam: { paramName: "mainProgressBar", paramData: [] } });
+    this.player.setRendererState({ singleParam: { paramName: "totalNoOfQuestions", paramData: 0 } });
+    this.player.setRendererState({ singleParam: { paramName: "finalScore", paramData: 0 } });
     this.parentConfig.contentName = this.playerConfig.metadata?.name;
     this.parentConfig.identifier = this.playerConfig.metadata?.identifier;
     this.parentConfig.requiresSubmit = this.playerConfig.metadata?.requiresSubmit?.toLowerCase() !== 'no';
@@ -194,7 +225,10 @@ export class MainPlayerComponent implements OnInit {
     this.parentConfig.sideMenuConfig = { ...this.parentConfig.sideMenuConfig, ...this.playerConfig.config.sideMenu };
     this.userName = this.playerConfig.context.userData.firstName + ' ' + this.playerConfig.context.userData.lastName;
 
-    if (this.playerConfig.metadata.isAvailableLocally && this.playerConfig.metadata.basePath) {
+    if (
+      this.playerConfig.metadata.isAvailableLocally &&
+      this.playerConfig.metadata.basePath
+    ) {
       this.parentConfig.baseUrl = this.playerConfig.metadata.basePath;
       this.parentConfig.isAvailableLocally = true;
     }
@@ -204,46 +238,34 @@ export class MainPlayerComponent implements OnInit {
       current: this.playerConfig.metadata?.currentAttempt ? this.playerConfig.metadata.currentAttempt + 1 : 1
     };
     this.totalScore = this.playerConfig.metadata.maxScore;
-    this.showReplay = this.attempts?.max && this.attempts?.current >= this.attempts.max ? false : true;
-    if (typeof this.playerConfig.metadata?.timeLimits === 'string') {
-      this.playerConfig.metadata.timeLimits = JSON.parse(this.playerConfig.metadata.timeLimits);
+    this.showReplay =
+      this.attempts?.max && this.attempts?.current >= this.attempts.max
+        ? false
+        : true;
+    if (typeof this.playerConfig.metadata?.timeLimits === "string") {
+      this.playerConfig.metadata.timeLimits = JSON.parse(
+        this.playerConfig.metadata.timeLimits
+      );
     }
     this.initialTime = new Date().getTime();
     this.emitMaxAttemptEvents();
   }
 
-  private getMultilevelSection(obj) {
-    let isMultiLevel;
-    obj.children.forEach(item => {
-      if (item.children && !isMultiLevel) {
-        isMultiLevel = this.hasChildren(item.children);
-      }
-
-    });
-    return isMultiLevel;
-  }
-
-  private hasChildren(arr) {
-    return arr.some(item => item.children);
-  }
-
   emitMaxAttemptEvents() {
     if ((this.playerConfig.metadata?.maxAttempts - 1) === this.playerConfig.metadata?.currentAttempt) {
       this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(this.attempts?.current, false, true));
+      this.player.emitMaxAttemptsExhausted(this.player.getRendererState());
     } else if (this.playerConfig.metadata?.currentAttempt >= this.playerConfig.metadata?.maxAttempts) {
       this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(this.attempts?.current, true, false));
+      this.player.emitMaxAttemptsExhausted(this.player.getRendererState());
     }
-  }
-
-  getActiveSectionIndex() {
-    return this.sections.findIndex(sec => sec.metadata?.identifier === this.activeSection.metadata?.identifier);
   }
 
   onShowScoreBoard(event) {
     /* istanbul ignore else */
     if (this.parentConfig.isSectionsAvailable) {
-      const activeSectionIndex = this.getActiveSectionIndex();
-      this.updateSectionScore(activeSectionIndex);
+      const activeSectionIndex = this.player.getActiveSectionIndex();
+      this.player.updateSectionScore(activeSectionIndex);
     }
     this.getSummaryObject();
     this.loadScoreBoard = true;
@@ -251,8 +273,8 @@ export class MainPlayerComponent implements OnInit {
 
   onSectionEnd(event) {
     if (this.parentConfig.isSectionsAvailable) {
-      const activeSectionIndex = this.getActiveSectionIndex();
-      this.updateSectionScore(activeSectionIndex);
+      const activeSectionIndex = this.player.getActiveSectionIndex();
+      this.player.updateSectionScore(activeSectionIndex);
       this.setNextSection(event, activeSectionIndex);
     } else {
       this.prepareEnd(event);
@@ -264,27 +286,35 @@ export class MainPlayerComponent implements OnInit {
   }
 
   getSummaryObject() {
-    const progressBar = this.isSectionsAvailable ? _.flattenDeep(this.mainProgressBar.map(item => item.children)) : this.mainProgressBar;
-    const classObj = _.groupBy(progressBar, 'class');
+    const mainProgressBar = this.player.getRendererState().mainProgressBar;
+    const progressBar = this.parentConfig.isSectionsAvailable
+      ? _.flattenDeep(mainProgressBar.map((item) => item.children))
+      : mainProgressBar;
+    const classObj = _.groupBy(progressBar, "class");
     this.summary = {
-      skipped: _.get(classObj, 'skipped.length') || 0,
-      correct: _.get(classObj, 'correct.length') || 0,
-      wrong: _.get(classObj, 'wrong.length') || 0,
-      partial: _.get(classObj, 'partial.length') || 0
+      skipped: _.get(classObj, "skipped.length") || 0,
+      correct: _.get(classObj, "correct.length") || 0,
+      wrong: _.get(classObj, "wrong.length") || 0,
+      partial: _.get(classObj, "partial.length") || 0,
     };
-    this.totalVisitedQuestion = this.summary.correct + this.summary.wrong + this.summary.partial + this.summary.skipped;
-    this.viewerService.totalNumberOfQuestions = this.totalNoOfQuestions;
-  }
-
-  updateSectionScore(activeSectionIndex: number) {
-    this.mainProgressBar[activeSectionIndex].score = this.mainProgressBar[activeSectionIndex].children
-      .reduce((accumulator, currentValue) => accumulator + currentValue.score, 0);
+    this.totalVisitedQuestion =
+      this.summary.correct +
+      this.summary.wrong +
+      this.summary.partial +
+      this.summary.skipped;
+    this.viewerService.totalNumberOfQuestions = this.player.getRendererState().totalNoOfQuestions;
   }
 
   setNextSection(event, activeSectionIndex: number) {
-    this.summary = this.utilService.sumObjectsByKey(this.summary, event.summary);
-    const isSectionFullyAttempted = event.summary.skipped === 0 &&
-      (event.summary?.correct + event.summary?.wrong) === this.mainProgressBar[activeSectionIndex]?.children?.length;
+    const sections = this.player.getRendererState().sections;
+    const mainProgressBar = this.player.getRendererState().mainProgressBar;
+    this.summary = this.utilService.sumObjectsByKey(
+      this.summary,
+      event.summary
+    );
+    const isSectionFullyAttempted =
+      event.summary.skipped === 0 &&
+      event.summary?.correct + event.summary?.wrong === mainProgressBar[activeSectionIndex]?.children?.length;
     const isSectionPartiallyAttempted = event.summary.skipped > 0;
 
     if (event.isDurationEnded) {
@@ -296,39 +326,59 @@ export class MainPlayerComponent implements OnInit {
     let nextSectionIndex = activeSectionIndex + 1;
     /* istanbul ignore else */
     if (event.jumpToSection) {
-      const sectionIndex = this.sections.findIndex(sec => sec.metadata?.identifier === event.jumpToSection);
+      const sectionIndex = sections.findIndex(
+        (sec) => sec.metadata?.identifier === event.jumpToSection
+      );
       nextSectionIndex = sectionIndex > -1 ? sectionIndex : nextSectionIndex;
     }
 
-    this.sectionIndex = _.cloneDeep(nextSectionIndex);
-    this.mainProgressBar.forEach((item, index) => {
+    this.player.setRendererState({ singleParam: { paramName: 'sectionIndex', paramData: nextSectionIndex } });
+    mainProgressBar.forEach((item, index) => {
       item.isActive = index === nextSectionIndex;
 
       if (index === activeSectionIndex) {
         if (isSectionFullyAttempted) {
-          item.class = 'attempted';
+          item.class = "attempted";
         } else if (isSectionPartiallyAttempted) {
-          item.class = 'partial';
+          item.class = "partial";
         }
       }
     });
-    if (nextSectionIndex < this.sections.length) {
-      this.activeSection = _.cloneDeep(this.sections[nextSectionIndex]);
+
+    this.player.setRendererState({ singleParam: { paramName: "mainProgressBar", paramData: mainProgressBar } });
+    if (nextSectionIndex < sections.length) {
+      this.player.setRendererState({ singleParam: { paramName: "activeSection", paramData: _.cloneDeep(sections[nextSectionIndex]) } });
     } else {
       this.prepareEnd(event);
     }
   }
 
   prepareEnd(event) {
-    this.calculateScore();
+    this.player.calculateScore();
     this.setDurationSpent();
     this.getSummaryObject();
     if (this.parentConfig.requiresSubmit && !this.isDurationExpired) {
       this.loadScoreBoard = true;
     } else {
       this.endPageReached = true;
-      this.viewerService.raiseSummaryEvent(this.totalVisitedQuestion, this.endPageReached, this.finalScore, this.summary);
-      this.raiseEndEvent(this.totalVisitedQuestion, this.endPageReached, this.finalScore);
+      // this.viewerService.raiseSummaryEvent(
+      //   this.totalVisitedQuestion,
+      //   this.endPageReached,
+      //   this.player.getRendererState().finalScore,
+      //   this.summary
+      // );
+      this.telemetryService.emitSummaryEvent(
+        this.totalVisitedQuestion,
+        this.endPageReached,
+        this.player.getRendererState().finalScore,
+        this.summary,
+        this.totalNoOfQuestions
+      );
+      this.raiseEndEvent(
+        this.totalVisitedQuestion,
+        this.endPageReached,
+        this.player.getRendererState().finalScore
+      );
       this.isSummaryEventRaised = true;
       this.isEndEventRaised = true;
     }
@@ -342,27 +392,34 @@ export class MainPlayerComponent implements OnInit {
     this.isEndEventRaised = false;
     this.attempts.current = this.attempts.current + 1;
     this.showReplay = this.attempts?.max && this.attempts?.current >= this.attempts.max ? false : true;
-    this.totalNoOfQuestions = 0;
     this.totalVisitedQuestion = 0;
-    this.mainProgressBar = [];
+    this.player.setRendererState({ singleParam: { paramName: "totalNoOfQuestions", paramData: 0 } });
+    this.player.setRendererState({ singleParam: { paramName: "mainProgressBar", paramData: [] } });
     this.jumpToQuestion = undefined;
     this.summary = {
       correct: 0,
       partial: 0,
       skipped: 0,
-      wrong: 0
+      wrong: 0,
     };
-    this.sections = [];
+    this.player.setRendererState({ singleParam: { paramName: "sections", paramData: [] } });
     this.initialTime = new Date().getTime();
     this.initializeSections();
     this.endPageReached = false;
     this.loadScoreBoard = false;
-    this.activeSection = this.isSectionsAvailable ? _.cloneDeep(this.sections[0]) : this.playerConfig;
-    /* istanbul ignore else */
+    const activeSection = this.parentConfig.isSectionsAvailable ? _.cloneDeep(this.player.getRendererState().sections[0]) : this.playerConfig;
+    this.player.setRendererState({ singleParam: { paramName: "activeSection", paramData: activeSection } });
     if (this.attempts?.max === this.attempts?.current) {
-      this.playerEvent.emit(this.viewerService.generateMaxAttemptEvents(_.get(this.attempts, 'current'), false, true));
+      this.playerEvent.emit(
+        this.viewerService.generateMaxAttemptEvents(
+          _.get(this.attempts, "current"),
+          false,
+          true
+        )
+      );
     }
-    this.viewerService.raiseHeartBeatEvent(eventName.replayClicked, TelemetryType.interact, pageId.endPage);
+    // this.viewerService.raiseHeartBeatEvent(eventName.replayClicked, TelemetryType.interact, pageId.endPage);
+    this.telemetryService.emitHeartBeatEvent(eventName.replayClicked, TelemetryType.interact, pageId.endPage);
 
     setTimeout(() => {
       this.parentConfig.isReplayed = false;
@@ -374,57 +431,43 @@ export class MainPlayerComponent implements OnInit {
     }, 1000);
   }
 
-  setInitialScores(activeSectionIndex = 0) {
-    const alphabets = 'abcdefghijklmnopqrstuvwxyz'.split('');
-    this.sections.forEach((section, i) => {
-      this.mainProgressBar.push({
-        index: alphabets[i].toLocaleUpperCase(), class: 'unattempted', value: undefined,
-        score: 0,
-        isActive: i === activeSectionIndex,
-        identifier: section.metadata?.identifier
-      });
-      const children = [];
-      section.metadata.childNodes.forEach((child, index) => {
-        children.push({
-          index: (index + 1), class: 'unattempted', value: undefined,
-          score: 0,
-        });
-        this.totalNoOfQuestions++;
-      });
-      this.mainProgressBar[this.mainProgressBar.length - 1] = {
-        ..._.last(this.mainProgressBar), children
-      };
-
-    });
-    this.parentConfig.questionCount = this.totalNoOfQuestions;
-  }
-
-  calculateScore() {
-    this.finalScore = this.mainProgressBar.reduce((accumulator, currentValue) => accumulator + currentValue.score, 0);
-    this.generateOutComeLabel();
-    return this.finalScore;
-  }
-
   exitContent(event) {
-    this.calculateScore();
+    this.player.calculateScore();
     /* istanbul ignore else */
     if (event?.type === 'EXIT') {
-      this.viewerService.raiseHeartBeatEvent(eventName.endPageExitClicked, TelemetryType.interact, pageId.endPage);
+      // this.viewerService.raiseHeartBeatEvent(eventName.endPageExitClicked, TelemetryType.interact, pageId.endPage);
+      this.telemetryService.emitHeartBeatEvent(eventName.endPageExitClicked, TelemetryType.interact, pageId.endPage);
       this.getSummaryObject();
-      this.viewerService.raiseSummaryEvent(this.totalVisitedQuestion, this.endPageReached, this.finalScore, this.summary);
+      // this.viewerService.raiseSummaryEvent(
+      //   this.totalVisitedQuestion,
+      //   this.endPageReached,
+      //   this.player.getRendererState().finalScore,
+      //   this.summary
+      // );
+      this.telemetryService.emitSummaryEvent(
+        this.totalVisitedQuestion,
+        this.endPageReached,
+        this.player.getRendererState().finalScore,
+        this.summary,
+        this.totalNoOfQuestions
+      );
       this.isSummaryEventRaised = true;
-      this.raiseEndEvent(this.totalVisitedQuestion, this.endPageReached, this.finalScore);
+      this.raiseEndEvent(
+        this.totalVisitedQuestion,
+        this.endPageReached,
+        this.player.getRendererState().finalScore
+      );
     }
   }
-
 
   raiseEndEvent(currentQuestionIndex, endPageSeen, score) {
     if (this.isEndEventRaised) {
       return;
     }
     this.isEndEventRaised = true;
-    this.viewerService.metaData.progressBar = this.mainProgressBar;
-    this.viewerService.raiseEndEvent(currentQuestionIndex, endPageSeen, score);
+    this.viewerService.metaData.progressBar = this.player.getRendererState().mainProgressBar;
+    // this.viewerService.raiseEndEvent(currentQuestionIndex, endPageSeen, score);
+    this.telemetryService.emitEndEvent(currentQuestionIndex, endPageSeen, score, this.totalNoOfQuestions);
 
     /* istanbul ignore else */
     if (_.get(this.attempts, 'current') >= _.get(this.attempts, 'max')) {
@@ -442,7 +485,7 @@ export class MainPlayerComponent implements OnInit {
 
   onScoreBoardLoaded(event) {
     if (event?.scoreBoardLoaded) {
-      this.calculateScore();
+      this.player.calculateScore();
     }
   }
 
@@ -450,46 +493,65 @@ export class MainPlayerComponent implements OnInit {
     this.endPageReached = true;
     this.getSummaryObject();
     this.setDurationSpent();
-    this.viewerService.raiseHeartBeatEvent(eventName.scoreBoardSubmitClicked, TelemetryType.interact, pageId.submitPage);
-    this.viewerService.raiseSummaryEvent(this.totalVisitedQuestion, this.endPageReached, this.finalScore, this.summary);
-    this.raiseEndEvent(this.totalVisitedQuestion, this.endPageReached, this.finalScore);
+    // this.viewerService.raiseHeartBeatEvent(
+    //   eventName.scoreBoardSubmitClicked,
+    //   TelemetryType.interact,
+    //   pageId.submitPage
+    // );
+    this.telemetryService.emitHeartBeatEvent(
+      eventName.scoreBoardSubmitClicked,
+      TelemetryType.interact,
+      pageId.submitPage
+    );
+    // this.viewerService.raiseSummaryEvent(
+    //   this.totalVisitedQuestion,
+    //   this.endPageReached,
+    //   this.player.getRendererState().finalScore,
+    //   this.summary
+    // );
+    this.telemetryService.emitSummaryEvent(this.totalVisitedQuestion, this.endPageReached, this.player.getRendererState().finalScore,
+      this.summary, this.totalNoOfQuestions);
+
+    this.raiseEndEvent(
+      this.totalVisitedQuestion,
+      this.endPageReached,
+      this.player.getRendererState().finalScore
+    );
+    const data = {
+      totalVisitedQuestion: this.totalVisitedQuestion,
+      endPageReached: this.endPageReached,
+      finalScore: this.player.getRendererState().finalScore
+    }
+    const event = new Event(EventType.TELEMETRY, data, '', 0);
+    this.player.sendTelemetryEvent(event);
     this.loadScoreBoard = false;
     this.isSummaryEventRaised = true;
-  }
-
-  generateOutComeLabel() {
-    this.outcomeLabel = this.finalScore.toString();
-    switch (_.get(this.playerConfig, 'metadata.summaryType')) {
-      case 'Complete': {
-        this.outcomeLabel = this.totalScore ? `${this.finalScore} / ${this.totalScore}` : this.outcomeLabel;
-        break;
-      }
-      case 'Duration': {
-        this.outcomeLabel = '';
-        break;
-      }
-    }
   }
 
   goToQuestion(event) {
     /* istanbul ignore else */
     if (this.parentConfig.isSectionsAvailable && event.identifier) {
-      const sectionIndex = this.sections.findIndex(sec => sec.metadata?.identifier === event.identifier);
-      this.activeSection = _.cloneDeep(this.sections[sectionIndex]);
-      this.mainProgressBar.forEach((item, index) => {
+      const sections = this.player.getRendererState().sections;
+      const sectionIndex = sections.findIndex(
+        (sec) => sec.metadata?.identifier === event.identifier
+      );
+      this.player.setRendererState({ singleParam: { paramName: "activeSection", paramData: _.cloneDeep(sections[sectionIndex]) } });
+      const mainProgressBar = this.player.getRendererState().mainProgressBar.forEach((item, index) => {
         item.isActive = index === sectionIndex;
       });
+      this.player.setRendererState({ singleParam: { paramName: "mainProgressBar", paramData: mainProgressBar } });
     }
     this.jumpToQuestion = event;
     this.loadScoreBoard = false;
   }
 
   playNextContent(event) {
-    this.viewerService.raiseHeartBeatEvent(event?.type, TelemetryType.interact, pageId.endPage, event?.identifier);
+    // this.viewerService.raiseHeartBeatEvent(event?.type, TelemetryType.interact, pageId.endPage, event?.identifier);
+    this.telemetryService.emitHeartBeatEvent(event?.type, TelemetryType.interact, pageId.endPage, event?.identifier);
   }
 
   toggleScreenRotate(event?: KeyboardEvent | MouseEvent) {
-    this.viewerService.raiseHeartBeatEvent(eventName.deviceRotationClicked, TelemetryType.interact, this.sectionPlayer.myCarousel.getCurrentSlideIndex() + 1);
+    this.telemetryService.emitHeartBeatEvent(eventName.deviceRotationClicked, TelemetryType.interact, this.sectionPlayer.myCarousel.getCurrentSlideIndex() + 1);
   }
 
   sideBarEvents(event: ISideBarEvent) {
@@ -497,7 +559,7 @@ export class MainPlayerComponent implements OnInit {
     if (event.type === 'OPEN_MENU' || event.type === 'CLOSE_MENU') {
       this.handleSideBarAccessibility(event);
     }
-    this.viewerService.raiseHeartBeatEvent(event.type, TelemetryType.interact, this.sectionPlayer.myCarousel.getCurrentSlideIndex() + 1);
+    this.telemetryService.emitHeartBeatEvent(event.type, TelemetryType.interact, this.sectionPlayer.myCarousel.getCurrentSlideIndex() + 1);
   }
 
   handleSideBarAccessibility(event) {
@@ -517,7 +579,7 @@ export class MainPlayerComponent implements OnInit {
           inputChecked.checked = false;
           document.getElementById('playerSideMenu').style.visibility = 'hidden';
           document.querySelector<HTMLElement>('.navBlock').style.marginLeft = '-100%';
-          this.viewerService.raiseHeartBeatEvent('CLOSE_MENU', TelemetryType.interact, this.sectionPlayer.myCarousel.getCurrentSlideIndex() + 1);
+          this.telemetryService.emitHeartBeatEvent('CLOSE_MENU', TelemetryType.interact, this.sectionPlayer.myCarousel.getCurrentSlideIndex() + 1);
           this.disabledHandle.disengage();
           this.subscription.unsubscribe();
           this.disabledHandle = null;
@@ -537,16 +599,28 @@ export class MainPlayerComponent implements OnInit {
 
   @HostListener('window:beforeunload')
   ngOnDestroy() {
-    this.calculateScore();
+    this.player.calculateScore();
     this.getSummaryObject();
     /* istanbul ignore else */
     if (this.isSummaryEventRaised === false) {
-      this.viewerService.raiseSummaryEvent(this.totalVisitedQuestion, this.endPageReached, this.finalScore, this.summary);
+      // this.viewerService.raiseSummaryEvent(
+      //   this.totalVisitedQuestion,
+      //   this.endPageReached,
+      //   this.player.getRendererState().finalScore,
+      //   this.summary
+      // );
+      this.telemetryService.emitSummaryEvent(this.totalVisitedQuestion, this.endPageReached, this.player.getRendererState().finalScore,
+        this.summary, this.totalNoOfQuestions
+      )
     }
     /* istanbul ignore else */
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
-    this.raiseEndEvent(this.totalVisitedQuestion, this.endPageReached, this.finalScore);
+    this.raiseEndEvent(
+      this.totalVisitedQuestion,
+      this.endPageReached,
+      this.player.getRendererState().finalScore
+    );
   }
 }
