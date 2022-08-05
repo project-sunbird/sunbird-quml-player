@@ -12,6 +12,7 @@ declare var katex: any;
 
 })
 export class McqComponent implements OnInit, AfterViewInit {
+  @Input() shuffleOptions?: boolean;
   @Input() question?: any;
   @Input() identifier: any;
   @Input() layout?: string;
@@ -28,6 +29,7 @@ export class McqComponent implements OnInit, AfterViewInit {
   showQumlPopup = false;
   solutions: Array<[]>;
   cardinality: string;
+  
 
   constructor(
     public domSanitizer: DomSanitizer,
