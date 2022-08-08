@@ -90,7 +90,6 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   disabledHandle: any;
   isAssessEventRaised = false;
   isShuffleQuestions = false;
-  isSingleQuestion = false;
   shuffleOptions: boolean;
 
   constructor(
@@ -179,7 +178,6 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     }
     this.threshold = this.sectionConfig.context?.threshold || 3;
     this.questionIds = _.cloneDeep(this.sectionConfig.metadata.childNodes);
-    this.isSingleQuestion = this.questionIds.length === 1;
 
     /* istanbul ignore else */
     if (this.parentConfig.isReplayed) {
@@ -432,7 +430,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   updateScoreForShuffledQuestion() {
     const currentIndex = this.myCarousel.getCurrentSlideIndex() - 1;
 
-    if (this.isShuffleQuestions && !this.isSingleQuestion) {
+    if (this.isShuffleQuestions) {
       this.updateScoreBoard(currentIndex, 'correct', undefined, DEFAULT_SCORE);
     }
   }
@@ -899,7 +897,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   getScore(currentIndex, key, isCorrectAnswer, selectedOption?) {
     /* istanbul ignore else */
     if (isCorrectAnswer) {
-      if (this.isShuffleQuestions && !this.isSingleQuestion) {
+      if (this.isShuffleQuestions) {
         return DEFAULT_SCORE;
       }
       return this.questions[currentIndex].responseDeclaration[key].correctResponse.outcomes.SCORE ?
