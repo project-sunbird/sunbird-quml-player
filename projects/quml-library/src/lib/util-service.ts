@@ -36,12 +36,12 @@ export class UtilService {
     public getMultiselectScore(options, responseDeclaration) {
         let key: any = this.getKeyValue(Object.keys(responseDeclaration));
         const selectedOptionValue = options.map(option => option.value);
-        let score = responseDeclaration[key].correctResponse.outcomes.score ? responseDeclaration[key].correctResponse.outcomes.score : responseDeclaration.maxScore;
-        let correctValues = responseDeclaration[key].correctResponse.value;
+        let score = responseDeclaration[key].correctResponse.outcomes.SCORE ? responseDeclaration[key].correctResponse.outcomes.SCORE : responseDeclaration.maxScore;
+        let correctValues = responseDeclaration[key].correctResponse.value.map((ele) => Number(ele));
         let mapping = responseDeclaration[key]['mapping'];
-        if (_.isEqual(correctValues, selectedOptionValue)) {
+        if (_.isEqual(correctValues.sort(), selectedOptionValue.sort())) {                                               
             return score;
-        } else if (!_.isEqual(correctValues, selectedOptionValue)) {
+        } else if (!_.isEqual(correctValues.sort(), selectedOptionValue.sort())) {
             return selectedOptionValue.reduce((sum, index) => { sum += (mapping[index] ? mapping[index].outcomes.score : 0); return sum; }, 0);
         }
     }

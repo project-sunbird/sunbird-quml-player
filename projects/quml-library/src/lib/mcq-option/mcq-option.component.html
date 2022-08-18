@@ -6,7 +6,7 @@
             <div class="option" tabindex="0" [innerHTML]="mcqOption.label | safeHtml"></div>
             <label class="container">
                 <input type="radio" name="radio" [checked]="mcqOption.selected" id="option-checkbox" tabindex="-1">
-                <span class="checkmark"></span>
+                <span  [ngClass]="{'radiomark': cardinality==='single','checkmark':cardinality==='multiple'} "></span>
             </label>
         </div>
     </div>
