@@ -110,7 +110,7 @@ describe('HeaderComponent', () => {
   });
 
   it('should open the progress indicator popup', () => {
-    const viewerService = TestBed.get(ViewerService);
+    const viewerService = TestBed.inject(ViewerService);
     component.showProgressIndicatorPopUp = false;
     component.currentSlideIndex = 1;
     spyOn(viewerService, 'raiseHeartBeatEvent');
@@ -120,7 +120,7 @@ describe('HeaderComponent', () => {
   });
 
   it('should close the progress indicator popup', () => {
-    const viewerService = TestBed.get(ViewerService);
+    const viewerService = TestBed.inject(ViewerService);
     component.showProgressIndicatorPopUp = true;
     component.currentSlideIndex = 1;
     spyOn(viewerService, 'raiseHeartBeatEvent');
