@@ -184,7 +184,7 @@ Follow below-mentioned steps to use it in plain javascript project:
   - Run `npm i` in root folder
   - Run `npm i` in `projects/quml-library` 
   - Open two terminal windows (on root folder)
-  - Run `npm run mybuild` once this run completes, run the next command - let it be running on 1st terminal window
+  - Run `npm run build` once this run completes, run the next command - let it be running on 1st terminal window
   - Run `npm run serve` on second terminal window (This will copy assets from the `quml-library` to the library dist folder)
   - Now it will be served on `http://localhost:4200/`
   - To run the web-component `npm run build-web-component`

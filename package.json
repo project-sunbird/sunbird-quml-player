@@ -8,16 +8,12 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "create-player-link": "cd dist/quml-library && npm link && cd ../..",
-    "link-player": "cd dist/quml-library && npm link && cd ../.. && npm link @project-sunbird/sunbird-quml-player-v9",
     "build-lib": "ng build quml-library && node scripts/copyAssets.js",
-    "build-lib-link": "npm run build-lib && npm run link-player",
+    "serve": "node scripts/copyAssets.js && ng serve",
+    "build-web-component": "npm run build-lib-link && ng build quml-player-wc --output-hashing none && node ./build-wc.js",
     "test-lib": "ng test quml-library",
     "test-lib-coverage": "ng test quml-library --code-coverage=true",
-    "test-lib-ci": "ng test quml-library --watch=false --code-coverage --sourceMap=false",
-    "mybuild": "npm run build",
-    "serve": "node scripts/copyAssets.js && npm link ./dist/quml-library && ng serve --vendor-source-map",
-    "build-web-component": "npm run build-lib-link && ng build quml-player-wc --output-hashing none && node ./build-wc.js"
+    "test-lib-ci": "ng test quml-library --watch=false --code-coverage --sourceMap=false"
   },
   "private": true,
   "dependencies": {
