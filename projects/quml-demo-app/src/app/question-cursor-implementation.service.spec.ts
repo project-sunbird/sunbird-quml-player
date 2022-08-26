@@ -6,7 +6,7 @@ describe('QuestionCursorImplementationService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: QuestionCursorImplementationService = TestBed.get(QuestionCursorImplementationService);
+    const service: QuestionCursorImplementationService = TestBed.inject(QuestionCursorImplementationService);
     expect(service).toBeTruthy();
   });
 });

@@ -66,11 +66,11 @@ describe('SectionPlayerComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(SectionPlayerComponent);
     component = fixture.componentInstance;
-    viewerService = TestBed.get(ViewerService);
-    utilService = TestBed.get(UtilService);
-    errorService = TestBed.get(ErrorService);
-    component.imageModal = TestBed.get(ElementRef);
-    component.questionSlide = TestBed.get(ElementRef);
+    viewerService = TestBed.inject(ViewerService);
+    utilService = TestBed.inject(UtilService);
+    errorService = TestBed.inject(ErrorService);
+    component.imageModal = TestBed.inject(ElementRef);
+    component.questionSlide = TestBed.inject(ElementRef);
     fixture.detectChanges();
   });
 
@@ -786,7 +786,7 @@ describe('SectionPlayerComponent', () => {
   });
 
   it('should clean up the state before leaving the page', () => {
-    const errorService = TestBed.get(ErrorService);
+    const errorService = TestBed.inject(ErrorService);
     spyOn(component['destroy$'], 'next');
     spyOn(errorService.getInternetConnectivityError, 'unsubscribe');
     component.ngOnDestroy();

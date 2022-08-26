@@ -67,7 +67,7 @@ describe('ScoreboardComponent', () => {
   });
 
   it('should call onReviewClicked for section Level questions', () => {
-    const viewerService = TestBed.get(ViewerService);
+    const viewerService = TestBed.inject(ViewerService);
     component.isSections = true;
     component.scores = [{ identifier: 'do_123' }, { identifier: 'do_456' }];
     spyOn(component, 'goToQuestion');
@@ -78,7 +78,7 @@ describe('ScoreboardComponent', () => {
   });
 
   it('should call onReviewClicked', () => {
-    const viewerService = TestBed.get(ViewerService);
+    const viewerService = TestBed.inject(ViewerService);
     component.isSections = false;
     component.scores = [{ identifier: 'do_123' }, { identifier: 'do_456' }];
     spyOn(component, 'goToQuestion');

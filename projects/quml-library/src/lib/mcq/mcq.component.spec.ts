@@ -203,7 +203,7 @@ describe('McqComponent', () => {
 
   it('should init the options', () => {
     component.options = options;
-    const domSanitizer = TestBed.get(DomSanitizer);
+    const domSanitizer = TestBed.inject(DomSanitizer);
     spyOn(domSanitizer, 'sanitize');
     component.initOptions();
     expect(domSanitizer.sanitize).toHaveBeenCalled();
