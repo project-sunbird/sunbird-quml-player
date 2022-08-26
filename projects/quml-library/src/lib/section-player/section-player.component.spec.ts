@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ElementRef, EventEmitter, NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
-import { ErrorService, SunbirdPlayerSdkModule } from '@project-sunbird/sunbird-player-sdk-v9';
+import { waitForAsync, ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
+import { ErrorService } from '@project-sunbird/sunbird-player-sdk-v9';
 import { CarouselComponent } from 'ngx-bootstrap/carousel';
 import { of } from 'rxjs';
 import { fakeMainProgressBar } from '../main-player/main-player.component.spec.data';
@@ -46,7 +46,7 @@ describe('SectionPlayerComponent', () => {
     "getCurrentSlideIndex": 1, "selectSlide": {}, "move": {}, isLast: false
   });
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [SectionPlayerComponent, CarouselComponent],
       imports: [
@@ -66,11 +66,11 @@ describe('SectionPlayerComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(SectionPlayerComponent);
     component = fixture.componentInstance;
-    viewerService = TestBed.get(ViewerService);
-    utilService = TestBed.get(UtilService);
-    errorService = TestBed.get(ErrorService);
-    component.imageModal = TestBed.get(ElementRef);
-    component.questionSlide = TestBed.get(ElementRef);
+    viewerService = TestBed.inject(ViewerService);
+    utilService = TestBed.inject(UtilService);
+    errorService = TestBed.inject(ErrorService);
+    component.imageModal = TestBed.inject(ElementRef);
+    component.questionSlide = TestBed.inject(ElementRef);
     fixture.detectChanges();
   });
 
@@ -786,7 +786,7 @@ describe('SectionPlayerComponent', () => {
   });
 
   it('should clean up the state before leaving the page', () => {
-    const errorService = TestBed.get(ErrorService);
+    const errorService = TestBed.inject(ErrorService);
     spyOn(component['destroy$'], 'next');
     spyOn(errorService.getInternetConnectivityError, 'unsubscribe');
     component.ngOnDestroy();

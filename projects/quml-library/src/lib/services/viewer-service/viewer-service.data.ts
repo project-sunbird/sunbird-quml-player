@@ -280,6 +280,7 @@ export const mockData = {
     "loadScoreBoard": false,
     "requiresSubmit": true,
     "isFirstSection": false,
+    "isAvailableLocally": false,
     "isSectionsAvailable": true,
     "isReplayed": false,
     "identifier": "do_213484313936035840138",
@@ -287,6 +288,8 @@ export const mockData = {
     "baseUrl": "",
     "instructions": "<ol><li>Please circle the correct answer</li><li>Do not use mobile phones</li></ol>",
     "questionCount": 4,
+    "showFeedback": false,
+    "showLegend": false,
     "sideMenuConfig": {
       "enable": true,
       "showShare": true,
