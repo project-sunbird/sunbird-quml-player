@@ -263,7 +263,7 @@ describe('MainPlayerComponent', () => {
     const viewerService = TestBed.inject(ViewerService);
     component.parentConfig.isReplayed = false;
     component.attempts = { max: 3, current: 2 }
-    spyOn(component, 'initializeSections').and.returnValue(true);
+    spyOn(component, 'initializeSections');
     spyOn(viewerService, 'generateMaxAttemptEvents');
     spyOn(component.playerEvent, 'emit');
     spyOn(viewerService, 'raiseHeartBeatEvent');
@@ -426,7 +426,7 @@ describe('MainPlayerComponent', () => {
     component.subscription = of(1, 2, 3).subscribe();
     spyOn(component, 'calculateScore');
     spyOn<any>(component, 'getSummaryObject');
-    spyOn(viewerService, 'raiseSummaryEvent').and.returnValue({});
+    spyOn(viewerService, 'raiseSummaryEvent');
     spyOn(component, 'raiseEndEvent');
     spyOn(component.subscription, 'unsubscribe');
     component.ngOnDestroy();
@@ -442,7 +442,7 @@ describe('MainPlayerComponent', () => {
     expect(component.subscription.unsubscribe).toHaveBeenCalled();
   });
 
-  it('should show error if the the mutltilevel sections are present', () => {
+  it('should show error if the the multilevel sections are present', () => {
     component.playerConfig = playerConfig;
     component.playerConfig.metadata.children[0].children[0].children = [];
     component.initializeSections();

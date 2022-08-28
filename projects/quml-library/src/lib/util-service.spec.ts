@@ -60,7 +60,7 @@ describe('UtilService', () => {
   it('should scroll the page from parent element to child for mobile portrait', () => {
     const service: UtilService = TestBed.inject(UtilService);
     const parent = document.createElement('div');
-    spyOn(window, 'matchMedia').and.returnValue({ matches: true });
+    spyOn(window, 'matchMedia').and.returnValue({ matches: true } as any);
     service.scrollParentToChild(parent, document.createElement('div'));
     expect(parent.scrollLeft).toBeDefined();
   });

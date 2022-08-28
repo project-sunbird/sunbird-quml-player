@@ -195,7 +195,7 @@ describe('ViewerService', () => {
     const service = TestBed.inject(ViewerService);
     const qumlLibraryService = TestBed.inject(QumlLibraryService);
     service.identifiers = ['do_123', 'do_124'];
-    spyOn(service.questionCursor, 'getQuestion').and.returnValue(of([{ id: 'do_123' }, { id: 'do_124' }]));
+    spyOn(service.questionCursor, 'getQuestion').and.returnValue(of([{ id: 'do_123' }, { id: 'do_124' }] as any));
     spyOn(service.qumlQuestionEvent, 'emit');
     service.getQuestion();
     expect(service.qumlQuestionEvent.emit).toHaveBeenCalled();
@@ -226,7 +226,7 @@ describe('ViewerService', () => {
     const service = TestBed.inject(ViewerService);
     service.parentIdentifier = 'do_555';
     service.identifiers = ['do_123', 'do_124'];
-    spyOn(service.questionCursor, 'getQuestions').and.returnValue(of([{ id: 'do_123' }]));
+    spyOn(service.questionCursor, 'getQuestions').and.returnValue(of([{ id: 'do_123' }] as any));
     spyOn(service.qumlQuestionEvent, 'emit');
     service.getQuestions(0, 1)
     expect(service.questionCursor.getQuestions).toHaveBeenCalled();
