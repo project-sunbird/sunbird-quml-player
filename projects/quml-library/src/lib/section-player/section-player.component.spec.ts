@@ -818,7 +818,7 @@ describe('SectionPlayerComponent', () => {
     const element = document.createElement('div');
     element.dataset.assetVariable = 'true';
     Object.defineProperty(element, 'clientHeight', { configurable: true, value: 100 });
-    spyOn(document, 'querySelectorAll').and.returnValue([element]);
+    spyOn(document, 'querySelectorAll').and.returnValue([element] as any);
     component.setImageHeightWidthClass();
     expect(document.querySelectorAll).toHaveBeenCalled();
     expect(element.classList.contains('portrait'))
@@ -828,7 +828,7 @@ describe('SectionPlayerComponent', () => {
     const element = document.createElement('div');
     element.dataset.assetVariable = 'true';
     Object.defineProperty(element, 'clientWidth', { configurable: true, value: 100 });
-    spyOn(document, 'querySelectorAll').and.returnValue([element]);
+    spyOn(document, 'querySelectorAll').and.returnValue([element] as any);
     component.setImageHeightWidthClass();
     expect(document.querySelectorAll).toHaveBeenCalled();
     expect(element.classList.contains('landscape'))
@@ -837,7 +837,7 @@ describe('SectionPlayerComponent', () => {
   it('should reset the height and width of the image for neutral mode', () => {
     const element = document.createElement('div');
     element.dataset.assetVariable = 'true';
-    spyOn(document, 'querySelectorAll').and.returnValue([element]);
+    spyOn(document, 'querySelectorAll').and.returnValue([element] as any);
     component.setImageHeightWidthClass();
     expect(document.querySelectorAll).toHaveBeenCalled();
     expect(element.classList.contains('neutral'))

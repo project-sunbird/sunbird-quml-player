@@ -196,7 +196,7 @@ describe('McqComponent', () => {
     expect(component.layout).toBeUndefined;
   });
   it('should return a element on view init', () => {
-    spyOn(document, 'getElementsByClassName').and.returnValue([document.createElement('div')]);
+    spyOn(document, 'getElementsByClassName').and.returnValue([document.createElement('div')] as any);
     component.ngAfterViewInit();
     expect(document.getElementsByClassName).toHaveBeenCalled();
   });
@@ -240,7 +240,7 @@ describe('McqComponent', () => {
     mathElement.classList.add('mathText');
     element.appendChild(mathElement);
     spyOn(document, 'getElementById').and.returnValue(element);
-    spyOn(document, 'getElementsByClassName').and.returnValue([element]);
+    spyOn(document, 'getElementsByClassName').and.returnValue([element] as any);
     // @ts-ignore
     window.katex = {
       render: () => { }

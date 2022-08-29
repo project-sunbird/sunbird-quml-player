@@ -28,7 +28,6 @@
       ],
       "quml-library/*": [
         "dist/quml-library/*",
-        
       ],
       "@project-sunbird/sunbird-quml-player-v9":[
         "dist/quml-library",
@@ -36,6 +35,19 @@
       "@project-sunbird/sunbird-quml-player-v9/*":[
         "dist/quml-library/*",
       ],
+      "@project-sunbird/sunbird-player-sdk-v9": [
+        "projects/quml-library/node_modules/@project-sunbird/sunbird-player-sdk-v9"
+      ],
+      "@project-sunbird/sunbird-player-sdk-v9/*": [
+        "projects/quml-library/node_modules/@project-sunbird/sunbird-player-sdk-v9/*"
+      ],
+      "ally.js": [
+        "projects/quml-library/node_modules/ally.js"
+      ],
+      "ally.js/*": [
+        "projects/quml-library/node_modules/ally.js/*"
+      ],
+
     }
   }
 }
