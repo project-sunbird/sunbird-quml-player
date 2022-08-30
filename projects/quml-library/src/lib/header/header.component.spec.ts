@@ -1,4 +1,4 @@
-import { async, ComponentFixture, discardPeriodicTasks, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
+import { waitForAsync,  ComponentFixture, discardPeriodicTasks, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 import { HeaderComponent } from './header.component';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ViewerService } from '../services/viewer-service/viewer-service';
@@ -20,7 +20,7 @@ describe('HeaderComponent', () => {
     raiseAssesEvent() { }
   }
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [HeaderComponent],
       providers: [{ provide: ViewerService, useClass: ViewerServiceMock }],

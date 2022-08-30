@@ -1,5 +1,5 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync,  ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { SafeHtmlPipe } from '../pipes/safe-html/safe-html.pipe';
 import { ViewerService } from '../services/viewer-service/viewer-service';
@@ -24,7 +24,7 @@ describe('ScoreboardComponent', () => {
   }
 
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ScoreboardComponent, SafeHtmlPipe],
       providers: [{ provide: ViewerService, useClass: ViewerServiceMock },],
