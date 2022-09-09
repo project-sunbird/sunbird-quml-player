@@ -1,5 +1,5 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync,  ComponentFixture, TestBed } from '@angular/core/testing';
 import { SafeHtmlPipe } from '../pipes/safe-html/safe-html.pipe';
 
 import { McqImageOptionComponent } from './mcq-image-option.component';
@@ -8,7 +8,7 @@ describe('McqImageOptionComponent', () => {
   let component: McqImageOptionComponent;
   let fixture: ComponentFixture<McqImageOptionComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [McqImageOptionComponent, SafeHtmlPipe],
       schemas: [NO_ERRORS_SCHEMA]

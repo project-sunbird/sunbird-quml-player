@@ -1,5 +1,5 @@
 import { ElementRef, NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync,  ComponentFixture, TestBed } from '@angular/core/testing';
 import { SafeHtmlPipe } from '../pipes/safe-html/safe-html.pipe';
 
 import { McqSolutionsComponent } from './mcq-solutions.component';
@@ -8,7 +8,7 @@ describe('SolutionsComponent', () => {
   let component: McqSolutionsComponent;
   let fixture: ComponentFixture<McqSolutionsComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [McqSolutionsComponent, SafeHtmlPipe],
       schemas: [NO_ERRORS_SCHEMA]

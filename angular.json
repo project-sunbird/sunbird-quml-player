@@ -72,7 +72,14 @@
               "node_modules/@project-sunbird/telemetry-sdk/index.js",
               "./node_modules/katex/dist/katex.min.js",
               "./node_modules/jquery/dist/jquery.min.js"
-            ]
+            ],
+            "aot": false,
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
           },
           "configurations": {
             "production": {
@@ -98,7 +105,8 @@
                 }
               ]
             }
-          }
+          },
+          "defaultConfiguration": ""
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -197,7 +205,6 @@
             "main": "projects/quml-player-wc/src/main.ts",
             "polyfills": "projects/quml-player-wc/src/polyfills.ts",
             "tsConfig": "projects/quml-player-wc/tsconfig.app.json",
-            "aot": true,
             "assets": [
               "./projects/quml-player-wc/src/favicon.ico",
               "./projects/quml-player-wc/src/assets",
@@ -217,7 +224,13 @@
               "./node_modules/jquery/dist/jquery.min.js",
               "./node_modules/katex/dist/katex.min.js",
               "./node_modules/@project-sunbird/telemetry-sdk/index.js"
-            ]
+            ],
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
           },
           "configurations": {
             "production": {
@@ -247,7 +260,8 @@
                 }
               ]
             }
-          }
+          },
+          "defaultConfiguration": ""
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",

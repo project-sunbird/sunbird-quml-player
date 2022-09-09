@@ -1,5 +1,5 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync,  ComponentFixture, TestBed } from '@angular/core/testing';
 import { SafeHtmlPipe } from '../pipes/safe-html/safe-html.pipe';
 
 import { QumlPopupComponent } from './quml-popup.component';
@@ -8,7 +8,7 @@ describe('QumlPopupComponent', () => {
   let component: QumlPopupComponent;
   let fixture: ComponentFixture<QumlPopupComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [QumlPopupComponent, SafeHtmlPipe],
       schemas: [NO_ERRORS_SCHEMA]

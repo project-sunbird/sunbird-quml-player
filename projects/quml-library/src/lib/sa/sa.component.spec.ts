@@ -1,5 +1,5 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync,  ComponentFixture, TestBed } from '@angular/core/testing';
 import { SafeHtmlPipe } from '../pipes/safe-html/safe-html.pipe';
 
 import { SaComponent } from './sa.component';
@@ -111,7 +111,7 @@ describe('SaComponent', () => {
     "board": "State (Tamil Nadu)"
   }
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [SaComponent, SafeHtmlPipe],
       schemas: [NO_ERRORS_SCHEMA]

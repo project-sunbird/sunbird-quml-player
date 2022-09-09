@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { SunbirdPlayerSdkModule } from '@project-sunbird/sunbird-player-sdk-v9';
 import { QuestionCursor } from './../quml-question-cursor.service';
 import { QumlLibraryService } from '../quml-library.service';
@@ -19,7 +19,7 @@ describe('MainPlayerComponent', () => {
     "getCurrentSlideIndex": 1, "selectSlide": {}, "move": {}, isLast: false
   });
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [MainPlayerComponent],
       imports: [
@@ -37,11 +37,6 @@ describe('MainPlayerComponent', () => {
     component = fixture.componentInstance;
     component.playerConfig = playerConfig;
     fixture.detectChanges();
-  });
-
-  afterEach(() => {
-    spyOn(component, 'ngOnDestroy').and.callFake(() => { });
-    fixture.destroy();
   });
 
   it('should create', () => {

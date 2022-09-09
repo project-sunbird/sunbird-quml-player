@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync,  ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ProgressIndicatorsComponent } from './progress-indicators.component';
 
@@ -6,7 +6,7 @@ describe('ProgressIndicatorsComponent', () => {
   let component: ProgressIndicatorsComponent;
   let fixture: ComponentFixture<ProgressIndicatorsComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ ProgressIndicatorsComponent ]
     })
