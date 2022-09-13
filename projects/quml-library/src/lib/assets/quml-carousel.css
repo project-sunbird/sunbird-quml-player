@@ -1,5 +1,4 @@
-html,
-body {
+html, body {
   height: 100%;
 }
 .carousel {
@@ -51,9 +50,7 @@ body {
   transform: translateX(0);
 }
 
-@supports (
-  (-webkit-transform-style: preserve-3d) or (transform-style: preserve-3d)
-) {
+@supports ((-webkit-transform-style: preserve-3d) or (transform-style: preserve-3d)) {
   .carousel-item-next.carousel-item-left,
   .carousel-item-prev.carousel-item-right {
     -webkit-transform: translate3d(0, 0, 0);
@@ -67,9 +64,7 @@ body {
   transform: translateX(100%);
 }
 
-@supports (
-  (-webkit-transform-style: preserve-3d) or (transform-style: preserve-3d)
-) {
+@supports ((-webkit-transform-style: preserve-3d) or (transform-style: preserve-3d)) {
   .carousel-item-next,
   .active.carousel-item-right {
     -webkit-transform: translate3d(100%, 0, 0);
@@ -83,9 +78,7 @@ body {
   transform: translateX(-100%);
 }
 
-@supports (
-  (-webkit-transform-style: preserve-3d) or (transform-style: preserve-3d)
-) {
+@supports ((-webkit-transform-style: preserve-3d) or (transform-style: preserve-3d)) {
   .carousel-item-prev,
   .active.carousel-item-left {
     -webkit-transform: translate3d(-100%, 0, 0);
@@ -95,7 +88,7 @@ body {
 
 .carousel-fade .carousel-item {
   opacity: 0;
-  transition-duration: 0.6s;
+  transition-duration: .6s;
   transition-property: opacity;
 }
 
@@ -119,9 +112,7 @@ body {
   transform: translateX(0);
 }
 
-@supports (
-  (-webkit-transform-style: preserve-3d) or (transform-style: preserve-3d)
-) {
+@supports ((-webkit-transform-style: preserve-3d) or (transform-style: preserve-3d)) {
   .carousel-fade .carousel-item-next,
   .carousel-fade .carousel-item-prev,
   .carousel-fade .carousel-item.active,
@@ -149,14 +140,13 @@ body {
   opacity: 0.5;
 }
 
-.carousel-control-prev:hover,
-.carousel-control-prev:focus,
+.carousel-control-prev:hover, .carousel-control-prev:focus,
 .carousel-control-next:hover,
 .carousel-control-next:focus {
   color: #fff;
   text-decoration: none;
   outline: 0;
-  opacity: 0.9;
+  opacity: .9;
 }
 
 .carousel-control-prev {
