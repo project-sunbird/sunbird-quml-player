@@ -211,5 +211,6 @@ Follow below-mentioned steps to use it in plain javascript project:
   - Run `npm run serve` on second terminal window (This will copy assets from the `quml-library` to the library dist folder)
   - Now it will be served on `http://localhost:4200/`
   - To run the web-component `npm run build-web-component`
+  - To run the the library run `npm run test-lib`
 
 
