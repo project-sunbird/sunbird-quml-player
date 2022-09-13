@@ -1,10 +1,9 @@
-import { Rule, Tree, SchematicsException, SchematicContext } from '@angular-devkit/schematics';
-
-import { Schema } from '../schema';
-import * as messages from '../messages';
-import { getProjectTargetOptions } from '../../utils/project';
+import { Rule, SchematicContext, SchematicsException, Tree } from '@angular-devkit/schematics';
+import { JsonArray, workspaces } from '@angular-devkit/core';
 import { getWorkspace, updateWorkspace } from '@schematics/angular/utility/workspace';
-import { workspaces, JsonArray } from '@angular-devkit/core';
+import { getProjectTargetOptions } from '../../utils/project';
+import * as messages from '../messages';
+import { Schema } from '../schema';
 
 const STYLE_FILEPATH = [
   'node_modules/@project-sunbird/sunbird-quml-player-v9/lib/assets/quml-carousel.css',

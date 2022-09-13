@@ -1,18 +1,13 @@
 import { Rule, SchematicsException, Tree, SchematicContext } from '@angular-devkit/schematics';
 import { getAppModulePath } from '@schematics/angular/utility/ng-ast-utils';
 import { Change } from '@schematics/angular/utility/change';
-import { addImportToModule, addSymbolToNgModuleMetadata, addProviderToModule, insertImport } from '@schematics/angular/utility/ast-utils';
+import { addImportToModule, addSymbolToNgModuleMetadata, insertImport } from '@schematics/angular/utility/ast-utils';
 import { InsertChange } from '@schematics/angular/utility/change';
 import * as ts from '@schematics/angular/third_party/github.com/Microsoft/TypeScript/lib/typescript';
 import { Schema } from '../schema';
 import { getWorkspace } from '@schematics/angular/utility/workspace';
 import * as messages from '../messages';
 import { getProjectTargetOptions } from '../../utils/project';
-
-
-const MODULE_NAME = 'QumlLibraryModule';
-const PACKAGE_NAME = '@project-sunbird/sunbird-quml-player-v9';
-
 
 const modules = [
   { moduleName: 'QumlLibraryModule', packageName: '@project-sunbird/sunbird-quml-player-v9' },
@@ -38,30 +33,6 @@ export function addLibraryModuleToAppModule(options: Schema): Rule {
       throw new SchematicsException(messages.noMainFile(projectName));
     }
 
-    // // 3. getting main app module file
-    // const appModuleFilePath = getAppModulePath(host, mainFilePath);
-    // const appModuleFileText = host.read(appModuleFilePath);
-    // if (appModuleFileText === null) {
-    //   throw new SchematicsException(messages.noModuleFile(appModuleFilePath));
-    // }
-
-    // 4. adding `modules` to the app module
-    // const appModuleSource =
-    //   ts.createSourceFile(appModuleFilePath, appModuleFileText.toString('utf-8'), ts.ScriptTarget.Latest, true);
-
-
-    // const changes =
-    //   addImportToModule(appModuleSource, appModuleFilePath, MODULE_NAME, PACKAGE_NAME);
-
-    // const recorder = host.beginUpdate(appModuleFilePath);
-    // for (const change of changes) {
-    //   if (change instanceof InsertChange) {
-    //     recorder.insertLeft(change.pos, change.toAdd);
-    //   }
-    // }
-    // host.commitUpdate(recorder);
-
-
     let changes: Change[], appModuleSource!: ts.SourceFile, appModuleFilePath: string;
 
     for (let item of modules) {
@@ -81,10 +52,6 @@ export function addLibraryModuleToAppModule(options: Schema): Rule {
     }
 
     if (appModuleSource) {
-      // const { appModuleFilePath, appModuleSource } = getModulesSource(host, mainFilePath);
-      // changes = addSymbolToNgModuleMetadata(appModuleSource, appModuleFilePath, 'imports', 'CarouselModule.forRoot()', 'ngx-bootstrap/carousel');
-      // update(host, appModuleFilePath, changes);
-
       addSymbolToMetadata(host, mainFilePath, 'imports', 'CarouselModule.forRoot()', 'ngx-bootstrap/carousel');
       addSymbolToMetadata(host, mainFilePath, 'providers', `QuestionCursorImplementationService`, './question-cursor-implementation.service');
       addSymbolToMetadata(host, mainFilePath, 'providers',
@@ -95,9 +62,6 @@ export function addLibraryModuleToAppModule(options: Schema): Rule {
 
       insertImportToModule(host, mainFilePath, 'QuestionCursor', '@project-sunbird/sunbird-quml-player-v9');
       insertImportToModule(host, mainFilePath, 'QuestionCursorImplementationService', './question-cursor-implementation.service');
-      // changes = [insertImport(appModuleSource, appModuleFilePath, 'QuestionCursor', '@project-sunbird/sunbird-quml-player-v9')];
-      // changes = [insertImport(appModuleSource, appModuleFilePath, 'QuestionCursorImplementationService', './question-cursor-implementation.service')];
-      // changes = addSymbolToNgModuleMetadata(appModuleSource, appModuleFilePath, 'providers', `QuestionCursorImplementationService`, './question-cursor-implementation.service');
     }
   };
 }

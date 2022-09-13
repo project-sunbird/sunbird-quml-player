@@ -1,14 +1,14 @@
 import { Rule, SchematicContext, SchematicsException, Tree } from '@angular-devkit/schematics';
 import {
   NodePackageInstallTask,
-  RunSchematicTask,
+  RunSchematicTask
 } from '@angular-devkit/schematics/tasks';
 
 import { getWorkspace } from '@schematics/angular/utility/workspace';
 
-import { Schema } from './schema';
-import * as messages from './messages';
 import { addPackageToPackageJson } from '../utils/package-config';
+import * as messages from './messages';
+import { Schema } from './schema';
 
 const VERSIONS = {
   // These required peer-dependency will get installed on build time if not exist

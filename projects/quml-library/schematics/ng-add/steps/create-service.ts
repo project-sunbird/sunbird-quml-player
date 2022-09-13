@@ -1,10 +1,8 @@
-import { Rule, Tree, SchematicsException, SchematicContext } from '@angular-devkit/schematics';
-
-import { Schema } from '../schema';
+import { workspaces } from '@angular-devkit/core';
+import { Rule, SchematicContext, SchematicsException, Tree } from '@angular-devkit/schematics';
+import { getWorkspace } from '@schematics/angular/utility/workspace';
 import * as messages from '../messages';
-import { getProjectTargetOptions } from '../../utils/project';
-import { getWorkspace, updateWorkspace } from '@schematics/angular/utility/workspace';
-import { workspaces, JsonArray, JsonObject } from '@angular-devkit/core';
+import { Schema } from '../schema';
 
 
 export function createService(options: Schema): Rule {
@@ -17,13 +15,7 @@ export function createService(options: Schema): Rule {
     if (!project) {
       throw new SchematicsException(messages.noProject(projectName));
     }
-    // const projectBuildOptions: JsonObject = getProjectTargetOptions(project, 'build');
-    // const mainFilePath = projectBuildOptions.main as string;
-    // context.logger.info(`main file path ${mainFilePath}`, projectBuildOptions);
-    // if (!mainFilePath || !host.read(mainFilePath)) {
-    //   throw new SchematicsException(messages.noMainFile(projectName));
-    // }
-    // just patching 'angular.json'
+
     return createQUMLImplementationService(workspace, project, host, context);
   };
 }
