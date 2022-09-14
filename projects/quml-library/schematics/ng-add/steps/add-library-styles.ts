@@ -20,9 +20,7 @@ const LIBRARY_ASSETS = {
   input: './node_modules/@project-sunbird/sunbird-quml-player-v9/lib/assets/',
   output: '/assets/'
 };
-/**
- * we're simply adding '_styles.scss' to the 'angular.json'
- */
+
 export function addLibraryStyles(options: Schema): Rule {
   return async (host: Tree, context: SchematicContext) => {
     const workspace: any = await getWorkspace(host);
@@ -33,15 +31,14 @@ export function addLibraryStyles(options: Schema): Rule {
       throw new SchematicsException(messages.noProject(projectName));
     }
     // just patching 'angular.json'
-    return addStyleToAngularJson(workspace, project, host, context);
+    return addStyleToAngularJson(project, context, projectName);
   };
 }
 
 /**
  * Patches 'angular.json' to add '_styles.scss' styles
  */
-function addStyleToAngularJson(
-  workspace: any, project: workspaces.ProjectDefinition, host: Tree, context: SchematicContext): Rule {
+function addStyleToAngularJson(project: workspaces.ProjectDefinition, context: SchematicContext, projectName: string): Rule {
   const targetOptions = getProjectTargetOptions(project, 'build');
   const styles = (targetOptions.styles as JsonArray | undefined);
 
@@ -51,13 +48,10 @@ function addStyleToAngularJson(
       targetOptions.styles = [PATH];
     } else {
       const existingStyles: any = styles.map((s: any) => typeof s === 'string' ? s : s.input);
-      for (const [, stylePath] of existingStyles.entries()) {
-        // If the given asset is already specified in the styles, we don't need to do anything.
-        if (stylePath === PATH) {
-          return () => host;
-        }
+
+      if (!existingStyles.includes(PATH)) {
+        styles.unshift(PATH);
       }
-      styles.unshift(PATH);
     }
   }
 
@@ -68,14 +62,10 @@ function addStyleToAngularJson(
     if (!scripts) {
       targetOptions.scripts = [PATH];
     } else {
-      const existingSripts: any = scripts.map((s: any) => typeof s === 'string' ? s : s.input);
-      for (const [, scriptPath] of existingSripts.entries()) {
-        // If the given asset is already specified in the scripts, we don't need to do anything.
-        if (scriptPath === PATH) {
-          return () => host;
-        }
+      const existingScripts: any = scripts.map((s: any) => typeof s === 'string' ? s : s.input);
+      if (!existingScripts.includes(PATH)) {
+        scripts.unshift(PATH);
       }
-      scripts.unshift(PATH);
     }
   }
 
@@ -85,14 +75,18 @@ function addStyleToAngularJson(
     targetOptions.assets = [LIBRARY_ASSETS];
   } else {
     const existingAssets: any = assets.map((a: any) => typeof a === 'string' ? a : a.input);
-    for (const [, assestPath] of existingAssets.entries()) {
-      // If the given asset is already specified in the assets, we don't need to do anything.
-      if (assestPath === LIBRARY_ASSETS.input) {
-        return () => host;
-      }
+
+    if (!existingAssets.includes(LIBRARY_ASSETS.input)) {
+      assets.unshift(LIBRARY_ASSETS);
     }
-    assets.unshift(LIBRARY_ASSETS);
   }
 
-  return updateWorkspace(workspace);
+  context.logger.info("updating angular.json...");
+  return updateWorkspace((defaultWorkspace: workspaces.WorkspaceDefinition) => {
+    let defaultProject: any = defaultWorkspace.projects.get(projectName);
+    const buildTarget = defaultProject.targets.get('build');
+    buildTarget.options.styles = styles;
+    buildTarget.options.scripts = scripts;
+    buildTarget.options.assets = assets;
+  });
 }

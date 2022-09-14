@@ -59,7 +59,6 @@ export function addLibraryModuleToAppModule(options: Schema): Rule {
           provide: QuestionCursor,
           useClass: QuestionCursorImplementationService
          }`);
-
       insertImportToModule(host, mainFilePath, 'QuestionCursor', '@project-sunbird/sunbird-quml-player-v9');
       insertImportToModule(host, mainFilePath, 'QuestionCursorImplementationService', './question-cursor-implementation.service');
     }

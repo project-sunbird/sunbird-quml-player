@@ -8,7 +8,6 @@ import { Schema } from '../schema';
 export function createService(options: Schema): Rule {
   return async (host: Tree, context: SchematicContext) => {
     const workspace: any = await getWorkspace(host);
-
     const projectName = options.project || (workspace.extensions.defaultProject as string);
     const project = workspace.projects.get(projectName);
 
@@ -21,8 +20,6 @@ export function createService(options: Schema): Rule {
 }
 
 function createQUMLImplementationService(workspace: any, project: workspaces.ProjectDefinition, host: Tree, context: SchematicContext): Rule {
-
-
   const path = `${project.sourceRoot}/app/question-cursor-implementation.service.ts`;
   if (!host.exists(path)) {
     context.logger.info("Creating question cursor implementation service...");
@@ -40,7 +37,9 @@ function getQuestionCursorImplementationService() {
     import { Observable, of, throwError } from 'rxjs';
     import { map, mergeMap } from 'rxjs/operators';
 
-    @Injectable()
+    @Injectable({
+        providedIn: 'root'
+    })
     export class QuestionCursorImplementationService implements QuestionCursor {
         listUrl: string | undefined; // Define this url to call list api in server
         constructor(private http: HttpClient) { }

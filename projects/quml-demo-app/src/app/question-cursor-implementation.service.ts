@@ -5,7 +5,9 @@ import { Observable, of, throwError as observableThrowError } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { ApiEndPoints } from './app.constant';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class QuestionCursorImplementationService implements QuestionCursor {
     constructor(private http: HttpClient) { }
 
