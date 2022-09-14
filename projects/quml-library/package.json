@@ -21,8 +21,8 @@
     "@project-sunbird/sunbird-player-sdk-v9": "5.1.0"
   },
   "devDependencies": {
-    "copyfiles": "file:../../node_modules/copyfiles",
-    "typescript": "file:../../node_modules/typescript"
+    "copyfiles": "2.4.1",
+    "typescript": "~4.3.5"
   },
   "homepage": "https://github.com/project-sunbird/sunbird-quml-player#readme",
   "keywords": [
