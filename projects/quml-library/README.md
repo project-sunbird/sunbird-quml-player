@@ -9,7 +9,7 @@ For existing apps, follow below-mentioned steps:
 ## :label: Step 1: Install the packages
 These are the peerDependencies of the library, need to be installed in order to use this library.
 
-    npm install @project-sunbird/sunbird-quml-player-v9 --save
+    npm install @project-sunbird/sunbird-quml-player --save
     npm install @project-sunbird/sb-styles --save
     npm install @project-sunbird/client-services --save
     npm install bootstrap@4.6.1 --save
@@ -50,7 +50,7 @@ For more information refer [question-cursor-implementation.service.ts](https://g
         ...
         {
          "glob": "**/*.*",
-         "input": "./node_modules/@project-sunbird/sunbird-quml-player-v9/lib/assets/",
+         "input": "./node_modules/@project-sunbird/sunbird-quml-player/lib/assets/",
          "output": "/assets/"
         }
       ],
@@ -78,7 +78,7 @@ Import the required modules such as **CarouselModule**, **QumlLibraryModule**, *
 
 ```javascript
   import { HttpClientModule } from '@angular/common/http';
-  import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml-player-v9';
+  import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml-player';
   import { CarouselModule } from 'ngx-bootstrap/carousel';
   import { QuestionCursorImplementationService } from './question-cursor-implementation.service';
 

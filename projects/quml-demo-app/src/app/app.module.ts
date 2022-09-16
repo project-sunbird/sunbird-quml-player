@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
 import { QuestionCursorImplementationService } from './question-cursor-implementation.service';
-import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml-player-v9';
+import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml-player';
 import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({

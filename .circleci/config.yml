@@ -33,7 +33,7 @@ jobs:
             if [ -z $CIRCLE_PR_NUMBER ]; then
               npm run build-lib && npm pack ./dist/quml-library
               echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
-              npm publish project-sunbird-sunbird-quml-player-v9-*
+              npm publish project-sunbird-sunbird-quml-player-*
             else
               npm run build-lib && npm pack ./dist/quml-library
             fi

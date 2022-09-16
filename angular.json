@@ -58,7 +58,7 @@
               "projects/quml-demo-app/src/assets",
               {
                 "glob": "**/*",
-                "input": "node_modules/@project-sunbird/sunbird-quml-player-v9/lib/assets/",
+                "input": "node_modules/@project-sunbird/sunbird-quml-player/lib/assets/",
                 "output": "/assets/"
               }
             ],
@@ -210,7 +210,7 @@
               "./projects/quml-player-wc/src/assets",
               {
                 "glob": "**/*",
-                "input": "node_modules/@project-sunbird/sunbird-quml-player-v9/lib/assets/",
+                "input": "node_modules/@project-sunbird/sunbird-quml-player/lib/assets/",
                 "output": "/assets/"
               }
             ],
