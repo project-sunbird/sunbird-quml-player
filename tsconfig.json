@@ -25,10 +25,10 @@
       "quml-library/*": [
         "dist/quml-library/*",
       ],
-      "@project-sunbird/sunbird-quml-player-v9":[
+      "@project-sunbird/sunbird-quml-player":[
         "dist/quml-library",
       ],
-      "@project-sunbird/sunbird-quml-player-v9/*":[
+      "@project-sunbird/sunbird-quml-player/*":[
         "dist/quml-library/*",
       ],
       "@project-sunbird/sunbird-player-sdk-v9": [
