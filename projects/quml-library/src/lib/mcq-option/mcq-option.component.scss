@@ -106,8 +106,8 @@
 /* When the radio button is checked, add a blue background */
 .container input:checked~.radiomark, .quml-option--selected .radiomark {
   position: relative;
-  background-color: var(--quml-option-selected-radiomark);
-  border: 0.45rem solid var(--primary-color);
+  background-color: var(--quml-option-selected-checkmark);
+  border: 0.125rem solid var(--primary-color);
 }
 
 /* Create the indicator (the square - hidden when not checked) */
@@ -154,7 +154,7 @@ input:checked~.radiomark:after, .quml-option--selected .radiomark:after {
 }
 
 
-.quml-option--selected .container .checkmark:after { 
+.quml-option--selected .container .checkmark:after, .quml-option--selected .container .radiomark:after { 
   opacity: 1;
 }
 
