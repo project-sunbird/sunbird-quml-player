@@ -281,19 +281,6 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     }
   }
 
-  sortQuestions() {
-    if (this.questions.length && this.questionIds.length) {
-      const ques = [];
-      this.questionIds.forEach((questionId) => {
-        const que = this.questions.find(question => question.identifier === questionId);
-        if (que) {
-          ques.push(que);
-        }
-      });
-      this.questions = ques;
-    }
-  }
-
   createSummaryObj() {
     const classObj = _.groupBy(this.progressBarClass, 'class');
     return {

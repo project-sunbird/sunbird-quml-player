@@ -200,7 +200,7 @@ export class MainPlayerComponent implements OnInit {
     }
 
     this.attempts = {
-      max: this.playerConfig.metadata?.maxAttempt,
+      max: this.playerConfig.metadata?.maxAttempts,
       current: this.playerConfig.metadata?.currentAttempt ? this.playerConfig.metadata.currentAttempt + 1 : 1
     };
     this.totalScore = this.playerConfig.metadata.maxScore;
