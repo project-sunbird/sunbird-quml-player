@@ -1,5 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
+import { Cardinality } from '../telemetry-constants';
 import { UtilService } from '../util-service';
+import * as _ from 'lodash-es';
 
 @Component({
   selector: 'quml-mcq-option',
@@ -8,32 +10,39 @@ import { UtilService } from '../util-service';
 })
 export class McqOptionComponent implements OnChanges {
 
+  @Input() shuffleOptions: boolean
   @Input() mcqOptions: any;
   @Input() solutions: any;
   @Input() layout: any;
   @Input() cardinality: string;
   @Output() showPopup = new EventEmitter();
   @Output() optionSelected = new EventEmitter<any>();
-  selectedOption = []; 
-  @Input() replayed : boolean;
-  @Input() tryAgain? : boolean;
+  selectedOption = [];
+  @Input() replayed: boolean;
+  @Input() tryAgain?: boolean;
 
   constructor(
-    public utilService : UtilService
+    public utilService: UtilService
   ) { }
 
   ngOnChanges() {
-    if(this.replayed) {
+    /* istanbul ignore else */
+    
+    this.mcqOptions =  this.shuffleOptions ? _.shuffle(this.mcqOptions)  :   this.mcqOptions;
+    //this.mcqOptions= _.shuffle(this.mcqOptions);
+    
+    if (this.replayed) {
       this.mcqOptions.forEach((ele) => {
-         ele.selected = false;
+        ele.selected = false;
       })
     }
+    /* istanbul ignore else */
     if (this.tryAgain) {
       this.unselectOption();
     }
   }
 
-  unselectOption(){
+  unselectOption() {
     this.mcqOptions.forEach((ele) => {
       ele.selected = false;
     });
@@ -48,21 +57,29 @@ export class McqOptionComponent implements OnChanges {
     );
   }
 
-  onOptionSelect(event, mcqOption) {
-    this.mcqOptions.forEach((ele) => {
-      if (this.cardinality === 'single') {
-        if (ele.label === mcqOption.label) {
-          ele.selected = true;
-        } else {
-          ele.selected = false;
-        }
-      } else if(this.cardinality === 'multiple') {
-        if (ele.label === mcqOption.label && !this.utilService.hasDuplicates(this.selectedOption , mcqOption)) {
-          ele.selected = true;
+  onOptionSelect(event: MouseEvent | KeyboardEvent, mcqOption, index?: number) {
+    /* istanbul ignore else */
+    if (event.hasOwnProperty('stopImmediatePropagation')) {
+      event.stopImmediatePropagation();
+    }
+    if (this.cardinality === Cardinality.single) {
+      if (index !== undefined) {
+        this.mcqOptions.forEach((ele) => ele.selected = false);
+        this.mcqOptions[index].selected = this.mcqOptions[index].label === mcqOption.label
+      } else {
+        this.mcqOptions.forEach(element => {
+          element.selected = element.label === mcqOption.label;
+        });
+      }
+    } else if (this.cardinality === Cardinality.multiple) {
+      this.mcqOptions.forEach(element => {
+        if (element.label === mcqOption.label && !this.utilService.hasDuplicates(this.selectedOption, mcqOption)) {
+          element.selected = true;
           this.selectedOption.push(mcqOption)
         }
-      }
-    });
+      });
+    }
+
     this.optionSelected.emit(
       {
         name: 'optionSelect',
@@ -79,5 +96,13 @@ export class McqOptionComponent implements OnChanges {
 
   showQumlPopup() {
     this.showPopup.emit();
+  }
+
+  onEnter(event: KeyboardEvent, mcqOption, index: number) {
+    /* istanbul ignore else */
+    if (event.key === 'Enter') {
+      event.stopPropagation();
+      this.onOptionSelect(event, mcqOption, index);
+    }
   }
 }

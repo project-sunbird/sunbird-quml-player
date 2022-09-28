@@ -1,3 +1,8 @@
+::ng-deep :root {
+  --quml-mcq-title-txt: #131415;
+}
+
+
 ::ng-deep {
 
   .startpage__instr-desc,
@@ -6,7 +11,7 @@
   quml-sa,
   quml-mcq-solutions {
     .mcq-title {
-      color: #131415;
+      color: var(--quml-mcq-title-txt);
     }
 
     .fs-8,
@@ -146,14 +151,14 @@
 
     .image-style-align-right {
       float: right;
-      text-align: right !important;
-      margin-left: 0.5rem !important;
+      text-align: right;
+      margin-left: 0.5rem;
     }
 
     .image-style-align-left {
       float: left;
-      text-align: left !important;
-      margin-right: 0.5rem !important;
+      text-align: left;
+      margin-right: 0.5rem;
     }
 
     .image,
@@ -357,7 +362,7 @@
 
     p,
     span {
-      color: #131415;
+      color: var(--quml-mcq-title-txt);
     }
 
     p strong,

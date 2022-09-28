@@ -1,14 +1,15 @@
 export const responseDeclaration = {
     maxScore: 1,
     response1: {
-        cardinality: "single",
+        cardinality: "multiple",
         type: "integer",
         correctResponse: {
-            value: 1,
+            value: [1, 2],
             outcomes: {
                 SCORE: 1
             }
-        }
+        },
+        mapping: []
     }
 }
 

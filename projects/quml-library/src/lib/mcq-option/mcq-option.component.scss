@@ -1,12 +1,23 @@
 @import '../../../../../node_modules/@project-sunbird/sb-styles/assets/mixins/mixins';
+::ng-deep :root {
+  --quml-btn-border: #ccc;
+  --quml-color-gray: #666;
+  --quml-checkmark: #cdcdcd;
+  --quml-color-primary-shade: rgba(0, 0, 0, .1);
+  --quml-color-success: #08BC82;
+  --quml-color-danger: #F1635D;
+  --quml-option-card-bg: #fff;
+  --quml-option-selected-checkmark:#fff;
+  --quml-option-selected-checkmark-icon:#fff;
+}
+
 .quml-mcq-options {
   align-items: center;
   margin-bottom: 0.5rem;
 }
 
 .quml-option-card .option {
-  font-weight: bold;
-  color: #666666;
+  color: var( --quml-active-slide);
 }
 
 ::ng-deep .quml-option-card .option p {
@@ -24,12 +35,12 @@
 
 .quml-option {
   position: relative;
-  background-color:var(--white);
+  background-color:var(--quml-option-card-bg);
   padding: 0.25rem;
   border-radius: 0.25rem;
-  border: 0.0625rem solid #CCCCCC;
+  border: 0.0625rem solid var(--quml-btn-border);
   padding: 1rem;
-  box-shadow: 0 0.125rem 0.75rem 0 rgba(0,0,0,.1);
+  box-shadow: 0 0.125rem 0.75rem 0 var(--quml-color-primary-shade);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -43,20 +54,14 @@
 .quml-option--selected {
   border: 0.125rem solid var(--primary-color);
 }
-.quml-option--correct {
-  border: 0.125rem solid #31A679;
-}
-.quml-option--wrong {
-  border: 0.125rem solid #F1635D;
-}
 
 .quml-option-card .option {
-  color: #666666;
+  color: var(--quml-color-gray);
   font-size: 0.875rem;
 }
 
 .selected-option {
-  border: 0.125rem solid #5649dc;
+  border: 0.125rem solid var(--primary-color);
 }
 
 .selected-option-text {
@@ -67,13 +72,21 @@
   padding-right: 0px !important;
 }
 
-/* Create a custom radio button */
+/* Create a custom checkbox button */
 .checkmark {
   display: block;
   height: 1.25rem;
   width: 1.25rem;
+  border: 0.125rem solid var(--quml-checkmark);
+}
+
+/* Create a custom radio button */
+.radiomark {
+  display: block;
+  height: 1.25rem;
+  width: 1.25rem;
   border-radius: 50%;
-  border: 0.125rem solid #cdcdcd;
+  border: 0.125rem solid var(--quml-checkmark);
 }
 
 /* Hide the browser's default radio button */
@@ -83,21 +96,35 @@
   cursor: pointer;
 }
 
-/* When the radio button is checked, add a blue background */
+/* When the checkmark button is checked, add a blue background */
 .container input:checked~.checkmark, .quml-option--selected .checkmark {
   position: relative;
-  background-color: var(--white);
+  background-color: var(--quml-option-selected-checkmark);
   border: 0.125rem solid var(--primary-color);
 }
 
-/* Create the indicator (the dot/circle - hidden when not checked) */
+/* When the radio button is checked, add a blue background */
+.container input:checked~.radiomark, .quml-option--selected .radiomark {
+  position: relative;
+  background-color: var(--quml-option-selected-checkmark);
+  border: 0.125rem solid var(--primary-color);
+}
+
+/* Create the indicator (the square - hidden when not checked) */
 input:checked~.checkmark:after, .quml-option--selected .checkmark:after {
   content: "";
   opacity: 1;
 }
 
-/* Style the indicator (dot/circle) */
-.container .checkmark:after, .quml-option--selected .container .checkmark:after {
+/* Create the indicator (the dot/circle - hidden when not checked) */
+input:checked~.radiomark:after, .quml-option--selected .radiomark:after {
+  content: "";
+  opacity: 1;
+}
+
+/* Style the indicator (circle) */
+
+.container .radiomark:after, .quml-option--selected .container .radiomark:after {
   margin: 0.125rem;
   width: 0.75rem;
   height: 0.75rem;
@@ -111,32 +138,24 @@ input:checked~.checkmark:after, .quml-option--selected .checkmark:after {
   opacity: 0;
 }
 
-.quml-option--selected .container .checkmark:after { 
-  opacity: 1;
+/* Style the indicator (square) */
+
+.container .checkmark:after, .quml-option--selected .container .checkmark:after {
+  margin: 0.125rem;
+  width: 0.75rem;
+  height: 0.75rem;
+  background:var(--primary-color);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: 0;
+  transform: translate(-50%, -50%);
+  opacity: 0;
 }
 
-.quml-option--correct .container input:checked ~ .checkmark {
-  border-color: #31A679;
-  background-color: #31A679;
-  &:after {
-    content: '\2714';
-    color: var(--white);
-  }
-}
-.quml-option--wrong .container input:checked ~ .checkmark {
-  border-color: #F1635D;
-  &:after {
-    content: '\2716';
-    color: #F1635D;
-  }
-}
-.quml-option--wrong, .quml-option--correct {
-  .container input:checked ~ .checkmark:after {
-    width: auto;
-    height: auto;
-    background-color: transparent;
-    font-size: 0.75rem;
-  }
+
+.quml-option--selected .container .checkmark:after, .quml-option--selected .container .radiomark:after { 
+  opacity: 1;
 }
 
 img {

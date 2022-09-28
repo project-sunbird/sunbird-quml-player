@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { QumlLibraryComponent } from './quml-library.component';
 import { McqComponent } from './mcq/mcq.component';
 import { SaComponent } from './sa/sa.component';
-import { PlayerComponent } from './player/player.component';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
 import { HeaderComponent } from './header/header.component';
 import { McqQuestionComponent } from './mcq-question/mcq-question.component';
@@ -33,12 +32,12 @@ import { DurationtimerComponent } from './icon/durationtimer/durationtimer.compo
 import { AudioComponent } from './icon/audio/audio.component';
 import { WrongComponent } from './icon/wrong/wrong.component';
 import { MenuComponent } from './icon/menu/menu.component';
-import {SunbirdPlayerSdkModule} from '@project-sunbird/sunbird-player-sdk-v9';
+import { SunbirdPlayerSdkModule } from '@project-sunbird/sunbird-player-sdk-v9';
 import { QumlLibraryService } from './quml-library.service';
 import { SafeHtmlPipe } from './pipes/safe-html/safe-html.pipe';
 import { MainPlayerComponent } from './main-player/main-player.component';
-import { SectionPlayerComponent } from './section-player/section-player.component'
-
+import { SectionPlayerComponent } from './section-player/section-player.component';
+import { ProgressIndicatorsComponent } from './progress-indicators/progress-indicators.component'
 
 @NgModule({
   declarations: [
@@ -46,7 +45,6 @@ import { SectionPlayerComponent } from './section-player/section-player.componen
     McqComponent,
     HeaderComponent,
     SaComponent,
-    PlayerComponent,
     McqQuestionComponent,
     McqOptionComponent,
     QumlPopupComponent,
@@ -77,6 +75,7 @@ import { SectionPlayerComponent } from './section-player/section-player.componen
     SafeHtmlPipe,
     MainPlayerComponent,
     SectionPlayerComponent,
+    ProgressIndicatorsComponent,
   ],
   imports: [
     CommonModule,
@@ -86,6 +85,6 @@ import { SectionPlayerComponent } from './section-player/section-player.componen
   providers: [
     QumlLibraryService
   ],
-  exports: [PlayerComponent, MainPlayerComponent]
+  exports: [MainPlayerComponent]
 })
 export class QumlLibraryModule { }

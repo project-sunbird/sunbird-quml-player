@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { QumlLibraryComponent } from './quml-library.component';
 
@@ -6,11 +6,11 @@ describe('QumlLibraryComponent', () => {
   let component: QumlLibraryComponent;
   let fixture: ComponentFixture<QumlLibraryComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ QumlLibraryComponent ]
+      declarations: [QumlLibraryComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

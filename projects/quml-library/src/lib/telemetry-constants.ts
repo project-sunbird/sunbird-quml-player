@@ -1,8 +1,8 @@
-export enum pageId  {
-        startPage = 'START_PAGE',
-        submitPage = 'SUBMIT_PAGE',
-        endPage = 'END_PAGE',
-        shortAnswer = 'SHORT_ANSWER'
+export enum pageId {
+    startPage = 'START_PAGE',
+    submitPage = 'SUBMIT_PAGE',
+    endPage = 'END_PAGE',
+    shortAnswer = 'SHORT_ANSWER'
 }
 
 
@@ -15,21 +15,36 @@ export enum eventName {
     progressBar = 'PROGRESSBAR_CLICKED',
     replayClicked = 'REPLAY_CLICKED',
     startPageLoaded = 'START_PAGE_LOADED',
-    viewSolutionClicked= 'VIEW_SOLUTION_CLICKED',
+    viewSolutionClicked = 'VIEW_SOLUTION_CLICKED',
     solutionClosed = 'SOLUTION_CLOSED',
     closedFeedBack = 'CLOSED_FEEDBACK',
     tryAgain = 'TRY_AGAIN',
     optionClicked = 'OPTION_CLICKED',
     scoreBoardSubmitClicked = 'SCORE_BOARD_SUBMIT_CLICKED',
+    scoreBoardReviewClicked = 'SCORE_BOARD_REVIEW_CLICKED',
     endPageExitClicked = 'EXIT',
     zoomClicked = 'ZOOM_CLICKED',
     zoomInClicked = 'ZOOM_IN_CLICKED',
     zoomOutClicked = 'ZOOM_OUT_CLICKED',
     zoomCloseClicked = 'ZOOM_CLOSE_CLICKED',
-    goToQuestion = 'GO_TO_QUESTION'
+    goToQuestion = 'GO_TO_QUESTION',
+    nextContentPlay = 'NEXT_CONTENT_PLAY',
+    deviceRotationClicked = 'DEVICE_ROTATION_CLICKED',
+    progressIndicatorPopupClosed = 'PROGRESS_INDICATOR_POPUP_CLOSED',
+    progressIndicatorPopupOpened = 'PROGRESS_INDICATOR_POPUP_OPENED',
 }
 
 export enum TelemetryType {
     interact = 'interact',
     impression = 'impression',
+}
+
+
+export enum MimeType {
+    questionSet = 'application/vnd.sunbird.questionset'
+}
+
+export enum Cardinality {
+    single = 'single',
+    multiple = 'multiple'
 }

@@ -1,13 +1,12 @@
-<div class="quml-mcq-options" *ngIf="layout=='DEFAULT' || layout=='IMAGEQOPTION'">
-    <div class="quml-option-card" *ngFor="let mcqOption of mcqOptions" (click)="onOptionSelect($event,mcqOption)">
+<div class="quml-mcq-options" role="radiogroup"  *ngIf="layout=='DEFAULT' || layout=='IMAGEQOPTION'">
+    <div class="quml-option-card" tabindex="0" role="checkbox" [attr.aria-checked]="mcqOption.selected" aria-labelledby="option-checkbox"  *ngFor="let mcqOption of mcqOptions; let index = index" 
+    (keydown)="onEnter($event, mcqOption, index)" (click)="onOptionSelect($event,mcqOption, index)">
         <div class="quml-option"
-        [ngClass]="(mcqOption.selected==true)?'quml-option quml-option--selected':'quml-option'">
-            <div class="option"
-                [innerHTML]="mcqOption.label | safeHtml">
-            </div>
+        [ngClass]="mcqOption.selected ? 'quml-option quml-option--selected' : 'quml-option'">
+            <div class="option" tabindex="0" [innerHTML]="mcqOption.label | safeHtml"></div>
             <label class="container">
-                <input type="radio" name="radio" [checked]="mcqOption.selected" >
-                <span class="checkmark"></span>
+                <input type="radio" name="radio" [checked]="mcqOption.selected" id="option-checkbox" tabindex="-1">
+                <span  [ngClass]="{'radiomark': cardinality==='single','checkmark':cardinality==='multiple'} "></span>
             </label>
         </div>
     </div>
@@ -16,7 +15,7 @@
     <div class="qumlImageOption">
         <div class="wrapper">
             <div *ngFor="let mcqOption of mcqOptions">
-                <quml-mcq-image-option (imgOptionSelected)="onOptionSelect($event , mcqOption)" [mcqOption]='mcqOption'></quml-mcq-image-option>
+                <quml-mcq-image-option (imgOptionSelected)="onImageOptionSelected($event)" [mcqOption]='mcqOption'></quml-mcq-image-option>
             </div>
         </div>
     </div>

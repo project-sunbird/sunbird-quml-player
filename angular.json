@@ -10,7 +10,7 @@
       "prefix": "quml",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/quml-library/tsconfig.lib.json",
             "project": "projects/quml-library/ng-package.json"
@@ -58,7 +58,7 @@
               "projects/quml-demo-app/src/assets",
               {
                 "glob": "**/*",
-                "input": "node_modules/@project-sunbird/sunbird-quml-player-v9/lib/assets/",
+                "input": "node_modules/@project-sunbird/sunbird-quml-player/lib/assets/",
                 "output": "/assets/"
               }
             ],
@@ -72,7 +72,14 @@
               "node_modules/@project-sunbird/telemetry-sdk/index.js",
               "./node_modules/katex/dist/katex.min.js",
               "./node_modules/jquery/dist/jquery.min.js"
-            ]
+            ],
+            "aot": false,
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
           },
           "configurations": {
             "production": {
@@ -85,7 +92,6 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
@@ -99,12 +105,14 @@
                 }
               ]
             }
-          }
+          },
+          "defaultConfiguration": ""
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "quml-demo-app:build"
+            "browserTarget": "quml-demo-app:build",
+            "proxyConfig": "projects/quml-demo-app/src/proxy.conf.json"
           },
           "configurations": {
             "production": {
@@ -197,13 +205,12 @@
             "main": "projects/quml-player-wc/src/main.ts",
             "polyfills": "projects/quml-player-wc/src/polyfills.ts",
             "tsConfig": "projects/quml-player-wc/tsconfig.app.json",
-            "aot": true,
             "assets": [
               "./projects/quml-player-wc/src/favicon.ico",
               "./projects/quml-player-wc/src/assets",
               {
                 "glob": "**/*",
-                "input": "node_modules/@project-sunbird/sunbird-quml-player-v9/lib/assets/",
+                "input": "node_modules/@project-sunbird/sunbird-quml-player/lib/assets/",
                 "output": "/assets/"
               }
             ],
@@ -217,7 +224,13 @@
               "./node_modules/jquery/dist/jquery.min.js",
               "./node_modules/katex/dist/katex.min.js",
               "./node_modules/@project-sunbird/telemetry-sdk/index.js"
-            ]
+            ],
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
           },
           "configurations": {
             "production": {
@@ -230,7 +243,6 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
               "extractLicenses": true,
               "vendorChunk": false,
@@ -248,7 +260,8 @@
                 }
               ]
             }
-          }
+          },
+          "defaultConfiguration": ""
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",

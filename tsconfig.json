@@ -1,8 +1,5 @@
 {
   "compileOnSave": false,
-  "angularCompilerOptions": {
-    "enableIvy": false
-  },
   "compilerOptions": {
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
@@ -10,9 +7,9 @@
     "declaration": false,
     "module": "es2015",
     "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
+    "skipLibCheck": true,
     "target": "es5",
     "typeRoots": [
       "node_modules/@types"
@@ -26,8 +23,27 @@
         "dist/quml-library"
       ],
       "quml-library/*": [
-        "dist/quml-library/*"
-      ]
+        "dist/quml-library/*",
+      ],
+      "@project-sunbird/sunbird-quml-player":[
+        "dist/quml-library",
+      ],
+      "@project-sunbird/sunbird-quml-player/*":[
+        "dist/quml-library/*",
+      ],
+      "@project-sunbird/sunbird-player-sdk-v9": [
+        "projects/quml-library/node_modules/@project-sunbird/sunbird-player-sdk-v9"
+      ],
+      "@project-sunbird/sunbird-player-sdk-v9/*": [
+        "projects/quml-library/node_modules/@project-sunbird/sunbird-player-sdk-v9/*"
+      ],
+      "ally.js": [
+        "projects/quml-library/node_modules/ally.js"
+      ],
+      "ally.js/*": [
+        "projects/quml-library/node_modules/ally.js/*"
+      ],
+
     }
   }
 }

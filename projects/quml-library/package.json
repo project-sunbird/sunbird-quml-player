@@ -1,22 +1,18 @@
 {
-  "name": "@project-sunbird/sunbird-quml-player-v9",
-  "version": "4.3.19",
+  "name": "@project-sunbird/sunbird-quml-player",
+  "version": "5.1.1",
   "peerDependencies": {
-    "@angular/common": ">=9.0.0",
-    "@angular/core": ">=9.0.0",
+    "@angular/common": ">=12.2.16",
+    "@angular/core": ">=12.2.16",
     "katex": "^0.11.1",
     "ngx-bootstrap": "^5.3.2",
     "lodash-es": "^4.17.21",
-    "@project-sunbird/client-services": "4.0.1"
+    "@project-sunbird/client-services": "4.9.1"
   },
   "dependencies": {
-    "@project-sunbird/sunbird-player-sdk-v9": "^4.3.0"
+    "@project-sunbird/sunbird-player-sdk-v9": "5.1.0"
   },
-  "whitelistedNonPeerDependencies": [
-    "carousel",
-    "@project-sunbird/sunbird-player-sdk-v9"
-  ],
-  "homepage": "https://github.com/project-sunbird/sunbird-quml-player/blob/release-4.3.0/README.md",
+  "homepage": "https://github.com/project-sunbird/sunbird-quml-player#readme",
   "keywords": [
     "sunbird",
     "sunbird QuML player",

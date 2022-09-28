@@ -1,0 +1,23 @@
+<div class="progress-indicators">
+  <div class="progress-indicators__overlay">
+    <div class="progress-indicators__popup" aria-modal="true">
+      <div class="close-btn" (click)="close.emit(true)">
+        <button type="button" id="close" class="close-icon" data-animation="showShadow"
+          aria-label="player-close-btn"></button>
+      </div>
+      <div class="progress-indicators__metadata">
+        <h5 class="progress-indicators__title text-left">Progress bar indicators</h5>
+        <div class="progress-indicators__content">
+          <div class="progress-indicators__item" *ngFor="let item of indicators">
+            <span class="default" [ngClass]="item.class ? item.class : ''" [innerHtml]="item.iconText"></span>
+            <p>{{item.title}}</p>
+          </div>
+        </div>
+        <div class="progress-indicators__action-btns">
+          <button type="button" class="sb-btn sb-btn-normal sb-btn-primary sb-btn-radius submit-btn"
+            (click)="close.emit(true)">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

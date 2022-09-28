@@ -1,7 +1,8 @@
 @import '../../../../../node_modules/@project-sunbird/sb-styles/assets/mixins/mixins';
-
+::ng-deep :root {
+    --quml-close-icon: #000;
+  }
 .solutions {
-    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
@@ -11,7 +12,7 @@
 }
 
 .solution-header {
-    color: #333333;
+    color: var(--gray-800);
     font-size: 0.875rem;
     font-weight: bold;
     margin: 1rem 0;
@@ -36,6 +37,9 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        svg g polygon:first-child{
+            fill: var(--quml-close-icon);
+        }
     }
 }
 
@@ -56,8 +60,5 @@
     flex-direction: column;
     .solution-options {
         margin-bottom: 0.5rem;
-        &:last-child {
-            
-        }
     }
   }

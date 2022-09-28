@@ -36,12 +36,12 @@ export class UtilService {
     public getMultiselectScore(options, responseDeclaration) {
         let key: any = this.getKeyValue(Object.keys(responseDeclaration));
         const selectedOptionValue = options.map(option => option.value);
-        let score = responseDeclaration[key].correctResponse.outcomes.score ? responseDeclaration[key].correctResponse.outcomes.score : responseDeclaration.maxScore;
-        let correctValues = responseDeclaration[key].correctResponse.value;
+        let score = responseDeclaration[key].correctResponse.outcomes.SCORE ? responseDeclaration[key].correctResponse.outcomes.SCORE : responseDeclaration.maxScore;
+        let correctValues = responseDeclaration[key].correctResponse.value.map((ele) => Number(ele));
         let mapping = responseDeclaration[key]['mapping'];
-        if (_.isEqual(correctValues, selectedOptionValue)) {
+        if (_.isEqual(correctValues.sort(), selectedOptionValue.sort())) {                                               
             return score;
-        } else if (!_.isEqual(correctValues, selectedOptionValue)) {
+        } else if (!_.isEqual(correctValues.sort(), selectedOptionValue.sort())) {
             return selectedOptionValue.reduce((sum, index) => { sum += (mapping[index] ? mapping[index].outcomes.score : 0); return sum; }, 0);
         }
     }
@@ -52,19 +52,20 @@ export class UtilService {
     }
 
     getQuestionType(questions, currentIndex) {
-            let index = currentIndex - 1 === -1 ? 0 : currentIndex-1;
-            return questions[index]['qType'];
-        
+        let index = currentIndex - 1 === -1 ? 0 : currentIndex - 1;
+        return questions[index]['qType'];
+
     }
 
-    canGo(progressBarClass){
-    let attemptedParams = ['correct', 'wrong', 'attempted'];
-     return attemptedParams.includes(progressBarClass);
+    canGo(progressBarClass) {
+        let attemptedParams = ['correct', 'wrong', 'attempted'];
+        return attemptedParams.includes(progressBarClass);
     }
 
     sumObjectsByKey(...objects) {
         return objects.reduce((accumulator, currentValue) => {
             for (const key in currentValue) {
+                /* istanbul ignore else */
                 if (currentValue.hasOwnProperty(key)) {
                     accumulator[key] = (accumulator[key] || 0) + currentValue[key];
                 }
@@ -72,4 +73,17 @@ export class UtilService {
             return accumulator;
         }, {});
     }
+
+    scrollParentToChild(parent: HTMLElement, child: HTMLElement) {
+        const isMobilePortrait = window.matchMedia("(max-width: 480px)").matches;
+        const parentRect = parent.getBoundingClientRect();
+        const childRect = child.getBoundingClientRect();
+
+        if (isMobilePortrait) {
+            parent.scrollLeft = childRect.left + parent.scrollLeft - parentRect.left;
+        } else {
+            parent.scrollTop = (childRect.top + parent.scrollTop) - parentRect.top;
+        }
+    }
+
 }

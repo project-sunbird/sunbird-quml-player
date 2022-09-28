@@ -1,6 +1,6 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { CsTelemetryModule } from '@project-sunbird/client-services/telemetry';
-import { Context, QumlPlayerConfig } from './quml-library-interface';
+import { Context, IParentConfig, QumlPlayerConfig } from './quml-library-interface';
 import { UtilService } from './util-service';
 
 @Injectable({
@@ -23,7 +23,7 @@ export class QumlLibraryService {
 
   constructor(public utilService: UtilService) { }
 
-  initializeTelemetry(config: QumlPlayerConfig, isSectionsAvailable: boolean = false) {
+  initializeTelemetry(config: QumlPlayerConfig, parentConfig: IParentConfig) {
     this.duration = new Date().getTime();
     this.context = config.context;
     this.contentSessionId = this.utilService.uniqueId();
@@ -34,8 +34,9 @@ export class QumlLibraryService {
     this.uid = this.context.uid;
     this.rollup = this.context.contextRollup;
     this.config = config;
-    this.isSectionsAvailable = isSectionsAvailable;
+    this.isSectionsAvailable = parentConfig?.isSectionsAvailable;
 
+    /* istanbul ignore else */
     if (!CsTelemetryModule.instance.isInitialised) {
       const telemetryConfig = {
         pdata: this.context.pdata,
@@ -66,9 +67,9 @@ export class QumlLibraryService {
     }
 
     this.telemetryObject = {
-      id: config.metadata.identifier || '',
+      id: parentConfig.identifier,
       type: 'Content',
-      ver: config.metadata.pkgVersion ? config.metadata.pkgVersion.toString() : '',
+      ver: parentConfig?.metadata?.pkgVersion ? parentConfig.metadata.pkgVersion.toString() : '',
       rollup: this.context.objectRollup || {}
     };
   }
@@ -190,6 +191,8 @@ export class QumlLibraryService {
         rollup: this.rollup || {}
       }
     };
+
+    /* istanbul ignore else */
     if (this.isSectionsAvailable) {
       options.context.cdata.push({ id: this.config.metadata.identifier, type: 'SectionId' });
     }

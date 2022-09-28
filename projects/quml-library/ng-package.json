@@ -2,9 +2,20 @@
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
   "dest": "../../dist/quml-library",
   "lib": {
-    "entryFile": "src/public_api.ts"
+    "entryFile": "src/public_api.ts",
+    "umdModuleIds": {
+      "ally.js": "ally.js",
+      "lodash-es": "lodash-es",
+      "ngx-bootstrap/carousel": "ngx-bootstrap/carousel",
+      "ally.js/esm/maintain/_maintain": "ally.js/esm/maintain/_maintain",
+      "@project-sunbird/sunbird-player-sdk-v9": "@project-sunbird/sunbird-player-sdk-v9",
+      "@project-sunbird/client-services": "@project-sunbird/client-services",
+      "@project-sunbird/client-services/telemetry": "@project-sunbird/client-services/telemetry"
+    }
   },
-  "whitelistedNonPeerDependencies": [
-    "."
+  "allowedNonPeerDependencies": [
+    "ally.js",
+    "carousel",
+    "@project-sunbird/sunbird-player-sdk-v9"
   ]
 }
