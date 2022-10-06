@@ -41,6 +41,7 @@ import { SectionPlayerComponent } from '../../../quml-library/src/lib/section-pl
 import { QuestionCursor } from '../../../quml-library/src/lib/quml-question-cursor.service';
 import { QuestionCursorImplementationService } from './question-cursor-implementation.service';
 import { HttpClientModule } from '@angular/common/http';
+import { ProgressIndicatorsComponent } from '../../../quml-library/src/lib/progress-indicators/progress-indicators.component';
 
 @NgModule({
   declarations: [
@@ -77,7 +78,8 @@ import { HttpClientModule } from '@angular/common/http';
     WrongComponent,
     MenuComponent,
     SafeHtmlPipe,
-    SectionPlayerComponent
+    SectionPlayerComponent,
+    ProgressIndicatorsComponent
   ],
   imports: [
     BrowserModule,
