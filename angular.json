@@ -210,7 +210,7 @@
               "./projects/quml-player-wc/src/assets",
               {
                 "glob": "**/*",
-                "input": "node_modules/@project-sunbird/sunbird-quml-player/lib/assets/",
+                "input": "projects/quml-library/src/lib/assets/",
                 "output": "/assets/"
               }
             ],

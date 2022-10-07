@@ -10,7 +10,7 @@
     "e2e": "ng e2e",
     "build-lib": "ng build quml-library && node scripts/copyAssets.js",
     "serve": "node scripts/copyAssets.js && ng serve",
-    "build-web-component": "npm run build-lib-link && ng build quml-player-wc --output-hashing none && node ./build-wc.js",
+    "build-web-component": "npm run build-lib && ng build quml-player-wc --output-hashing none && node ./build-wc.js",
     "test-lib": "ng test quml-library",
     "test-lib-coverage": "ng test quml-library --code-coverage=true",
     "test-lib-ci": "ng test quml-library --watch=false --code-coverage --sourceMap=false"
