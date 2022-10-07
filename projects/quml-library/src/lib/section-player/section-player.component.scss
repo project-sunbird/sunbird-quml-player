@@ -821,6 +821,10 @@ scrollbar-width: none; /* Firefox */
   quml-mcq-solutions {
     .mcq-title {
       color: var(--quml-mcq-title-txt);
+
+      p {
+        word-break: break-all;
+      }
       @media only screen and (max-width: 480px){
         margin-top: 1rem;
       }
@@ -872,6 +876,10 @@ scrollbar-width: none; /* Firefox */
     .solution-options p {
       margin-bottom: 1rem;
     }
+  }
+
+  .quml-option .option {
+    word-break: break-all;
   }
 }
 
