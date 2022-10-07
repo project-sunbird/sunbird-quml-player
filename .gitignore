@@ -1,3 +1,10 @@
 node_modules/
 dist/
 coverage/
+
+web-component-examples/react-app/public/assets
+web-component-examples/react-app/src/sunbird
+web-component-examples/vanilla-js/*.ttf
+web-component-examples/vanilla-js/*.woff
+web-component-examples/vanilla-js/*.woff2
+web-component-examples/vanilla-js/assets

@@ -10,7 +10,7 @@
 
 <div *ngIf="!isLoading" class="main-container">
   <div class="main-container" [hidden]="!activeSection || loadScoreBoard || endPageReached">
-    <quml-section-player [sectionConfig]="activeSection" (sectionEnd)="onSectionEnd($event)" [attempts]="attempts"
+    <quml-section-player *ngIf="activeSection" [sectionConfig]="activeSection" (sectionEnd)="onSectionEnd($event)" [attempts]="attempts"
       [mainProgressBar]="mainProgressBar" [parentConfig]="parentConfig" [sectionIndex]="sectionIndex"
       [jumpToQuestion]="jumpToQuestion" (showScoreBoard)="onShowScoreBoard($event)"
       (playerEvent)="onPlayerEvent($event)">

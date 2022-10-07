@@ -55,10 +55,18 @@
 }
 
 .solution-options-container {
-    display: flex;
-    align-items: flex-start;
-    flex-direction: column;
     .solution-options {
         margin-bottom: 0.5rem;
     }
+  }
+  .image-style-align-right {
+    float: right !important;
+    text-align: right !important;
+    margin-left: 0.5rem !important;
+  }
+
+  .image-style-align-left {
+    float: left !important;
+    text-align: left !important;
+    margin-right: 0.5rem !important;
   }

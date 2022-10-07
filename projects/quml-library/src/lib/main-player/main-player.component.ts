@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostListener, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { contentErrorMessage } from '@project-sunbird/sunbird-player-sdk-v9/lib/player-utils/interfaces/errorMessage';
 import { NextContent } from '@project-sunbird/sunbird-player-sdk-v9/sunbird-player-sdk.interface';
 import * as _ from 'lodash-es';
@@ -15,7 +15,7 @@ import maintain from 'ally.js/esm/maintain/_maintain';
   templateUrl: './main-player.component.html',
   styleUrls: ['./main-player.component.scss']
 })
-export class MainPlayerComponent implements OnInit {
+export class MainPlayerComponent implements OnInit, OnChanges {
 
   @Input() playerConfig: QumlPlayerConfig;
   @Output() playerEvent = new EventEmitter<any>();
@@ -23,6 +23,7 @@ export class MainPlayerComponent implements OnInit {
 
   @ViewChild(SectionPlayerComponent) sectionPlayer!: SectionPlayerComponent;
 
+  isInitialized = false;
   isLoading = false;
   isSectionsAvailable = false;
   isMultiLevelSection = false;
@@ -89,18 +90,28 @@ export class MainPlayerComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (typeof this.playerConfig === 'string') {
-      try {
-        this.playerConfig = JSON.parse(this.playerConfig);
-      } catch (error) {
-        console.error('Invalid playerConfig: ', error);
+    this.isInitialized = true;
+
+    if (this.playerConfig) {
+      if (typeof this.playerConfig === 'string') {
+        try {
+          this.playerConfig = JSON.parse(this.playerConfig);
+        } catch (error) {
+          console.error('Invalid playerConfig: ', error);
+        }
       }
+      this.isLoading = true;
+      this.setConfig();
+      this.initializeSections();
     }
-    this.isLoading = true;
-    this.setConfig();
-    this.initializeSections();
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.playerConfig.firstChange && this.isInitialized) {
+      // This explicitly calling ngOnInit is for the web-component. Life cycle methods works in different order there.
+      this.ngOnInit();
+    }
+  }
 
   initializeSections() {
     const childMimeType = _.map(this.playerConfig.metadata.children, 'mimeType');
