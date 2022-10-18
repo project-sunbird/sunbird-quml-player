@@ -258,6 +258,7 @@ export class MainPlayerComponent implements OnInit, OnChanges {
     }
     this.getSummaryObject();
     this.loadScoreBoard = true;
+    this.viewerService.pauseVideo();
   }
 
   onSectionEnd(event) {

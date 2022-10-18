@@ -293,4 +293,9 @@ export class ViewerService {
   getSectionQuestions(id: string) {
     return this.sectionQuestions.find(section => section.id === id)?.questions || [];
   }
+
+  pauseVideo() {
+    const videoElements = Array.from(document.getElementsByTagName('video') as HTMLCollectionOf<Element>);
+    videoElements.forEach((element: HTMLVideoElement) => element.pause());
+  }
 }

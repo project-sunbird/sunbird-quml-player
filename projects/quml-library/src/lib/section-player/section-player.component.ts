@@ -393,6 +393,8 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     if (progressBarContainer && questionElement && !this.parentConfig.isReplayed) {
       this.utilService.scrollParentToChild(progressBarContainer, questionElement);
     }
+
+    this.viewerService.pauseVideo();
   }
 
   nextSlideClicked(event) {
@@ -572,6 +574,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   durationEnds() {
     this.showSolution = false;
     this.showAlert = false;
+    this.viewerService.pauseVideo();
     this.emitSectionEnd(true);
   }
 
