@@ -98,6 +98,14 @@ describe('ViewerService', () => {
     expect(res).toBeDefined();
   });
 
+  it('should call pauseVideo', () => {
+    const viewerService = TestBed.inject(ViewerService);
+    const video = document.createElement('video');
+    document.body.appendChild(video);
+    viewerService.pauseVideo();
+    expect(video.paused).toBeTruthy();
+  });
+
   it('should call updateSectionQuestions', () => {
     const viewerService = TestBed.inject(ViewerService);
     viewerService.sectionQuestions = mockData.mockSectionQuestions;

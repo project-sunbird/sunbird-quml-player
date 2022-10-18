@@ -136,13 +136,16 @@ describe('MainPlayerComponent', () => {
   })
 
   it('should show scoreboard', () => {
+    const viewerService = TestBed.inject(ViewerService);
     component.parentConfig.isSectionsAvailable = true;
     spyOn(component, 'getActiveSectionIndex').and.returnValue(0);
     spyOn(component, 'updateSectionScore');
+    spyOn(viewerService, 'pauseVideo');
     component.onShowScoreBoard({});
     expect(component.getActiveSectionIndex).toHaveBeenCalled();
     expect(component.updateSectionScore).toHaveBeenCalledWith(0);
     expect(component.loadScoreBoard).toBeTruthy();
+    expect(viewerService.pauseVideo).toHaveBeenCalled();
 
   });
 

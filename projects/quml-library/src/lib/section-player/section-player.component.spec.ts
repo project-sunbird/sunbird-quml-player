@@ -31,6 +31,7 @@ describe('SectionPlayerComponent', () => {
     raiseAssesEvent() { }
     qumlPlayerEvent = new EventEmitter<any>();
     qumlQuestionEvent = new EventEmitter<any>();
+    pauseVideo() { }
   }
 
   class ElementRefMock {
@@ -205,8 +206,10 @@ describe('SectionPlayerComponent', () => {
   });
 
   it('should change the slide', () => {
+    spyOn(viewerService, 'pauseVideo');
     component.activeSlideChange({});
     expect(component.initialSlideDuration > 0).toBeTruthy();
+    expect(viewerService.pauseVideo).toHaveBeenCalled();
   });
 
   it('should getQuestion', () => {
@@ -434,15 +437,17 @@ describe('SectionPlayerComponent', () => {
 
   it('should handle the duration end', () => {
     spyOn(component, 'emitSectionEnd');
+    spyOn(viewerService, 'pauseVideo');
     component.durationEnds();
     expect(component.showSolution).toBe(false);
     expect(component.showAlert).toBe(false);
     expect(component.emitSectionEnd).toHaveBeenCalledWith(true);
+    expect(viewerService.pauseVideo).toHaveBeenCalled();
   });
 
   it('should check compatibility of the questionset', () => {
     spyOn(errorService, 'checkContentCompatibility').and.returnValue(false);
-    spyOn(viewerService, 'raiseExceptionLog')
+    spyOn(viewerService, 'raiseExceptionLog');
     component['checkCompatibilityLevel'](3);
     expect(errorService.checkContentCompatibility).toHaveBeenCalled();
     expect(viewerService.raiseExceptionLog).toHaveBeenCalled();
