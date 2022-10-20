@@ -21,9 +21,12 @@
       
 
       <div class="quml-alert__solution-container">
-        <div class="quml-alert__try-again" *ngIf="alertType === 'wrong' || (alertType === 'correct' && showSolutionButton)">
+        <div class="quml-alert__try-again" *ngIf="alertType === 'wrong'">
           <span tabindex="0" id="wrongButton" *ngIf="alertType === 'wrong'" (click)="close('tryAgain')" (keyup.enter)="close('tryAgain')"  aria-label="Try again">Try again</span>
-          <span tabindex="0" id="correctButton" *ngIf="alertType === 'correct' && showSolutionButton" (click)="viewSolution()" (keyup.enter)="viewSolution()"  aria-label="View Solution">View Solution</span>
+          <!-- TODO: should add some label for correct response when solution is off <span *ngIf="alertType === 'correct' && !showSolutionButton">Correct</span> --> 
+        </div>
+        <div class="quml-alert__view-solution" *ngIf="showSolutionButton">
+          <span tabindex="0" id="correctButton" (click)="viewSolution()" (keyup.enter)="viewSolution()"  aria-label="View Solution">View Solution</span>
         </div>
       </div>
 

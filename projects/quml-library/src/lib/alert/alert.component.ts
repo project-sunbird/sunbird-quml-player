@@ -4,15 +4,18 @@ import {
 } from '@angular/core';
 import { fromEvent, Subscription } from 'rxjs';
 
+type AlertType = "correct" | "wrong";
+
 @Component({
   selector: 'quml-alert',
   templateUrl: './alert.component.html',
   styleUrls: ['./alert.component.scss']
 })
 export class AlertComponent implements OnInit, AfterViewInit, OnDestroy {
-  @Input() alertType: any;
+  @Input() alertType: AlertType;
   @Input() isHintAvailable: boolean;
   @Input() showSolutionButton: boolean;
+
   @Output() closeAlert = new EventEmitter();
   @Output() showSolution = new EventEmitter();
   @Output() showHint = new EventEmitter();
