@@ -120,7 +120,7 @@
   </div>
 
   <quml-alert *ngIf="showAlert && showFeedBack" [alertType]="alertType" [isHintAvailable]="showHints"
-    [showSolutionButton]="showUserSolution" (showSolution)="viewSolution()" (showHint)="viewHint()"
+    [showSolutionButton]="showUserSolution && currentSolutions" (showSolution)="viewSolution()" (showHint)="viewHint()"
     (closeAlert)="closeAlertBox($event)"></quml-alert>
 
   <quml-mcq-solutions *ngIf="showSolution" [question]="currentQuestion" [options]="currentOptions"
