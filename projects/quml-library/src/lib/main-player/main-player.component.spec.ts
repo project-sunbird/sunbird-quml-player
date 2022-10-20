@@ -231,12 +231,15 @@ describe('MainPlayerComponent', () => {
 
   it('should calculate the final score and time spent before end event generated and when submit page is available', () => {
     component.parentConfig.requiresSubmit = true;
+    const viewerService = TestBed.inject(ViewerService);
     spyOn(component, 'calculateScore');
     spyOn(component, 'setDurationSpent');
+    spyOn(viewerService, 'pauseVideo');
     component.prepareEnd({});
     expect(component.calculateScore).toHaveBeenCalled();
     expect(component.setDurationSpent).toHaveBeenCalled();
     expect(component.loadScoreBoard).toBeTruthy();
+    expect(viewerService.pauseVideo).toHaveBeenCalled();
   });
 
   it('should calculate the final score and time spent before end event generated and when submit page is not available', () => {
