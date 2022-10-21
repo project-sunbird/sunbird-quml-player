@@ -332,6 +332,7 @@ export class MainPlayerComponent implements OnInit, OnChanges {
   }
 
   prepareEnd(event) {
+    this.viewerService.pauseVideo();
     this.calculateScore();
     this.setDurationSpent();
     this.getSummaryObject();
