@@ -954,9 +954,10 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
         image.setAttribute('class', 'portrait');
       } else if (image.clientHeight < image.clientWidth) {
         image.setAttribute('class', 'landscape');
-      } else {
-        image.setAttribute('class', 'neutral');
       }
+      // } else {
+      //   image.setAttribute('class', 'neutral');
+      // }
     });
   }
 
