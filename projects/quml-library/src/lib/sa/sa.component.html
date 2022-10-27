@@ -10,9 +10,9 @@
   <div id="answer-container" [ngClass]="showAnswer ? 'option-container-blurred-out': 'option-container-blurred'">
     <div class="sa-title" [attr.aria-hidden]="showAnswer ? null : true">Answer</div>
     <div class="option-body" [innerHTML]="answer | safeHtml" [attr.aria-hidden]="showAnswer ? null : true"></div>
-    <ng-container *ngIf="solutions?.length" [attr.aria-hidden]="showAnswer ? null : true">
-      <div class="sa-title">Solution</div>
-      <div class="solutions" *ngFor="let solution of solutions">
+    <ng-container *ngIf="solutions?.length">
+      <div class="sa-title" [attr.aria-hidden]="showAnswer ? null : true">Solution</div>
+      <div class="solutions" *ngFor="let solution of solutions" [attr.aria-hidden]="showAnswer ? null : true">
         <ng-container [ngSwitch]="solution.type">
           <div *ngSwitchCase="'html'" [innerHTML]="solution.value | safeHtml" tabindex="-1"></div>
           <div *ngSwitchCase="'video'">
