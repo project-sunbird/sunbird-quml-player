@@ -40,7 +40,7 @@ export class AlertComponent implements OnInit, AfterViewInit, OnDestroy {
         /* istanbul ignore else */
         if (nextBtn) {
           this.close('close');
-          nextBtn.focus();
+          nextBtn.focus({ preventScroll: true });
           this.isFocusSet = true;
           e.stopPropagation();
         }
@@ -54,9 +54,9 @@ export class AlertComponent implements OnInit, AfterViewInit, OnDestroy {
       const correctButton = document.querySelector('#correctButton') as HTMLElement;
 
       if (this.alertType === 'wrong' && wrongButton) {
-        wrongButton.focus();
+        wrongButton.focus({ preventScroll: true });
       } else if (this.alertType === 'correct' && this.showSolutionButton && correctButton) {
-        correctButton.focus();
+        correctButton.focus({ preventScroll: true });
       }
     }, 200);
   }
@@ -80,7 +80,7 @@ export class AlertComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy() {
     /* istanbul ignore else */
     if (this.previousActiveElement && !this.isFocusSet) {
-      this.previousActiveElement.focus();
+      this.previousActiveElement.focus({ preventScroll: true });
     }
 
     /* istanbul ignore else */
