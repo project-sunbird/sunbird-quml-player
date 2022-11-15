@@ -10,17 +10,17 @@ For existing apps, follow below-mentioned steps:
 ## :label: Installation
 Just run the following:
 ```red
-ng add @project-sunbird/sunbird-quml-player-v9
+ng add @project-sunbird/sunbird-quml-player
 ```
 It will install sunbird-quml-player for the default application specified in your `angular.json`. If you have multiple projects and you want to target a specific application, you could specify the `--project` option
 
 ```red
-ng add @project-sunbird/sunbird-quml-player-v9 --project myProject
+ng add @project-sunbird/sunbird-quml-player --project myProject
 ```
 Shematics will create `question-cursor-implementation.service.ts`. Please update the `listUrl` in it. For more information refer [question-cursor-implementation.service.ts](https://github.com/project-sunbird/sunbird-quml-player/blob/main/projects/quml-demo-app/src/app/question-cursor-implementation.service.ts)
 
 ### Manual installation
-If you prefer not to use schematics or want to add `sunbird-quml-player-v9` to an older project, you'll need to do the following:
+If you prefer not to use schematics or want to add `sunbird-quml-player` to an older project, you'll need to do the following:
 
 <details>
   <summary>Click here to show detailed instructions!</summary>
@@ -28,31 +28,24 @@ If you prefer not to use schematics or want to add `sunbird-quml-player-v9` to a
   ### :label: Step 1: Install Packages
   These are the peerDependencies of the library, need to be installed in order to use this library.
 
-    npm install @project-sunbird/sunbird-quml-player-v9 --save
+    npm install @project-sunbird/sunbird-quml-player --save
     npm install @project-sunbird/sb-styles --save
     npm install @project-sunbird/client-services --save
-    npm install bootstrap@4.6.1 --save
+    npm install bootstrap@^4.6.2 --save
     npm install jquery --save
     npm install katex --save
     npm install lodash-es --save
-    npm install ngx-bootstrap@6.0.0 --save
+    npm install ngx-bootstrap@^7.1.0 --save
 
 
-  Note: *As QuML library is build with angular version 12, we are using **bootstrap@4.1.1** and **ngx-bootstrap@5.6.2** which are the compatible versions.
+  Note: *As QuML library is build with angular version 12, we are using **bootstrap@^4.6.2** and **ngx-bootstrap@^7.1.0** which are the compatible versions.
   For more reference Check compatibility document for ng-bootstrap [here](https://valor-software.com/ngx-bootstrap/#/documentation#compatibility)*  
-
-  ### :label: Step 2: Add CSS
-  Copy CSS code from the below given `styles.css` to app's default `styles.css` or `styles.scss`
-  keep `quml-carousel.css` in root folder.
-
-    - [styles.css](https://github.com/project-sunbird/sunbird-quml-player/blob/main/projects/quml-demo-app/src/styles.css)  
-    - [quml-carousel.css](https://github.com/project-sunbird/sunbird-quml-player/blob/main/quml-carousel.css)  
-
-  ## :label: Step 3: Add question-cursor-implementation.service
+  
+  ## :label: Step 2: Add question-cursor-implementation.service
   Create a **question-cursor-implementation.service.ts** in a project and which will implement the `QuestionCursor` abstract class.  
   `QuestionCursor` is an abstract class, exported from the library, which needs to be implemented. Basically it has some methods which should make an API request over HTTP  
 
-  For more information refer [question-cursor-implementation.service.ts](https://github.com/project-sunbird/sunbird-quml-player/blob/main/projects/quml-demo-app/src/app/question-cursor-implementation.service.ts) and do not forgot to add your question list API URL here, for example: [https://staging.sunbirded.org/api/question/v1/list](https://staging.sunbirded.org/api/question/v1/list)
+  For more information refer [question-cursor-implementation.service.ts](https://github.com/project-sunbird/sunbird-quml-player/blob/main/projects/quml-demo-app/src/app/question-cursor-implementation.service.ts) and do not forgot to add your question list API URL here, for example: listUrl = "https://staging.sunbirded.org/api/question/v1/list";
 
   ### :label: Step 3: Include the styles, scripts and assets in angular.json
   Add the following under `architect.build.assets` for default project  
@@ -77,7 +70,7 @@ If you prefer not to use schematics or want to add `sunbird-quml-player-v9` to a
         ...
         "src/styles.css",
         "./node_modules/@project-sunbird/sb-styles/assets/_styles.scss",
-        "./quml-carousel.css",
+        "./node_modules/@project-sunbird/sunbird-quml-player/lib/assets/styles/quml-carousel.css",
         "./node_modules/katex/dist/katex.min.css"
       ],
       "scripts": [

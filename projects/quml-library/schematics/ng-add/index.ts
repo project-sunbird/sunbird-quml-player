@@ -14,11 +14,11 @@ const VERSIONS = {
   // These required peer-dependency will get installed on build time if not exist
   '@project-sunbird/client-services': '^4.9.1',
   '@project-sunbird/sb-styles': '0.0.9',
-  'bootstrap': '4.1.1',
+  'bootstrap': '^4.6.2',
   'jquery': '^3.5.1',
   'lodash-es': '^4.17.21',
   'katex': '^0.11.1',
-  'ngx-bootstrap': '^5.6.2'
+  'ngx-bootstrap': '^7.1.0'
 };
 
 /**
