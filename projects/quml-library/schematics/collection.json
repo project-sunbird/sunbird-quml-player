@@ -1,0 +1,19 @@
+{
+  "$schema": "../../../node_modules/@angular-devkit/schematics/collection-schema.json",
+  "schematics": {
+    "ng-add": {
+      "description": "Add QUML Player to the project.",
+      "factory": "./ng-add/index#ngAdd",
+      "schema": "./ng-add/schema.json",
+      "aliases": [
+        "install"
+      ]
+    },
+    "ng-add-setup-project": {
+      "private": true,
+      "description": "Sets up the specified project after the ng-add dependencies have been installed.",
+      "factory": "./ng-add/setup-project",
+      "schema": "./ng-add/schema.json"
+    }
+  }
+}
