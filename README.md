@@ -193,7 +193,7 @@ Follow below-mentioned steps to use it in plain javascript project:
 
 # :bookmark_tabs: QuML Player Contribution Guide  
 ## Repo Setup  
-  - Install Node 12.x and Angular 10
+  - Install Node 14.x and Angular 12
   - Clone the Repo with desired release-branch - https://github.com/project-sunbird/sunbird-quml-player
   - Add the your baseUrl in the *environment.ts* and *proxy.conf.json* files
   - If there any changes in API endpoints, update the *app.constant.ts* file
