@@ -17,7 +17,8 @@ It will install sunbird-quml-player for the default application specified in you
 ```red
 ng add @project-sunbird/sunbird-quml-player --project myProject
 ```
-Shematics will create `question-cursor-implementation.service.ts`. Please update the `listUrl` in it. For more information refer [question-cursor-implementation.service.ts](https://github.com/project-sunbird/sunbird-quml-player/blob/main/projects/quml-demo-app/src/app/question-cursor-implementation.service.ts)
+Shematics will create `question-cursor-implementation.service.ts`. Please update the `listUrl` in it.
+For more information refer [question-cursor-implementation.service.ts](https://github.com/project-sunbird/sunbird-quml-player/blob/main/projects/quml-demo-app/src/app/question-cursor-implementation.service.ts) and do not forgot to add your question list API URL here, for example: listUrl = "https://staging.sunbirded.org/api/question/v1/list";
 
 ### Manual installation
 If you prefer not to use schematics or want to add `sunbird-quml-player` to an older project, you'll need to do the following:
