@@ -1,6 +1,6 @@
 {
   "name": "@project-sunbird/sunbird-quml-player",
-  "version": "5.2.0",
+  "version": "5.3.0",
   "schematics": "./schematics/collection.json",
   "ng-add": {
     "save": "dependencies"
