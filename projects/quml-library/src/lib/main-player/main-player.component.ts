@@ -262,6 +262,10 @@ export class MainPlayerComponent implements OnInit, OnChanges {
   }
 
   onSectionEnd(event) {
+    if (event.isDurationEnded) {
+      this.isDurationExpired = true;
+    }
+
     if (this.parentConfig.isSectionsAvailable) {
       const activeSectionIndex = this.getActiveSectionIndex();
       this.updateSectionScore(activeSectionIndex);
@@ -340,6 +344,7 @@ export class MainPlayerComponent implements OnInit, OnChanges {
       this.loadScoreBoard = true;
     } else {
       this.endPageReached = true;
+      this.loadScoreBoard = false;
       this.viewerService.raiseSummaryEvent(this.totalVisitedQuestion, this.endPageReached, this.finalScore, this.summary);
       this.raiseEndEvent(this.totalVisitedQuestion, this.endPageReached, this.finalScore);
       this.isSummaryEventRaised = true;

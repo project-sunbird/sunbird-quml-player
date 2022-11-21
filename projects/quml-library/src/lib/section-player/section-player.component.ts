@@ -5,7 +5,6 @@ import { CarouselComponent } from 'ngx-bootstrap/carousel';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { QumlPlayerConfig, IParentConfig, IAttempts } from '../quml-library-interface';
-import { QuestionCursor } from '../quml-question-cursor.service';
 import { ViewerService } from '../services/viewer-service/viewer-service';
 import { eventName, pageId, TelemetryType } from '../telemetry-constants';
 import { UtilService } from '../util-service';
@@ -95,7 +94,6 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
   constructor(
     public viewerService: ViewerService,
     public utilService: UtilService,
-    public questionCursor: QuestionCursor,
     private cdRef: ChangeDetectorRef,
     public errorService: ErrorService
   ) { }
@@ -197,13 +195,12 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
         const menuBtn = document.querySelector('#overlay-button') as HTMLElement;
         /* istanbul ignore else */
         if (menuBtn) {
-          menuBtn.focus();
+          menuBtn.focus({ preventScroll: true });
         }
       }, 200);
     }
 
-    
-    this.shuffleOptions=this.sectionConfig.config?.shuffleOptions;
+    this.shuffleOptions = this.sectionConfig.config?.shuffleOptions;
     this.isShuffleQuestions = this.sectionConfig.metadata.shuffle;
     this.noOfQuestions = this.questionIds.length;
     this.viewerService.initialize(this.sectionConfig, this.threshold, this.questionIds, this.parentConfig);
@@ -394,6 +391,11 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
       this.utilService.scrollParentToChild(progressBarContainer, questionElement);
     }
 
+    const contentElement: HTMLElement = document.querySelector(".landscape-content");
+    if (contentElement) {
+      contentElement.scrollTop = 0;
+    }
+
     this.viewerService.pauseVideo();
   }
 
@@ -507,14 +509,14 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
       const nextBtn = document.querySelector('.quml-navigation__next') as HTMLElement;
       /* istanbul ignore else */
       if (nextBtn) {
-        nextBtn.focus();
+        nextBtn.focus({ preventScroll: true });
       }
     }, 100);
   }
 
   getOptionSelected(optionSelected) {
     /* istanbul ignore else */
-    if (optionSelected.cardinality  === "single" && JSON.stringify(this.currentOptionSelected) === JSON.stringify(optionSelected)) {
+    if (optionSelected.cardinality === "single" && JSON.stringify(this.currentOptionSelected) === JSON.stringify(optionSelected)) {
       return; // Same option selected
     }
     this.focusOnNextButton();
@@ -817,7 +819,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
 
       if (questionTitleElement) {
         setTimeout(() => {
-          questionTitleElement.focus();
+          questionTitleElement.focus({ preventScroll: true });
         }, 0);
       }
     }
