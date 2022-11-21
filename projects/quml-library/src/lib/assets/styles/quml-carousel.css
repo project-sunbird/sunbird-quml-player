@@ -1,4 +1,7 @@
-.carousel {
+html, body {
+    height: 100%;
+  }
+  .carousel {
     position: relative;
   }
   
