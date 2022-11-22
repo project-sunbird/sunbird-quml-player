@@ -26,7 +26,7 @@ jobs:
             - node_modules
       - run:
           name: Test QuML
-          command: mkdir -p /tmp/logs && npm run test-lib-ci | tee /tmp/logs/test_cases.log'
+          command: mkdir -p /tmp/logs && npm run test-lib-ci | tee /tmp/logs/test_cases.log
       - run:
           name: Publish to NPM
           command: |
