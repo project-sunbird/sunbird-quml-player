@@ -57,8 +57,8 @@ export class ViewerService {
     this.questionSetId = config.metadata.identifier;
 
     /* istanbul ignore else */
-    if (config.context.userData) {
-      this.userName = config.context.userData.firstName + ' ' + config.context.userData.lastName;
+    if (config?.context?.userData) {
+      this.userName = config?.context?.userData?.firstName + ' ' + config?.context?.userData?.lastName;
     }
     this.metaData = {
       pagesHistory: [],

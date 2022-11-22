@@ -174,7 +174,7 @@ export class SectionPlayerComponent implements OnChanges, AfterViewInit {
     if (this.myCarousel) {
       this.myCarousel.selectSlide(this.currentSlideIndex);
     }
-    this.threshold = this.sectionConfig.context?.threshold || 3;
+    this.threshold = this.sectionConfig?.context?.threshold || 3;
     this.questionIds = _.cloneDeep(this.sectionConfig.metadata.childNodes);
 
     /* istanbul ignore else */
