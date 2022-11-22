@@ -133,11 +133,21 @@ Click to see the mock - [samplePlayerConfig](https://github.com/project-sunbird/
 1. playerConfig: Object - [`Required`]  
 ```javascript
 {
+  metadata: Object  // Question hierarchy response
+  config: Object    // default player config such as sidebar menu list
+}
+```
+
+playerConfig: Object
+For enabling telemetry call pass context in the playerconfig as:
+```javascript
+{
   context: Object   // Information about the telemetry and default settings for quml API requests
   metadata: Object  // Question hierarchy response
   config: Object    // default player config such as sidebar menu list
 }
 ```
+**Note:** If **context** is not passed in player config, telemetry event of player will not be capture.
 
 ### :small_red_triangle_down: Output Events
 1. playerEvent()    - It provides heartbeat event for each action performed in the player.
