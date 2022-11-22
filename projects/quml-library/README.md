@@ -138,7 +138,6 @@ Click to see the mock - [samplePlayerConfig](https://github.com/project-sunbird/
 }
 ```
 
-playerConfig: Object
 For enabling telemetry call pass context in the playerconfig as:
 ```javascript
 {
