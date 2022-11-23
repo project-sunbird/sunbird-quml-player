@@ -204,8 +204,8 @@ export class MainPlayerComponent implements OnInit, OnChanges {
     this.parentConfig.showFeedback = this.showFeedBack = this.playerConfig.metadata?.showFeedback?.toLowerCase() === 'yes';
     this.parentConfig.sideMenuConfig = { ...this.parentConfig.sideMenuConfig, ...this.playerConfig.config.sideMenu };
     if (this.playerConfig?.context?.userData) {
-      const firstName = this.playerConfig?.context?.userData?.firstName ? this.playerConfig?.context?.userData?.firstName : '';
-      const lastName = this.playerConfig?.context?.userData?.lastName ? this.playerConfig?.context?.userData?.lastName : '';
+      const firstName = this.playerConfig.context.userData?.firstName ?? '';
+      const lastName = this.playerConfig.context.userData?.lastName ?? '';
       this.userName = firstName + ' ' + lastName;
     }
 

@@ -58,7 +58,9 @@ export class ViewerService {
 
     /* istanbul ignore else */
     if (config?.context?.userData) {
-      this.userName = config?.context?.userData?.firstName + ' ' + config?.context?.userData?.lastName;
+      const firstName = config.context.userData?.firstName ?? '';
+      const lastName = config.context.userData?.lastName ?? '';
+      this.userName = firstName + ' ' + lastName;
     }
     this.metaData = {
       pagesHistory: [],

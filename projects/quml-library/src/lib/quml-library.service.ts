@@ -25,37 +25,37 @@ export class QumlLibraryService {
   constructor(public utilService: UtilService) { }
 
   initializeTelemetry(config: QumlPlayerConfig, parentConfig: IParentConfig) {
-    if (!_.has(config, 'context')) {
+    if (!_.has(config, 'context') || _.isEmpty(config, 'context')) {
       return;
     }
     this.duration = new Date().getTime();
     this.context = config?.context;
     this.contentSessionId = this.utilService.uniqueId();
     this.playSessionId = this.utilService.uniqueId();
-    this.channel = this.context?.channel || '';
-    this.pdata = this.context?.pdata;
-    this.sid = this.context?.sid;
-    this.uid = this.context?.uid;
-    this.rollup = this.context?.contextRollup;
+    this.channel = this.context.channel || '';
+    this.pdata = this.context.pdata;
+    this.sid = this.context.sid;
+    this.uid = this.context.uid;
+    this.rollup = this.context.contextRollup;
     this.config = config;
     this.isSectionsAvailable = parentConfig?.isSectionsAvailable;
 
     /* istanbul ignore else */
     if (!CsTelemetryModule.instance.isInitialised && this.context) {
       const telemetryConfig = {
-        pdata: this.context?.pdata,
+        pdata: this.context.pdata,
         env: 'contentplayer',
-        channel: this.context?.channel,
-        did: this.context?.did,
-        authtoken: this.context?.authToken || '',
-        uid: this.context?.uid || '',
-        sid: this.context?.sid,
+        channel: this.context.channel,
+        did: this.context.did,
+        authtoken: this.context.authToken || '',
+        uid: this.context.uid || '',
+        sid: this.context.sid,
         batchsize: 20,
-        mode: this.context?.mode,
-        host: this.context?.host || '',
-        endpoint: this.context?.endpoint || '/data/v3/telemetry',
-        tags: this.context?.tags,
-        cdata: (this.context?.cdata || []).concat([
+        mode: this.context.mode,
+        host: this.context.host || '',
+        endpoint: this.context.endpoint || '/data/v3/telemetry',
+        tags: this.context.tags,
+        cdata: (this.context.cdata || []).concat([
           { id: this.contentSessionId, type: 'ContentSession' },
           { id: this.playSessionId, type: 'PlaySession' },
           { id: '2.0', type: 'PlayerVersion' }
@@ -79,7 +79,7 @@ export class QumlLibraryService {
   }
 
   public startAssesEvent(assesEvent) {
-    if (CsTelemetryModule.instance.isInitialised && this.context) {
+    if (!_.isEmpty(this.context)) {
       CsTelemetryModule.instance.telemetryService.raiseAssesTelemetry(
         assesEvent,
         this.getEventOptions()
@@ -88,7 +88,7 @@ export class QumlLibraryService {
   }
 
   public start(duration) {
-    if (CsTelemetryModule.instance.isInitialised && this.context) {
+    if (!_.isEmpty(this.context)) {
       CsTelemetryModule.instance.telemetryService.raiseStartTelemetry(
         {
           options: this.getEventOptions(),
@@ -99,7 +99,7 @@ export class QumlLibraryService {
   }
 
   public response(identifier, version, type, option) {
-    if (CsTelemetryModule.instance.isInitialised && this.context) {
+    if (!_.isEmpty(this.context)) {
       const responseEvent = {
         target: {
           id: identifier,
@@ -119,7 +119,7 @@ export class QumlLibraryService {
   }
 
   public summary(eData) {
-    if (CsTelemetryModule.instance.isInitialised && this.context) {
+    if (!_.isEmpty(this.context)) {
       CsTelemetryModule.instance.telemetryService.raiseSummaryTelemetry(
         eData,
         this.getEventOptions()
@@ -128,7 +128,7 @@ export class QumlLibraryService {
   }
 
   public end(duration, currentQuestionIndex, totalNoofQuestions, visitedQuestions, endpageseen, score) {
-    if (CsTelemetryModule.instance.isInitialised && this.context) {
+    if (!_.isEmpty(this.context)) {
       const durationSec = Number((duration / 1e3).toFixed(2));
       CsTelemetryModule.instance.telemetryService.raiseEndTelemetry({
         edata: {
@@ -160,7 +160,7 @@ export class QumlLibraryService {
   }
 
   public interact(id, currentPage, currentQuestionDetails?) {
-    if (CsTelemetryModule.instance.isInitialised && this.context) {
+    if (!_.isEmpty(this.context)) {
       CsTelemetryModule.instance.telemetryService.raiseInteractTelemetry({
         options: this.getEventOptions(),
         edata: { type: 'TOUCH', subtype: '', id, pageid: currentPage + '' }
@@ -171,13 +171,13 @@ export class QumlLibraryService {
 
 
   public heartBeat(data) {
-    if (CsTelemetryModule.instance.isInitialised && this.context) {
+    if (!_.isEmpty(this.context)) {
       CsTelemetryModule.instance.playerTelemetryService.onHeartBeatEvent(data, {});
     }
   }
 
   public impression(currentPage) {
-    if (CsTelemetryModule.instance.isInitialised && this.context) {
+    if (!_.isEmpty(this.context)) {
       CsTelemetryModule.instance.telemetryService.raiseImpressionTelemetry({
         options: this.getEventOptions(),
         edata: { type: 'workflow', subtype: '', pageid: currentPage + '', uri: '' }
@@ -186,7 +186,7 @@ export class QumlLibraryService {
   }
 
   public error(error: Error, edata?: { err: string, errtype: string }) {
-    if (CsTelemetryModule.instance.isInitialised && this.context) {
+    if (!_.isEmpty(this.context)) {
       CsTelemetryModule.instance.telemetryService.raiseErrorTelemetry({
         options: this.getEventOptions(),
         edata: {
