@@ -4911,19 +4911,20 @@ html[dir=rtl] .sb-left-icon-btn i.icon {
   background: none;
   transform: scale(1.15);
 }
-/*!***********************************************************************************************************************************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[4].rules[0].oneOf[1].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[4].rules[0].oneOf[1].use[2]!./quml-carousel.css ***!
-  \***********************************************************************************************************************************************************************************************************/
-.carousel {
+/*!*******************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[4].rules[0].oneOf[1].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[4].rules[0].oneOf[1].use[2]!./projects/quml-library/src/lib/assets/styles/quml-carousel.css ***!
+  \*******************************************************************************************************************************************************************************************************************************************************/
+html, body {
+    height: 100%;
+  }
+  .carousel {
     position: relative;
   }
-  
   .carousel-inner {
     position: relative;
     width: 100%;
     overflow: hidden;
   }
-  
   .carousel-item {
     position: relative;
     display: none;
@@ -4934,78 +4935,65 @@ html[dir=rtl] .sb-left-icon-btn i.icon {
     backface-visibility: hidden;
     perspective: 1000px;
   }
-  
   @media screen and (prefers-reduced-motion: reduce) {
     .carousel-item {
       transition: none;
     }
   }
-  
   .carousel-item.active,
   .carousel-item-next,
   .carousel-item-prev {
     display: block;
   }
-  
   .carousel-item-next,
   .carousel-item-prev {
     position: absolute;
     top: 0;
   }
-  
   .carousel-item-next.carousel-item-left,
   .carousel-item-prev.carousel-item-right {
     transform: translateX(0);
   }
-  
   @supports (transform-style: preserve-3d) {
     .carousel-item-next.carousel-item-left,
     .carousel-item-prev.carousel-item-right {
       transform: translate3d(0, 0, 0);
     }
   }
-  
   .carousel-item-next,
   .active.carousel-item-right {
     transform: translateX(100%);
   }
-  
   @supports (transform-style: preserve-3d) {
     .carousel-item-next,
     .active.carousel-item-right {
       transform: translate3d(100%, 0, 0);
     }
   }
-  
   .carousel-item-prev,
   .active.carousel-item-left {
     transform: translateX(-100%);
   }
-  
   @supports (transform-style: preserve-3d) {
     .carousel-item-prev,
     .active.carousel-item-left {
       transform: translate3d(-100%, 0, 0);
     }
   }
-  
   .carousel-fade .carousel-item {
     opacity: 0;
     transition-duration: .6s;
     transition-property: opacity;
   }
-  
   .carousel-fade .carousel-item.active,
   .carousel-fade .carousel-item-next.carousel-item-left,
   .carousel-fade .carousel-item-prev.carousel-item-right {
     opacity: 1;
   }
-  
   .carousel-fade .active.carousel-item-left,
   .carousel-fade .active.carousel-item-right {
     opacity: 0;
   }
-  
   .carousel-fade .carousel-item-next,
   .carousel-fade .carousel-item-prev,
   .carousel-fade .carousel-item.active,
@@ -5013,7 +5001,6 @@ html[dir=rtl] .sb-left-icon-btn i.icon {
   .carousel-fade .active.carousel-item-prev {
     transform: translateX(0);
   }
-  
   @supports (transform-style: preserve-3d) {
     .carousel-fade .carousel-item-next,
     .carousel-fade .carousel-item-prev,
@@ -5023,7 +5010,6 @@ html[dir=rtl] .sb-left-icon-btn i.icon {
       transform: translate3d(0, 0, 0);
     }
   }
-  
   .carousel-control-prev,
   .carousel-control-next {
     position: absolute;
@@ -5037,7 +5023,6 @@ html[dir=rtl] .sb-left-icon-btn i.icon {
     text-align: center;
     opacity: 0.5;
   }
-  
   .carousel-control-prev:hover, .carousel-control-prev:focus,
   .carousel-control-next:hover,
   .carousel-control-next:focus {
@@ -5046,15 +5031,12 @@ html[dir=rtl] .sb-left-icon-btn i.icon {
     outline: 0;
     opacity: .9;
   }
-  
   .carousel-control-prev {
     left: 0;
   }
-  
   .carousel-control-next {
     right: 0;
   }
-  
   .carousel-control-prev-icon,
   .carousel-control-next-icon {
     display: inline-block;
@@ -5063,15 +5045,12 @@ html[dir=rtl] .sb-left-icon-btn i.icon {
     background: transparent no-repeat center center;
     background-size: 100% 100%;
   }
-  
   .carousel-control-prev-icon {
     background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23fff' viewBox='0 0 8 8'%3E%3Cpath d='M5.25 0l-4 4 4 4 1.5-1.5-2.5-2.5 2.5-2.5-1.5-1.5z'/%3E%3C/svg%3E");
   }
-  
   .carousel-control-next-icon {
     background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23fff' viewBox='0 0 8 8'%3E%3Cpath d='M2.75 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z'/%3E%3C/svg%3E");
   }
-  
   .carousel-indicators {
     position: absolute;
     right: 0;
@@ -5085,7 +5064,6 @@ html[dir=rtl] .sb-left-icon-btn i.icon {
     margin-left: 15%;
     list-style: none;
   }
-  
   .carousel-indicators li {
     position: relative;
     flex: 0 1 auto;
@@ -5097,7 +5075,6 @@ html[dir=rtl] .sb-left-icon-btn i.icon {
     cursor: pointer;
     background-color: rgba(255, 255, 255, 0.5);
   }
-  
   .carousel-indicators li::before {
     position: absolute;
     top: -10px;
@@ -5107,7 +5084,6 @@ html[dir=rtl] .sb-left-icon-btn i.icon {
     height: 10px;
     content: "";
   }
-  
   .carousel-indicators li::after {
     position: absolute;
     bottom: -10px;
@@ -5117,11 +5093,9 @@ html[dir=rtl] .sb-left-icon-btn i.icon {
     height: 10px;
     content: "";
   }
-  
   .carousel-indicators .active {
     background-color: #fff;
   }
-  
   .carousel-caption {
     position: absolute;
     right: 15%;

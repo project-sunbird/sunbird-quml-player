@@ -203,7 +203,11 @@ export class MainPlayerComponent implements OnInit, OnChanges {
     this.showEndPage = this.playerConfig.metadata?.showEndPage?.toLowerCase() !== 'no';
     this.parentConfig.showFeedback = this.showFeedBack = this.playerConfig.metadata?.showFeedback?.toLowerCase() === 'yes';
     this.parentConfig.sideMenuConfig = { ...this.parentConfig.sideMenuConfig, ...this.playerConfig.config.sideMenu };
-    this.userName = this.playerConfig.context.userData.firstName + ' ' + this.playerConfig.context.userData.lastName;
+    if (this.playerConfig?.context?.userData) {
+      const firstName = this.playerConfig.context.userData?.firstName ?? '';
+      const lastName = this.playerConfig.context.userData?.lastName ?? '';
+      this.userName = firstName + ' ' + lastName;
+    }
 
     if (this.playerConfig.metadata.isAvailableLocally && this.playerConfig.metadata.basePath) {
       this.parentConfig.baseUrl = this.playerConfig.metadata.basePath;

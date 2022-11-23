@@ -131,14 +131,18 @@ Click to see the mock - [samplePlayerConfig](https://github.com/project-sunbird/
 | Quml Player | Can be used to render Quml | quml-main-player| *`<quml-main-player [playerConfig]="playerConfig"><quml-main-player>`*|playerConfig|playerEvent, telemetryEvent|
 
 ### :small_red_triangle_down: Input Parameters
-1. playerConfig: Object - [`Required`]  
+playerConfig: Object - [`Required`]
 ```javascript
 {
-  context: Object   // Information about the telemetry and default settings for quml API requests
+  context: Object    // Optional. Information about the telemetry and default settings for quml API requests
   metadata: Object  // Question hierarchy response
-  config: Object    // default player config such as sidebar menu list
+  config: Object   // default player config such as sidebar menu list
 }
 ```
+**Note:**  **context** is optional which is used for capuring the telemetry event.
+If context is not passed in playerConfig telemetry event of player will not be captured.
+
+- Here is the detailed description of playerConfig: [player-configuration](https://inquiry.sunbird.org/learn/product-and-developer-guide/question-set-player/player-configuration)
 
 ### :small_red_triangle_down: Output Events
 1. playerEvent()    - It provides heartbeat event for each action performed in the player.
