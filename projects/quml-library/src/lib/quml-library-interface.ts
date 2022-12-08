@@ -65,7 +65,7 @@ export interface Config {
 }
 
 export interface QumlPlayerConfig {
-    context: Context;
+    context?: Context;
     metadata: any;
     data?: any;
     config: Config;

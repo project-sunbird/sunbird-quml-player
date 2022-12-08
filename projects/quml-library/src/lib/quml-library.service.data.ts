@@ -1,49 +1,5 @@
 export const mockQumlLibraryServiceData = {
   config: {
-    "context": {
-      "threshold": 3,
-      "mode": "play",
-      "authToken": " ",
-      "sid": "913b3c6c-2874-26dd-ed0c-c23ddc00b718",
-      "did": "561c348e631fd225b46a5571cbd42ad1",
-      "uid": "",
-      "channel": "01268904781886259221",
-      "pdata": {
-        "id": "preprod.diksha.portal",
-        "ver": "3.3.0",
-        "pid": "sunbird-portal.contentplayer"
-      },
-      "contextRollup": {
-        "l1": "string",
-        "l2": "string",
-        "l3": "string",
-        "l4": "string"
-      },
-      "tags": [],
-      "cdata": [
-        {
-          "id": "c0c9384a82a75f219468d363e1891963",
-          "type": "ContentSession"
-        },
-        {
-          "id": "a12f45a1d7078901adb27b48be4b428d",
-          "type": "PlaySession"
-        }
-      ],
-      "timeDiff": 5,
-      "objectRollup": {
-        "l1": "string",
-        "l2": "string",
-        "l3": "string",
-        "l4": "string"
-      },
-      "host": "",
-      "endpoint": "/data/v3/telemetry",
-      "userData": {
-        "firstName": "Diptesh",
-        "lastName": "Mukherjee"
-      }
-    },
     "metadata": {
       "lastStatusChangedOn": "2022-02-28T07:56:09.702+0000",
       "parent": "do_213484313936035840138",
@@ -317,50 +273,72 @@ export const mockQumlLibraryServiceData = {
   },
   sid: "913b3c6c-2874-26dd-ed0c-c23ddc00b718",
   uid: "",
-  context: {
-    "threshold": 3,
-    "mode": "play",
-    "authToken": " ",
-    "sid": "913b3c6c-2874-26dd-ed0c-c23ddc00b718",
-    "did": "561c348e631fd225b46a5571cbd42ad1",
-    "uid": "",
-    "channel": "01268904781886259221",
-    "pdata": {
-      "id": "preprod.diksha.portal",
-      "ver": "3.3.0",
-      "pid": "sunbird-portal.contentplayer"
-    },
-    "contextRollup": {
-      "l1": "string",
-      "l2": "string",
-      "l3": "string",
-      "l4": "string"
-    },
-    "tags": [],
-    "cdata": [
-      {
-        "id": "c0c9384a82a75f219468d363e1891963",
-        "type": "ContentSession"
-      },
-      {
-        "id": "a12f45a1d7078901adb27b48be4b428d",
-        "type": "PlaySession"
-      }
-    ],
-    "timeDiff": 5,
-    "objectRollup": {
-      "l1": "string",
-      "l2": "string",
-      "l3": "string",
-      "l4": "string"
-    },
-    "host": "",
-    "endpoint": "/data/v3/telemetry",
-    "userData": {
-      "firstName": "Diptesh",
-      "lastName": "Mukherjee"
-    }
+  contentSessionId: 'lfWArNwtFxYODkAGjMPNN8A6v8kTBp4s',
+  playSessionId: 'Qw2LHbDrch4rKi5w5Gi6SFtNHuqfJBof',
+  rollup: {
+    "l1": "string",
+    "l2": "string",
+    "l3": "string",
+    "l4": "string"
+  }
+}
+
+export const telemetryContext = {
+  "threshold": 3,
+  "mode": "play",
+  "authToken": " ",
+  "sid": "913b3c6c-2874-26dd-ed0c-c23ddc00b718",
+  "did": "561c348e631fd225b46a5571cbd42ad1",
+  "uid": "",
+  "channel": "01268904781886259221",
+  "pdata": {
+    "id": "preprod.diksha.portal",
+    "ver": "3.3.0",
+    "pid": "sunbird-portal.contentplayer"
   },
+  "contextRollup": {
+    "l1": "string",
+    "l2": "string",
+    "l3": "string",
+    "l4": "string"
+  },
+  "tags": [],
+  "cdata": [
+    {
+      "id": "c0c9384a82a75f219468d363e1891963",
+      "type": "ContentSession"
+    },
+    {
+      "id": "a12f45a1d7078901adb27b48be4b428d",
+      "type": "PlaySession"
+    }
+  ],
+  "timeDiff": 5,
+  "objectRollup": {
+    "l1": "string",
+    "l2": "string",
+    "l3": "string",
+    "l4": "string"
+  },
+  "host": "",
+  "endpoint": "/data/v3/telemetry",
+  "userData": {
+    "firstName": "Diptesh",
+    "lastName": "Mukherjee"
+  }
+}
+
+export const optionPlayerConfig = {
+  config: {
+    metadata: mockQumlLibraryServiceData.config.metadata,
+    config: mockQumlLibraryServiceData.config.config,
+    context: telemetryContext
+  },
+  parentConfig: mockQumlLibraryServiceData.parentConfig,
+  telemetryObject: mockQumlLibraryServiceData.telemetryObject,
+  channel: mockQumlLibraryServiceData.channel,
+  sid: mockQumlLibraryServiceData.sid,
+  uid: "",
   contentSessionId: 'lfWArNwtFxYODkAGjMPNN8A6v8kTBp4s',
   playSessionId: 'Qw2LHbDrch4rKi5w5Gi6SFtNHuqfJBof',
   rollup: {

@@ -65,7 +65,7 @@
             "styles": [
               "projects/quml-demo-app/src/styles.css",
               "./node_modules/@project-sunbird/sb-styles/assets/_styles.scss",
-              "./quml-carousel.css",
+              "projects/quml-library/src/lib/assets/styles/quml-carousel.css",
               "./node_modules/katex/dist/katex.min.css"
             ],
             "scripts": [
@@ -217,7 +217,7 @@
             "styles": [
               "./projects/quml-player-wc/src/styles.scss",
               "./node_modules/@project-sunbird/sb-styles/assets/_styles.scss",
-              "./quml-carousel.css",
+              "projects/quml-library/src/lib/assets/styles/quml-carousel.css",
               "./node_modules/katex/dist/katex.min.css"
             ],
             "scripts": [
