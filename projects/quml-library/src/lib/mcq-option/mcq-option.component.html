@@ -1,4 +1,4 @@
-<div class="quml-mcq-options" role="radiogroup"  *ngIf="layout=='DEFAULT' || layout=='IMAGEQOPTION'">
+<div class="quml-mcq-options" role="radiogroup"  *ngIf="layout === 'DEFAULT' || layout === 'IMAGEQOPTION'">
     <div class="quml-option-card" tabindex="0" role="checkbox" [attr.aria-checked]="mcqOption.selected" aria-labelledby="option-checkbox"  *ngFor="let mcqOption of mcqOptions; let index = index" 
     (keydown)="onEnter($event, mcqOption, index)" (click)="onOptionSelect($event,mcqOption, index)">
         <div class="quml-option"
@@ -6,37 +6,36 @@
             <div class="option" tabindex="0" [innerHTML]="mcqOption.label | safeHtml"></div>
             <label class="container">
                 <input type="radio" name="radio" [checked]="mcqOption.selected" id="option-checkbox" tabindex="-1">
-                <span  [ngClass]="{'radiomark': cardinality==='single','checkmark':cardinality==='multiple'} "></span>
+                <span [ngClass]="{'radiomark': cardinality==='single','checkmark':cardinality==='multiple'} "></span>
             </label>
         </div>
     </div>
 </div>
-<div *ngIf="layout=='IMAGEGRID'">
+<div *ngIf="layout === 'IMAGEGRID'">
     <div class="qumlImageOption">
         <div class="wrapper">
-            <div *ngFor="let mcqOption of mcqOptions">
-                <quml-mcq-image-option (imgOptionSelected)="onImageOptionSelected($event)" [mcqOption]='mcqOption'></quml-mcq-image-option>
+            <div *ngFor="let mcqOption of mcqOptions; let index = index">
+                <quml-mcq-image-option (imgOptionSelected)="onOptionSelect($event, mcqOption, index)" [mcqOption]='mcqOption'></quml-mcq-image-option>
             </div>
         </div>
     </div>
 
 </div>
-<div *ngIf="layout == 'IMAGEQAGRID'">
+<div *ngIf="layout === 'IMAGEQAGRID'">
     <div class="qumlOption-imageQaGrid">
         <div class="wrapper">
-            <div *ngFor="let mcqOption of mcqOptions">
-                <quml-mcq-image-option (imgOptionSelected)="onImageOptionSelected($event)" [mcqOption]='mcqOption'></quml-mcq-image-option>
+            <div *ngFor="let mcqOption of mcqOptions; let index = index">
+                <quml-mcq-image-option (imgOptionSelected)="onOptionSelect($event, mcqOption, index)" [mcqOption]='mcqOption'></quml-mcq-image-option>
             </div>
         </div>
     </div>
 </div>
-<div class="" *ngIf="layout=='MULTIIMAGEGRID'">
+<div *ngIf="layout === 'MULTIIMAGEGRID'">
     <div class="qumlImageOption">
         <div class="wrapper">
-            <div *ngFor="let mcqOption of mcqOptions">
-                <quml-mcq-image-option (imgOptionSelected)="onImageOptionSelected($event)"  [mcqOption]='mcqOption'></quml-mcq-image-option>
+            <div *ngFor="let mcqOption of mcqOptions; let index = index">
+                <quml-mcq-image-option (imgOptionSelected)="onOptionSelect($event, mcqOption, index)" [mcqOption]='mcqOption'></quml-mcq-image-option>
             </div>
         </div>
     </div>
-
 </div>
