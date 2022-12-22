@@ -90,12 +90,6 @@ describe('McqOptionComponent', () => {
     expect(component.mcqOptions[1].selected).toBe(true);
   });
 
-  it('should emit event for the selected option', () => {
-    spyOn(component, 'onOptionSelect');
-    component.onImageOptionSelected({ option: { 'label': 'option1', value: 1 } });
-    expect(component.onOptionSelect).toHaveBeenCalled();
-  });
-
   it('should show the popup', () => {
     spyOn(component.showPopup, 'emit');
     component.showQumlPopup();

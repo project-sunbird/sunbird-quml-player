@@ -90,10 +90,6 @@ export class McqOptionComponent implements OnChanges {
     );
   }
 
-  onImageOptionSelected(event) {
-    this.onOptionSelect(event, event.option);
-  }
-
   showQumlPopup() {
     this.showPopup.emit();
   }
