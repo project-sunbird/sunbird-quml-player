@@ -28,6 +28,12 @@ jobs:
           name: Test QuML
           command: npm run test-lib-ci
       - run:
+          name: Install sonar scanner
+          command: 'sudo npm install -i -g sonarqube-scanner'
+      - run:
+          name: Run Sonar scanner
+          command: sonar-scanner
+      - run:
           name: Publish to NPM
           command: |
             if [ -z $CIRCLE_PR_NUMBER ]; then
